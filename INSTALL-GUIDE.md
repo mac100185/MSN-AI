@@ -1,27 +1,242 @@
 # 🌍 Guía de Instalación Multiplataforma - MSN-AI
 
-**Versión 1.0.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 1.1.0** | **Por Alan Mac-Arthur García Díaz**
 
 Esta guía te ayudará a instalar y configurar MSN-AI en **Linux**, **Windows** o **macOS**.
 
+## 🔥 **NUEVO: Ahora con Docker Edition**
+
+MSN-AI ahora ofrece **DOS opciones completas** de instalación:
+
+### 🐳 **Docker Edition** (Recomendado para nuevos usuarios)
+- **Un solo comando** para cualquier plataforma
+- **Cero configuración** manual necesaria
+- **Instalación automática** de Docker si no está presente
+- **Aislamiento completo** sin "ensuciar" tu sistema
+- **Compatibilidad universal** garantizada
+
+### 💻 **Local Edition** (Clásica - Máximo rendimiento)
+- **Instalación nativa** en tu sistema
+- **Control total** sobre configuraciones
+- **Rendimiento óptimo** sin overhead de contenedores
+- **Personalización avanzada** disponible
+
 ---
 
-## 🎯 Selecciona tu plataforma
+## 🚀 Instalación Rápida (Recomendada)
 
-- [🐧 **LINUX**](#-linux) - Ubuntu, Debian, CentOS, etc.
-- [🪟 **WINDOWS**](#-windows) - Windows 10/11
-- [🍎 **macOS**](#-macos) - macOS 10.14+
+### 🐳 **Docker Edition - Un comando para todas las plataformas:**
+```bash
+# Linux:
+./start-msnai-docker.sh --auto
+
+# Windows:
+.\start-msnai-docker.ps1 --auto
+
+# macOS:
+./start-msnai-docker-mac.sh --auto
+```
+
+### 💻 **Local Edition - Instalación tradicional:**
+```bash
+# Linux:
+./start-msnai.sh --auto
+
+# Windows:
+.\start-msnai.ps1 --auto
+
+# macOS:
+./start-msnai-mac.sh --auto
+```
 
 ---
 
-## 🐧 LINUX
+## 🎯 Selecciona tu método de instalación
 
-### ⚡ Instalación rápida (1 comando)
+### 🐳 **Docker Edition:**
+- [🐧 **DOCKER LINUX**](#-docker-linux)
+- [🪟 **DOCKER WINDOWS**](#-docker-windows)
+- [🍎 **DOCKER macOS**](#-docker-macos)
+
+### 💻 **Local Edition (Tradicional):**
+- [🐧 **LINUX LOCAL**](#-linux-local) - Ubuntu, Debian, CentOS, etc.
+- [🪟 **WINDOWS LOCAL**](#-windows-local) - Windows 10/11
+- [🍎 **macOS LOCAL**](#-macos-local) - macOS 10.14+
+
+---
+
+## 🐳 DOCKER LINUX
+
+### ⚡ Instalación súper rápida (1 comando)
+```bash
+git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+```
+> **✨ Con Docker**: Se instala Docker automáticamente si no lo tienes, detecta tu hardware y configura la IA óptima
+
+### 📋 Instalación paso a paso Docker
+
+#### 1. Descargar MSN-AI
+```bash
+# Git (recomendado)
+git clone [URL_DEL_REPO]
+cd MSN-AI
+
+# O descarga directa
+wget [URL_ZIP]
+unzip msn-ai.zip && cd MSN-AI
+```
+
+#### 2. Dar permisos y ejecutar
+```bash
+chmod +x *.sh
+./start-msnai-docker.sh --auto
+```
+
+#### 3. ¡Listo! 
+- Docker se instala automáticamente si falta
+- La aplicación se configura sola según tu hardware
+- Se abre MSN-AI en tu navegador
+- Todo funciona en contenedores aislados
+
+### 🔧 Configuración específica Docker Linux
+
+#### Si Docker ya está instalado:
+```bash
+# Verificar Docker
+docker --version
+docker-compose --version
+
+# Iniciar MSN-AI directamente
+./start-msnai-docker.sh --auto
+```
+
+#### Para uso con GPU NVIDIA:
+```bash
+# El script detecta automáticamente GPU y configura soporte
+# No necesitas hacer nada manual
+```
+
+#### Comandos útiles Docker:
+```bash
+# Ver estado de contenedores
+docker-compose -f docker/docker-compose.yml ps
+
+# Ver logs
+docker-compose -f docker/docker-compose.yml logs -f
+
+# Detener servicios
+docker-compose -f docker/docker-compose.yml down
+
+# Reiniciar servicios
+docker-compose -f docker/docker-compose.yml restart
+```
+
+---
+
+## 🪟 DOCKER WINDOWS
+
+### ⚡ Instalación súper rápida (PowerShell)
+```powershell
+# Clonar e iniciar
+git clone [URL_DEL_REPO] ; cd MSN-AI ; .\start-msnai-docker.ps1 --auto
+```
+
+### 📋 Instalación paso a paso Docker
+
+#### 1. Abrir PowerShell
+```powershell
+# Windows + R -> "powershell" -> Enter
+# (NO necesita ser como administrador)
+```
+
+#### 2. Habilitar scripts (si es necesario)
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+#### 3. Descargar y ejecutar
+```powershell
+# Clonar repositorio
+git clone [URL_DEL_REPO]
+cd MSN-AI
+
+# Iniciar (instala Docker Desktop automáticamente si falta)
+.\start-msnai-docker.ps1 --auto
+```
+
+### 🔧 Configuración específica Docker Windows
+
+#### Docker Desktop se instala automáticamente:
+- El script detecta si Docker falta
+- Descarga e instala Docker Desktop
+- Configura todo automáticamente
+- Reinicia servicios si es necesario
+
+#### Compatibilidad Windows:
+- **Windows 10/11 Pro/Enterprise**: Hyper-V nativo
+- **Windows 10/11 Home**: WSL 2 automático
+- **GPU NVIDIA**: Soporte automático si tienes drivers
+
+---
+
+## 🍎 DOCKER macOS
+
+### ⚡ Instalación súper rápida (Terminal)
+```bash
+git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-mac.sh --auto
+```
+
+### 📋 Instalación paso a paso Docker
+
+#### 1. Abrir Terminal
+```bash
+# Aplicaciones -> Utilidades -> Terminal
+# O CMD + Espacio -> "Terminal"
+```
+
+#### 2. Descargar y ejecutar
+```bash
+# Clonar repositorio
+git clone [URL_DEL_REPO]
+cd MSN-AI
+
+# Dar permisos
+chmod +x *.sh
+
+# Iniciar (optimizado para tu Mac)
+./start-msnai-docker-mac.sh --auto
+```
+
+### 🔧 Configuración específica Docker macOS
+
+#### Apple Silicon (M1/M2/M3) - Optimizado:
+- Detecta arquitectura ARM64 automáticamente
+- Descarga Docker Desktop para Apple Silicon
+- Optimiza modelos de IA para Neural Engine
+- Aprovecha memoria unificada eficientemente
+
+#### Intel Mac - Compatible:
+- Detecta arquitectura x86_64
+- Descarga Docker Desktop para Intel
+- Configura modelos según RAM disponible
+- Funciona perfectamente en Macs Intel
+
+#### Homebrew Integration:
+```bash
+# Si prefieres instalar Docker via Homebrew:
+# El script ofrece esta opción automáticamente
+```
+
+---
+
+## 💻 LINUX LOCAL
+
+### ⚡ Instalación rápida tradicional (1 comando)
 ```bash
 git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai.sh --auto
 ```
 
-### 📋 Instalación paso a paso
+### 📋 Instalación paso a paso tradicional
 
 #### 1. Preparar el sistema
 ```bash
@@ -101,9 +316,9 @@ sudo yum groupinstall multimedia          # CentOS/RHEL
 
 ---
 
-## 🪟 WINDOWS
+## 🪟 WINDOWS LOCAL
 
-### ⚡ Instalación rápida (PowerShell)
+### ⚡ Instalación rápida tradicional (PowerShell)
 ```powershell
 # 1. Abrir PowerShell como usuario normal
 # 2. Habilitar scripts (solo una vez)
@@ -114,7 +329,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\start-msnai.ps1 --auto
 ```
 
-### 📋 Instalación paso a paso
+### 📋 Instalación paso a paso tradicional
 
 #### 1. Preparar PowerShell
 ```powershell
@@ -154,7 +369,7 @@ cd "C:\Users\TuUsuario\Documents\MSN-AI"
 .\start-msnai.ps1 --auto
 ```
 
-### 🔧 Configuración específica para Windows
+### 🔧 Configuración específica local para Windows
 
 #### Instalar Python (opcional, para servidor web)
 ```powershell
@@ -181,14 +396,14 @@ cd "C:\Users\TuUsuario\Documents\MSN-AI"
 
 ---
 
-## 🍎 macOS
+## 🍎 macOS LOCAL
 
-### ⚡ Instalación rápida (Terminal)
+### ⚡ Instalación rápida tradicional (Terminal)
 ```bash
 curl -o msn-ai.zip [URL_ZIP] && unzip msn-ai.zip && cd MSN-AI && chmod +x *.sh && ./start-msnai-mac.sh --auto
 ```
 
-### 📋 Instalación paso a paso
+### 📋 Instalación paso a paso tradicional
 
 #### 1. Preparar el sistema
 ```bash
@@ -225,7 +440,7 @@ chmod +x *.sh
 ./start-msnai-mac.sh --auto
 ```
 
-### 🔧 Configuración específica para macOS
+### 🔧 Configuración específica local para macOS
 
 #### Apple Silicon (M1/M2/M3)
 ```bash
@@ -261,7 +476,37 @@ chmod +x *.sh
 
 ## 🛠️ Resolución de problemas comunes
 
-### ❌ "Ollama no responde"
+### 🐳 **Problemas Docker Edition**
+
+#### ❌ "Docker no encontrado"
+```bash
+# Linux/macOS - Se instala automáticamente:
+./start-msnai-docker.sh  # Detecta e instala Docker
+
+# Windows - Descarga Docker Desktop automáticamente:
+.\start-msnai-docker.ps1  # Instala Docker Desktop
+```
+
+#### ❌ "Contenedores no inician"
+```bash
+# Ver logs detallados
+docker-compose -f docker/docker-compose.yml logs -f
+
+# Reconstruir imágenes completamente
+docker-compose -f docker/docker-compose.yml build --no-cache
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+#### ❌ "Puerto ocupado en Docker"
+```bash
+# Cambiar puerto automáticamente
+echo "MSN_AI_PORT=8001" > .env
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+### 💻 **Problemas Local Edition**
+
+#### ❌ "Ollama no responde"
 ```bash
 # Verificar que Ollama esté ejecutándose
 # Linux/macOS:
@@ -281,7 +526,7 @@ ollama serve &
 Start-Process -FilePath "ollama" -ArgumentList "serve" -NoNewWindow
 ```
 
-### ❌ "Puerto 8000 ocupado"
+#### ❌ "Puerto 8000 ocupado"
 El script automáticamente buscará un puerto libre (8001, 8002, etc.)
 
 **Solución manual**:
@@ -323,6 +568,7 @@ sudo yum install python3  # CentOS/RHEL
 ```
 
 #### Windows:
+# Windows:
 - Descargar desde [python.org](https://www.python.org/downloads/windows/)
 - O instalar desde Microsoft Store: "Python 3.11"
 
@@ -335,22 +581,34 @@ brew install python3
 
 ## 🔍 Verificación de instalación exitosa
 
-### ✅ Indicadores de éxito:
+### ✅ Indicadores de éxito para ambas ediciones:
+
+#### 🐳 **Docker Edition:**
+1. **Contenedores ejecutándose**: `docker-compose -f docker/docker-compose.yml ps`
+2. **MSN-AI accesible**: http://localhost:8000/msn-ai.html
+3. **Sonido de inicio** de MSN al cargar
+4. **Conexión verde** con Ollama
+5. **Health check verde**: Contenedores saludables
+
+#### 💻 **Local Edition:**
 1. **Sonido de inicio** de MSN al cargar
 2. **Conexión verde** en la esquina inferior derecha
 3. **Lista de modelos** visible en configuración
 4. **Chat de bienvenida** creado automáticamente
+5. **Procesos activos**: Python server + Ollama
 
 ### 🧪 Test completo:
 ```bash
-# Linux:
+# Docker Edition:
+docker-compose -f docker/docker-compose.yml logs
+docker stats --no-stream
+
+# Local Edition:
+# Linux/macOS:
 ./test-msnai.sh
 
-# macOS:
-./test-msnai.sh
-
-# Windows:
-# (El test está disponible solo para Linux/macOS por ahora)
+# Windows local: (disponible pronto)
+# Get-Process python, ollama
 ```
 
 ---
@@ -390,9 +648,63 @@ Una vez que MSN-AI esté funcionando:
 ### ⏹️ Recuerda siempre detener correctamente:
 En cualquier plataforma: **Ctrl + C** en la terminal/PowerShell donde iniciaste MSN-AI
 
+## 🎯 Recomendaciones por tipo de usuario
+
+### 🆕 **Usuario nuevo/casual:**
+- **Usa Docker Edition** - Instalación de un comando, cero configuración
+- Ideal para probar MSN-AI sin complicaciones
+- Perfecto para usuarios no técnicos
+
+### 🏢 **Entorno corporativo:**
+- **Usa Docker Edition** - Aislamiento completo, fácil despliegue
+- Sin modificaciones del sistema host
+- Fácil escalabilidad y gestión
+
+### ⚡ **Usuario avanzado/desarrollador:**
+- **Usa Local Edition** si quieres máximo rendimiento
+- **Usa Docker Edition** si prefieres containerización
+- Ambas opciones ofrecen funcionalidad completa
+
+### 🎮 **Máximo rendimiento IA:**
+- **Local Edition** para rendimiento puro
+- **Docker Edition con GPU** para balance perfecto
+- Ambas soportan hardware GPU completamente
+
 ---
 
-*MSN-AI v1.0.0 - Donde el pasado conversa con el futuro*
+## 🔄 Migración entre ediciones
+
+### Cambiar de Local a Docker:
+```bash
+# Exportar chats desde Local Edition
+# (en la interfaz web: Configuración -> Exportar)
+
+# Iniciar Docker Edition
+./start-msnai-docker.sh --auto
+
+# Importar chats en Docker Edition
+# (en la interfaz web: Configuración -> Importar)
+```
+
+### Cambiar de Docker a Local:
+```bash
+# Detener Docker
+docker-compose -f docker/docker-compose.yml down
+
+# Backup de volúmenes (opcional)
+docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/chats.tar.gz -C /data .
+
+# Iniciar Local Edition
+./start-msnai.sh --auto
+
+# Los chats se importan desde la interfaz web
+```
+
+---
+
+*MSN-AI v1.1.0 - Donde el pasado conversa con el futuro, y donde tú eliges cómo*
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**
+
+**🐳 Nuevas funciones Docker | 💻 Funciones locales conservadas | 🎯 Libertad total de elección**

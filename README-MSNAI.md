@@ -2,11 +2,17 @@
 
 ![MSN-AI Logo](assets/general/logo.png)
 
-**Versión 1.0.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 1.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 ## 🎯 Descripción
 
-MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Live Messenger 8.5 con la potencia de los modelos de IA local ejecutados a través de Ollama. Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de inteligencia artificial avanzados.
+MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Live Messenger 8.5 con la potencia de los modelos de IA local ejecutados a través de Ollama. 
+
+**🐳 NOVEDAD v1.1.0**: Ahora disponible en **DOS ediciones completas**:
+- **Docker Edition**: Instalación de un comando, cero configuración
+- **Local Edition**: Máximo rendimiento con instalación tradicional
+
+Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de inteligencia artificial avanzados, eligiendo el método de instalación que prefieras.
 
 **Desarrollado por**: Alan Mac-Arthur García Díaz  
 **Contacto**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)  
@@ -25,12 +31,14 @@ MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Liv
 - Conversaciones contextuales inteligentes
 - Detección automática de modelos disponibles
 - Reconexión automática con Ollama
+- **Detector inteligente de hardware** en ambas ediciones
 
 ### 💾 Gestión de datos
 - Almacenamiento local en el navegador (localStorage)
 - Historial completo de conversaciones
 - Sistema de búsqueda en chats
 - Exportación e importación de chats en JSON
+- **Volúmenes persistentes** en Docker Edition
 
 ### 🔊 Experiencia inmersiva
 - Sonidos auténticos de MSN (login, mensajes, notificaciones)
@@ -38,10 +46,61 @@ MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Liv
 - Animaciones de "IA pensando"
 - Interfaz completamente responsive
 
+### 🐳 Docker Edition (NUEVO v1.1.0)
+- **Instalación de cero prerequisitos** - Solo requiere Docker
+- **Containerización completa** - Aislamiento total del sistema
+- **Instalación automática de Docker** si no está presente
+- **Health checks y monitoreo** integrados
+- **Soporte GPU** con NVIDIA Container Toolkit
+- **Backup/Restore** automático de datos
+- **Compatibilidad universal** - Idéntico en todos los OS
+
+### 💻 Local Edition (Clásica)
+- **Máximo rendimiento** - Ejecución nativa
+- **Control total** - Configuración avanzada disponible
+- **Instalación tradicional** - Para usuarios que prefieren control directo
+- **Scripts inteligentes** - Instalación automática de dependencias
+
 ## 🚀 Instalación y configuración
 
-### Prerrequisitos
+### 🎯 Elige tu edición preferida
 
+#### 🐳 **Docker Edition** (Recomendado - Cero configuración)
+```bash
+# Linux:
+./start-msnai-docker.sh --auto
+
+# Windows:
+.\start-msnai-docker.ps1 --auto
+
+# macOS:
+./start-msnai-docker-mac.sh --auto
+```
+**✅ Instala Docker automáticamente si falta**  
+**✅ Detecta hardware y configura IA óptima**  
+**✅ Todo funciona en contenedores aislados**
+
+#### 💻 **Local Edition** (Clásica - Máximo rendimiento)
+```bash
+# Linux:
+./start-msnai.sh --auto
+
+# Windows:
+.\start-msnai.ps1 --auto
+
+# macOS:
+./start-msnai-mac.sh --auto
+```
+
+### Prerrequisitos por edición
+
+#### 🐳 **Docker Edition**
+- **Solo Docker** (se instala automáticamente si falta)
+- 8GB+ RAM recomendado
+- 4GB+ espacio libre
+- Navegador moderno
+
+#### 💻 **Local Edition**
 1. **Ollama instalado y ejecutándose**
    - Descargar desde: https://ollama.ai
    - O usar el script incluido: `./ai_check_all.sh`
@@ -53,64 +112,100 @@ MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Liv
    ollama pull phi3:mini   # Para equipos limitados
    ```
 
-### Uso rápido
+### 🎮 Uso - Ambas ediciones
 
-1. **Abrir el archivo**
-   ```bash
-   # Opción 1: Navegador web
-   firefox MSN-AI/msn-ai.html
-   
-   # Opción 2: Servidor local simple
-   python3 -m http.server 8000
-   # Luego abrir: http://localhost:8000/MSN-AI/msn-ai.html
-   ```
+#### 🚀 Inicio inmediato
+```bash
+# Docker Edition:
+./start-msnai-docker.sh --auto
 
-2. **Verificar conexión**
-   - Al iniciar, MSN-AI intentará conectarse automáticamente a Ollama
-   - Indicador de estado en la esquina inferior derecha
-   - Verde = Conectado, Rojo = Desconectado, Amarillo = Conectando
+# Local Edition:
+./start-msnai.sh --auto
 
-3. **Comenzar a chatear**
-   - Clic en "Nuevo Chat" para crear una conversación
-   - Escribe tu mensaje y presiona Enter o clic en "Enviar"
-   ### 3. ¡Disfruta de la nostalgia mientras conversas con IA!
+# ¡La aplicación se abre automáticamente!
+```
 
-   ## ⏹️ Detener MSN-AI correctamente
+#### 🌐 Acceso manual
+```bash
+# Docker Edition - Siempre en:
+http://localhost:8000/msn-ai.html
 
-   **⚠️ IMPORTANTE**: Siempre detén correctamente para evitar daños al sistema:
+# Local Edition - Servidor automático:
+http://localhost:8000/msn-ai.html
 
-   ### Método recomendado
-   ```bash
-   # En la terminal donde ejecutaste start-msnai.sh:
-   Ctrl + C
-   # El script automáticamente limpiará todos los procesos
-   ```
+# Local Edition - Archivo directo:
+file:///ruta/completa/msn-ai.html
+```
 
-   ### Detención manual (emergencia)
-   ```bash
-   # Detener todos los procesos relacionados
-   pkill -f "python.*http.server"
-   pkill -f "http-server" 
-   pkill -f "start-msnai"
-   pkill ollama  # Solo si fue iniciado por el script
+#### 🎯 Primera experiencia
+1. **Sonido de login** - MSN auténtico te da la bienvenida
+2. **Conexión automática** - Verde = IA lista, Rojo = Revisar Ollama
+3. **Chat de bienvenida** - Conversación inicial automática
+4. **Crear nuevo chat** - Botón "+" para nuevas conversaciones
 
-   # Verificar que todo esté detenido
-   ps aux | grep -E "(python.*http|ollama|start-msnai)"
-   ```
+#### 💬 Chatear con IA
+1. **Escribir mensaje** - En el área de texto inferior
+2. **Enviar** - Enter o botón "Enviar"
+3. **Sonido envío** - Efecto auténtico message_out.wav
+4. **IA pensando** - Indicador visual animado
+5. **Respuesta IA** - Con sonido message_in.wav auténtico
+6. **Guardado automático** - Todo se preserva localmente
 
-   ### Indicadores de detención exitosa
-   - ✅ Mensaje: "👋 ¡Gracias por usar MSN-AI!"
-   - ✅ Puerto 8000 liberado (no responde)
-   - ✅ Sin procesos relacionados ejecutándose
-   - ✅ Terminal disponible para nuevos comandos
+## ⏹️ Detener MSN-AI correctamente
 
-   ### ❌ Nunca hagas esto
-   - Cerrar terminal sin Ctrl+C
-   - Usar `kill -9` directamente
-   - Apagar el sistema con servicios activos
-   - Forzar cierre del navegador sin detener servicios
+**⚠️ IMPORTANTE**: Siempre detén correctamente para evitar daños:
 
-   ## 📚 Guía de uso
+### 🐳 Docker Edition
+```bash
+# Método principal:
+docker-compose -f docker/docker-compose.yml down
+
+# Si usaste --daemon:
+Ctrl + C  # En la terminal del script
+```
+
+### 💻 Local Edition
+```bash
+# En la terminal donde ejecutaste start-msnai.sh:
+Ctrl + C
+# El script automáticamente limpiará todos los procesos
+```
+
+### 🚨 Detención de emergencia
+
+#### Docker Edition:
+```bash
+# Detener contenedores forzadamente
+docker stop $(docker ps -q --filter "label=com.msnai.service")
+docker-compose -f docker/docker-compose.yml down --remove-orphans
+```
+
+#### Local Edition:
+```bash
+# Detener todos los procesos relacionados
+pkill -f "python.*http.server"
+pkill -f "http-server" 
+pkill -f "start-msnai"
+pkill ollama  # Solo si fue iniciado por el script
+
+# Verificar que todo esté detenido
+ps aux | grep -E "(python.*http|ollama|start-msnai)"
+```
+
+### Indicadores de detención exitosa
+- ✅ **Docker**: Containers stopped, volumes preserved
+- ✅ **Local**: Mensaje "👋 ¡Gracias por usar MSN-AI!"
+- ✅ Puerto liberado (8000 no responde)
+- ✅ Sin procesos relacionados ejecutándose
+- ✅ Terminal disponible para nuevos comandos
+
+### ❌ Nunca hagas esto
+- Cerrar terminal sin Ctrl+C
+- Usar `kill -9` directamente
+- Apagar el sistema con servicios activos
+- Forzar cierre del navegador sin detener servicios
+
+## 📚 Guía de uso
 
 ### Gestión de chats
 
@@ -201,20 +296,55 @@ MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Liv
 
 ## ⚙️ Configuración avanzada
 
-### Modelos recomendados según hardware
+### 🧠 Detector inteligente de hardware (Ambas ediciones)
 
-| Hardware | Modelo recomendado | Razón |
-|----------|-------------------|--------|
-| 80GB+ VRAM | `llama3:70b` | Máximo rendimiento |
-| 24GB+ VRAM | `llama3:8b` | Excelente para programación |
-| 8-16GB VRAM | `mistral:7b` | Balance perfecto |
-| Solo CPU, 32GB+ RAM | `mistral:7b` | Funciona en CPU |
-| Hardware limitado | `phi3:mini` | Ligero y eficiente |
+**MSN-AI incluye un detector automático que recomienda el modelo óptimo:**
 
-### Personalización del servidor Ollama
+| Hardware detectado | Modelo recomendado | Nivel |
+|-------------------|-------------------|--------|
+| 80GB+ VRAM | `llama3:70b` | Máximo (alto rendimiento) |
+| 24GB+ VRAM | `llama3:8b` | Avanzado (programación) |
+| 8-16GB VRAM | `mistral:7b` | Eficiente (balance perfecto) |
+| Solo CPU, 32GB+ RAM | `mistral:7b` | Eficiente (CPU + alta RAM) |
+| Solo CPU, 16GB+ RAM | `phi3:mini` | Ligero (CPU + RAM media) |
+| Hardware limitado | `tinyllama` | Básico (equipos limitados) |
+
+### 🐳 Configuración Docker Edition
+
+#### Variables de entorno disponibles:
+```env
+# Archivo .env (creado automáticamente)
+MSN_AI_VERSION=1.1.0
+MSN_AI_PORT=8000
+COMPOSE_PROJECT_NAME=msn-ai
+DOCKER_BUILDKIT=1
+RECOMMENDED_MODEL=mistral:7b
+GPU_SUPPORT=true
+MEMORY_GB=16
+```
+
+#### Comandos Docker útiles:
+```bash
+# Ver estado de contenedores
+docker-compose -f docker/docker-compose.yml ps
+
+# Logs en tiempo real
+docker-compose -f docker/docker-compose.yml logs -f
+
+# Entrar al contenedor MSN-AI
+docker exec -it msn-ai-app /bin/bash
+
+# Ver uso de recursos
+docker stats
+
+# Backup de datos
+docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/backup.tar.gz -C /data .
+```
+
+### 💻 Personalización Local Edition
 
 ```bash
-# Cambiar puerto por defecto
+# Cambiar puerto por defecto Ollama
 OLLAMA_HOST=0.0.0.0:11435 ollama serve
 
 # Configurar GPU específica
@@ -236,35 +366,393 @@ Si Ollama está en otro servidor:
 
 ## 🔧 Solución de problemas
 
-### Error: "No hay conexión con Ollama"
+### 🐳 Docker Edition - Troubleshooting
+
+#### ❌ "Docker no encontrado"
+```bash
+# Linux/macOS - Se instala automáticamente
+./start-msnai-docker.sh
+
+# Windows - Descarga Docker Desktop automáticamente
+.\start-msnai-docker.ps1
+```
+
+#### ❌ "Contenedores no inician"
+```bash
+# Ver logs específicos
+docker-compose -f docker/docker-compose.yml logs ollama
+docker-compose -f docker/docker-compose.yml logs msn-ai
+
+# Reconstruir desde cero
+docker-compose -f docker/docker-compose.yml build --no-cache
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+#### ❌ "Puerto ocupado"
+```bash
+# Cambiar puerto automáticamente
+echo "MSN_AI_PORT=8001" >> .env
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+#### ❌ "Health check failed"
+```bash
+# Verificar health check manualmente
+docker exec msn-ai-app /app/healthcheck.sh
+
+# Ver detalles del contenedor
+docker inspect msn-ai-app
+```
+
+### 💻 Local Edition - Troubleshooting
+
+#### ❌ "No hay conexión con Ollama"
 **Causa**: Ollama no está ejecutándose o no es accesible
 **Solución**:
 1. Verificar que Ollama esté ejecutándose: `ollama list`
 2. Verificar el puerto: `netstat -tlnp | grep 11434`
 3. Probar conexión manual: `curl http://localhost:11434/api/tags`
 
-### Error: "Modelo no disponible"
+#### ❌ "Modelo no disponible"
 **Causa**: El modelo seleccionado no está descargado
 **Solución**:
 1. Listar modelos disponibles: `ollama list`
 2. Descargar modelo: `ollama pull mistral:7b`
 3. Reiniciar MSN-AI
 
-### Los sonidos no se reproducen
+#### ❌ "Script no se detiene"
+```bash
+# Forzar limpieza (último recurso)
+pkill -f "start-msnai"
+./test-msnai.sh  # Para ver procesos activos
+```
+
+### 🔧 Problemas comunes (Ambas ediciones)
+
+#### ❌ "Los sonidos no se reproducen"
 **Causa**: Navegador bloquea autoplay o archivos no encontrados
 **Solución**:
 1. Permitir autoplay en el navegador
 2. Verificar que existan los archivos en `assets/sounds/`
 3. Desactivar/activar sonidos en Configuración
 
-### Chat lento o no responde
-**Causa**: Modelo muy grande para el hardware o problemas de red
+#### ❌ "Chat lento o no responde"
+**Causa**: Modelo muy grande para el hardware
 **Solución**:
-1. Cambiar a modelo más ligero (phi3:mini)
-2. Verificar uso de GPU: `nvidia-smi`
+1. **Docker**: Los modelos se seleccionan automáticamente según hardware
+2. **Local**: Cambiar a modelo más ligero (phi3:mini)
+3. Verificar uso de GPU: `nvidia-smi` (local) o `docker exec msn-ai-ollama nvidia-smi` (docker)
 3. Verificar log de Ollama: `journalctl -u ollama`
 
-### Pérdida de datos
+#### ❌ "Pérdida de datos"
+**Causa**: Cierre incorrecto o problemas del navegador
+**Solución**:
+1. **Docker**: Los datos están en volúmenes persistentes - `docker volume ls`
+2. **Local**: Datos en localStorage del navegador - Revisar configuración del navegador
+3. Usar Export regular como backup
+4. **Docker**: Backup manual: `docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/backup.tar.gz -C /data .`
+
+#### ❌ "La aplicación no carga"
+**Docker**:
+```bash
+# Verificar contenedores
+docker-compose -f docker/docker-compose.yml ps
+
+# Reiniciar servicios
+docker-compose -f docker/docker-compose.yml restart
+```
+
+**Local**:
+```bash
+# Usar servidor local
+python3 -m http.server 8000
+# Luego abrir: http://localhost:8000/msn-ai.html
+```
+
+## 🎯 Casos de uso
+
+### 👨‍💻 Desarrollo y programación
+- Consultas técnicas con contexto histórico
+- Revisión de código y debugging asistido
+- Documentación automática de proyectos
+- Aprendizaje de nuevas tecnologías
+
+### 📚 Educación y aprendizaje
+- Tutoría personalizada en cualquier materia
+- Explicaciones paso a paso guardadas
+- Práctica de idiomas con contexto
+- Resolución de ejercicios académicos
+
+### 💼 Productividad profesional
+- Asistencia en escritura de documentos
+- Brainstorming y lluvia de ideas
+- Análisis de textos y datos
+- Automatización de tareas repetitivas
+
+### 🎮 Entretenimiento nostálgico
+- Conversación casual con IA
+- Roleplay y creatividad narrativa
+- Revivir la época dorada del MSN
+- Mostrar a amigos la fusión retro-futurista
+
+### 🏢 Casos empresariales (Docker Edition)
+- Despliegue en servidores corporativos
+- Múltiples instancias para equipos
+- Aislamiento de datos por proyecto
+- Fácil escalabilidad y mantenimiento
+
+## 🏗️ Arquitectura técnica
+
+### 📱 Frontend (Aplicación web)
+```javascript
+// Estructura principal
+class MSNAI {
+  constructor() {
+    this.chats = [];
+    this.currentChatId = null;
+    this.ollamaUrl = 'http://localhost:11434';
+    this.models = [];
+    this.soundsEnabled = true;
+  }
+  
+  // Funciones principales
+  async connectToOllama() { /* ... */ }
+  async sendMessage(content) { /* ... */ }
+  saveToLocalStorage() { /* ... */ }
+  exportChats() { /* ... */ }
+  importChats(file) { /* ... */ }
+}
+```
+
+### 🐳 Docker Architecture
+```yaml
+# Servicios Docker
+services:
+  msn-ai:        # Aplicación web + servidor HTTP
+  ollama:        # Servicio IA local
+  ai-setup:      # Configuración automática hardware
+```
+
+### 💾 Almacenamiento de datos
+- **Docker**: Volúmenes persistentes (`msn-ai-chats`, `ollama-data`)
+- **Local**: localStorage del navegador
+- **Formato**: JSON estructurado con metadatos
+- **Backup**: Exportación manual o automática (Docker)
+
+### 🔊 Sistema de audio
+```javascript
+// Gestión de sonidos
+const playSound = (soundName) => {
+  if (!soundsEnabled) return;
+  const audio = new Audio(`assets/sounds/${soundName}.wav`);
+  audio.play().catch(console.warn);
+};
+```
+
+### 🌐 Comunicación con IA
+```javascript
+// API Ollama
+const response = await fetch(`${ollamaUrl}/api/generate`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    model: selectedModel,
+    prompt: userMessage,
+    stream: false
+  })
+});
+```
+
+## 🚀 Roadmap futuro
+
+### [1.2.0] - Mejoras multiplataforma
+- [ ] **Docker**: Soporte para más architecturas (ARM32, RISC-V)
+- [ ] **Local**: Instalador GUI para Windows (.msi)
+- [ ] **macOS**: App Bundle nativo (.app)
+- [ ] **Linux**: Packages .deb/.rpm para todas las distros
+- [ ] **Mobile**: PWA (Progressive Web App) para móviles
+
+### [1.3.0] - Funcionalidades avanzadas
+- [ ] **Temas**: Modo oscuro, colores personalizables
+- [ ] **Emoticons**: Animados estilo MSN original
+- [ ] **IA múltiple**: Varios modelos simultáneos
+- [ ] **Plugins**: Sistema de extensiones
+- [ ] **Cifrado**: End-to-end para chats sensibles
+
+### [2.0.0] - Expansión mayor
+- [ ] **Colaborativo**: Chat tiempo real entre usuarios
+- [ ] **MSN Revival**: Integración con servidores Escargot
+- [ ] **Cloud opcional**: Sincronización entre dispositivos
+- [ ] **API pública**: Para desarrolladores externos
+- [ ] **IA especializada**: Modelos fine-tuned para casos específicos
+
+### [2.1.0] - Funcionalidades avanzadas IA
+- [ ] **RAG**: Retrieval-Augmented Generation con documentos
+- [ ] **Code execution**: Ejecución de código en sandbox
+- [ ] **Multimodal**: Soporte para imágenes y archivos
+- [ ] **Voice**: Text-to-speech y speech-to-text
+- [ ] **Memoria extendida**: Base de datos vectorial
+
+## 📊 Métricas y estadísticas
+
+### 📈 Rendimiento típico
+- **Tiempo de carga**: < 2 segundos
+- **Latencia IA**: 1-5 segundos (según modelo)
+- **Uso de memoria**: 50-200MB (navegador)
+- **Espacio en disco**: 
+  - **Docker**: 2-4GB (imágenes + modelos)
+  - **Local**: 500MB-8GB (según modelos Ollama)
+
+### 🎯 Compatibilidad
+- **Navegadores**: 98% usuarios (Chrome, Firefox, Safari, Edge)
+- **Sistemas**: Linux, Windows, macOS
+- **Arquitecturas**: x86_64, ARM64 (Apple Silicon)
+- **Docker**: Engine 20.10+, Compose 1.25+
+- **Hardware**: Desde Raspberry Pi hasta workstations
+
+### 📦 Tamaños de descarga
+- **Aplicación base**: 15MB (assets incluidos)
+- **Docker images**: 1.2GB (MSN-AI + Ollama)
+- **Modelos IA típicos**:
+  - `phi3:mini`: 2.3GB
+  - `mistral:7b`: 4.1GB
+  - `llama3:8b`: 4.7GB
+  - `llama3:70b`: 40GB
+
+## 🤝 Contribuir al proyecto
+
+### 🐛 Reportar bugs
+1. **Issues en GitHub**: Problemas y solicitudes de funcionalidades
+2. **Email directo**: alan.mac.arthur.garcia.diaz@gmail.com
+3. **Información útil a incluir**:
+   - Edición (Docker/Local)
+   - Sistema operativo y versión
+   - Navegador y versión
+   - Pasos para reproducir
+   - Logs de error
+
+### 💡 Sugerir funcionalidades
+- Crear GitHub Issue con etiqueta "enhancement"
+- Describir caso de uso específico
+- Mockups o ejemplos visuales (si aplica)
+- Considerar compatibilidad multiplataforma
+
+### 🔧 Contribuir código
+```bash
+# Fork del repositorio
+git clone [TU_FORK]
+cd MSN-AI
+
+# Crear rama para tu funcionalidad
+git checkout -b feature/nueva-funcionalidad
+
+# Realizar cambios y testear
+# Docker: docker-compose -f docker/docker-compose.yml up -d
+# Local: ./start-msnai.sh
+
+# Commit y push
+git add .
+git commit -m "Añadir nueva funcionalidad X"
+git push origin feature/nueva-funcionalidad
+
+# Crear Pull Request en GitHub
+```
+
+### 📚 Contribuir documentación
+- Mejoras en README files
+- Traducciones a otros idiomas
+- Tutoriales y guías de uso
+- Casos de estudio reales
+
+### 🎨 Contribuir assets
+- Nuevos temas visuales
+- Sonidos adicionales (respetando copyright)
+- Iconos y elementos UI
+- Fondos y personalizaciones
+
+## 📞 Soporte y contacto
+
+### 📧 Contacto directo
+**Desarrollador**: Alan Mac-Arthur García Díaz  
+**Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)
+
+### 🌐 Enlaces oficiales
+- **Repositorio**: GitHub (próximamente público)
+- **Documentación**: [README-DOCKER.md](docker/README-DOCKER.md)
+- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **Instalación**: [INSTALL-GUIDE.md](INSTALL-GUIDE.md)
+
+### 💬 Comunidad
+- **GitHub Discussions**: Para preguntas generales
+- **GitHub Issues**: Para bugs específicos
+- **Email**: Para soporte técnico urgente
+
+### 🆘 Soporte empresarial
+Para uso empresarial o despliegues masivos:
+- Consultoría personalizada disponible
+- Configuraciones específicas
+- Soporte técnico prioritario
+- Funcionalidades customizadas
+
+## ⚖️ Licencia y créditos
+
+### 📄 Licencia
+**GNU General Public License v3.0**
+
+**Puntos clave**:
+- ✅ Uso comercial y personal permitido
+- ✅ Modificación y distribución libre
+- ✅ Patent protection incluida
+- ⚖️ Copyleft: modificaciones deben ser GPL-3.0
+- ⚖️ Código fuente debe proporcionarse
+
+### 🤝 Créditos y agradecimientos
+- **[androidWG/WLMOnline](https://github.com/androidWG/WLMOnline)** - Proyecto base para la interfaz
+- **Microsoft Corporation** - Windows Live Messenger original (Fair Use educativo)
+- **[Ollama Team](https://ollama.ai)** - Por hacer la IA local accesible a todos
+- **Proyecto Escargot** - Por mantener vivo el espíritu de MSN
+- **Messenger Plus! Community** - Por las herramientas de extracción de assets
+
+### 📜 Derechos de terceros
+- **Assets de Microsoft**: Usados bajo Fair Use para preservación histórica
+- **Sonidos MSN**: Extraídos del software original con fines educativos
+- **Logotipos**: Marcas registradas de sus respectivos propietarios
+- **Docker**: Marca registrada de Docker, Inc.
+
+## 🎉 Mensaje final
+
+**¡Gracias por elegir MSN-AI!**
+
+Has descubierto una aplicación única que:
+
+🎨 **Preserva la historia** - Mantiene viva la nostalgia del MSN  
+🤖 **Abraza el futuro** - Integra IA local de última generación  
+🐳 **Ofrece opciones** - Docker para simplicidad, Local para control  
+❤️ **Respeta al usuario** - Libertad total de elección y privacidad  
+🌍 **Es verdaderamente universal** - Funciona en cualquier sistema  
+
+### 🌟 Tu experiencia nostálgica te espera
+
+**Docker Edition**: Un comando, cero configuración, máxima compatibilidad  
+**Local Edition**: Control total, rendimiento óptimo, personalización avanzada
+
+```bash
+# ¿Listo para el viaje nostálgico?
+# Docker (recomendado):
+./start-msnai-docker.sh --auto
+
+# Local (clásico):
+./start-msnai.sh --auto
+```
+
+---
+
+*"Donde cada mensaje es una conexión entre el pasado que amamos y el futuro que construimos"*
+
+**MSN-AI v1.1.0 - Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
+**Licenciado bajo GPL-3.0 | Enero 2025**
+
+**🐳 Docker Edition | 💻 Local Edition | 🎯 Tu elección, tu experiencia**
 **Causa**: localStorage del navegador fue limpiado
 **Solución**:
 1. Los datos se guardan automáticamente en localStorage

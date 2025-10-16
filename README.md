@@ -24,7 +24,25 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 ## 🚀 Inicio rápido (2 minutos)
 
-### 🐧 Linux
+### 🔥 **NUEVO: Instalación Docker (Recomendado)**
+```bash
+# 🐳 UN SOLO COMANDO PARA TODAS LAS PLATAFORMAS
+# Linux:
+./start-msnai-docker.sh --auto
+
+# Windows:
+.\start-msnai-docker.ps1 --auto
+
+# macOS:
+./start-msnai-docker-mac.sh --auto
+```
+> **✨ Con Docker**: Cero configuración, máxima compatibilidad, instalación automática de todo
+
+---
+
+### 📟 **Instalación Tradicional (Local)**
+
+#### 🐧 Linux
 ```bash
 # 1. Verificar sistema
 ./test-msnai.sh
@@ -36,7 +54,7 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 ./start-msnai.sh --auto
 ```
 
-### 🪟 Windows
+#### 🪟 Windows
 ```powershell
 # 1. Habilitar scripts (solo la primera vez)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -48,7 +66,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 .\start-msnai.ps1 --auto
 ```
 
-### 🍎 macOS
+#### 🍎 macOS
 ```bash
 # 1. Dar permisos (solo la primera vez)
 chmod +x *.sh
@@ -62,6 +80,25 @@ chmod +x *.sh
 
 ### 3. ¡Disfruta!
 La aplicación se abrirá automáticamente en tu navegador con sonidos nostálgicos y IA lista para conversar.
+
+---
+
+## 🤔 ¿Docker o Local? ¡Tú decides!
+
+| Característica | 🐳 **Docker** | 💻 **Local** |
+|----------------|---------------|---------------|
+| **Instalación** | Un comando | Varios pasos |
+| **Compatibilidad** | Universal | Dependiente |
+| **Dependencias** | Cero config | Manual |
+| **Aislamiento** | Completo | Sistema host |
+| **Actualizaciones** | Automáticas | Manuales |
+| **Rendimiento** | Muy bueno | Nativo |
+
+### 🎯 **Recomendaciones:**
+- 🆕 **¿Primera vez?** → Usa **Docker**
+- 🏢 **¿Trabajo/Corporativo?** → Usa **Docker**  
+- ⚡ **¿Máximo rendimiento?** → Usa **Local**
+- 🔧 **¿Ya tienes Python/Ollama?** → Usa **Local**
 
 ## ⏹️ Cómo detener MSN-AI de forma segura
 
@@ -110,19 +147,28 @@ Get-Process -Name "ollama" | Stop-Process
 
 ## 📋 Requisitos por plataforma
 
-### 🐧 Linux
+### 🐳 **Requisitos Docker (Recomendado)**
+- **Solo Docker**: Docker Engine 20.10+ o Docker Desktop
+- **Sistema**: Linux, Windows 10/11, macOS 10.14+
+- **RAM**: 8GB+ recomendado
+- **Disco**: 4GB+ espacio libre
+- **GPU**: NVIDIA (opcional, para mejor rendimiento)
+
+### 💻 **Requisitos Instalación Local**
+
+#### 🐧 Linux
 - **Obligatorio**: Ubuntu 18.04+, Debian 10+, o similar
 - **Terminal**: bash, zsh o compatible
 - **Python**: 3.6+ (para servidor web local)
 - **Permisos**: Capacidad de ejecutar scripts
 
-### 🪟 Windows
+#### 🪟 Windows
 - **Obligatorio**: Windows 10/11
 - **PowerShell**: 5.1+ (incluido en Windows)
 - **Python**: 3.6+ (opcional, para servidor web)
 - **Permisos**: Capacidad de ejecutar scripts PowerShell
 
-### 🍎 macOS
+#### 🍎 macOS
 - **Obligatorio**: macOS 10.14+ (Mojave)
 - **Terminal**: Terminal.app o iTerm2
 - **Python**: 3.6+ (incluido en macOS moderno)
@@ -130,14 +176,26 @@ Get-Process -Name "ollama" | Stop-Process
 
 ### Común para todas las plataformas
 - 🌐 **Navegador**: Chrome 80+, Firefox 75+, Safari 14+, Edge 80+
-- 🤖 **[Ollama](https://ollama.ai)** instalado y funcionando
+- 🤖 **[Ollama](https://ollama.ai)** instalado y funcionando (solo local)
 - 💾 **8GB+ RAM** (recomendado)
 - 🎮 **GPU con 4GB+ VRAM** (opcional, para mejor rendimiento)
 - 🔊 **Altavoces** para la experiencia completa
 
 ## 🤖 Instalación de IA por plataforma
 
-### 🐧 Linux
+### 🐳 **Con Docker (Automático)**
+```bash
+# 🚀 TODO SE HACE AUTOMÁTICAMENTE
+# El detector de hardware funciona igual que en local
+# pero dentro del contenedor con instalación cero
+
+# Linux/macOS/Windows: Un solo comando
+./start-msnai-docker*.sh  # Se autoconfiguran según tu hardware
+```
+
+### 💻 **Instalación Local Manual**
+
+#### 🐧 Linux
 ```bash
 # Detección automática de hardware y recomendación
 ./ai_check_all.sh
@@ -147,7 +205,7 @@ curl -fsSL https://ollama.com/install.sh | sh
 ollama pull mistral:7b  # Modelo recomendado
 ```
 
-### 🪟 Windows
+#### 🪟 Windows
 ```powershell
 # Configurar IA automáticamente
 .\ai_check_all.ps1
@@ -158,7 +216,7 @@ ollama pull mistral:7b  # Modelo recomendado
 # 3. ollama pull mistral:7b
 ```
 
-### 🍎 macOS
+#### 🍎 macOS
 ```bash
 # Configurar IA automáticamente
 ./ai_check_all_mac.sh
@@ -173,14 +231,26 @@ ollama pull mistral:7b  # Modelo recomendado
 ```
 MSN-AI/
 ├── msn-ai.html              # 🎯 Aplicación principal (TODO EN UNO)
-├── 🐧 LINUX:
+├── 🐳 DOCKER (NUEVO):
+│   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux
+│   ├── start-msnai-docker.ps1      # 🪟 Inicio Docker Windows
+│   ├── start-msnai-docker-mac.sh   # 🍎 Inicio Docker macOS
+│   ├── docker/                     # 📁 Configuración Docker
+│   │   ├── Dockerfile              # 🏗️ Imagen principal
+│   │   ├── docker-compose.yml      # 🎼 Orquestación servicios
+│   │   ├── docker-entrypoint.sh    # 🚀 Inicio contenedor
+│   │   ├── healthcheck.sh          # 🏥 Verificación salud
+│   │   ├── scripts/                # 📁 Scripts Docker
+│   │   └── README-DOCKER.md        # 📖 Documentación Docker
+│   └── .dockerignore               # 🚫 Exclusiones build
+├── 🐧 LINUX (Local):
 │   ├── start-msnai.sh       # 🚀 Script de inicio para Linux
 │   ├── ai_check_all.sh      # 🤖 Detector de hardware + IA
 │   └── test-msnai.sh        # 🧪 Verificación del sistema
-├── 🪟 WINDOWS:
+├── 🪟 WINDOWS (Local):
 │   ├── start-msnai.ps1      # 🚀 Script de inicio PowerShell
 │   └── ai_check_all.ps1     # 🤖 Detector de hardware + IA
-├── 🍎 macOS:
+├── 🍎 macOS (Local):
 │   ├── start-msnai-mac.sh   # 🚀 Script de inicio para macOS
 │   └── ai_check_all_mac.sh  # 🤖 Detector de hardware + IA
 ├── 📚 DOCUMENTACIÓN:
@@ -239,7 +309,37 @@ Accede desde el botón de **engranaje** en la interfaz:
 
 ## 🆘 Solución de problemas
 
-### "No hay conexión con Ollama"
+### 🐳 **Problemas Docker**
+
+#### "Docker no encontrado"
+```bash
+# Instalación automática incluida en los scripts
+./start-msnai-docker.sh  # Instala Docker automáticamente
+
+# O manualmente:
+# Linux: curl -fsSL https://get.docker.com | sh
+# Windows/macOS: Descargar Docker Desktop
+```
+
+#### "Contenedores no inician"
+```bash
+# Ver logs detallados
+docker-compose -f docker/docker-compose.yml logs
+
+# Reconstruir imágenes
+docker-compose -f docker/docker-compose.yml build --no-cache
+```
+
+#### "Puerto ocupado"
+```bash
+# Cambiar puerto en .env
+echo "MSN_AI_PORT=8001" > .env
+docker-compose -f docker/docker-compose.yml up -d
+```
+
+### 💻 **Problemas Instalación Local**
+
+#### "No hay conexión con Ollama"
 ```bash
 # Iniciar Ollama
 ollama serve
@@ -248,7 +348,7 @@ ollama serve
 curl http://localhost:11434/api/tags
 ```
 
-### "Modelo no disponible"
+#### "Modelo no disponible"
 ```bash
 # Listar modelos disponibles
 ollama list
@@ -257,22 +357,29 @@ ollama list
 ollama pull mistral:7b
 ```
 
-### Sin sonidos
+### 🔧 **Problemas Comunes**
+
+#### Sin sonidos
 - Permitir autoplay en el navegador
 - Verificar que existan archivos en `assets/sounds/`
 - Activar sonidos en Configuración
 
-### La aplicación no carga
+#### La aplicación no carga
 ```bash
-# Usar servidor local
+# Docker:
+docker-compose -f docker/docker-compose.yml restart
+
+# Local:
 python3 -m http.server 8000
 # Luego abrir: http://localhost:8000/msn-ai.html
 ```
 
-### El script no se detiene correctamente
+#### Detención incorrecta
 ```bash
-# Forzar limpieza (último recurso)
-./test-msnai.sh  # Para ver procesos activos
+# Docker:
+docker-compose -f docker/docker-compose.yml down
+
+# Local:
 pkill -f "start-msnai"
 ```
 
@@ -417,24 +524,38 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 
 **🚀 ¡Inicia tu viaje nostálgico ahora!**
 
-### 🐧 Linux:
+### 🐳 Docker (Recomendado):
 ```bash
+# Linux:
+./start-msnai-docker.sh --auto
+
+# Windows:
+.\start-msnai-docker.ps1 --auto
+
+# macOS:
+./start-msnai-docker-mac.sh --auto
+```
+
+### 💻 Local (Tradicional):
+```bash
+# Linux:
 ./start-msnai.sh --auto
-```
 
-### 🪟 Windows:
-```powershell
+# Windows:
 .\start-msnai.ps1 --auto
-```
 
-### 🍎 macOS:
-```bash
+# macOS:
 ./start-msnai-mac.sh --auto
 ```
 
 **⏹️ Y recuerda siempre detenerlo correctamente:**
 
-En cualquier plataforma: **Ctrl + C** en la terminal/PowerShell donde lo iniciaste
+🐳 **Docker**: 
+```bash
+docker-compose -f docker/docker-compose.yml down
+```
+
+💻 **Local**: **Ctrl + C** en la terminal/PowerShell donde lo iniciaste
 
 ---
 

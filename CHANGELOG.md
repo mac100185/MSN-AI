@@ -5,6 +5,65 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es/).
 
+## [1.1.0] - 2025-01-15
+
+### 🐳 Nueva Opción Docker (MAJOR)
+**¡Implementación Docker completa como alternativa a la instalación local!**
+
+#### ✨ Añadido - Docker Edition
+- **🏗️ Infraestructura Docker completa**
+  - `docker/Dockerfile` - Imagen optimizada con usuario no-root y health checks
+  - `docker/docker-compose.yml` - Orquestación completa (MSN-AI + Ollama + AI Setup)
+  - `docker/docker-entrypoint.sh` - Script de inicio inteligente del contenedor
+  - `docker/healthcheck.sh` - Verificación automática de salud
+  - `docker/scripts/ai-setup-docker.sh` - Detector de hardware adaptado para contenedores
+  - `docker/README-DOCKER.md` - Documentación técnica completa (630+ líneas)
+
+- **🚀 Scripts de inicio multiplataforma Docker**
+  - `start-msnai-docker.sh` - Linux con instalación automática de Docker
+  - `start-msnai-docker.ps1` - Windows con Docker Desktop automático
+  - `start-msnai-docker-mac.sh` - macOS optimizado (Apple Silicon + Intel)
+
+- **🧠 Detector de hardware conservado al 100%**
+  - Mismo algoritmo de selección de modelos que la versión local
+  - Detecta GPU/CPU/RAM dentro del contenedor
+  - Optimizaciones por plataforma (Apple Silicon, Intel, NVIDIA)
+  - Configuración automática de modelos según hardware
+  - Compatible con NVIDIA Container Toolkit para GPU
+
+- **⚙️ Características Docker avanzadas**
+  - Instalación cero prerequisitos (solo requiere Docker)
+  - Volúmenes persistentes para chats, modelos y configuración
+  - Health checks automáticos y monitoreo
+  - Backup/Restore integrado
+  - Soporte para GPU (NVIDIA Container Toolkit)
+  - Configuración por variables de entorno
+
+#### 🔧 Mejoras técnicas
+- **`.dockerignore`** optimizado para build context eficiente
+- **Multi-stage builds** para imágenes ligeras
+- **Networking** aislado con comunicación inter-contenedor
+- **Security** - Usuario no-root, permisos mínimos
+- **Escalabilidad** - Múltiples instancias sin conflictos
+
+#### 📚 Documentación actualizada
+- Todas las guías actualizadas con opciones Docker
+- Comparación detallada Docker vs Local
+- Guías de troubleshooting específicas para Docker
+- Ejemplos de despliegue en producción
+
+### 🎯 Filosofía preservada
+- **Opción adicional** (no reemplazo de la instalación local)
+- **Libertad de elección** entre Docker o instalación local
+- **Misma experiencia** nostálgica y funcionalidades
+- **Coexistencia perfecta** de ambas opciones
+
+### 💡 Experiencia de usuario mejorada
+- **Un solo comando** para instalación completa: `./start-msnai-docker.sh --auto`
+- **Compatibilidad universal** - idéntico comportamiento en todos los OS
+- **Instalación automática** de Docker si no está presente
+- **Detección inteligente** de plataforma y optimizaciones automáticas
+
 ## [1.0.0] - 2025-01-07
 
 ### 🎉 Lanzamiento inicial
