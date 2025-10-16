@@ -24,29 +24,23 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 ## 🚀 Inicio rápido (2 minutos)
 
-### 🔥 **NUEVO: Instalación Docker (Recomendado)**
+### 🔥 **DOCKER EDITION v1.1.0 - PROBLEMAS CORREGIDOS**
 ```bash
-# 🐳 UN SOLO COMANDO PARA TODAS LAS PLATAFORMAS
-# Clonar e instalar en un comando:
+# 🐳 INSTALACIÓN ULTRA-RÁPIDA (PROBLEMAS CORREGIDOS)
 git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 
-# O paso a paso:
-# Linux:
-git clone https://github.com/mac100185/MSN-AI.git
-cd MSN-AI
-./start-msnai-docker.sh --auto
-
-# Windows:
-git clone https://github.com/mac100185/MSN-AI.git
-cd MSN-AI
-.\start-msnai-docker.ps1 --auto
-
-# macOS:
-git clone https://github.com/mac100185/MSN-AI.git
-cd MSN-AI
-./start-msnai-docker-mac.sh --auto
+# 🆕 O USA LOS NUEVOS SCRIPTS DEDICADOS:
+./docker-start.sh              # Iniciar todo
+./docker-status.sh             # Ver estado
+./docker-logs.sh --follow      # Logs en tiempo real
+./docker-stop.sh               # Detener limpiamente
+./docker-cleanup.sh --all      # Limpieza completa
 ```
-> **✨ Con Docker**: Cero configuración, máxima compatibilidad, instalación automática de todo
+> **✅ CORREGIDO v1.1.0**: 
+> - Docker Compose compatibility (docker-compose vs docker compose)
+> - Healthcheck circular dependency FIXED
+> - Scripts de gestión dedicados añadidos
+> - Cero configuración, máxima compatibilidad
 
 ---
 
@@ -253,17 +247,22 @@ ollama pull mistral:7b  # Modelo recomendado
 ```
 MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 ├── msn-ai.html              # 🎯 Aplicación principal (TODO EN UNO)
-├── 🐳 DOCKER (NUEVO):
-│   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux
+├── 🐳 DOCKER EDITION v1.1.0 (CORREGIDO):
+│   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux (FIXED)
 │   ├── start-msnai-docker.ps1      # 🪟 Inicio Docker Windows
 │   ├── start-msnai-docker-mac.sh   # 🍎 Inicio Docker macOS
+│   ├── 🆕 docker-start.sh          # 🚀 Script dedicado iniciar
+│   ├── 🆕 docker-stop.sh           # 🛑 Script dedicado detener
+│   ├── 🆕 docker-cleanup.sh        # 🧹 Limpieza completa
+│   ├── 🆕 docker-logs.sh           # 📋 Visualizador logs
+│   ├── 🆕 docker-status.sh         # 📊 Monitor estado
 │   ├── docker/                     # 📁 Configuración Docker
 │   │   ├── Dockerfile              # 🏗️ Imagen principal
-│   │   ├── docker-compose.yml      # 🎼 Orquestación servicios
+│   │   ├── docker-compose.yml      # 🎼 Orquestación (sin version obsoleta)
 │   │   ├── docker-entrypoint.sh    # 🚀 Inicio contenedor
 │   │   ├── healthcheck.sh          # 🏥 Verificación salud
-│   │   ├── scripts/                # 📁 Scripts Docker
-│   │   └── README-DOCKER.md        # 📖 Documentación Docker
+│   │   ├── scripts/                # 📁 Scripts Docker mejorados
+│   │   └── README-DOCKER.md        # 📖 Documentación actualizada
 │   └── .dockerignore               # 🚫 Exclusiones build
 ├── 🐧 LINUX (Local):
 │   ├── start-msnai.sh       # 🚀 Script de inicio para Linux
@@ -339,32 +338,37 @@ Accede desde el botón de **engranaje** en la interfaz:
 
 ## 🆘 Solución de problemas
 
-### 🐳 **Problemas Docker**
+### 🐳 **Problemas Docker v1.1.0 - CORREGIDOS**
 
-#### "Docker no encontrado"
+#### ✅ "docker-compose: command not found" - SOLUCIONADO
 ```bash
-# Instalación automática incluida en los scripts
-./start-msnai-docker.sh  # Instala Docker automáticamente
-
-# O manualmente:
-# Linux: curl -fsSL https://get.docker.com | sh
-# Windows/macOS: Descargar Docker Desktop
+# El script ahora detecta automáticamente:
+# - docker-compose (standalone)
+# - docker compose (plugin)
+# - Ofrece instalación automática
+./start-msnai-docker.sh  # Detecta e instala automáticamente
 ```
 
-#### "Contenedores no inician"
+#### ✅ "Healthcheck circular dependency" - CORREGIDO
 ```bash
-# Ver logs detallados
-docker-compose -f docker/docker-compose.yml logs
-
-# Reconstruir imágenes
-docker-compose -f docker/docker-compose.yml build --no-cache
+# Ya no hay dependencia circular entre ollama y ai-setup
+# Healthcheck mejorado, usa conectividad básica
+# Configuración IA más robusta
+./docker-logs.sh --service ai-setup  # Ver progreso configuración
 ```
 
-#### "Puerto ocupado"
+#### ✅ "version is obsolete warning" - ELIMINADO
 ```bash
-# Cambiar puerto en .env
-echo "MSN_AI_PORT=8001" > .env
-docker-compose -f docker/docker-compose.yml up -d
+# Atributo obsoleto removido del docker-compose.yml
+# Ya no aparecen warnings molestos
+```
+
+#### 🆕 Nuevos Scripts de Gestión
+```bash
+./docker-status.sh --detailed      # Estado completo
+./docker-logs.sh --follow          # Logs tiempo real
+./docker-stop.sh                   # Detener limpiamente
+./docker-cleanup.sh --all          # Reset completo
 ```
 
 ### 💻 **Problemas Instalación Local**
@@ -559,24 +563,24 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 **🚀 ¡Inicia tu viaje nostálgico ahora!**
 
 ```bash
-# 🔥 INSTALACIÓN RÁPIDA EN UNA LÍNEA:
+# 🔥 INSTALACIÓN SÚPER RÁPIDA v1.1.0 (PROBLEMAS CORREGIDOS):
 git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 ```
 
-### 🐳 Docker (Recomendado):
+### 🐳 Docker v1.1.0 (Recomendado - Issues Fixed):
 ```bash
-# 1. Clonar:
+# 1. Clonar e iniciar:
 git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 
-# 2. Iniciar:
-# Linux:
-./start-msnai-docker.sh --auto
+# 2. Scripts nuevos (más fáciles):
+./docker-start.sh              # Inicia todo automáticamente
+./docker-status.sh             # ¿Cómo va todo?
+./docker-logs.sh --follow      # Ver qué pasa en tiempo real
 
-# Windows:
-.\start-msnai-docker.ps1 --auto
-
-# macOS:
-./start-msnai-docker-mac.sh --auto
+# 3. O scripts originales (también funcionan):
+./start-msnai-docker.sh --auto    # Linux
+.\start-msnai-docker.ps1 --auto   # Windows  
+./start-msnai-docker-mac.sh --auto # macOS
 ```
 
 ### 💻 Local (Tradicional):
@@ -597,8 +601,10 @@ git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 
 **⏹️ Y recuerda siempre detenerlo correctamente:**
 
-🐳 **Docker**: 
+🐳 **Docker v1.1.0**: 
 ```bash
+./docker-stop.sh                 # ← NUEVO: Método más fácil
+# O método tradicional (también funciona):
 docker-compose -f docker/docker-compose.yml down
 ```
 
@@ -606,7 +612,14 @@ docker-compose -f docker/docker-compose.yml down
 
 ---
 
-*MSN-AI v1.0.0 - "Donde el pasado conversa con el futuro"*
+*MSN-AI v1.1.0 - "Donde el pasado conversa con el futuro, ahora sin errores"*
+
+**🔧 Docker Edition v1.1.0 - Issues Fixed:**
+- ✅ Docker Compose compatibility resolved
+- ✅ Circular dependency healthcheck fixed  
+- ✅ Obsolete version warning removed
+- ✅ New dedicated management scripts
+- ✅ Improved error handling and diagnostics
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Repositorio**: [https://github.com/mac100185/MSN-AI](https://github.com/mac100185/MSN-AI)  

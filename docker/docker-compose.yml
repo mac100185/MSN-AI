@@ -4,8 +4,6 @@
 # License: GNU General Public License v3.0
 # Description: Complete MSN-AI stack with Ollama AI service
 
-version: '3.8'
-
 services:
   # MSN-AI Web Application
   msn-ai:
@@ -26,7 +24,9 @@ services:
       - msn-ai-logs:/app/data/logs
     depends_on:
       ollama:
-        condition: service_healthy
+        condition: service_started
+      ai-setup:
+        condition: service_completed_successfully
     networks:
       - msn-ai-network
     restart: unless-stopped
@@ -35,10 +35,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 20s
     labels:
       - "com.msnai.service=web"
-      - "com.msnai.version=1.0.0"
+      - "com.msnai.version=1.1.0"
       - "com.msnai.author=alan.mac.arthur.garcia.diaz@gmail.com"
 
   # Ollama AI Service
@@ -58,14 +58,14 @@ services:
       - msn-ai-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
       interval: 30s
       timeout: 10s
-      retries: 5
-      start_period: 30s
+      retries: 3
+      start_period: 45s
     labels:
       - "com.msnai.service=ai"
-      - "com.msnai.version=1.0.0"
+      - "com.msnai.version=1.1.0"
     # GPU support (uncomment if you have NVIDIA GPU)
     # deploy:
     #   resources:
@@ -83,6 +83,8 @@ services:
     container_name: msn-ai-setup
     environment:
       - OLLAMA_HOST=ollama:11434
+      - SETUP_TIMEOUT=300
+      - MAX_RETRIES=10
     volumes:
       - ollama-data:/root/.ollama
       - ./scripts/:/scripts:rw
@@ -90,12 +92,12 @@ services:
       - msn-ai-network
     depends_on:
       ollama:
-        condition: service_healthy
+        condition: service_started
     command: ["/app/docker/scripts/ai-setup-docker.sh"]
     restart: "no"
     labels:
       - "com.msnai.service=setup"
-      - "com.msnai.version=1.0.0"
+      - "com.msnai.version=1.1.0"
 
 # Networks
 networks:

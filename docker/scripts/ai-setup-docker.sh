@@ -17,26 +17,38 @@ echo "======================================"
 
 # Environment variables
 OLLAMA_HOST=${OLLAMA_HOST:-ollama:11434}
-SETUP_TIMEOUT=300  # 5 minutes timeout
+SETUP_TIMEOUT=${SETUP_TIMEOUT:-300}  # 5 minutes timeout
+MAX_RETRIES=${MAX_RETRIES:-10}       # Maximum connection retries
 
 # Function to wait for Ollama
 wait_for_ollama() {
     echo "🔄 Esperando conexión con Ollama..."
-    local max_attempts=60
+    local max_attempts=$MAX_RETRIES
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
-        if curl -s "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
-            echo "✅ Conexión con Ollama establecida"
-            return 0
+        # First check basic connectivity
+        if curl -s --max-time 5 "http://${OLLAMA_HOST}/" >/dev/null 2>&1; then
+            echo "✅ Conexión básica con Ollama establecida"
+
+            # Then check if API is responding
+            if curl -s --max-time 10 "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
+                echo "✅ API de Ollama completamente disponible"
+                return 0
+            else
+                echo "⏳ Ollama iniciando, API aún no lista..."
+            fi
+        else
+            echo "⏳ Esperando que Ollama inicie..."
         fi
 
-        echo "⏳ Intento $attempt/$max_attempts..."
-        sleep 5
+        echo "   Intento $attempt/$max_attempts (esperando 10s...)"
+        sleep 10
         attempt=$((attempt + 1))
     done
 
     echo "❌ No se pudo conectar con Ollama después de $max_attempts intentos"
+    echo "   Verifique que el contenedor ollama esté ejecutándose"
     return 1
 }
 
@@ -162,39 +174,57 @@ install_model() {
     local model=$1
 
     echo "📥 Instalando modelo: $model"
-    echo "⏰ Esto puede tomar varios minutos dependiendo del modelo..."
+    echo "⏰ Esto puede tomar varios minutos dependiendo del modelo y conexión..."
 
-    # Use curl to pull the model via Ollama API
-    echo "🔄 Iniciando descarga..."
+    # Use curl to pull the model via Ollama API with streaming
+    echo "🔄 Iniciando descarga con progreso..."
 
-    # Start the pull operation
-    PULL_RESPONSE=$(curl -s -X POST "http://${OLLAMA_HOST}/api/pull" \
+    # Start the pull operation with streaming to show progress
+    local pull_success=false
+    local temp_file="/tmp/ollama_pull_$$.json"
+
+    # Make the pull request and capture the response
+    if curl -s -X POST "http://${OLLAMA_HOST}/api/pull" \
         -H "Content-Type: application/json" \
-        -d "{\"name\":\"$model\"}" 2>/dev/null)
+        -d "{\"name\":\"$model\"}" \
+        --max-time 1800 > "$temp_file" 2>/dev/null; then
 
-    if [ $? -eq 0 ]; then
         echo "✅ Descarga iniciada para $model"
+        pull_success=true
+    else
+        echo "❌ Error iniciando la descarga del modelo"
+        rm -f "$temp_file"
+        return 1
+    fi
 
-        # Wait for the model to be available
-        echo "⏳ Esperando que el modelo esté disponible..."
+    if [ "$pull_success" = true ]; then
+        # Wait for the model to be available with better error handling
+        echo "⏳ Verificando instalación del modelo..."
         local attempts=0
-        local max_attempts=60  # 10 minutes with 10s intervals
+        local max_attempts=90  # 15 minutes with 10s intervals
 
         while [ $attempts -lt $max_attempts ]; do
-            if curl -s "http://${OLLAMA_HOST}/api/tags" | grep -q "$model"; then
-                echo "✅ Modelo $model instalado correctamente"
+            local tags_response
+            tags_response=$(curl -s --max-time 10 "http://${OLLAMA_HOST}/api/tags" 2>/dev/null)
+
+            if [ $? -eq 0 ] && echo "$tags_response" | grep -q "\"name\":\"$model"; then
+                echo "✅ Modelo $model instalado y disponible"
+                rm -f "$temp_file"
                 return 0
             fi
 
-            echo "⏳ Descargando... (intento $((attempts + 1))/$max_attempts)"
+            # Show progress every 5 attempts
+            if [ $((attempts % 5)) -eq 0 ]; then
+                echo "⏳ Descargando modelo... ($(( (attempts * 10) / 60 )) min transcurridos)"
+            fi
+
             sleep 10
             attempts=$((attempts + 1))
         done
 
-        echo "⚠️  Timeout esperando la instalación del modelo"
-        return 1
-    else
-        echo "❌ Error iniciando la descarga del modelo"
+        echo "⚠️  Timeout esperando la instalación del modelo después de 15 minutos"
+        echo "   El modelo puede seguir descargándose en segundo plano"
+        rm -f "$temp_file"
         return 1
     fi
 }
@@ -262,11 +292,42 @@ EOF
 # Main setup function
 main() {
     echo "🚀 Iniciando configuración de IA para MSN-AI..."
+    echo "⏰ Timeout configurado: ${SETUP_TIMEOUT}s"
 
-    # Wait for Ollama service
-    if ! wait_for_ollama; then
-        echo "❌ No se pudo establecer conexión con Ollama"
-        echo "   El contenedor continuará funcionando sin IA"
+    # Set timeout for entire process
+    local start_time=$(date +%s)
+
+    # Wait for Ollama service with retries
+    echo "📡 Estableciendo conexión con Ollama..."
+    local ollama_attempts=0
+    while [ $ollama_attempts -lt 3 ]; do
+        if wait_for_ollama; then
+            break
+        fi
+
+        ollama_attempts=$((ollama_attempts + 1))
+        if [ $ollama_attempts -lt 3 ]; then
+            echo "🔄 Reintentando conexión con Ollama (intento $((ollama_attempts + 1))/3)..."
+            sleep 15
+        fi
+    done
+
+    if [ $ollama_attempts -eq 3 ]; then
+        echo "❌ No se pudo establecer conexión con Ollama después de 3 intentos"
+        echo "   Posibles causas:"
+        echo "   - Ollama container aún iniciándose"
+        echo "   - Recursos del sistema insuficientes"
+        echo "   - Problemas de red entre contenedores"
+        echo ""
+        echo "💡 El contenedor MSN-AI funcionará sin IA hasta que Ollama esté disponible"
+        exit 1
+    fi
+
+    # Check timeout
+    local current_time=$(date +%s)
+    local elapsed=$((current_time - start_time))
+    if [ $elapsed -ge $SETUP_TIMEOUT ]; then
+        echo "⏰ Timeout alcanzado durante la conexión inicial"
         exit 1
     fi
 
@@ -278,23 +339,37 @@ main() {
 
     # Check if models already exist
     if check_existing_models; then
-        echo "ℹ️  Ya existen modelos instalados"
-        echo "   ¿Desea instalar el modelo recomendado ($RECOMMENDED_MODEL) de todas formas?"
+        echo "ℹ️  Modelos existentes encontrados"
         echo "   Configuración automática: Usando modelo existente"
+        echo "   Modelo recomendado para este hardware: $RECOMMENDED_MODEL"
     else
-        echo "📦 Instalando modelo recomendado: $RECOMMENDED_MODEL"
+        echo "📦 No se encontraron modelos, instalando: $RECOMMENDED_MODEL"
+
+        # Check timeout before starting model installation
+        current_time=$(date +%s)
+        elapsed=$((current_time - start_time))
+        if [ $elapsed -ge $((SETUP_TIMEOUT - 60)) ]; then
+            echo "⏰ Tiempo insuficiente para instalar modelo, usando modelo básico"
+            RECOMMENDED_MODEL="phi3:mini"
+        fi
 
         if install_model "$RECOMMENDED_MODEL"; then
             echo "✅ Instalación exitosa"
 
-            # Test the model
-            if test_model "$RECOMMENDED_MODEL"; then
-                echo "🎉 Configuración de IA completada exitosamente"
+            # Test the model if we have time
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
+            if [ $elapsed -lt $((SETUP_TIMEOUT - 30)) ]; then
+                if test_model "$RECOMMENDED_MODEL"; then
+                    echo "🎉 Configuración de IA completada exitosamente"
+                else
+                    echo "⚠️  Modelo instalado pero falló la prueba (puede ser normal al inicio)"
+                fi
             else
-                echo "⚠️  Modelo instalado pero falló la prueba"
+                echo "⏰ Saltando test del modelo por tiempo"
             fi
         else
-            echo "❌ Error en la instalación del modelo"
+            echo "❌ Error en la instalación del modelo principal"
             echo "   Intentando con modelo de respaldo: phi3:mini"
 
             if install_model "phi3:mini"; then
@@ -303,7 +378,8 @@ main() {
                 echo "✅ Modelo de respaldo instalado correctamente"
             else
                 echo "❌ Error instalando modelo de respaldo"
-                exit 1
+                echo "   MSN-AI funcionará sin modelo preinstalado"
+                echo "   Puedes instalar modelos manualmente desde la interfaz"
             fi
         fi
     fi
@@ -314,12 +390,13 @@ main() {
     echo ""
     echo "🎉 Configuración de MSN-AI Docker completada"
     echo "============================================="
-    echo "🤖 Modelo activo: $RECOMMENDED_MODEL"
+    echo "🤖 Modelo configurado: $RECOMMENDED_MODEL"
     echo "🎯 Nivel: $RECOMMENDED_LEVEL"
     echo "🐳 Host Ollama: $OLLAMA_HOST"
     echo "💾 Configuración: /app/data/config/ai-config.json"
+    echo "⏱️  Tiempo total: $(($(date +%s) - start_time))s"
     echo ""
-    echo "💡 MSN-AI está listo para usar con IA local"
+    echo "💡 MSN-AI está listo para usar"
     echo "============================================="
 }
 

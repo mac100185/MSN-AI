@@ -27,13 +27,117 @@ if [ ! -d "docker" ]; then
     exit 1
 fi
 
+# Function to detect and configure Docker Compose
+setup_docker_compose() {
+    echo "🔍 Detectando Docker Compose..."
+
+    # Check if docker-compose (standalone binary) exists
+    if command -v docker-compose &> /dev/null; then
+        DOCKER_COMPOSE_CMD="docker-compose"
+        echo "✅ Docker Compose (standalone) disponible"
+        return 0
+    fi
+
+    # Check if docker compose (plugin) exists
+    if docker compose version &> /dev/null 2>&1; then
+        DOCKER_COMPOSE_CMD="docker compose"
+        echo "✅ Docker Compose (plugin) disponible"
+        return 0
+    fi
+
+    # Neither available, offer installation
+    echo "❌ Docker Compose no está disponible"
+    echo ""
+    echo "🚀 Opciones:"
+    echo "   1. Instalar docker-compose standalone (recomendado para compatibilidad)"
+    echo "   2. Usar docker compose plugin (requiere Docker Engine reciente)"
+    echo "   3. Salir e instalar manualmente"
+
+    read -p "Selecciona una opción (1-3): " compose_option
+
+    case $compose_option in
+        1)
+            install_docker_compose_standalone
+            ;;
+        2)
+            if docker compose version &> /dev/null 2>&1; then
+                DOCKER_COMPOSE_CMD="docker compose"
+                echo "✅ Usando docker compose plugin"
+            else
+                echo "❌ Docker compose plugin no disponible"
+                echo "   Actualiza Docker Engine o instala Docker Desktop"
+                exit 1
+            fi
+            ;;
+        3)
+            echo "ℹ️  Para instalar manualmente:"
+            echo "   curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose"
+            echo "   sudo chmod +x /usr/local/bin/docker-compose"
+            exit 1
+            ;;
+        *)
+            echo "❌ Opción no válida"
+            exit 1
+            ;;
+    esac
+}
+
+# Function to install docker-compose standalone
+install_docker_compose_standalone() {
+    echo "📦 Instalando docker-compose standalone..."
+
+    # Detect architecture
+    ARCH=$(uname -m)
+    case $ARCH in
+        x86_64)
+            COMPOSE_URL="https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64"
+            ;;
+        aarch64|arm64)
+            COMPOSE_URL="https://github.com/docker/compose/releases/latest/download/docker-compose-linux-aarch64"
+            ;;
+        *)
+            echo "❌ Arquitectura $ARCH no soportada para instalación automática"
+            exit 1
+            ;;
+    esac
+
+    # Check if we can write to /usr/local/bin
+    if [ -w "/usr/local/bin" ]; then
+        INSTALL_PATH="/usr/local/bin/docker-compose"
+        SUDO_CMD=""
+    else
+        INSTALL_PATH="/usr/local/bin/docker-compose"
+        SUDO_CMD="sudo"
+        echo "🔐 Se requieren permisos de administrador para instalar en /usr/local/bin"
+    fi
+
+    # Download and install
+    echo "📥 Descargando desde: $COMPOSE_URL"
+    if curl -SL "$COMPOSE_URL" -o "/tmp/docker-compose" 2>/dev/null; then
+        $SUDO_CMD mv "/tmp/docker-compose" "$INSTALL_PATH"
+        $SUDO_CMD chmod +x "$INSTALL_PATH"
+
+        # Verify installation
+        if command -v docker-compose &> /dev/null; then
+            DOCKER_COMPOSE_CMD="docker-compose"
+            echo "✅ Docker Compose standalone instalado correctamente"
+            echo "   Versión: $(docker-compose --version)"
+        else
+            echo "❌ Error en la instalación"
+            exit 1
+        fi
+    else
+        echo "❌ Error descargando docker-compose"
+        exit 1
+    fi
+}
+
 # Function to check Docker installation
 check_docker() {
     echo "🔍 Verificando Docker..."
 
     if ! command -v docker &> /dev/null; then
         echo "❌ Docker no está instalado"
-        echo "📦 Instalando Docker automáticamente..."
         echo ""
         echo "🚀 Opciones de instalación:"
         echo "   1. Instalar automáticamente (recomendado)"
@@ -73,14 +177,8 @@ check_docker() {
         echo "✅ Docker está ejecutándose"
     fi
 
-    # Check Docker Compose
-    if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
-        echo "❌ Docker Compose no está disponible"
-        echo "   Instala Docker Compose o usa Docker Desktop"
-        exit 1
-    else
-        echo "✅ Docker Compose disponible"
-    fi
+    # Setup Docker Compose
+    setup_docker_compose
 }
 
 # Function to install Docker automatically
@@ -115,7 +213,7 @@ install_docker() {
             ;;
         arch)
             echo "🏹 Detectado: Arch Linux"
-            sudo pacman -S docker docker-compose
+            sudo pacman -S docker
             sudo usermod -aG docker $USER
             sudo systemctl start docker
             sudo systemctl enable docker
@@ -150,7 +248,7 @@ show_docker_instructions() {
     echo "   sudo usermod -aG docker \$USER"
     echo ""
     echo "🏹 Arch Linux:"
-    echo "   sudo pacman -S docker docker-compose"
+    echo "   sudo pacman -S docker"
     echo "   sudo systemctl start docker"
     echo "   sudo usermod -aG docker \$USER"
     echo ""
@@ -209,7 +307,7 @@ start_containers() {
 
     # Build images
     echo "📦 Construyendo imagen MSN-AI..."
-    docker-compose -f docker/docker-compose.yml build --no-cache
+    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml build --no-cache
 
     if [ $? -ne 0 ]; then
         echo "❌ Error construyendo la imagen"
@@ -218,7 +316,7 @@ start_containers() {
 
     # Start services
     echo "🚀 Iniciando servicios..."
-    docker-compose -f docker/docker-compose.yml up -d
+    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml up -d
 
     if [ $? -ne 0 ]; then
         echo "❌ Error iniciando los servicios"
@@ -248,7 +346,7 @@ wait_for_services() {
 
     if [ $attempt -gt $max_attempts ]; then
         echo "⚠️  Timeout esperando los servicios"
-        echo "   Verifica los logs: docker-compose -f docker/docker-compose.yml logs"
+        echo "   Verifica los logs: $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml logs"
     fi
 }
 
@@ -275,19 +373,19 @@ show_status() {
     echo "===================================="
     echo "📱 URL: http://localhost:8000/msn-ai.html"
     echo "🐳 Contenedores:"
-    docker-compose -f docker/docker-compose.yml ps
+    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
     echo ""
     echo "📊 Estado de servicios:"
-    docker-compose -f docker/docker-compose.yml ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
     echo ""
     echo "💡 Comandos útiles:"
-    echo "   🔍 Ver logs:        docker-compose -f docker/docker-compose.yml logs -f"
-    echo "   ⏹️  Detener:         docker-compose -f docker/docker-compose.yml down"
-    echo "   🔄 Reiniciar:       docker-compose -f docker/docker-compose.yml restart"
-    echo "   📊 Estado:          docker-compose -f docker/docker-compose.yml ps"
+    echo "   🔍 Ver logs:        $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml logs -f"
+    echo "   ⏹️  Detener:         $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml down"
+    echo "   🔄 Reiniciar:       $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml restart"
+    echo "   📊 Estado:          $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps"
     echo ""
     echo "⚠️  DETENCIÓN CORRECTA:"
-    echo "   docker-compose -f docker/docker-compose.yml down"
+    echo "   $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml down"
     echo ""
     echo "🔧 Datos persistentes en volumes de Docker"
     echo "📧 Soporte: alan.mac.arthur.garcia.diaz@gmail.com"
@@ -297,9 +395,18 @@ show_status() {
 cleanup() {
     echo ""
     echo "🧹 Deteniendo contenedores MSN-AI..."
-    docker-compose -f docker/docker-compose.yml down
+    if [ -n "$DOCKER_COMPOSE_CMD" ]; then
+        $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml down
+    else
+        # Fallback si no se pudo determinar el comando
+        if command -v docker-compose &> /dev/null; then
+            docker-compose -f docker/docker-compose.yml down
+        elif docker compose version &> /dev/null 2>&1; then
+            docker compose -f docker/docker-compose.yml down
+        fi
+    fi
     echo "✅ Contenedores detenidos correctamente"
-    echo "👋 ¡Gracias por usar MSN-AI v1.0.0!"
+    echo "👋 ¡Gracias por usar MSN-AI v1.1.0!"
     exit 0
 }
 
@@ -341,7 +448,7 @@ main() {
         done
     else
         echo "💡 Script completado. Los contenedores continúan ejecutándose."
-        echo "   Para detenerlos: docker-compose -f docker/docker-compose.yml down"
+        echo "   Para detenerlos: $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml down"
     fi
 }
 

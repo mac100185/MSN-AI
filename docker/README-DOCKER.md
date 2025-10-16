@@ -2,7 +2,7 @@
 
 **Versión 1.0.0** | **Por Alan Mac-Arthur García Díaz**
 
-Esta guía explica la implementación completa de MSN-AI usando Docker, proporcionando una alternativa robusta y multiplataforma a la instalación local tradicional.
+Esta guía explica la implementación completa de MSN-AI usando Docker, proporcionando una alternativa robusta y multiplataforma a la instalación local tradicional. **Incluye correcciones para problemas comunes de Docker Compose y dependencias circulares.**
 
 ---
 
@@ -36,15 +36,20 @@ Esta guía explica la implementación completa de MSN-AI usando Docker, proporci
 MSN-AI/
 ├── docker/
 │   ├── Dockerfile                 # Imagen principal MSN-AI
-│   ├── docker-compose.yml         # Orquestación de servicios
+│   ├── docker-compose.yml         # Orquestación de servicios (sin version obsoleta)
 │   ├── docker-entrypoint.sh       # Script de inicio del contenedor
 │   ├── healthcheck.sh             # Verificación de salud
 │   ├── scripts/                   # Scripts específicos Docker
-│   │   └── ai-setup-docker.sh     # Configuración IA en contenedor
+│   │   └── ai-setup-docker.sh     # Configuración IA mejorada
 │   └── README-DOCKER.md           # Esta documentación
-├── start-msnai-docker.sh          # Inicio Linux
+├── start-msnai-docker.sh          # Inicio Linux (con detección automática compose)
 ├── start-msnai-docker.ps1         # Inicio Windows
 ├── start-msnai-docker-mac.sh      # Inicio macOS
+├── docker-start.sh                # 🆕 Script dedicado para iniciar
+├── docker-stop.sh                 # 🆕 Script dedicado para detener
+├── docker-cleanup.sh              # 🆕 Script de limpieza completa
+├── docker-logs.sh                 # 🆕 Visualizador de logs
+├── docker-status.sh               # 🆕 Monitor de estado
 └── .dockerignore                  # Optimización build
 ```
 
@@ -203,31 +208,51 @@ sudo systemctl restart docker
 # Asegúrate de tener drivers NVIDIA actualizados
 ```
 
-### 📊 **Comandos de Gestión**
+## 📊 Comandos de Gestión
 
+### 🆕 Scripts Dedicados (Recomendado)
 ```bash
+# Gestión básica
+./docker-start.sh              # Iniciar todos los servicios
+./docker-stop.sh               # Detener todos los servicios
+./docker-status.sh             # Ver estado de contenedores
+./docker-logs.sh --follow      # Ver logs en tiempo real
+
+# Gestión avanzada
+./docker-start.sh --build      # Reconstruir e iniciar
+./docker-stop.sh --volumes     # Detener y eliminar datos (¡CUIDADO!)
+./docker-logs.sh --service ollama  # Logs de servicio específico
+./docker-status.sh --detailed  # Estado detallado con recursos
+./docker-cleanup.sh --all      # Limpieza completa del sistema
+```
+
+### 🔧 Comandos Docker Compose Tradicionales
+```bash
+# El script detecta automáticamente docker-compose vs docker compose
+COMPOSE_CMD="docker compose"  # o "docker-compose" según tu instalación
+
 # Ver estado de contenedores
-docker-compose -f docker/docker-compose.yml ps
+$COMPOSE_CMD -f docker/docker-compose.yml ps
 
 # Ver logs en tiempo real
-docker-compose -f docker/docker-compose.yml logs -f
+$COMPOSE_CMD -f docker/docker-compose.yml logs -f
 
 # Ver logs de servicio específico
-docker-compose -f docker/docker-compose.yml logs msn-ai
-docker-compose -f docker/docker-compose.yml logs ollama
+$COMPOSE_CMD -f docker/docker-compose.yml logs msn-ai
+$COMPOSE_CMD -f docker/docker-compose.yml logs ollama
 
 # Reiniciar servicios
-docker-compose -f docker/docker-compose.yml restart
+$COMPOSE_CMD -f docker/docker-compose.yml restart
 
 # Detener servicios
-docker-compose -f docker/docker-compose.yml down
+$COMPOSE_CMD -f docker/docker-compose.yml down
 
 # Detener y limpiar volúmenes (¡CUIDADO! Borra chats guardados)
-docker-compose -f docker/docker-compose.yml down -v
+$COMPOSE_CMD -f docker/docker-compose.yml down -v
 
 # Actualizar imágenes
-docker-compose -f docker/docker-compose.yml pull
-docker-compose -f docker/docker-compose.yml up -d --build
+$COMPOSE_CMD -f docker/docker-compose.yml pull
+$COMPOSE_CMD -f docker/docker-compose.yml up -d --build
 
 # Ver uso de recursos
 docker stats
@@ -624,20 +649,39 @@ La implementación Docker de MSN-AI te ofrece:
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
-# 2. Iniciar según tu plataforma:
+# 2. Opción rápida (detecta plataforma automáticamente):
+./docker-start.sh
+
+# 3. O usar scripts específicos de plataforma:
 # Linux
 ./start-msnai-docker.sh
 
-# Windows
+# Windows  
 .\start-msnai-docker.ps1
 
 # macOS
 ./start-msnai-docker-mac.sh
 ```
 
+### 🆕 Gestión Simplificada
+```bash
+# Comandos básicos post-instalación
+./docker-status.sh             # ¿Cómo está todo?
+./docker-logs.sh --follow      # ¿Qué está pasando?
+./docker-stop.sh               # Detener limpiamente
+./docker-cleanup.sh --all      # Empezar de cero
+```
+
 ---
 
-*MSN-AI Docker v1.0.0 - "La nostalgia contenida"*
+*MSN-AI Docker v1.1.0 - "La nostalgia contenida, ahora sin problemas"*
+
+**🔧 Correcciones v1.1.0:**
+- ✅ Docker Compose compatibility (docker-compose vs docker compose)
+- ✅ Healthcheck circular dependency fixed
+- ✅ Removed obsolete version warning
+- ✅ Added dedicated management scripts
+- ✅ Improved error handling and diagnostics
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**
