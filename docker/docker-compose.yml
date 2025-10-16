@@ -58,11 +58,17 @@ services:
       - msn-ai-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/"]
+      test:
+        [
+          "CMD",
+          "sh",
+          "-c",
+          "curl -f http://localhost:11434/ && curl -f http://localhost:11434/api/tags",
+        ]
       interval: 30s
-      timeout: 10s
+      timeout: 15s
       retries: 3
-      start_period: 45s
+      start_period: 60s
     labels:
       - "com.msnai.service=ai"
       - "com.msnai.version=1.1.0"
