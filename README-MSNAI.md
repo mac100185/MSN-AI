@@ -2,9 +2,15 @@
 
 ![MSN-AI Logo](assets/general/logo.png)
 
+**Versión 1.0.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+
 ## 🎯 Descripción
 
 MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Live Messenger 8.5 con la potencia de los modelos de IA local ejecutados a través de Ollama. Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de inteligencia artificial avanzados.
+
+**Desarrollado por**: Alan Mac-Arthur García Díaz  
+**Contacto**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)  
+**Licencia**: GNU General Public License v3.0
 
 ## ✨ Características principales
 
@@ -67,9 +73,44 @@ MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Liv
 3. **Comenzar a chatear**
    - Clic en "Nuevo Chat" para crear una conversación
    - Escribe tu mensaje y presiona Enter o clic en "Enviar"
-   - ¡Disfruta de la nostalgia mientras conversas con IA!
+   ### 3. ¡Disfruta de la nostalgia mientras conversas con IA!
 
-## 📚 Guía de uso
+   ## ⏹️ Detener MSN-AI correctamente
+
+   **⚠️ IMPORTANTE**: Siempre detén correctamente para evitar daños al sistema:
+
+   ### Método recomendado
+   ```bash
+   # En la terminal donde ejecutaste start-msnai.sh:
+   Ctrl + C
+   # El script automáticamente limpiará todos los procesos
+   ```
+
+   ### Detención manual (emergencia)
+   ```bash
+   # Detener todos los procesos relacionados
+   pkill -f "python.*http.server"
+   pkill -f "http-server" 
+   pkill -f "start-msnai"
+   pkill ollama  # Solo si fue iniciado por el script
+
+   # Verificar que todo esté detenido
+   ps aux | grep -E "(python.*http|ollama|start-msnai)"
+   ```
+
+   ### Indicadores de detención exitosa
+   - ✅ Mensaje: "👋 ¡Gracias por usar MSN-AI!"
+   - ✅ Puerto 8000 liberado (no responde)
+   - ✅ Sin procesos relacionados ejecutándose
+   - ✅ Terminal disponible para nuevos comandos
+
+   ### ❌ Nunca hagas esto
+   - Cerrar terminal sin Ctrl+C
+   - Usar `kill -9` directamente
+   - Apagar el sistema con servicios activos
+   - Forzar cierre del navegador sin detener servicios
+
+   ## 📚 Guía de uso
 
 ### Gestión de chats
 
@@ -329,30 +370,89 @@ MSN-AI/
 - [ ] Colaboración en tiempo real
 - [ ] Integración con Escargot/MSN servers
 
-## 📄 Licencia
+## 📄 Licencia y Términos Legales
 
-Este proyecto está bajo la Licencia MIT. Ver archivo `LICENSE` para más detalles.
+### ⚖️ Licencia Principal
+Este proyecto está licenciado bajo la **GNU General Public License v3.0**.
 
-Los assets gráficos y sonidos pertenecen a Microsoft Corporation y se usan bajo criterios de Fair Use para fines educativos y de preservación histórica.
+**Puntos clave de GPL-3.0:**
+- ✅ Libertad de usar para cualquier propósito
+- ✅ Libertad de estudiar y modificar el código
+- ✅ Libertad de distribuir copias  
+- ✅ Libertad de distribuir modificaciones
+- ⚖️ Copyleft: Las modificaciones deben ser GPL-3.0 también
+
+Ver el archivo [LICENSE](LICENSE) para el texto completo.
+
+### 🛡️ Garantía y Responsabilidad
+**SOFTWARE PROPORCIONADO "TAL COMO ESTÁ"** según GPL-3.0:
+- ❌ Sin garantía de funcionamiento
+- ❌ Sin garantía de compatibilidad
+- ❌ Sin responsabilidad por daños
+- ✅ Código abierto para auditoría completa
+- ✅ Soporte de mejor esfuerzo de la comunidad
+
+### 📜 Derechos de Terceros
+- **Assets de Microsoft**: Usados bajo Fair Use para preservación histórica
+- **Sonidos originales**: Extraídos para fines educativos
+- **Proyecto base WLMOnline**: Por androidWG, respetando licencia original
+- **Ollama**: Software independiente con su propia licencia
+
+### 🔒 Política de Privacidad
+- **100% Local**: Sin envío de datos a servidores externos
+- **Sin rastreo**: No recopilamos información personal
+- **LocalStorage únicamente**: Datos almacenados en tu navegador
+- **Control total**: Exporta, importa o elimina tus datos cuando quieras
 
 ## 🙏 Agradecimientos
 
-- **androidWG** por el proyecto original WLMOnline
-- **Microsoft** por Windows Live Messenger
+- **androidWG** por el proyecto original [WLMOnline](https://github.com/androidWG/WLMOnline)
+- **Microsoft Corporation** por Windows Live Messenger original
 - **Ollama** por hacer accesible la IA local
 - **Escargot Project** por mantener vivos los servidores de MSN
 - **Messenger Plus!** por las herramientas de extracción de assets
+- **Comunidad Open Source** por las librerías y herramientas utilizadas
 
-## 📞 Soporte
+## 📞 Soporte y Contacto
 
+### 👨‍💻 Desarrollador
+**Alan Mac-Arthur García Díaz**  
+📧 **Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)
+
+### 🆘 Obtener ayuda
 ¿Necesitas ayuda? ¿Encontraste un bug? ¿Tienes una idea genial?
 
-- **GitHub Issues**: Para reportes de bugs y solicitudes de funcionalidades
-- **Discusiones**: Para preguntas y sugerencias generales
-- **Email**: Para soporte directo
+- 🐛 **GitHub Issues**: Para reportes de bugs y solicitudes de funcionalidades
+- 💬 **Discusiones**: Para preguntas y sugerencias generales  
+- 📧 **Email directo**: Para soporte técnico urgente
+- 🤝 **Comunidad**: Los usuarios se ayudan entre sí
+
+### ⏱️ Tiempo de respuesta
+- **Issues críticos**: Mejor esfuerzo, sin garantía de SLA
+- **Preguntas generales**: Respuesta cuando sea posible
+- **Contribuciones**: Revisión activa de Pull Requests
+- **Email directo**: Para casos urgentes únicamente
+
+### 🤝 Código de conducta
+- Respeta a otros usuarios y colaboradores
+- Proporciona información detallada en reportes
+- Sé constructivo en críticas y sugerencias
+- Mantén las discusiones on-topic
+
+---
+
+## 🔗 Enlaces importantes
+
+- 📖 **Documentación**: [README.md](README.md) - Guía principal  
+- 📋 **Cambios**: [CHANGELOG.md](CHANGELOG.md) - Historial de versiones
+- ⚖️ **Licencia**: [LICENSE](LICENSE) - Texto completo GPL-3.0
+- 🏠 **Proyecto base**: [WLMOnline](https://github.com/androidWG/WLMOnline)
 
 ---
 
 **¡Disfruta de la nostalgia con el poder de la IA moderna! 🚀✨**
 
-*MSN-AI v1.0 - Donde el pasado se encuentra con el futuro*
+*MSN-AI v1.0.0 - Donde el pasado se encuentra con el futuro*
+
+**Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
+**Licenciado bajo GPL-3.0 | Enero 2025**

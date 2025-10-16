@@ -1,8 +1,14 @@
 # 🎉 MSN-AI - IMPLEMENTACIÓN COMPLETA
 
+**Versión 1.0.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+
 ## 🚀 ¡LO QUE HEMOS LOGRADO!
 
 Has creado **MSN-AI**, una aplicación revolucionaria que combina la nostalgia de Windows Live Messenger con la potencia de la IA local moderna. Esta es una implementación completa y funcional que transforma tu experiencia de chat con IA.
+
+**Desarrollado por**: Alan Mac-Arthur García Díaz  
+**Contacto**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)  
+**Licencia**: GNU General Public License v3.0
 
 ---
 
@@ -287,6 +293,21 @@ Avanzados (13-70GB):
 ### ⚡ **Inicio rápido (1 comando)**
 ```bash
 ./start-msnai.sh --auto
+```
+
+### ⏹️ **Detención segura (IMPORTANTE)**
+```bash
+# En la terminal donde ejecutaste el script:
+Ctrl + C
+# El script limpia automáticamente todos los procesos
+```
+
+### 🚨 **Detención de emergencia**
+```bash
+# Si el método anterior no funciona:
+pkill -f "start-msnai"
+pkill -f "python.*http.server" 
+pkill ollama  # Solo si fue iniciado por el script
 ```
 
 ### 🔧 **Instalación paso a paso**

@@ -4,6 +4,8 @@
 
 > *Donde la nostalgia se encuentra con la inteligencia artificial moderna*
 
+**Versión 1.0.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+
 ## 🎯 ¿Qué es MSN-AI?
 
 MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica de **Windows Live Messenger 8.5** con la potencia de los **modelos de IA local** ejecutados a través de Ollama. 
@@ -22,40 +24,146 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 ## 🚀 Inicio rápido (2 minutos)
 
-### 1. Verificar el sistema
+### 🐧 Linux
 ```bash
+# 1. Verificar sistema
 ./test-msnai.sh
+
+# 2. Configurar IA (opcional)
+./ai_check_all.sh
+
+# 3. Iniciar aplicación
+./start-msnai.sh --auto
 ```
 
-### 2. Instalar automáticamente
+### 🪟 Windows
+```powershell
+# 1. Habilitar scripts (solo la primera vez)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# 2. Configurar IA (opcional)
+.\ai_check_all.ps1
+
+# 3. Iniciar aplicación
+.\start-msnai.ps1 --auto
+```
+
+### 🍎 macOS
 ```bash
-./start-msnai.sh --auto
+# 1. Dar permisos (solo la primera vez)
+chmod +x *.sh
+
+# 2. Configurar IA (opcional)
+./ai_check_all_mac.sh
+
+# 3. Iniciar aplicación
+./start-msnai-mac.sh --auto
 ```
 
 ### 3. ¡Disfruta!
 La aplicación se abrirá automáticamente en tu navegador con sonidos nostálgicos y IA lista para conversar.
 
-## 📋 Requisitos
+## ⏹️ Cómo detener MSN-AI de forma segura
 
-### Obligatorio
-- 🐧 Linux, macOS o Windows
-- 🌐 Navegador moderno (Chrome 80+, Firefox 75+, Safari 14+)
-- 🤖 [Ollama](https://ollama.ai) instalado
+**¡IMPORTANTE!** Para evitar daños y pérdida de datos, siempre detén correctamente:
 
-### Recomendado  
-- 💾 8GB+ RAM
-- 🎮 GPU con 4GB+ VRAM (para mejor rendimiento)
-- 🔊 Altavoces para la experiencia completa
+### 🐧 Linux / 🍎 macOS
+```bash
+# En la terminal donde ejecutaste el script
+Ctrl + C
+# El script limpiará automáticamente todos los procesos
+```
 
-## 🤖 Instalación de IA
+### 🪟 Windows
+```powershell
+# En la ventana PowerShell donde ejecutaste el script
+Ctrl + C
+# El script limpiará automáticamente todos los procesos
+```
 
-Si no tienes Ollama o modelos instalados:
+### Detención manual (emergencia)
+#### Linux/macOS:
+```bash
+# Detener procesos específicos
+pkill -f "start-msnai"
+pkill -f "python.*http.server"
+pkill ollama  # Solo si fue iniciado por el script
+```
 
+#### Windows:
+```powershell
+# Detener procesos específicos
+Get-Process -Name "python" | Where-Object {$_.CommandLine -like "*http.server*"} | Stop-Process
+Get-Process -Name "ollama" | Stop-Process
+```
+
+### ⚠️ Nunca hagas esto
+- ❌ Cerrar la terminal/PowerShell sin Ctrl+C
+- ❌ Forzar cierre del navegador sin detener el servidor
+- ❌ Apagar el sistema sin detener los servicios
+- ❌ Usar `kill -9` directamente en los procesos
+
+### 💡 Indicadores de que está bien detenido
+- ✅ Mensaje "👋 ¡Gracias por usar MSN-AI!"
+- ✅ Puerto liberado (http://localhost:8000 no responde)
+- ✅ No hay procesos python/ollama ejecutándose
+
+## 📋 Requisitos por plataforma
+
+### 🐧 Linux
+- **Obligatorio**: Ubuntu 18.04+, Debian 10+, o similar
+- **Terminal**: bash, zsh o compatible
+- **Python**: 3.6+ (para servidor web local)
+- **Permisos**: Capacidad de ejecutar scripts
+
+### 🪟 Windows
+- **Obligatorio**: Windows 10/11
+- **PowerShell**: 5.1+ (incluido en Windows)
+- **Python**: 3.6+ (opcional, para servidor web)
+- **Permisos**: Capacidad de ejecutar scripts PowerShell
+
+### 🍎 macOS
+- **Obligatorio**: macOS 10.14+ (Mojave)
+- **Terminal**: Terminal.app o iTerm2
+- **Python**: 3.6+ (incluido en macOS moderno)
+- **Homebrew**: Recomendado para dependencias
+
+### Común para todas las plataformas
+- 🌐 **Navegador**: Chrome 80+, Firefox 75+, Safari 14+, Edge 80+
+- 🤖 **[Ollama](https://ollama.ai)** instalado y funcionando
+- 💾 **8GB+ RAM** (recomendado)
+- 🎮 **GPU con 4GB+ VRAM** (opcional, para mejor rendimiento)
+- 🔊 **Altavoces** para la experiencia completa
+
+## 🤖 Instalación de IA por plataforma
+
+### 🐧 Linux
 ```bash
 # Detección automática de hardware y recomendación
 ./ai_check_all.sh
 
-# Instalación manual
+# O instalación manual
+curl -fsSL https://ollama.com/install.sh | sh
+ollama pull mistral:7b  # Modelo recomendado
+```
+
+### 🪟 Windows
+```powershell
+# Configurar IA automáticamente
+.\ai_check_all.ps1
+
+# O instalación manual
+# 1. Descargar Ollama desde https://ollama.com/download
+# 2. Instalar el .exe descargado
+# 3. ollama pull mistral:7b
+```
+
+### 🍎 macOS
+```bash
+# Configurar IA automáticamente
+./ai_check_all_mac.sh
+
+# O instalación manual
 curl -fsSL https://ollama.com/install.sh | sh
 ollama pull mistral:7b  # Modelo recomendado
 ```
@@ -65,14 +173,29 @@ ollama pull mistral:7b  # Modelo recomendado
 ```
 MSN-AI/
 ├── msn-ai.html              # 🎯 Aplicación principal (TODO EN UNO)
-├── start-msnai.sh           # 🚀 Script de inicio automático
-├── ai_check_all.sh          # 🤖 Detector de hardware + IA
-├── test-msnai.sh            # 🧪 Verificación del sistema
-├── README-MSNAI.md          # 📚 Documentación completa
+├── 🐧 LINUX:
+│   ├── start-msnai.sh       # 🚀 Script de inicio para Linux
+│   ├── ai_check_all.sh      # 🤖 Detector de hardware + IA
+│   └── test-msnai.sh        # 🧪 Verificación del sistema
+├── 🪟 WINDOWS:
+│   ├── start-msnai.ps1      # 🚀 Script de inicio PowerShell
+│   └── ai_check_all.ps1     # 🤖 Detector de hardware + IA
+├── 🍎 macOS:
+│   ├── start-msnai-mac.sh   # 🚀 Script de inicio para macOS
+│   └── ai_check_all_mac.sh  # 🤖 Detector de hardware + IA
+├── 📚 DOCUMENTACIÓN:
+│   ├── README.md            # 📖 Guía principal (este archivo)
+│   ├── README-MSNAI.md      # 📚 Documentación técnica completa
+│   ├── CHANGELOG.md         # 📋 Historial de cambios
+│   └── LICENSE              # ⚖️ Licencia GPL-3.0
 ├── assets/                  # 🎨 Recursos multimedia
 │   ├── sounds/              # 🔊 Sonidos auténticos de MSN
 │   ├── background/          # 🖼️ Fondos e imágenes
-│   └── ...                  # Más assets organizados
+│   ├── chat-window/         # 🖼️ Iconos y elementos de chat
+│   ├── contacts-window/     # 🖼️ Iconos de lista de contactos
+│   ├── general/             # 🖼️ Elementos UI generales
+│   ├── scrollbar/           # 🖼️ Elementos personalizados
+│   └── status/              # 🖼️ Iconos de estado
 └── backup/                  # 🛡️ Respaldos de archivos originales
 ```
 
@@ -146,34 +269,143 @@ python3 -m http.server 8000
 # Luego abrir: http://localhost:8000/msn-ai.html
 ```
 
+### El script no se detiene correctamente
+```bash
+# Forzar limpieza (último recurso)
+./test-msnai.sh  # Para ver procesos activos
+pkill -f "start-msnai"
+```
+
 ## 📚 Documentación completa
 
 - 📖 **[README-MSNAI.md](README-MSNAI.md)** - Guía detallada de 350+ líneas
 - 🎯 **[IMPLEMENTACION-COMPLETA.md](IMPLEMENTACION-COMPLETA.md)** - Detalles técnicos
+- 📋 **[CHANGELOG.md](CHANGELOG.md)** - Historial de cambios y roadmap
 - 🧪 **`./test-msnai.sh`** - Diagnóstico automático
 
-## 🎨 Capturas de pantalla
+## 📞 Contacto
 
-*Próximamente: Screenshots de la interfaz nostálgica funcionando*
+**Autor**: Alan Mac-Arthur García Díaz  
+**Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)
 
-## 🤝 Créditos y agradecimientos
+### 🐛 Reportar problemas
+- **GitHub Issues**: Para bugs y solicitudes de funcionalidades
+- **Email directo**: Para soporte técnico urgente
+- **Discusiones**: Para ideas y sugerencias generales
 
-- **[androidWG/WLMOnline](https://github.com/androidWG/WLMOnline)** - Proyecto base para la interfaz
-- **Microsoft** - Windows Live Messenger original
-- **[Ollama](https://ollama.ai)** - Por hacer la IA local accesible
-- **Proyecto Escargot** - Por mantener vivo el espíritu de MSN
+### 💬 Comunidad
+- Únete a las discusiones del proyecto
+- Comparte tus experiencias nostálgicas
+- Contribuye con ideas y mejoras
+
+## 🔒 Política de Privacidad
+
+### 📍 Datos locales únicamente
+- **MSN-AI es 100% local** - No envía datos a servidores externos
+- **Tus chats permanecen en tu dispositivo** - Almacenados en localStorage del navegador
+- **Sin rastreo ni análisis** - No recopilamos información personal
+- **Sin cookies de terceros** - Solo almacenamiento local necesario
+
+### 🛡️ Seguridad de datos
+- **Cifrado del navegador** - localStorage protegido por las políticas del navegador
+- **Sin transmisión de red** - Excepto comunicación local con Ollama
+- **Control total** - Puedes exportar, importar o eliminar todos tus datos
+- **Código abierto** - Puedes auditar completamente el funcionamiento
+
+### 📤 Export/Import
+- **Tus datos son tuyos** - Exporta en cualquier momento en formato JSON estándar
+- **Portabilidad completa** - Migra entre dispositivos fácilmente
+- **Sin dependencias** - No necesitas cuenta ni registro
+
+## ⚖️ Términos de Uso
+
+### 📋 Uso permitido
+- ✅ **Uso personal y educativo** - Sin restricciones
+- ✅ **Modificación y distribución** - Bajo los términos de GPL-3.0
+- ✅ **Uso comercial** - Permitido bajo GPL-3.0
+- ✅ **Contribuciones** - Bienvenidas y apreciadas
+
+### 🚫 Restricciones
+- ❌ **No redistribuir sin código fuente** - GPL-3.0 requiere código abierto
+- ❌ **No cambiar licencia** - Debe mantenerse GPL-3.0
+- ❌ **No usar para actividades ilegales** - Responsabilidad del usuario
+- ❌ **No reclamar autoría original** - Respeta los créditos
+
+### 🤝 Responsabilidades
+- **Del desarrollador**: Mantener código de calidad y documentación
+- **Del usuario**: Uso responsable y respeto a los términos
+- **De la comunidad**: Contribuir constructivamente
+
+## 🛡️ Garantía y Limitaciones
+
+### ⚠️ Exención de garantía (Según GPL-3.0)
+
+**MSN-AI se proporciona "TAL COMO ESTÁ", sin garantía de ningún tipo.**
+
+- **Sin garantía de funcionamiento** - El software puede tener bugs
+- **Sin garantía de compatibilidad** - Puede no funcionar en todos los sistemas  
+- **Sin garantía de permanencia** - Las funcionalidades pueden cambiar
+- **Sin responsabilidad por daños** - Usa bajo tu propio riesgo
+
+### 🔧 Limitaciones conocidas
+- **Dependencia de Ollama** - Requiere instalación y configuración correcta
+- **Compatibilidad de navegador** - Funciones modernas requeridas
+- **Recursos del sistema** - IA local consume memoria y procesamiento
+- **Sonidos** - Requiere permisos de autoplay del navegador
+
+### 💪 Lo que SÍ garantizamos
+- ✅ **Código abierto completo** - Transparencia total
+- ✅ **Respuesta a problemas críticos** - En tiempo razonable
+- ✅ **Documentación actualizada** - Mantener guías al día
+- ✅ **Respeto a la privacidad** - Sin recopilación de datos
+
+### 🆘 Soporte
+- **Mejor esfuerzo** - Ayudamos cuando podemos
+- **Comunidad** - Los usuarios se ayudan entre sí
+- **Issues en GitHub** - Canal oficial para reportes
+- **Sin SLA** - No hay garantía de tiempo de respuesta
 
 ## 📄 Licencia
 
-Proyecto bajo Licencia MIT. Los assets gráficos pertenecen a Microsoft Corporation y se usan bajo criterios de Fair Use educativo.
+Este proyecto está licenciado bajo la **GNU General Public License v3.0**.
+
+### 🔑 Puntos clave de GPL-3.0:
+- ✅ **Libertad de usar** - Para cualquier propósito
+- ✅ **Libertad de estudiar** - Código fuente disponible
+- ✅ **Libertad de modificar** - Adapta según tus necesidades
+- ✅ **Libertad de distribuir** - Comparte con otros
+- ⚖️ **Copyleft** - Las modificaciones deben ser GPL-3.0 también
+
+Ver el archivo [LICENSE](LICENSE) para el texto completo de la licencia.
+
+### 🤝 Créditos y agradecimientos
+
+- **[androidWG/WLMOnline](https://github.com/androidWG/WLMOnline)** - Proyecto base para la interfaz
+- **Microsoft Corporation** - Windows Live Messenger original (Fair Use educativo)
+- **[Ollama](https://ollama.ai)** - Por hacer la IA local accesible
+- **Proyecto Escargot** - Por mantener vivo el espíritu de MSN
+- **Messenger Plus!** - Herramientas de extracción de assets
+
+### 📜 Derechos de terceros
+- **Assets de Microsoft** - Usados bajo Fair Use para preservación histórica
+- **Sonidos originales** - Extraídos del software original para fines educativos
+- **Logotipos** - Marcas registradas de sus respectivos propietarios
 
 ## 🚀 ¿Qué sigue?
 
+### 🔮 Roadmap
 - [ ] Integración con más modelos de IA
 - [ ] Temas personalizables
 - [ ] Modo colaborativo
 - [ ] App móvil
 - [ ] Integración con servidores MSN revividos
+
+### 🤝 Cómo contribuir
+1. **Fork** el repositorio
+2. **Crea** una rama para tu funcionalidad
+3. **Desarrolla** siguiendo las convenciones del proyecto
+4. **Documenta** tus cambios
+5. **Envía** un Pull Request
 
 ---
 
@@ -185,10 +417,28 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 
 **🚀 ¡Inicia tu viaje nostálgico ahora!**
 
+### 🐧 Linux:
 ```bash
 ./start-msnai.sh --auto
 ```
 
+### 🪟 Windows:
+```powershell
+.\start-msnai.ps1 --auto
+```
+
+### 🍎 macOS:
+```bash
+./start-msnai-mac.sh --auto
+```
+
+**⏹️ Y recuerda siempre detenerlo correctamente:**
+
+En cualquier plataforma: **Ctrl + C** en la terminal/PowerShell donde lo iniciaste
+
 ---
 
-*MSN-AI v1.0 - "Donde el pasado conversa con el futuro"*
+*MSN-AI v1.0.0 - "Donde el pasado conversa con el futuro"*
+
+**Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
+**Licenciado bajo GPL-3.0 | Enero 2025**

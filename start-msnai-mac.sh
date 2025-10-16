@@ -1,10 +1,10 @@
 #!/bin/bash
-# Script de inicio rápido para MSN-AI
+# start-msnai-mac.sh - Script de inicio para MSN-AI en macOS
 # Versión: 1.0.0
 # Autor: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # Licencia: GNU General Public License v3.0
-# Descripción: Inicia MSN-AI con verificaciones automáticas
+# Descripción: Inicia MSN-AI con verificaciones automáticas en macOS
 
 echo "🚀 MSN-AI v1.0.0 - Iniciando aplicación..."
 echo "============================================"
@@ -95,32 +95,22 @@ check_ollama() {
 detect_browser() {
     echo "🌐 Detectando navegador..."
 
-    # Detectar SO
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
-        if command -v firefox &> /dev/null; then
-            BROWSER="firefox"
-        elif command -v google-chrome &> /dev/null; then
-            BROWSER="google-chrome"
-        elif command -v chromium-browser &> /dev/null; then
-            BROWSER="chromium-browser"
-        elif command -v google-chrome-stable &> /dev/null; then
-            BROWSER="google-chrome-stable"
-        else
-            BROWSER="xdg-open"
-        fi
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        BROWSER="open"
-    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
-        # Windows
-        BROWSER="start"
+    # Detectar navegadores comunes en macOS
+    if [ -d "/Applications/Google Chrome.app" ]; then
+        BROWSER="open -a 'Google Chrome'"
+        BROWSER_NAME="Chrome"
+    elif [ -d "/Applications/Firefox.app" ]; then
+        BROWSER="open -a Firefox"
+        BROWSER_NAME="Firefox"
+    elif [ -d "/Applications/Safari.app" ]; then
+        BROWSER="open -a Safari"
+        BROWSER_NAME="Safari"
     else
-        echo "⚠️  Sistema operativo no detectado"
-        BROWSER="xdg-open"
+        BROWSER="open"
+        BROWSER_NAME="Default"
     fi
 
-    echo "✅ Navegador seleccionado: $BROWSER"
+    echo "✅ Navegador seleccionado: $BROWSER_NAME"
 }
 
 # Función para iniciar servidor web local
@@ -139,7 +129,7 @@ start_server() {
 
     echo "📡 Servidor web en puerto: $PORT"
 
-    # Intentar Python 3 primero, luego Python 2, luego Node.js
+    # Intentar Python 3 primero, luego Python 2
     if command -v python3 &> /dev/null; then
         echo "🐍 Usando Python 3..."
         python3 -m http.server $PORT &
@@ -150,18 +140,24 @@ start_server() {
         python -m SimpleHTTPServer $PORT &
         SERVER_PID=$!
         SERVER_CMD="python"
-    elif command -v node &> /dev/null && command -v npx &> /dev/null; then
-        echo "📗 Usando Node.js..."
-        npx http-server -p $PORT &
-        SERVER_PID=$!
-        SERVER_CMD="node"
     else
-        echo "⚠️  No se encontró servidor web disponible"
-        echo "   Instalando python3-http-server simple..."
+        echo "⚠️  No se encontró Python. Instalando con Homebrew si está disponible..."
 
-        # Crear servidor simple en bash (último recurso)
-        echo "🔧 Modo directo (sin servidor)"
-        return 2
+        if command -v brew &> /dev/null; then
+            echo "📦 Instalando Python 3 con Homebrew..."
+            brew install python3
+            if [ $? -eq 0 ]; then
+                python3 -m http.server $PORT &
+                SERVER_PID=$!
+                SERVER_CMD="python3"
+            else
+                echo "❌ Error instalando Python"
+                return 2
+            fi
+        else
+            echo "⚠️ Sin Python ni Homebrew. Modo directo..."
+            return 2
+        fi
     fi
 
     if [ $? -eq 0 ]; then
@@ -181,54 +177,28 @@ start_server() {
 # Función para abrir la aplicación
 open_app() {
     local url=$1
-    local file_path=$2
 
     echo "🚀 Abriendo MSN-AI..."
 
     if [ -n "$url" ]; then
         # Abrir URL del servidor
-        case $BROWSER in
-            "firefox")
-                firefox "$url/msn-ai.html" &
+        case $BROWSER_NAME in
+            "Chrome")
+                open -a "Google Chrome" "$url/msn-ai.html"
                 ;;
-            "google-chrome"|"google-chrome-stable")
-                $BROWSER --new-window "$url/msn-ai.html" &
+            "Firefox")
+                open -a Firefox "$url/msn-ai.html"
                 ;;
-            "chromium-browser")
-                chromium-browser --new-window "$url/msn-ai.html" &
-                ;;
-            "open")
-                open "$url/msn-ai.html"
-                ;;
-            "start")
-                start "$url/msn-ai.html"
+            "Safari")
+                open -a Safari "$url/msn-ai.html"
                 ;;
             *)
-                $BROWSER "$url/msn-ai.html" &
+                open "$url/msn-ai.html"
                 ;;
         esac
     else
         # Abrir archivo directamente
-        case $BROWSER in
-            "firefox")
-                firefox "file://$(pwd)/msn-ai.html" &
-                ;;
-            "google-chrome"|"google-chrome-stable")
-                $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
-                ;;
-            "chromium-browser")
-                chromium-browser --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
-                ;;
-            "open")
-                open "file://$(pwd)/msn-ai.html"
-                ;;
-            "start")
-                start "file://$(pwd)/msn-ai.html"
-                ;;
-            *)
-                $BROWSER "file://$(pwd)/msn-ai.html" &
-                ;;
-        esac
+        open "file://$(pwd)/msn-ai.html"
     fi
 
     echo "✅ MSN-AI abierto en el navegador"
@@ -262,7 +232,7 @@ cleanup() {
         fi
     fi
 
-    # Verificar que todo esté limpio
+    # Verificar procesos restantes
     echo "🔍 Verificando limpieza..."
     if pgrep -f "python.*http.server" >/dev/null 2>&1; then
         echo "⚠️ Limpiando servidores Python restantes..."
@@ -318,14 +288,14 @@ case $METHOD in
         SERVER_STATUS=$?
 
         if [ $SERVER_STATUS -eq 0 ]; then
-            open_app "http://localhost:$PORT" ""
+            open_app "http://localhost:$PORT"
 
             echo ""
             echo "🎉 ¡MSN-AI v1.0.0 está ejecutándose!"
             echo "============================================"
             echo "📱 URL: http://localhost:$PORT/msn-ai.html"
             echo "🔧 Ollama: $([ $OLLAMA_OK -eq 0 ] && echo "✅ Funcionando" || echo "⚠️ No disponible")"
-            echo "🌐 Navegador: $BROWSER"
+            echo "🌐 Navegador: $BROWSER_NAME"
             echo "📧 Desarrollador: Alan Mac-Arthur García Díaz"
             echo ""
             echo "💡 Consejos importantes:"
@@ -352,13 +322,13 @@ case $METHOD in
             done
         else
             echo "⚠️ Error con servidor, intentando modo directo..."
-            open_app "" "$(pwd)/msn-ai.html"
+            open_app ""
         fi
         ;;
 
     2)
         echo "📁 Abriendo archivo directo..."
-        open_app "" "$(pwd)/msn-ai.html"
+        open_app ""
 
         echo ""
         echo "🎉 ¡MSN-AI v1.0.0 abierto!"
@@ -376,12 +346,12 @@ case $METHOD in
         echo "============================================"
         echo "✅ MSN-AI: Archivo encontrado"
         echo "🔧 Ollama: $([ $OLLAMA_OK -eq 0 ] && echo "✅ Funcionando" || echo "❌ No disponible")"
-        echo "🌐 Navegador: $BROWSER detectado"
+        echo "🌐 Navegador: $BROWSER_NAME detectado"
         echo "📧 Desarrollador: Alan Mac-Arthur García Díaz"
         echo "⚖️ Licencia: GPL-3.0"
         echo ""
         echo "💡 Para iniciar la aplicación:"
-        echo "   $0 --auto"
+        echo "   ./start-msnai-mac.sh --auto"
         echo ""
         echo "💡 Para detener correctamente (cuando esté ejecutándose):"
         echo "   Ctrl+C en la terminal del servidor"
