@@ -510,8 +510,25 @@ docker-compose -f docker/docker-compose.yml up -d
 #### ❌ "Puerto ocupado en Docker"
 ```bash
 # Cambiar puerto automáticamente
-echo "MSN_AI_PORT=8001" > .env
+echo "MSN_AI_PORT=8001" >> .env
 docker-compose -f docker/docker-compose.yml up -d
+```
+
+#### 🔥 "Problemas extremos - Reset nuclear MSN-AI"
+```bash
+# Para casos extremos donde nada funciona:
+./docker-cleanup.sh --nuclear
+
+# ⚠️ IMPORTANTE: Solo afecta recursos MSN-AI:
+# - Elimina TODOS los contenedores MSN-AI
+# - Elimina TODAS las imágenes MSN-AI  
+# - Elimina TODOS los volúmenes MSN-AI
+# - Elimina TODAS las redes MSN-AI
+# ✅ NO afecta otros proyectos Docker
+
+# Requiere confirmación doble:
+# "Para continuar, escribe 'NUCLEAR MSN-AI': NUCLEAR MSN-AI"
+# "¿Estás SEGURO de resetear MSN-AI? Escribe 'RESETEAR MSN-AI': RESETEAR MSN-AI"
 ```
 
 ### 💻 **Problemas Local Edition**
@@ -700,6 +717,21 @@ git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 # (en la interfaz web: Configuración -> Importar)
 ```
 
+### Reset completo MSN-AI (casos extremos):
+```bash
+# Cuando MSN-AI tiene problemas graves que no se resuelven:
+./docker-cleanup.sh --nuclear
+
+# ⚠️ IMPORTANTE: 
+# - Solo elimina recursos de MSN-AI
+# - NO afecta otros proyectos Docker
+# - Resetea MSN-AI a estado fresco
+# - Requiere confirmación doble
+
+# Después del reset nuclear:
+./start-msnai-docker.sh --auto  # Instalación completamente nueva
+```
+
 ### Cambiar de Docker a Local:
 ```bash
 # 1. Detener Docker
@@ -721,4 +753,4 @@ docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/c
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**
 
-**🐳 Nuevas funciones Docker | 💻 Funciones locales conservadas | 🎯 Libertad total de elección**
+**🐳 Docker con opción nuclear MSN-AI | 💻 Funciones locales conservadas | 🎯 Libertad total de elección**

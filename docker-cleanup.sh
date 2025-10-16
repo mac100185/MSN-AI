@@ -45,6 +45,7 @@ REMOVE_VOLUMES=false
 REMOVE_NETWORKS=false
 FORCE_ALL=false
 INTERACTIVE=true
+NUCLEAR_CLEANUP=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -66,6 +67,13 @@ while [[ $# -gt 0 ]]; do
             REMOVE_NETWORKS=true
             shift
             ;;
+        --nuclear)
+            NUCLEAR_CLEANUP=true
+            REMOVE_IMAGES=true
+            REMOVE_VOLUMES=true
+            REMOVE_NETWORKS=true
+            shift
+            ;;
         --force|-f)
             FORCE_ALL=true
             INTERACTIVE=false
@@ -84,6 +92,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --images, -i      Eliminar imágenes MSN-AI"
             echo "  --volumes, -v     Eliminar volúmenes (¡ELIMINA DATOS PERMANENTEMENTE!)"
             echo "  --networks, -n    Eliminar redes Docker"
+            echo "  --nuclear         🔥 RESET TOTAL MSN-AI: Elimina TODO de MSN-AI + limpieza profunda"
             echo ""
             echo "Opciones de control:"
             echo "  --force, -f       Forzar eliminación sin confirmación"
@@ -96,6 +105,7 @@ while [[ $# -gt 0 ]]; do
             echo "  $0 --volumes      # Solo eliminar datos"
             echo "  $0 --images       # Solo eliminar imágenes"
             echo "  $0 --all --force  # Limpieza completa sin confirmación"
+            echo "  $0 --nuclear      # 🔥 RESET TOTAL del sistema Docker"
             echo ""
             echo "⚠️  CUIDADO:"
             echo "   --volumes eliminará PERMANENTEMENTE:"
@@ -103,6 +113,13 @@ while [[ $# -gt 0 ]]; do
             echo "   - Modelos de IA descargados (varios GB)"
             echo "   - Configuraciones personalizadas"
             echo "   - Logs del sistema"
+            echo ""
+            echo "🔥 PELIGRO EXTREMO --nuclear:"
+            echo "   - Elimina TODOS los recursos MSN-AI (contenedores, imágenes, volúmenes, redes)"
+            echo "   - Busca y elimina recursos huérfanos relacionados con MSN-AI"
+            echo "   - Limpia cache de build relacionado con MSN-AI"
+            echo "   - Resetea MSN-AI a estado de instalación fresca"
+            echo "   - ⚠️ SOLO AFECTA RECURSOS DE MSN-AI, NO otros proyectos Docker"
             echo ""
             exit 0
             ;;
@@ -130,43 +147,88 @@ echo "   📦 Imágenes MSN-AI: $IMAGES_EXIST"
 echo "   💾 Volúmenes MSN-AI: $VOLUMES_EXIST"
 echo "   🌐 Redes MSN-AI: $NETWORKS_EXIST"
 
-if [ "$CONTAINERS_EXIST" -eq 0 ] && [ "$IMAGES_EXIST" -eq 0 ] && [ "$VOLUMES_EXIST" -eq 0 ] && [ "$NETWORKS_EXIST" -eq 0 ]; then
-    echo ""
-    echo "✅ No se encontraron recursos de MSN-AI para limpiar"
-    echo "   El sistema ya está limpio"
-    exit 0
+if [ "$NUCLEAR_CLEANUP" = false ]; then
+    if [ "$CONTAINERS_EXIST" -eq 0 ] && [ "$IMAGES_EXIST" -eq 0 ] && [ "$VOLUMES_EXIST" -eq 0 ] && [ "$NETWORKS_EXIST" -eq 0 ]; then
+        echo ""
+        echo "✅ No se encontraron recursos de MSN-AI para limpiar"
+        echo "   El sistema ya está limpio"
+        exit 0
+    fi
 fi
 
 # Show what will be cleaned
 echo ""
-echo "🧹 Limpieza planificada:"
-echo "   🐳 Contenedores: SÍ (detendrá y eliminará)"
-
-if [ "$REMOVE_IMAGES" = true ]; then
-    echo "   📦 Imágenes: SÍ (liberará ~2-4GB)"
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo "🔥 LIMPIEZA NUCLEAR MSN-AI PLANIFICADA:"
+    echo "   🐳 Contenedores: TODOS los de MSN-AI (etiquetados y por nombre)"
+    echo "   📦 Imágenes: TODAS las de MSN-AI (liberará ~2-4GB)"
+    echo "   💾 Volúmenes: TODOS los de MSN-AI (⚠️ TODOS LOS DATOS MSN-AI PERDIDOS)"
+    echo "   🌐 Redes: TODAS las de MSN-AI"
+    echo "   🧹 Cache Build: Solo relacionado con MSN-AI"
+    echo "   🎯 Recursos huérfanos: Busca y elimina residuos MSN-AI"
+    echo "   💣 ESTO RESETEA COMPLETAMENTE MSN-AI"
+    echo ""
+    echo "⚠️  ESTO AFECTARÁ SOLO:"
+    echo "       - Recursos etiquetados com.msnai.*"
+    echo "       - Contenedores/imágenes con nombres msn-ai*"
+    echo "       - Volúmenes msn-ai-*"
+    echo "       - ✅ OTROS proyectos Docker NO se afectarán"
 else
-    echo "   📦 Imágenes: NO"
-fi
+    echo "🧹 Limpieza planificada:"
+    echo "   🐳 Contenedores: SÍ (detendrá y eliminará)"
 
-if [ "$REMOVE_VOLUMES" = true ]; then
-    echo "   💾 Volúmenes: SÍ (⚠️ ELIMINARÁ DATOS PERMANENTEMENTE)"
-    echo "       - Chats guardados"
-    echo "       - Modelos IA (hasta 40GB+)"
-    echo "       - Configuraciones"
-else
-    echo "   💾 Volúmenes: NO (datos preservados)"
-fi
+    if [ "$REMOVE_IMAGES" = true ]; then
+        echo "   📦 Imágenes: SÍ (liberará ~2-4GB)"
+    else
+        echo "   📦 Imágenes: NO"
+    fi
 
-if [ "$REMOVE_NETWORKS" = true ]; then
-    echo "   🌐 Redes: SÍ"
-else
-    echo "   🌐 Redes: NO"
+    if [ "$REMOVE_VOLUMES" = true ]; then
+        echo "   💾 Volúmenes: SÍ (⚠️ ELIMINARÁ DATOS PERMANENTEMENTE)"
+        echo "       - Chats guardados"
+        echo "       - Modelos IA (hasta 40GB+)"
+        echo "       - Configuraciones"
+    else
+        echo "   💾 Volúmenes: NO (datos preservados)"
+    fi
+
+    if [ "$REMOVE_NETWORKS" = true ]; then
+        echo "   🌐 Redes: SÍ"
+    else
+        echo "   🌐 Redes: NO"
+    fi
 fi
 
 # Confirmation if interactive
 if [ "$INTERACTIVE" = true ]; then
     echo ""
-    if [ "$REMOVE_VOLUMES" = true ]; then
+    if [ "$NUCLEAR_CLEANUP" = true ]; then
+        echo "🚨 ¡ADVERTENCIA NUCLEAR MSN-AI!"
+        echo "   Vas a RESETEAR COMPLETAMENTE MSN-AI Docker"
+        echo "   Esto afectará SOLO los recursos de MSN-AI"
+        echo "   TODOS los datos, imágenes, contenedores MSN-AI serán ELIMINADOS"
+        echo "   Tendrás que reinstalar MSN-AI desde cero"
+        echo "   Esta acción es IRREVERSIBLE para MSN-AI"
+        echo ""
+        echo "🔥 Esta opción es para casos extremos MSN-AI como:"
+        echo "   - Corrupción de contenedores/imágenes MSN-AI"
+        echo "   - Problemas persistentes que no se resuelven"
+        echo "   - Resetear MSN-AI a estado fresco sin afectar otros proyectos"
+        echo ""
+        read -p "Para continuar, escribe 'NUCLEAR MSN-AI': " confirmation
+        if [ "$confirmation" != "NUCLEAR MSN-AI" ]; then
+            echo "❌ Cancelado por el usuario"
+            echo "💡 Para limpieza normal: $0 --all"
+            exit 1
+        fi
+        echo ""
+        read -p "¿Estás SEGURO de resetear MSN-AI? Escribe 'RESETEAR MSN-AI': " final_confirmation
+        if [ "$final_confirmation" != "RESETEAR MSN-AI" ]; then
+            echo "❌ Cancelado por el usuario"
+            echo "💡 Decisión inteligente. Para limpieza normal: $0 --all"
+            exit 1
+        fi
+    elif [ "$REMOVE_VOLUMES" = true ]; then
         echo "⚠️  ¡ADVERTENCIA CRÍTICA!"
         echo "   Vas a eliminar PERMANENTEMENTE todos los datos de MSN-AI"
         echo "   Esto incluye chats, modelos de IA y configuraciones"
@@ -188,7 +250,12 @@ if [ "$INTERACTIVE" = true ]; then
 fi
 
 echo ""
-echo "🚀 Iniciando limpieza de MSN-AI..."
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo "🔥 Iniciando LIMPIEZA NUCLEAR de MSN-AI..."
+    echo "⚠️  Esta operación puede tardar algunos minutos"
+else
+    echo "🚀 Iniciando limpieza de MSN-AI..."
+fi
 
 # Step 1: Stop and remove containers
 if [ "$CONTAINERS_EXIST" -gt 0 ]; then
@@ -277,6 +344,42 @@ if [ "$REMOVE_NETWORKS" = true ]; then
     echo "   ✅ Redes eliminadas"
 fi
 
+# Nuclear cleanup additional steps (MSN-AI only)
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo ""
+    echo "🔥 Paso 5: LIMPIEZA NUCLEAR PROFUNDA de MSN-AI..."
+
+    # Find and stop MSN-AI related containers (by name pattern)
+    echo "   🛑 Buscando y deteniendo contenedores MSN-AI adicionales..."
+    MSNAI_CONTAINERS=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null)
+    if [ -n "$MSNAI_CONTAINERS" ]; then
+        docker stop $MSNAI_CONTAINERS >/dev/null 2>&1 || true
+        docker rm -f $MSNAI_CONTAINERS >/dev/null 2>&1 || true
+    fi
+
+    # Remove MSN-AI images (by name pattern and labels)
+    echo "   📦 Eliminando imágenes MSN-AI huérfanas..."
+    docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep -E "(msn-ai|msnai)" | awk '{print $2}' | xargs -r docker rmi -f >/dev/null 2>&1 || true
+
+    # Remove MSN-AI volumes (by name pattern)
+    echo "   💾 Eliminando volúmenes MSN-AI huérfanos..."
+    docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" | xargs -r docker volume rm -f >/dev/null 2>&1 || true
+
+    # Remove MSN-AI networks (by name pattern)
+    echo "   🌐 Eliminando redes MSN-AI huérfanas..."
+    docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" | xargs -r docker network rm >/dev/null 2>&1 || true
+
+    # Clean MSN-AI related build cache
+    echo "   🗄️ Limpiando cache de build MSN-AI..."
+    docker builder prune -f --filter "label=com.msnai.service" >/dev/null 2>&1 || true
+
+    # Remove any dangling resources that might be MSN-AI related
+    echo "   🧹 Limpieza final de recursos huérfanos..."
+    docker system prune -f >/dev/null 2>&1 || true
+
+    echo "   💥 LIMPIEZA NUCLEAR MSN-AI COMPLETADA"
+fi
+
 # Final verification
 echo ""
 echo "🔍 Verificando limpieza final..."
@@ -287,38 +390,84 @@ FINAL_VOLUMES=$(docker volume ls --filter "label=com.msnai.volume" -q 2>/dev/nul
 FINAL_NETWORKS=$(docker network ls --filter "label=com.msnai.network" -q 2>/dev/null | wc -l)
 
 echo ""
-echo "📊 Estado final:"
-echo "   🐳 Contenedores restantes: $FINAL_CONTAINERS"
-echo "   📦 Imágenes restantes: $FINAL_IMAGES"
-echo "   💾 Volúmenes restantes: $FINAL_VOLUMES"
-echo "   🌐 Redes restantes: $FINAL_NETWORKS"
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    # Get MSN-AI specific stats after nuclear cleanup
+    REMAINING_MSNAI_CONTAINERS=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_IMAGES=$(docker images --format "{{.Repository}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_VOLUMES=$(docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_NETWORKS=$(docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
+
+    echo "📊 Estado final MSN-AI después de limpieza nuclear:"
+    echo "   🐳 Contenedores MSN-AI restantes: $REMAINING_MSNAI_CONTAINERS"
+    echo "   📦 Imágenes MSN-AI restantes: $REMAINING_MSNAI_IMAGES"
+    echo "   💾 Volúmenes MSN-AI restantes: $REMAINING_MSNAI_VOLUMES"
+    echo "   🌐 Redes MSN-AI restantes: $REMAINING_MSNAI_NETWORKS"
+else
+    echo "📊 Estado final:"
+    echo "   🐳 Contenedores restantes: $FINAL_CONTAINERS"
+    echo "   📦 Imágenes restantes: $FINAL_IMAGES"
+    echo "   💾 Volúmenes restantes: $FINAL_VOLUMES"
+    echo "   🌐 Redes restantes: $FINAL_NETWORKS"
+fi
 
 # Summary
 echo ""
-echo "🎉 Limpieza de MSN-AI completada"
-echo "================================"
-
-if [ "$REMOVE_VOLUMES" = true ]; then
-    echo "⚠️  DATOS ELIMINADOS PERMANENTEMENTE"
-    echo "   - Chats, modelos IA, y configuraciones fueron eliminados"
-    echo "   - La próxima instalación será completamente nueva"
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo "💥 LIMPIEZA NUCLEAR MSN-AI COMPLETADA"
+    echo "===================================="
+    echo "🔥 MSN-AI HA SIDO COMPLETAMENTE RESETADO"
     echo ""
-    echo "💡 Para reinstalar MSN-AI:"
+    echo "✅ Lo que se eliminó de MSN-AI:"
+    echo "   - TODOS los contenedores MSN-AI"
+    echo "   - TODAS las imágenes MSN-AI"
+    echo "   - TODOS los volúmenes MSN-AI"
+    echo "   - TODAS las redes MSN-AI"
+    echo "   - Cache de build relacionado"
+    echo "   - Recursos huérfanos relacionados"
+    echo ""
+    echo "⚠️  IMPORTANTE:"
+    echo "   - MSN-AI está ahora en estado 'recién instalado'"
+    echo "   - Otros proyectos Docker NO fueron afectados"
+    echo "   - Solo datos de MSN-AI se perdieron"
+    echo ""
+    echo "💡 Para instalar MSN-AI desde cero:"
     echo "   ./start-msnai-docker.sh --auto"
-else
-    echo "✅ Limpieza conservadora completada"
-    echo "   - Contenedores eliminados"
-    if [ "$REMOVE_IMAGES" = true ]; then
-        echo "   - Imágenes eliminadas (se reconstruirán en próximo inicio)"
-    fi
-    echo "   - Datos preservados en volúmenes"
     echo ""
-    echo "💡 Para reiniciar MSN-AI:"
-    echo "   ./docker-start.sh"
+    echo "🎯 Solo MSN-AI fue reseteado, otros proyectos intactos"
+else
+    echo "🎉 Limpieza de MSN-AI completada"
+    echo "================================"
+
+    if [ "$REMOVE_VOLUMES" = true ]; then
+        echo "⚠️  DATOS ELIMINADOS PERMANENTEMENTE"
+        echo "   - Chats, modelos IA, y configuraciones fueron eliminados"
+        echo "   - La próxima instalación será completamente nueva"
+        echo ""
+        echo "💡 Para reinstalar MSN-AI:"
+        echo "   ./start-msnai-docker.sh --auto"
+    else
+        echo "✅ Limpieza conservadora completada"
+        echo "   - Contenedores eliminados"
+        if [ "$REMOVE_IMAGES" = true ]; then
+            echo "   - Imágenes eliminadas (se reconstruirán en próximo inicio)"
+        fi
+        echo "   - Datos preservados en volúmenes"
+        echo ""
+        echo "💡 Para reiniciar MSN-AI:"
+        echo "   ./docker-start.sh"
+    fi
 fi
 
 # Show disk space freed (approximate)
-if [ "$REMOVE_IMAGES" = true ] || [ "$REMOVE_VOLUMES" = true ]; then
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo ""
+    echo "💾 Espacio liberado (aproximado):"
+    echo "   🔥 Todo el espacio usado por MSN-AI"
+    echo "   📦 Imágenes MSN-AI (~2-4GB)"
+    echo "   💾 Volúmenes MSN-AI (modelos IA hasta 40GB+)"
+    echo "   🗄️ Cache de build MSN-AI"
+    echo "   📊 Para ver espacio total: docker system df"
+elif [ "$REMOVE_IMAGES" = true ] || [ "$REMOVE_VOLUMES" = true ]; then
     echo ""
     echo "💾 Espacio aproximado liberado:"
     if [ "$REMOVE_IMAGES" = true ] && [ "$REMOVE_VOLUMES" = true ]; then
@@ -331,6 +480,11 @@ if [ "$REMOVE_IMAGES" = true ] || [ "$REMOVE_VOLUMES" = true ]; then
 fi
 
 echo ""
-echo "👋 Limpieza completada exitosamente"
+if [ "$NUCLEAR_CLEANUP" = true ]; then
+    echo "💥 LIMPIEZA NUCLEAR MSN-AI completada exitosamente"
+    echo "🔥 MSN-AI ha sido completamente resetado (otros proyectos intactos)"
+else
+    echo "👋 Limpieza completada exitosamente"
+fi
 echo "📧 Soporte: alan.mac.arthur.garcia.diaz@gmail.com"
 echo "🧹 MSN-AI Docker Cleanup v1.1.0"

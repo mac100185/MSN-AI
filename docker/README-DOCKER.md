@@ -224,6 +224,30 @@ sudo systemctl restart docker
 ./docker-logs.sh --service ollama  # Logs de servicio específico
 ./docker-status.sh --detailed  # Estado detallado con recursos
 ./docker-cleanup.sh --all      # Limpieza completa del sistema
+
+# 🔥 Casos extremos (cuando MSN-AI no funciona)
+./docker-cleanup.sh --nuclear  # RESET TOTAL MSN-AI: Elimina TODO de MSN-AI
+```
+
+### ⚠️ **Opción Nuclear MSN-AI - Solo para Emergencias**
+```bash
+# Cuando MSN-AI está completamente roto o corrupto:
+./docker-cleanup.sh --nuclear
+
+# ⚠️ IMPORTANTE: Esto elimina SOLO recursos MSN-AI:
+# - TODOS los contenedores MSN-AI (etiquetados y por nombre)
+# - TODAS las imágenes MSN-AI
+# - TODOS los volúmenes MSN-AI
+# - TODAS las redes MSN-AI
+# - Cache de build relacionado con MSN-AI
+# - Recursos huérfanos relacionados con MSN-AI
+# ✅ NO afecta otros proyectos Docker
+
+# Úsalo solo cuando MSN-AI:
+# - Está corrupto y no responde
+# - Tiene problemas persistentes sin solución
+# - Necesitas resetear MSN-AI sin afectar otros proyectos
+# - Quieres empezar MSN-AI completamente desde cero
 ```
 
 ### 🔧 Comandos Docker Compose Tradicionales
@@ -682,6 +706,14 @@ cd MSN-AI
 - ✅ Removed obsolete version warning
 - ✅ Added dedicated management scripts
 - ✅ Improved error handling and diagnostics
+- ✅ Nuclear cleanup option for MSN-AI extreme cases
+
+**🔥 Nuclear Cleanup MSN-AI:**
+- Opción de reset total de MSN-AI (solo MSN-AI)
+- Para casos extremos cuando MSN-AI está corrupto
+- Elimina TODO de MSN-AI (contenedores, imágenes, volúmenes, redes)
+- NO afecta otros proyectos Docker
+- Requiere confirmación doble para evitar accidentes
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**

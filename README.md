@@ -253,7 +253,7 @@ MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 │   ├── start-msnai-docker-mac.sh   # 🍎 Inicio Docker macOS
 │   ├── 🆕 docker-start.sh          # 🚀 Script dedicado iniciar
 │   ├── 🆕 docker-stop.sh           # 🛑 Script dedicado detener
-│   ├── 🆕 docker-cleanup.sh        # 🧹 Limpieza completa
+│   ├── 🆕 docker-cleanup.sh        # 🧹 Limpieza completa + NUCLEAR MSN-AI
 │   ├── 🆕 docker-logs.sh           # 📋 Visualizador logs
 │   ├── 🆕 docker-status.sh         # 📊 Monitor estado
 │   ├── docker/                     # 📁 Configuración Docker
@@ -369,6 +369,21 @@ Accede desde el botón de **engranaje** en la interfaz:
 ./docker-logs.sh --follow          # Logs tiempo real
 ./docker-stop.sh                   # Detener limpiamente
 ./docker-cleanup.sh --all          # Reset completo
+./docker-cleanup.sh --nuclear      # 🔥 RESET TOTAL MSN-AI (solo MSN-AI)
+```
+
+#### 🔥 **Opción Nuclear MSN-AI para Casos Extremos**
+```bash
+# Cuando MSN-AI no funciona y necesitas resetear SOLO MSN-AI:
+./docker-cleanup.sh --nuclear
+
+# ⚠️ IMPORTANTE: Esto elimina SOLO recursos MSN-AI:
+# - Todos los contenedores MSN-AI
+# - Todas las imágenes MSN-AI
+# - Todos los volúmenes MSN-AI
+# - Todas las redes MSN-AI
+# - Cache relacionado con MSN-AI
+# ✅ NO afecta otros proyectos Docker
 ```
 
 ### 💻 **Problemas Instalación Local**
@@ -606,6 +621,9 @@ git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 ./docker-stop.sh                 # ← NUEVO: Método más fácil
 # O método tradicional (también funciona):
 docker-compose -f docker/docker-compose.yml down
+
+# 🔥 Para casos extremos (problemas graves MSN-AI):
+./docker-cleanup.sh --nuclear    # RESET MSN-AI completo (solo MSN-AI)
 ```
 
 💻 **Local**: **Ctrl + C** en la terminal/PowerShell donde lo iniciaste
@@ -619,6 +637,7 @@ docker-compose -f docker/docker-compose.yml down
 - ✅ Circular dependency healthcheck fixed  
 - ✅ Obsolete version warning removed
 - ✅ New dedicated management scripts
+- ✅ Nuclear cleanup option (MSN-AI scope only)
 - ✅ Improved error handling and diagnostics
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
