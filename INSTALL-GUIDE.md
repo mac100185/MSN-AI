@@ -27,25 +27,35 @@ MSN-AI ahora ofrece **DOS opciones completas** de instalación:
 
 ### 🐳 **Docker Edition - Un comando para todas las plataformas:**
 ```bash
+# Clonar e instalar en una línea:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+
+# O paso a paso:
 # Linux:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 ./start-msnai-docker.sh --auto
 
 # Windows:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 .\start-msnai-docker.ps1 --auto
 
 # macOS:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 ./start-msnai-docker-mac.sh --auto
 ```
 
 ### 💻 **Local Edition - Instalación tradicional:**
 ```bash
 # Linux:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 ./start-msnai.sh --auto
 
 # Windows:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 .\start-msnai.ps1 --auto
 
 # macOS:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 ./start-msnai-mac.sh --auto
 ```
 
@@ -69,7 +79,7 @@ MSN-AI ahora ofrece **DOS opciones completas** de instalación:
 
 ### ⚡ Instalación súper rápida (1 comando)
 ```bash
-git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 ```
 > **✨ Con Docker**: Se instala Docker automáticamente si no lo tienes, detecta tu hardware y configura la IA óptima
 
@@ -78,12 +88,12 @@ git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.s
 #### 1. Descargar MSN-AI
 ```bash
 # Git (recomendado)
-git clone [URL_DEL_REPO]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # O descarga directa
-wget [URL_ZIP]
-unzip msn-ai.zip && cd MSN-AI
+wget https://github.com/mac100185/MSN-AI/archive/refs/heads/main.zip
+unzip main.zip && cd MSN-AI-main
 ```
 
 #### 2. Dar permisos y ejecutar
@@ -138,7 +148,7 @@ docker-compose -f docker/docker-compose.yml restart
 ### ⚡ Instalación súper rápida (PowerShell)
 ```powershell
 # Clonar e iniciar
-git clone [URL_DEL_REPO] ; cd MSN-AI ; .\start-msnai-docker.ps1 --auto
+git clone https://github.com/mac100185/MSN-AI.git ; cd MSN-AI ; .\start-msnai-docker.ps1 --auto
 ```
 
 ### 📋 Instalación paso a paso Docker
@@ -157,7 +167,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 #### 3. Descargar y ejecutar
 ```powershell
 # Clonar repositorio
-git clone [URL_DEL_REPO]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # Iniciar (instala Docker Desktop automáticamente si falta)
@@ -183,7 +193,7 @@ cd MSN-AI
 
 ### ⚡ Instalación súper rápida (Terminal)
 ```bash
-git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-mac.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-mac.sh --auto
 ```
 
 ### 📋 Instalación paso a paso Docker
@@ -197,7 +207,7 @@ git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-m
 #### 2. Descargar y ejecutar
 ```bash
 # Clonar repositorio
-git clone [URL_DEL_REPO]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # Dar permisos
@@ -233,7 +243,7 @@ chmod +x *.sh
 
 ### ⚡ Instalación rápida tradicional (1 comando)
 ```bash
-git clone [URL_DEL_REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai.sh --auto
 ```
 
 ### 📋 Instalación paso a paso tradicional
@@ -253,12 +263,12 @@ sudo pacman -S curl python git
 #### 2. Descargar MSN-AI
 ```bash
 # Opción A: Git (recomendado)
-git clone [URL_DEL_REPO]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # Opción B: Descarga directa
-wget [URL_ZIP]
-unzip msn-ai.zip && cd MSN-AI
+wget https://github.com/mac100185/MSN-AI/archive/refs/heads/main.zip
+unzip main.zip && cd MSN-AI-main
 ```
 
 #### 3. Dar permisos a los scripts
@@ -325,7 +335,7 @@ sudo yum groupinstall multimedia          # CentOS/RHEL
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # 3. Descargar e iniciar
-# [Descargar ZIP desde GitHub, extraer y navegar al directorio]
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
 .\start-msnai.ps1 --auto
 ```
 
@@ -341,17 +351,17 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 #### 2. Descargar MSN-AI
-- **Opción A**: Descargar ZIP desde GitHub
-  1. Ve al repositorio de MSN-AI
-  2. Clic en "Code" > "Download ZIP"
-  3. Extrae el ZIP en `C:\Users\TuUsuario\Documents\MSN-AI`
-
-- **Opción B**: Git for Windows
+- **Opción A**: Git for Windows (recomendado)
 ```powershell
-# Si tienes Git instalado
-git clone [URL_DEL_REPO]
+# Instalar Git si no lo tienes: https://git-scm.com/download/win
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 ```
+
+- **Opción B**: Descargar ZIP desde GitHub
+  1. Ve a https://github.com/mac100185/MSN-AI
+  2. Clic en "Code" > "Download ZIP"
+  3. Extrae el ZIP en `C:\Users\TuUsuario\Documents\MSN-AI`
 
 #### 3. Navegar al directorio
 ```powershell
@@ -400,7 +410,7 @@ cd "C:\Users\TuUsuario\Documents\MSN-AI"
 
 ### ⚡ Instalación rápida tradicional (Terminal)
 ```bash
-curl -o msn-ai.zip [URL_ZIP] && unzip msn-ai.zip && cd MSN-AI && chmod +x *.sh && ./start-msnai-mac.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-mac.sh --auto
 ```
 
 ### 📋 Instalación paso a paso tradicional
@@ -417,12 +427,12 @@ brew install curl python3 git
 #### 2. Descargar MSN-AI
 ```bash
 # Opción A: Git (recomendado)
-git clone [URL_DEL_REPO]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # Opción B: Descarga directa
-curl -L -o msn-ai.zip [URL_ZIP]
-unzip msn-ai.zip && cd MSN-AI
+curl -L -o main.zip https://github.com/mac100185/MSN-AI/archive/refs/heads/main.zip
+unzip main.zip && cd MSN-AI-main
 ```
 
 #### 3. Dar permisos a los scripts
@@ -672,32 +682,36 @@ En cualquier plataforma: **Ctrl + C** en la terminal/PowerShell donde iniciaste 
 
 ---
 
-## 🔄 Migración entre ediciones
+### 🔄 Migración entre ediciones
 
 ### Cambiar de Local a Docker:
 ```bash
-# Exportar chats desde Local Edition
+# Si ya tienes MSN-AI Local
+# 1. Exportar chats desde Local Edition
 # (en la interfaz web: Configuración -> Exportar)
 
-# Iniciar Docker Edition
+# 2. Clonar repositorio actualizado (si no tienes Docker Edition)
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
+
+# 3. Iniciar Docker Edition
 ./start-msnai-docker.sh --auto
 
-# Importar chats en Docker Edition
+# 4. Importar chats en Docker Edition
 # (en la interfaz web: Configuración -> Importar)
 ```
 
 ### Cambiar de Docker a Local:
 ```bash
-# Detener Docker
+# 1. Detener Docker
 docker-compose -f docker/docker-compose.yml down
 
-# Backup de volúmenes (opcional)
+# 2. Backup de volúmenes (opcional)
 docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/chats.tar.gz -C /data .
 
-# Iniciar Local Edition
+# 3. Iniciar Local Edition
 ./start-msnai.sh --auto
 
-# Los chats se importan desde la interfaz web
+# 4. Los chats se importan desde la interfaz web
 ```
 
 ---

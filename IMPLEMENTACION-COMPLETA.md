@@ -8,6 +8,7 @@ Has creado **MSN-AI**, una aplicación revolucionaria que combina la nostalgia d
 
 **Desarrollado por**: Alan Mac-Arthur García Díaz  
 **Contacto**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)  
+**Repositorio**: https://github.com/mac100185/MSN-AI  
 **Licencia**: GNU General Public License v3.0
 
 ---
@@ -247,7 +248,15 @@ assets/sounds/
 ### 🐳 **Opción 1: Docker Edition (Recomendado)**
 ```bash
 # UN SOLO COMANDO - CUALQUIER PLATAFORMA
-# Linux:
+# Clonar e instalar en una línea:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+
+# O paso a paso:
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Linux:
 ./start-msnai-docker.sh --auto
 
 # Windows:
@@ -264,10 +273,14 @@ assets/sounds/
 
 ### 💻 **Opción 2: Local Edition (Clásica)**
 ```bash
-# Verificar sistema y recomendar modelo
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Verificar sistema y recomendar modelo
 ./ai_check_all.sh
 
-# Instalar automáticamente todo
+# 3. Instalar automáticamente todo
 ./start-msnai.sh --auto
 ```
 
@@ -610,6 +623,14 @@ Tienes en tus manos **DOS aplicaciones únicas** con **libertad total de elecci�
 ---
 
 ## 🚀 PRÓXIMOS PASOS RECOMENDADOS
+### 🌐 **Próximos pasos recomendados**
+
+### 🚀 **Primeros pasos**
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+```
 
 ### 🐳 **Para usuarios nuevos (Docker Edition)**
 1. **Prueba Docker**: `./start-msnai-docker.sh --auto`
@@ -625,7 +646,7 @@ Tienes en tus manos **DOS aplicaciones únicas** con **libertad total de elecci�
 1. **Explora funcionalidades**: Crea chats, experimenta con modelos
 2. **Personaliza experiencia**: Ajusta configuraciones y sonidos
 3. **Comparte la nostalgia**: Es mejor cuando se comparte
-4. **Contribuye al proyecto**: Ideas para mejoras futuras
+4. **Contribuye al proyecto**: https://github.com/mac100185/MSN-AI/fork
 5. **Documenta tu experiencia**: Ayuda a otros usuarios
 
 ---
@@ -639,3 +660,4 @@ Tienes en tus manos **DOS aplicaciones únicas** con **libertad total de elecci�
 - Una implementación que combina **nostalgia + tecnología moderna**
 - Una solución que funciona para **todos los usuarios y todos los sistemas**
 - Un proyecto que demuestra que **la innovación puede ser inclusiva**
+- Un repositorio público que beneficia a toda la comunidad: https://github.com/mac100185/MSN-AI

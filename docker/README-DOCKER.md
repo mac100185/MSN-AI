@@ -88,13 +88,13 @@ MSN-AI/
 #### **Instalación rápida:**
 ```bash
 # Todo en una línea
-git clone [REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 ```
 
 #### **Instalación paso a paso:**
 ```bash
 # 1. Clonar repositorio
-git clone [REPO_URL]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # 2. Dar permisos
@@ -112,13 +112,13 @@ chmod +x *.sh
 #### **Instalación rápida:**
 ```powershell
 # En PowerShell
-git clone [REPO] ; cd MSN-AI ; .\start-msnai-docker.ps1
+git clone https://github.com/mac100185/MSN-AI.git ; cd MSN-AI ; .\start-msnai-docker.ps1
 ```
 
 #### **Instalación paso a paso:**
 ```powershell
 # 1. Clonar repositorio
-git clone [REPO_URL]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # 2. Habilitar scripts (si es necesario)
@@ -136,7 +136,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 #### **Instalación rápida:**
 ```bash
 # En Terminal
-git clone [REPO] && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-mac.sh
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker-mac.sh
 ```
 
 #### **Instalación paso a paso:**
@@ -404,7 +404,7 @@ docker inspect msn-ai-app
 
 ```bash
 # En el servidor
-git clone [REPO_URL]
+git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 
 # Configurar para producción
@@ -533,6 +533,9 @@ services:
 
 ### 🔗 **Enlaces Útiles**
 
+- **MSN-AI GitHub**: https://github.com/mac100185/MSN-AI
+- **Clonar repositorio**: `git clone https://github.com/mac100185/MSN-AI.git`
+- **Issues y soporte**: https://github.com/mac100185/MSN-AI/issues
 - **Docker Official**: https://docs.docker.com/
 - **Docker Compose**: https://docs.docker.com/compose/
 - **Ollama Docker**: https://hub.docker.com/r/ollama/ollama
@@ -548,8 +551,8 @@ services:
 ### 🤝 **Contribuir**
 
 ```bash
-# Fork del repositorio
-git clone [TU_FORK]
+# Fork del repositorio en GitHub: https://github.com/mac100185/MSN-AI/fork
+git clone https://github.com/TU_USUARIO/MSN-AI.git
 cd MSN-AI
 
 # Crear rama para mejoras Docker
@@ -558,7 +561,12 @@ git checkout -b docker-improvements
 # Realizar cambios
 # Especialmente en docker/ directory
 
-# Enviar Pull Request
+# Commit y push
+git add .
+git commit -m "Mejoras en Docker Edition"
+git push origin docker-improvements
+
+# Crear Pull Request en: https://github.com/mac100185/MSN-AI/compare
 ```
 
 ---
@@ -592,8 +600,8 @@ docker stats --no-stream
 
 ### 💬 **Comunidad**
 
-- **GitHub Issues**: Para bugs específicos de Docker
-- **GitHub Discussions**: Para preguntas y mejoras
+- **GitHub Issues**: https://github.com/mac100185/MSN-AI/issues (Para bugs específicos de Docker)
+- **GitHub Discussions**: https://github.com/mac100185/MSN-AI/discussions (Para preguntas y mejoras)
 - **Email**: Para soporte directo
 
 ---
@@ -612,6 +620,11 @@ La implementación Docker de MSN-AI te ofrece:
 **🚀 Inicia tu experiencia nostálgica con IA ahora:**
 
 ```bash
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Iniciar según tu plataforma:
 # Linux
 ./start-msnai-docker.sh
 

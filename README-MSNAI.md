@@ -112,6 +112,14 @@ Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de 
    ollama pull phi3:mini   # Para equipos limitados
    ```
 
+### 🚀 Instalación rápida desde GitHub
+
+#### Clonar repositorio:
+```bash
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+```
+
 ### 🎮 Uso - Ambas ediciones
 
 #### 🚀 Inicio inmediato
@@ -640,7 +648,7 @@ const response = await fetch(`${ollamaUrl}/api/generate`, {
 ### 🔧 Contribuir código
 ```bash
 # Fork del repositorio
-git clone [TU_FORK]
+git clone https://github.com/TU_USUARIO/MSN-AI.git
 cd MSN-AI
 
 # Crear rama para tu funcionalidad
@@ -677,14 +685,17 @@ git push origin feature/nueva-funcionalidad
 **Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)
 
 ### 🌐 Enlaces oficiales
-- **Repositorio**: GitHub (próximamente público)
+- **Repositorio**: https://github.com/mac100185/MSN-AI
+- **Clonar**: `git clone https://github.com/mac100185/MSN-AI.git`
+- **Issues**: https://github.com/mac100185/MSN-AI/issues
+- **Releases**: https://github.com/mac100185/MSN-AI/releases
 - **Documentación**: [README-DOCKER.md](docker/README-DOCKER.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 - **Instalación**: [INSTALL-GUIDE.md](INSTALL-GUIDE.md)
 
 ### 💬 Comunidad
-- **GitHub Discussions**: Para preguntas generales
-- **GitHub Issues**: Para bugs específicos
+- **GitHub Discussions**: https://github.com/mac100185/MSN-AI/discussions
+- **GitHub Issues**: https://github.com/mac100185/MSN-AI/issues
 - **Email**: Para soporte técnico urgente
 
 ### 🆘 Soporte empresarial
@@ -738,6 +749,11 @@ Has descubierto una aplicación única que:
 
 ```bash
 # ¿Listo para el viaje nostálgico?
+# 1. Clonar repositorio:
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Elegir tu edición:
 # Docker (recomendado):
 ./start-msnai-docker.sh --auto
 

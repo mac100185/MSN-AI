@@ -27,13 +27,23 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 ### 🔥 **NUEVO: Instalación Docker (Recomendado)**
 ```bash
 # 🐳 UN SOLO COMANDO PARA TODAS LAS PLATAFORMAS
+# Clonar e instalar en un comando:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+
+# O paso a paso:
 # Linux:
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
 ./start-msnai-docker.sh --auto
 
 # Windows:
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
 .\start-msnai-docker.ps1 --auto
 
 # macOS:
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
 ./start-msnai-docker-mac.sh --auto
 ```
 > **✨ Con Docker**: Cero configuración, máxima compatibilidad, instalación automática de todo
@@ -44,37 +54,49 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 #### 🐧 Linux
 ```bash
-# 1. Verificar sistema
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Verificar sistema
 ./test-msnai.sh
 
-# 2. Configurar IA (opcional)
+# 3. Configurar IA (opcional)
 ./ai_check_all.sh
 
-# 3. Iniciar aplicación
+# 4. Iniciar aplicación
 ./start-msnai.sh --auto
 ```
 
 #### 🪟 Windows
 ```powershell
-# 1. Habilitar scripts (solo la primera vez)
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Habilitar scripts (solo la primera vez)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# 2. Configurar IA (opcional)
+# 3. Configurar IA (opcional)
 .\ai_check_all.ps1
 
-# 3. Iniciar aplicación
+# 4. Iniciar aplicación
 .\start-msnai.ps1 --auto
 ```
 
 #### 🍎 macOS
 ```bash
-# 1. Dar permisos (solo la primera vez)
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Dar permisos (solo la primera vez)
 chmod +x *.sh
 
-# 2. Configurar IA (opcional)
+# 3. Configurar IA (opcional)
 ./ai_check_all_mac.sh
 
-# 3. Iniciar aplicación
+# 4. Iniciar aplicación
 ./start-msnai-mac.sh --auto
 ```
 
@@ -229,7 +251,7 @@ ollama pull mistral:7b  # Modelo recomendado
 ## 📁 Estructura del proyecto
 
 ```
-MSN-AI/
+MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 ├── msn-ai.html              # 🎯 Aplicación principal (TODO EN UNO)
 ├── 🐳 DOCKER (NUEVO):
 │   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux
@@ -257,6 +279,8 @@ MSN-AI/
 │   ├── README.md            # 📖 Guía principal (este archivo)
 │   ├── README-MSNAI.md      # 📚 Documentación técnica completa
 │   ├── CHANGELOG.md         # 📋 Historial de cambios
+│   ├── INSTALL-GUIDE.md     # 🌍 Guía de instalación multiplataforma
+│   ├── IMPLEMENTACION-COMPLETA.md  # 🎉 Resumen técnico completo
 │   └── LICENSE              # ⚖️ Licencia GPL-3.0
 ├── assets/                  # 🎨 Recursos multimedia
 │   ├── sounds/              # 🔊 Sonidos auténticos de MSN
@@ -267,6 +291,12 @@ MSN-AI/
 │   ├── scrollbar/           # 🖼️ Elementos personalizados
 │   └── status/              # 🖼️ Iconos de estado
 └── backup/                  # 🛡️ Respaldos de archivos originales
+```
+
+### 🌐 **Clonar repositorio:**
+```bash
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
 ```
 
 ## 🎮 Uso básico
@@ -393,14 +423,18 @@ pkill -f "start-msnai"
 ## 📞 Contacto
 
 **Autor**: Alan Mac-Arthur García Díaz  
-**Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)
+**Email**: [alan.mac.arthur.garcia.diaz@gmail.com](mailto:alan.mac.arthur.garcia.diaz@gmail.com)  
+**Repositorio**: [https://github.com/mac100185/MSN-AI](https://github.com/mac100185/MSN-AI)
 
 ### 🐛 Reportar problemas
-- **GitHub Issues**: Para bugs y solicitudes de funcionalidades
+- **GitHub Issues**: [https://github.com/mac100185/MSN-AI/issues](https://github.com/mac100185/MSN-AI/issues) - Para bugs y solicitudes de funcionalidades
 - **Email directo**: Para soporte técnico urgente
-- **Discusiones**: Para ideas y sugerencias generales
+- **Discusiones**: [https://github.com/mac100185/MSN-AI/discussions](https://github.com/mac100185/MSN-AI/discussions) - Para ideas y sugerencias generales
 
 ### 💬 Comunidad
+- **GitHub**: [https://github.com/mac100185/MSN-AI](https://github.com/mac100185/MSN-AI)
+- **Fork y contribuye**: [https://github.com/mac100185/MSN-AI/fork](https://github.com/mac100185/MSN-AI/fork)
+- **Releases**: [https://github.com/mac100185/MSN-AI/releases](https://github.com/mac100185/MSN-AI/releases)
 - Únete a las discusiones del proyecto
 - Comparte tus experiencias nostálgicas
 - Contribuye con ideas y mejoras
@@ -524,8 +558,17 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 
 **🚀 ¡Inicia tu viaje nostálgico ahora!**
 
+```bash
+# 🔥 INSTALACIÓN RÁPIDA EN UNA LÍNEA:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+```
+
 ### 🐳 Docker (Recomendado):
 ```bash
+# 1. Clonar:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
+
+# 2. Iniciar:
 # Linux:
 ./start-msnai-docker.sh --auto
 
@@ -538,6 +581,10 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 
 ### 💻 Local (Tradicional):
 ```bash
+# 1. Clonar:
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
+
+# 2. Iniciar:
 # Linux:
 ./start-msnai.sh --auto
 
@@ -562,4 +609,5 @@ docker-compose -f docker/docker-compose.yml down
 *MSN-AI v1.0.0 - "Donde el pasado conversa con el futuro"*
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
+**Repositorio**: [https://github.com/mac100185/MSN-AI](https://github.com/mac100185/MSN-AI)  
 **Licenciado bajo GPL-3.0 | Enero 2025**

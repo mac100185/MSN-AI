@@ -33,6 +33,7 @@ check_docker() {
 
     if ! command -v docker &> /dev/null; then
         echo "❌ Docker no está instalado"
+        echo "📦 Instalando Docker automáticamente..."
         echo ""
         echo "🚀 Opciones de instalación:"
         echo "   1. Instalar automáticamente (recomendado)"

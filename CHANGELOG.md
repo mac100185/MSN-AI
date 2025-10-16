@@ -5,6 +5,8 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es/).
 
+**Repositorio oficial**: https://github.com/mac100185/MSN-AI
+
 ## [1.1.0] - 2025-01-15
 
 ### 🐳 Nueva Opción Docker (MAJOR)
@@ -172,7 +174,7 @@ Primera versión completa de MSN-AI que combina la nostalgia de Windows Live Mes
 
 ## 🔮 Roadmap futuro
 
-### [1.1.0] - Mejoras multiplataforma (Próximamente)
+### [1.2.0] - Mejoras multiplataforma (Próximamente)
 - [ ] Instalador GUI para Windows (.msi)
 - [ ] App Bundle para macOS (.app)
 - [ ] Package .deb/.rpm para distribuciones Linux
@@ -180,7 +182,7 @@ Primera versión completa de MSN-AI que combina la nostalgia de Windows Live Mes
 - [ ] Emoticons animados
 - [ ] Sistema de plugins para extensiones
 
-### [1.2.0] - Funcionalidades avanzadas
+### [1.3.0] - Funcionalidades avanzadas
 - [ ] Soporte para más modelos de IA (Claude local, GPT4All)
 - [ ] Cifrado end-to-end para chats sensibles
 - [ ] Colaboración en tiempo real entre usuarios
@@ -204,6 +206,12 @@ Primera versión completa de MSN-AI que combina la nostalgia de Windows Live Mes
 
 Las contribuciones son bienvenidas. Ver [README.md](README.md) para guías de contribución.
 
+**GitHub**: https://github.com/mac100185/MSN-AI
+- Fork del repositorio
+- Crear Pull Requests
+- Reportar issues
+- Discusiones de la comunidad
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia GNU General Public License v3.0. Ver [LICENSE](LICENSE) para más detalles.
@@ -212,4 +220,5 @@ Este proyecto está bajo la Licencia GNU General Public License v3.0. Ver [LICEN
 
 **Autor**: Alan Mac-Arthur García Díaz  
 **Contacto**: alan.mac.arthur.garcia.diaz@gmail.com  
+**Repositorio**: https://github.com/mac100185/MSN-AI  
 **Proyecto base**: [WLMOnline por androidWG](https://github.com/androidWG/WLMOnline)
