@@ -1,16 +1,16 @@
 #!/bin/bash
 # Docker Startup Script for MSN-AI - Linux
-# Version: 1.0.0
+# Version: 2.1.0
 # Author: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # License: GNU General Public License v3.0
 # Description: Docker-based startup for MSN-AI with intelligent setup
 
-echo "🐳 MSN-AI v1.0.0 - Docker Edition"
+echo "🐳 MSN-AI v2.1.0 - Docker Edition"
 echo "=================================="
 echo "📧 Desarrollado por: Alan Mac-Arthur García Díaz"
 echo "⚖️ Licencia: GPL-3.0 | 🔗 alan.mac.arthur.garcia.diaz@gmail.com"
-echo "🐳 Modo: Docker Container"
+echo "🐳 Modo: Docker Container (Sin Firewall)"
 echo "=================================="
 
 # Check if we're in the correct directory
@@ -278,7 +278,47 @@ check_gpu_support() {
     fi
 }
 
-# Function to setup environment
+# Function to check port conflicts
+check_port_conflicts() {
+    echo "🔍 Verificando conflictos de puerto..."
+
+    local conflicts_found=false
+
+    # Check port 8000
+    if netstat -tuln 2>/dev/null | grep -q ":8000 " || ss -tuln 2>/dev/null | grep -q ":8000 "; then
+        echo "⚠️  Puerto 8000 ya está en uso:"
+        netstat -tulnp 2>/dev/null | grep ":8000 " || ss -tulnp 2>/dev/null | grep ":8000 " || true
+        conflicts_found=true
+    fi
+
+    # Check port 11434
+    if netstat -tuln 2>/dev/null | grep -q ":11434 " || ss -tuln 2>/dev/null | grep -q ":11434 "; then
+        echo "⚠️  Puerto 11434 ya está en uso (posiblemente Ollama local):"
+        netstat -tulnp 2>/dev/null | grep ":11434 " || ss -tulnp 2>/dev/null | grep ":11434 " || true
+        echo "💡 Para servidor dedicado, detén Ollama local:"
+        echo "   sudo systemctl stop ollama"
+        echo "   sudo pkill -f ollama"
+        conflicts_found=true
+    fi
+
+    if [ "$conflicts_found" = true ]; then
+        echo ""
+        echo "❓ ¿Continuar con la instalación? Los contenedores pueden fallar si los puertos están ocupados. (y/N):"
+        if [ "${AUTO_MODE}" != "true" ]; then
+            read -r CONTINUE
+            if [ "$CONTINUE" != "y" ] && [ "$CONTINUE" != "Y" ]; then
+                echo "❌ Instalación cancelada por el usuario"
+                exit 1
+            fi
+        else
+            echo "⚠️  Modo automático: Intentando continuar..."
+        fi
+    else
+        echo "✅ Puertos 8000 y 11434 disponibles"
+    fi
+}
+
+# Function to setup Docker environment
 setup_environment() {
     echo "⚙️  Configurando entorno Docker..."
 
@@ -376,15 +416,59 @@ show_status() {
     # Detect server IP for information only
     SERVER_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "localhost")
 
+    # Test connectivity
+    echo "🧪 Verificando conectividad..."
+    sleep 3
+
+    echo -n "   🌐 MSN-AI Web (localhost:8000): "
+    if curl -s --connect-timeout 5 "http://localhost:8000/msn-ai.html" >/dev/null 2>&1; then
+        echo "✅ OK"
+        WEB_OK=true
+    else
+        echo "❌ FALLA"
+        WEB_OK=false
+    fi
+
+    echo -n "   🤖 Ollama API (localhost:11434): "
+    if curl -s --connect-timeout 5 "http://localhost:11434/api/tags" >/dev/null 2>&1; then
+        MODELS_RESPONSE=$(curl -s "http://localhost:11434/api/tags" 2>/dev/null)
+        MODEL_COUNT=$(echo "$MODELS_RESPONSE" | grep -o '"name"' | wc -l 2>/dev/null || echo "0")
+        echo "✅ OK ($MODEL_COUNT modelos)"
+        API_OK=true
+    else
+        echo "❌ FALLA"
+        API_OK=false
+    fi
+
     echo ""
     echo "🔗 URLs DE ACCESO:"
-    echo "   🏠 Local:  http://localhost:8000/msn-ai.html"
-    if [ "$SERVER_IP" != "localhost" ]; then
-        echo "   🌐 Remoto: http://$SERVER_IP:8000/msn-ai.html"
+    if [ "$WEB_OK" = true ]; then
+        echo "   🏠 Local:  http://localhost:8000/msn-ai.html"
+        if [ "$SERVER_IP" != "localhost" ]; then
+            echo "   🌐 Remoto: http://$SERVER_IP:8000/msn-ai.html"
+        fi
+    fi
+
+    if [ "$WEB_OK" = true ] && [ "$API_OK" = true ]; then
         echo ""
-        echo "📝 NOTA: Firewall deshabilitado - Acceso remoto disponible"
-        echo "   • La interfaz detecta automáticamente la configuración"
-        echo "   • Los modelos se cargan automáticamente desde Ollama"
+        echo "✅ MSN-AI COMPLETAMENTE FUNCIONAL"
+        echo "   • Interfaz web accesible"
+        echo "   • API Ollama respondiendo"
+        echo "   • $MODEL_COUNT modelos disponibles"
+        echo "   • Auto-detección de configuración habilitada"
+        echo "   • Sin configuración de firewall requerida"
+    elif [ "$WEB_OK" = true ]; then
+        echo ""
+        echo "⚠️  MSN-AI PARCIALMENTE FUNCIONAL"
+        echo "   • Interfaz web: ✅ Accesible"
+        echo "   • API Ollama: ❌ No responde"
+        echo "   💡 Ver logs: docker logs msn-ai-ollama"
+    else
+        echo ""
+        echo "❌ MSN-AI CON PROBLEMAS"
+        echo "   • Interfaz web: ❌ No accesible"
+        echo "   • API Ollama: ❌ No responde"
+        echo "   💡 Ver logs: docker logs msn-ai-app"
     fi
 
     echo ""
@@ -422,7 +506,7 @@ cleanup() {
         fi
     fi
     echo "✅ Contenedores detenidos correctamente"
-    echo "👋 ¡Gracias por usar MSN-AI v1.1.0!"
+    echo "👋 ¡Gracias por usar MSN-AI v2.1.0!"
     exit 0
 }
 
@@ -435,6 +519,9 @@ main() {
 
     # Check Docker installation
     check_docker
+
+    # Check port conflicts
+    check_port_conflicts
 
     # Check GPU support
     check_gpu_support

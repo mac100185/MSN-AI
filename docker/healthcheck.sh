@@ -1,6 +1,6 @@
 #!/bin/bash
 # Health Check Script for MSN-AI Docker Container
-# Version: 1.0.0
+# Version: 2.1.0
 # Author: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # License: GNU General Public License v3.0

@@ -14,7 +14,7 @@ services:
     ports:
       - "${MSN_AI_PORT:-8000}:8000"
     environment:
-      - MSN_AI_VERSION=1.0.0
+      - MSN_AI_VERSION=2.1.0
       - OLLAMA_HOST=ollama:11434
       - MSN_AI_PORT=8000
       - PYTHONUNBUFFERED=1
@@ -38,7 +38,7 @@ services:
       start_period: 20s
     labels:
       - "com.msnai.service=web"
-      - "com.msnai.version=1.1.0"
+      - "com.msnai.version=2.1.0"
       - "com.msnai.author=alan.mac.arthur.garcia.diaz@gmail.com"
 
   # Ollama AI Service
@@ -71,7 +71,7 @@ services:
       start_period: 60s
     labels:
       - "com.msnai.service=ai"
-      - "com.msnai.version=1.1.0"
+      - "com.msnai.version=2.1.0"
     # GPU support (uncomment if you have NVIDIA GPU)
     # deploy:
     #   resources:
@@ -104,7 +104,7 @@ services:
     restart: "no"
     labels:
       - "com.msnai.service=setup"
-      - "com.msnai.version=1.1.0"
+      - "com.msnai.version=2.1.0"
 
 # Networks
 networks:
