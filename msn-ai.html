@@ -909,7 +909,7 @@
                 </label><br><br>
                 <label>
                     Servidor Ollama:
-                    <input type="text" id="ollama-server" value="http://localhost:11434" style="width: 200px;">
+                    <input type="text" id="ollama-server" placeholder="Se detectará automáticamente..." style="width: 200px;">
                 </label><br><br>
                 <label>
                     Modelo de IA:
@@ -980,21 +980,57 @@
             constructor() {
                 this.chats = [];
                 this.currentChatId = null;
-                this.settings = {
-                    soundsEnabled: true,
-                    ollamaServer: 'http://localhost:11434',
-                    selectedModel: 'mistral:7b',
-                    apiTimeout: 30000
-                };
                 this.isConnected = false;
                 this.availableModels = [];
                 this.sounds = {};
 
+                // Auto-detectar la IP del servidor
+                const currentHost = window.location.hostname;
+                const isRemoteAccess = currentHost !== 'localhost' && currentHost !== '127.0.0.1';
+
+                // Configurar servidor Ollama automáticamente
+                const defaultServer = isRemoteAccess
+                    ? `http://${currentHost}:11434`
+                    : 'http://localhost:11434';
+
+                console.log(`🌐 MSN-AI Inicializando:`);
+                console.log(`   Host: ${currentHost}`);
+                console.log(`   Acceso: ${isRemoteAccess ? 'REMOTO' : 'LOCAL'}`);
+                console.log(`   Servidor Ollama: ${defaultServer}`);
+
+                this.settings = {
+                    soundsEnabled: true,
+                    ollamaServer: defaultServer,
+                    selectedModel: '',
+                    apiTimeout: 30000
+                };
+
                 this.init();
             }
 
+            // Configurar automáticamente según el tipo de acceso
+            async autoConfigureConnection() {
+                console.log(`🔧 Configurando conexión automática...`);
+
+                // Intentar conectar
+                const connected = await this.checkConnection();
+
+                if (connected && this.availableModels.length > 0) {
+                    // Si no hay modelo seleccionado, usar el primero disponible
+                    if (!this.settings.selectedModel) {
+                        const firstModel = this.availableModels[0].name;
+                        console.log(`🤖 Auto-seleccionando modelo: ${firstModel}`);
+                        this.settings.selectedModel = firstModel;
+                        this.saveSettings();
+                    }
+                    this.updateModelSelect();
+                }
+
+                return connected;
+            }
+
             async init() {
-                console.log('Iniciando MSN-AI...');
+                console.log('🚀 Iniciando MSN-AI...');
 
                 // Cargar configuración y chats desde localStorage
                 this.loadSettings();
@@ -1006,16 +1042,17 @@
                 // Configurar eventos
                 this.setupEventListeners();
 
-                // Verificar conexión con Ollama
-                await this.checkConnection();
+                // Auto-configurar conexión y modelos
+                await this.autoConfigureConnection();
 
                 // Renderizar interfaz
                 this.renderChatList();
+                this.createNewChat();
 
                 // Reproducir sonido de inicio
                 this.playSound('login');
 
-                console.log('MSN-AI iniciado correctamente');
+                console.log('✅ MSN-AI iniciado correctamente');
             }
 
             // ===================
@@ -1050,7 +1087,21 @@
             loadSettings() {
                 const saved = localStorage.getItem('msnai-settings');
                 if (saved) {
-                    this.settings = { ...this.settings, ...JSON.parse(saved) };
+                    const savedSettings = JSON.parse(saved);
+                    // Preservar la auto-detección de servidor Ollama
+                    const currentOllamaServer = this.settings.ollamaServer;
+                    this.settings = { ...this.settings, ...savedSettings };
+
+                    // Solo usar servidor guardado si es diferente de localhost y estamos en localhost
+                    const currentHost = window.location.hostname;
+                    const isLocalAccess = currentHost === 'localhost' || currentHost === '127.0.0.1';
+                    const savedServerIsLocal = savedSettings.ollamaServer && savedSettings.ollamaServer.includes('localhost');
+
+                    if (!isLocalAccess && savedServerIsLocal) {
+                        // Estamos accediendo remotamente pero el servidor guardado es localhost, usar auto-detección
+                        this.settings.ollamaServer = currentOllamaServer;
+                        console.log(`🔄 Auto-detección: Usando ${currentOllamaServer} en lugar de ${savedSettings.ollamaServer}`);
+                    }
                 }
                 this.updateSettingsUI();
             }
@@ -1091,28 +1142,55 @@
             // ===================
 
             async checkConnection() {
+                console.log(`🔍 Verificando conexión con Ollama...`);
+                console.log(`   Servidor: ${this.settings.ollamaServer}`);
+
                 this.updateConnectionStatus('connecting');
 
                 try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
                     const response = await fetch(`${this.settings.ollamaServer}/api/tags`, {
                         method: 'GET',
-                        timeout: 5000
+                        signal: controller.signal,
+                        headers: {
+                            'Accept': 'application/json',
+                        }
                     });
+
+                    clearTimeout(timeoutId);
 
                     if (response.ok) {
                         const data = await response.json();
                         this.availableModels = data.models || [];
                         this.isConnected = true;
+
                         this.updateConnectionStatus('connected');
                         this.updateModelStatus();
+                        this.updateModelSelect();
+
+                        console.log(`✅ Conexión exitosa. Modelos encontrados: ${this.availableModels.length}`);
+                        this.availableModels.forEach(model => {
+                            const sizeGB = (model.size / 1024 / 1024 / 1024).toFixed(1);
+                            console.log(`📦 - ${model.name} (${sizeGB}GB)`);
+                        });
+
                         return true;
+                    } else {
+                        console.error(`❌ Error HTTP: ${response.status} - ${response.statusText}`);
                     }
                 } catch (error) {
-                    console.error('Error conectando con Ollama:', error);
+                    console.error('❌ Error conectando con Ollama:', error);
+                    if (error.name === 'AbortError') {
+                        console.error('⏱️ Timeout: La conexión tardó más de 10 segundos');
+                    }
                 }
 
                 this.isConnected = false;
+                this.availableModels = [];
                 this.updateConnectionStatus('disconnected');
+                this.updateModelSelect();
                 return false;
             }
 
@@ -1466,9 +1544,13 @@
             }
 
             updateSettingsUI() {
-                document.getElementById('sounds-enabled').checked = this.settings.soundsEnabled;
-                document.getElementById('ollama-server').value = this.settings.ollamaServer;
-                document.getElementById('model-select').value = this.settings.selectedModel;
+                const soundsEnabledEl = document.getElementById('sounds-enabled');
+                const ollamaServerEl = document.getElementById('ollama-server');
+                const modelSelectEl = document.getElementById('model-select');
+
+                if (soundsEnabledEl) soundsEnabledEl.checked = this.settings.soundsEnabled;
+                if (ollamaServerEl) ollamaServerEl.value = this.settings.ollamaServer;
+                if (modelSelectEl) modelSelectEl.value = this.settings.selectedModel;
             }
 
             // ===================
@@ -1589,22 +1671,62 @@
                 });
 
                 // Configuración
-                document.getElementById('save-settings').addEventListener('click', () => {
+                document.getElementById('save-settings').addEventListener('click', async () => {
+                    const oldServer = this.settings.ollamaServer;
                     this.settings.soundsEnabled = document.getElementById('sounds-enabled').checked;
                     this.settings.ollamaServer = document.getElementById('ollama-server').value;
                     this.settings.selectedModel = document.getElementById('model-select').value;
 
                     this.saveSettings();
-                    this.checkConnection();
+
+                    // Si cambió el servidor, limpiar cache de modelos
+                    if (oldServer !== this.settings.ollamaServer) {
+                        console.log(`🔄 Servidor Ollama cambió de ${oldServer} a ${this.settings.ollamaServer}`);
+                        this.availableModels = [];
+                        this.isConnected = false;
+                    }
+
+                    // Verificar conexión y actualizar modelos
+                    const connected = await this.checkConnection();
+
+                    if (connected && this.availableModels.length > 0) {
+                        // Si hay modelos disponibles y no hay uno seleccionado válido, usar el primero
+                        const modelExists = this.availableModels.some(m => m.name === this.settings.selectedModel);
+                        if (!modelExists) {
+                            this.settings.selectedModel = this.availableModels[0].name;
+                            this.saveSettings();
+                        }
+                    }
 
                     document.getElementById('settings-modal').style.display = 'none';
 
-                    alert('Configuración guardada exitosamente.');
+                    if (connected) {
+                        alert(`Configuración guardada exitosamente.\nConectado a: ${this.settings.ollamaServer}\nModelos disponibles: ${this.availableModels.length}`);
+                    } else {
+                        alert('Configuración guardada, pero no se pudo conectar con el servidor Ollama.\nVerifica la URL y que el servidor esté funcionando.');
+                    }
                 });
 
                 document.getElementById('test-connection').addEventListener('click', async () => {
+                    console.log('🧪 Test de conexión iniciado...');
+
+                    // Mostrar que está cargando
+                    const button = document.getElementById('test-connection');
+                    const originalText = button.textContent;
+                    button.textContent = 'Probando...';
+                    button.disabled = true;
+
                     const success = await this.checkConnection();
-                    alert(success ? 'Conexión exitosa con Ollama!' : 'No se pudo conectar con Ollama. Verifica que esté ejecutándose.');
+
+                    // Restaurar botón
+                    button.textContent = originalText;
+                    button.disabled = false;
+
+                    const message = success
+                        ? `✅ Conexión exitosa con Ollama!\n📦 Modelos encontrados: ${this.availableModels.length}\n${this.availableModels.map(m => `• ${m.name}`).join('\n')}`
+                        : `❌ No se pudo conectar con Ollama.\n🔧 URL: ${this.settings.ollamaServer}\n\nVerifica que:\n• Ollama esté ejecutándose\n• La URL sea correcta\n• No haya firewall bloqueando el puerto`;
+
+                    alert(message);
                 });
 
                 // Export/Import
@@ -1655,16 +1777,33 @@
 
             updateModelSelect() {
                 const select = document.getElementById('model-select');
-                const currentValue = select.value;
+                if (!select) return;
+
+                const currentValue = this.settings.selectedModel;
 
                 // Limpiar opciones actuales
                 select.innerHTML = '';
+
+                console.log(`🔄 Actualizando selector de modelos. Disponibles: ${this.availableModels.length}`);
+
+                if (this.availableModels.length === 0) {
+                    // Si no hay modelos disponibles, mostrar mensaje
+                    const option = document.createElement('option');
+                    option.value = '';
+                    option.textContent = this.isConnected ? 'No hay modelos instalados' : 'Sin conexión - Verifica configuración';
+                    option.disabled = true;
+                    select.appendChild(option);
+                    console.log(`❌ No se encontraron modelos. Estado conexión: ${this.isConnected ? 'conectado' : 'desconectado'}`);
+                    return;
+                }
 
                 // Agregar modelos disponibles
                 this.availableModels.forEach(model => {
                     const option = document.createElement('option');
                     option.value = model.name;
-                    option.textContent = `${model.name} (${(model.size / 1024 / 1024 / 1024).toFixed(1)}GB)`;
+                    const sizeGB = (model.size / 1024 / 1024 / 1024).toFixed(1);
+                    option.textContent = `${model.name} (${sizeGB}GB)`;
+                    console.log(`📦 Agregando modelo al selector: ${model.name}`);
                     select.appendChild(option);
                 });
 
@@ -1673,6 +1812,9 @@
                     select.value = currentValue;
                 } else if (this.availableModels.length > 0) {
                     select.value = this.availableModels[0].name;
+                    this.settings.selectedModel = this.availableModels[0].name;
+                    this.saveSettings();
+                    console.log(`🤖 Auto-seleccionado: ${this.availableModels[0].name}`);
                 }
             }
 

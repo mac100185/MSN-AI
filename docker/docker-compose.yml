@@ -94,12 +94,18 @@ services:
     volumes:
       - ollama-data:/root/.ollama
       - ./scripts/:/scripts:rw
+      - msn-ai-data:/app/data
     networks:
       - msn-ai-network
     depends_on:
       ollama:
         condition: service_started
-    command: ["/app/docker/scripts/ai-setup-docker.sh"]
+    command:
+      [
+        "/bin/sh",
+        "-c",
+        "/app/docker/scripts/ai-setup-docker.sh && /app/docker/scripts/auto-configure-remote.sh",
+      ]
     restart: "no"
     labels:
       - "com.msnai.service=setup"
