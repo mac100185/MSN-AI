@@ -24,15 +24,12 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 ## 🚀 Inicio rápido (2 minutos)
 
-### 🌐 **DOCKER EDITION v2.0.0 - ACCESO REMOTO TRANSPARENTE**
+### 🐳 **DOCKER EDITION v2.1.0 - INSTALACIÓN SIMPLIFICADA**
 ```bash
-# 🐳 INSTALACIÓN TRANSPARENTE CON ACCESO REMOTO AUTOMÁTICO
-git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && sudo ./start-msnai-remote.sh
+# 🚀 INSTALACIÓN ÚNICA - ACCESO LOCAL Y REMOTO AUTOMÁTICO
+git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 
-# O si prefieres instalación tradicional (solo local):
-./start-msnai-docker.sh --auto
-
-# 🆕 O USA LOS NUEVOS SCRIPTS DEDICADOS:
+# 🆕 O USA LOS SCRIPTS DEDICADOS:
 ./docker-start.sh              # Iniciar todo
 ./docker-status.sh             # Ver estado
 ./docker-logs.sh --follow      # Logs en tiempo real
@@ -40,45 +37,23 @@ git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh 
 ./docker-cleanup.sh --all      # Limpieza completa
 ```
 
-### 🌟 **NUEVO EN v2.0.0 - ACCESO REMOTO TRANSPARENTE**
+### 🌟 **NUEVO EN v2.1.0 - INSTALACIÓN SIMPLIFICADA**
 
-**¿Qué significa "acceso remoto transparente"?**
-- 🎯 **Un solo comando** instala todo y configura automáticamente el acceso desde cualquier dispositivo
-- 🔧 **Cero configuración manual** - la interfaz detecta automáticamente si accedes local o remotamente
-- 🌐 **URLs automáticas** - funciona en `localhost` Y en la IP del servidor simultáneamente
-- 🤖 **Modelos auto-detectados** - carga automáticamente los modelos instalados en Ollama
-- 🔥 **Firewall auto-configurado** - abre los puertos necesarios automáticamente
+**Características principales:**
+- 🎯 **Un solo comando** instala y configura todo automáticamente
+- 🔧 **Sin configuración de firewall** - Trabaja con firewall deshabilitado para máxima simplicidad
+- 🌐 **Auto-detección de IP** - Funciona automáticamente local y remoto
+- 🤖 **Detección automática de modelos** - Carga modelos de Ollama automáticamente
+- ✨ **Zero-config** - Sin configuración adicional requerida
 
-**Antes vs Ahora:**
-
-| Antes (v1.x) | Ahora (v2.0) |
-|--------------|--------------|
-| ❌ Solo acceso local | ✅ Acceso local + remoto automático |
-| ❌ Configuración manual de firewall | ✅ Firewall configurado automáticamente |
-| ❌ URL hardcodeada a localhost | ✅ Auto-detección inteligente de IP |
-| ❌ Modelos no aparecían | ✅ Detección automática de modelos |
-| ❌ Problemas de conectividad | ✅ Diagnóstico integrado |
-
-**URLs resultantes:**
+**URLs automáticas:**
 - 🏠 **Local**: `http://localhost:8000/msn-ai.html`
 - 🌐 **Remoto**: `http://[IP-DE-TU-SERVIDOR]:8000/msn-ai.html`
 
-> **🎉 NUEVO v2.0.0**: 
-> - Acceso remoto completamente transparente
-> - Auto-configuración de firewall
-> - Detección inteligente de IP del servidor
-> - Carga automática de modelos de IA
-> - Diagnósticos integrados en la interfaz
-> - Sin configuración adicional requerida
-
----
-
-### 🔍 **¿Qué método de instalación elegir?**
-
-| Método | Cuándo usar | Acceso |
-|---------|-------------|---------|
-| `start-msnai-remote.sh` | 🌐 **Recomendado** - Quieres acceso desde otros dispositivos | Local + Remoto |
-| `start-msnai-docker.sh` | 🏠 Solo necesitas acceso local | Solo Local |
+> **📝 NOTA IMPORTANTE**: 
+> - MSN-AI funciona con firewall deshabilitado para máxima simplicidad
+> - Los puertos 8000 y 11434 quedan abiertos automáticamente
+> - Para entornos de producción, configura tu propio firewall según necesites
 
 ### 📟 **Instalación Tradicional (Solo Local)**
 

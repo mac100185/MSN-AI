@@ -100,12 +100,7 @@ services:
     depends_on:
       ollama:
         condition: service_started
-    command:
-      [
-        "/bin/sh",
-        "-c",
-        "/app/docker/scripts/ai-setup-docker.sh && /app/docker/scripts/auto-configure-remote.sh",
-      ]
+    command: ["/app/docker/scripts/ai-setup-docker.sh"]
     restart: "no"
     labels:
       - "com.msnai.service=setup"

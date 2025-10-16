@@ -367,78 +367,24 @@ open_application() {
 }
 
 # Function to show status and logs
-# Function to automatically configure firewall for remote access
-configure_remote_access() {
-    echo "🌐 Configurando acceso remoto automáticamente..."
-
-    # Detect server IP
-    SERVER_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || ip route get 1.1.1.1 2>/dev/null | grep -oP 'src \K[^ ]+' || echo "localhost")
-
-    if [ "$SERVER_IP" != "localhost" ] && [ -n "$SERVER_IP" ]; then
-        echo "📡 IP del servidor detectada: $SERVER_IP"
-
-        # Configure firewall if needed
-        if command -v ufw >/dev/null 2>&1; then
-            echo "🔥 Configurando firewall para acceso remoto..."
-
-            # Check if running as root or if sudo is available without password
-            if [ "$EUID" -eq 0 ] || sudo -n true 2>/dev/null; then
-                # Allow MSN-AI ports silently
-                sudo ufw allow 8000 >/dev/null 2>&1
-                sudo ufw allow 11434 >/dev/null 2>&1
-
-                # Enable UFW if it's inactive
-                if sudo ufw status 2>/dev/null | grep -q "inactive"; then
-                    sudo ufw --force enable >/dev/null 2>&1
-                fi
-
-                echo "✅ Firewall configurado automáticamente"
-            else
-                echo "⚠️  Para acceso remoto automático, ejecuta:"
-                echo "   sudo ufw allow 8000 && sudo ufw allow 11434"
-            fi
-        fi
-
-        # Test remote connectivity
-        echo "🧪 Verificando conectividad remota..."
-        sleep 2
-
-        if curl -s --connect-timeout 3 "http://$SERVER_IP:8000/msn-ai.html" >/dev/null 2>&1; then
-            REMOTE_ACCESS_OK=true
-            echo "✅ Acceso remoto disponible"
-        else
-            REMOTE_ACCESS_OK=false
-            echo "⚠️  Acceso remoto requiere configuración manual de firewall"
-        fi
-    else
-        SERVER_IP="localhost"
-        REMOTE_ACCESS_OK=false
-    fi
-}
 
 show_status() {
     echo ""
     echo "🎉 ¡MSN-AI Docker está ejecutándose!"
     echo "===================================="
 
-    # Configure remote access automatically
-    configure_remote_access
+    # Detect server IP for information only
+    SERVER_IP=$(hostname -I | awk '{print $1}' 2>/dev/null || echo "localhost")
 
     echo ""
     echo "🔗 URLs DE ACCESO:"
     echo "   🏠 Local:  http://localhost:8000/msn-ai.html"
-    if [ "$REMOTE_ACCESS_OK" = true ]; then
+    if [ "$SERVER_IP" != "localhost" ]; then
         echo "   🌐 Remoto: http://$SERVER_IP:8000/msn-ai.html"
         echo ""
-        echo "✅ ACCESO REMOTO CONFIGURADO"
+        echo "📝 NOTA: Firewall deshabilitado - Acceso remoto disponible"
         echo "   • La interfaz detecta automáticamente la configuración"
         echo "   • Los modelos se cargan automáticamente desde Ollama"
-        echo "   • No se requiere configuración adicional"
-    else
-        echo "   🌐 Remoto: http://$SERVER_IP:8000/msn-ai.html (requiere configuración)"
-        echo ""
-        echo "⚠️  PARA HABILITAR ACCESO REMOTO:"
-        echo "   sudo ufw allow 8000 && sudo ufw allow 11434"
     fi
 
     echo ""
