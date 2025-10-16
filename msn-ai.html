@@ -271,7 +271,9 @@
             border: none;
             font-size: 8pt;
             text-align: start;
-            height: 40px;
+            min-height: 40px;
+            height: auto;
+            max-height: 70px;
             width: 100%;
             overflow: hidden;
             background-color: white;
@@ -417,17 +419,22 @@
         /* Área de conversación */
         .conversation {
             height: 100%;
+            width: 100%;
             display: flex;
             padding: 10px;
             padding-right: 0;
             padding-bottom: 15px;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
         #messages-container {
             width: 100%;
+            min-width: 0;
             margin-right: 20px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
         .chattext {
@@ -443,6 +450,9 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
         }
 
         #ai-thinking {
@@ -463,17 +473,23 @@
         #messages-area {
             margin: 0;
             height: 100%;
+            width: 100%;
             font-size: 9pt;
             background-color: white;
             overflow-y: auto;
+            overflow-x: hidden;
             padding: 8px;
             border: thin solid #BED6E0;
+            word-wrap: break-word;
+            box-sizing: border-box;
         }
 
         /* Estilos de mensajes */
         .message {
             margin-bottom: 8px;
             line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }
 
         .message-user {
@@ -493,6 +509,9 @@
         .message-content {
             margin-left: 10px;
             white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         /* Separador */
@@ -537,6 +556,10 @@
             border-top: none;
             font-size: 10pt;
             padding: 8px;
+            font-family: "Tahoma", sans-serif;
+            overflow-y: auto;
+            overflow-x: hidden;
+            word-wrap: break-word;
         }
 
         #message-input:focus {
