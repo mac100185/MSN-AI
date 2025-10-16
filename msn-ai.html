@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MSN-AI - Windows Live Messenger with AI</title>
+    <link rel="icon" type="image/png" href="assets/general/logo.png" />
+
+    <style>
+        /* ===================
+           ESTILOS GENERALES
+           =================== */
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            position: relative;
+        }
+
+        body {
+            height: 100%;
+            font-family: "Tahoma", sans-serif;
+            font-size: 8pt;
+            margin: 0;
+            padding: 0;
+            background: #ECF6F9;
+        }
+
+        a {
+            color: #0088e4;
+        }
+
+        .main {
+            display: flex;
+            height: 100vh;
+            min-height: 440px;
+            padding: 10px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+        }
+
+        /* ===================
+           VENTANAS PRINCIPALES
+           =================== */
+        .mainwindow {
+            background-color: #ECF6F9;
+            border: thin solid #707070;
+            border-radius: 8px;
+            box-shadow: 0 0 5px #00000050;
+        }
+
+        /* ===================
+           BOTONES AERO
+           =================== */
+        .aerobutton {
+            background-color: transparent;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .aerobutton:hover {
+            border-image: url("assets/general/aerobutton_border.png") 2 round;
+            background-size: 100% 100%;
+        }
+        .aerobutton:active {
+            border-image: url("assets/general/aerobutton_border_down.png") 2 round;
+        }
+        .aerobutton:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .smallarrowbtn {
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            align-items: center;
+        }
+        .arrowdown {
+            height: 5px;
+            margin-left: 4px;
+        }
+
+        /* ===================
+           PANEL DE CHATS (IZQUIERDO)
+           =================== */
+        #chats-panel {
+            background-color: white;
+            float: left;
+            display: flex;
+            flex-direction: column;
+            width: 30%;
+            min-width: 250px;
+            max-width: 350px;
+            height: 100%;
+        }
+
+        #chats-panel > .header {
+            background-image: url("assets/background/msgres_fullheader.png");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            height: 95px;
+            width: 100%;
+        }
+
+        .titlebar {
+            padding: 6px;
+            padding-bottom: 5px;
+            height: 28px;
+            display: flex;
+            flex-direction: row;
+            height: fit-content;
+        }
+
+        #title {
+            height: 10px;
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+
+        .ai-info {
+            display: flex;
+            height: 69px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 14px;
+        }
+
+        #ai-avatar-frame {
+            height: 62px;
+            width: auto;
+            position: absolute;
+            top: 42px;
+            left: 19px;
+        }
+
+        #ai-avatar {
+            height: 48px;
+            width: auto;
+            border-radius: 2px;
+        }
+
+        .ai-profile {
+            margin: auto;
+            margin-left: 14px;
+            margin-top: 3px;
+            height: 100%;
+        }
+
+        #ai-status-btn {
+            padding: 0;
+            height: fit-content;
+            display: flex;
+            text-align: start;
+            align-items: center;
+        }
+
+        #ai-status-btn > h3 {
+            font-size: 10pt;
+            font-weight: 600;
+            color: white;
+            margin: 0;
+        }
+
+        #ai-connection-status {
+            margin: 0;
+            font-size: 8pt;
+            color: #B9DDE7;
+            margin-left: 8px;
+        }
+
+        #model-selector {
+            padding: 0;
+            margin: 0;
+            height: fit-content;
+            display: flex;
+            text-align: start;
+            align-items: center;
+            color: #B9DDE7;
+            padding-top: 2px;
+            padding-bottom: 3px;
+            font-size: 8pt;
+        }
+
+        .arrowchats {
+            margin-left: 8px;
+            fill: #B9DDE7 !important;
+        }
+
+        /* Navegación de chats */
+        #chats-nav {
+            background-image: url("assets/background/msgres_navbar.png");
+            background-size: 100% 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            height: 31px;
+            padding: 0;
+            box-shadow: 0px 1px 2px #00000077;
+        }
+
+        .iconbar {
+            list-style: none;
+            margin: 0;
+            padding: 3px 8px 2px 8px;
+        }
+
+        .chataction {
+            height: 25px;
+            width: 28px;
+            margin: 0 2px;
+        }
+
+        #left > .chataction {
+            float: left;
+        }
+
+        #right > .chataction {
+            float: right;
+        }
+
+        /* Búsqueda de chats */
+        .chat-search {
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            height: 38px;
+            padding: 8px 8px 8px 7px;
+            border-bottom: thin solid #e2eaf3;
+        }
+
+        #chat-search-input {
+            font-size: 8pt;
+            height: 23px;
+            width: 100%;
+            padding: 8px;
+            margin-right: 7px;
+            border: thin solid #c7c7c7;
+            box-shadow: inset 0 0 3px #0000002a;
+        }
+
+        #chat-search-input:focus {
+            border: thin solid #52c9fd;
+            box-shadow: 0 0 6px #52cafdbe;
+            outline: none;
+        }
+
+        .searchbar-btn {
+            height: 23px;
+            width: 22px;
+            border: 2px solid transparent;
+        }
+
+        /* Lista de chats */
+        .chat-list {
+            flex: 1;
+            margin: 0;
+            padding: 0;
+            max-height: 100%;
+            list-style: none;
+            overflow: auto;
+        }
+
+        .chat-item {
+            border: none;
+            font-size: 8pt;
+            text-align: start;
+            height: 40px;
+            width: 100%;
+            overflow: hidden;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .chat-item:hover {
+            background-color: #f0f8ff;
+        }
+
+        .chat-item.active {
+            background-color: #D2EAF6;
+        }
+
+        .chat-title {
+            font-weight: bold;
+            margin: 0;
+            font-size: 8pt;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-preview {
+            margin: 2px 0 0 0;
+            font-size: 7pt;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-date {
+            font-size: 6pt;
+            color: #999;
+            margin-top: auto;
+        }
+
+        /* Footer */
+        #chats-footer {
+            width: 100%;
+            margin: 0;
+            padding: 5px 10px;
+            background-color: #ECF6F9;
+            border-radius: 0 0 8px 8px;
+            border-top: thin solid #BED6E0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* ===================
+           PANEL DE CHAT (DERECHO)
+           =================== */
+        #chat-panel {
+            height: 100%;
+            width: 100%;
+            min-width: 420px;
+            margin-left: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header del chat */
+        #chat-panel > .header {
+            border-top: thin solid #707070;
+            image-rendering: pixelated;
+            background-image: url("assets/background/chat_header.png");
+            background-size: 100% 100%;
+            margin: 0;
+            height: 77px;
+            padding: 7px;
+            box-shadow: 0px 1px 4px #00000057;
+        }
+
+        #chat-info {
+            display: flex;
+        }
+
+        #chat-icon {
+            height: 16px;
+        }
+
+        #chat-text {
+            display: flex;
+            flex-direction: column;
+            margin-left: 5px;
+        }
+
+        #chat-contact-name {
+            font-weight: bold;
+            color: #333333;
+        }
+
+        #chat-status-message {
+            color: #6F8A92;
+            margin: 0;
+        }
+
+        #chat-navbars {
+            display: flex;
+            flex-direction: row;
+            margin-top: 3px;
+            justify-content: space-between;
+        }
+
+        .chatnav {
+            list-style: none;
+            margin: 0;
+            height: 33px;
+            padding: 0;
+        }
+
+        .chat-nav-action {
+            height: 100%;
+            width: 33px;
+            margin-left: 5px;
+        }
+
+        .chatnav#left {
+            width: 100%;
+            min-width: 230px;
+        }
+
+        .chatnav#right {
+            width: 10%;
+            min-width: 84px;
+        }
+
+        .chatnav#left > .chat-nav-action {
+            float: left;
+        }
+
+        .chatnav#right > .chat-nav-action {
+            float: right;
+        }
+
+        /* Área de conversación */
+        .conversation {
+            height: 100%;
+            display: flex;
+            padding: 10px;
+            padding-right: 0;
+            padding-bottom: 15px;
+        }
+
+        #messages-container {
+            width: 100%;
+            margin-right: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chattext {
+            font-family: "Tahoma", sans-serif;
+            width: 100%;
+            resize: none;
+            border: thin solid #BED6E0;
+            padding: 4px 8px;
+        }
+
+        /* Área de mensajes recibidos */
+        #messages-display {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        #ai-thinking {
+            display: none;
+            align-items: center;
+            height: 19px;
+            background-color: #fff3cd;
+            border: thin solid #ffeaa7;
+            border-bottom: none;
+            padding: 0 8px;
+        }
+
+        #ai-thinking .thinking-dots {
+            margin-left: 5px;
+            color: #856404;
+        }
+
+        #messages-area {
+            margin: 0;
+            height: 100%;
+            font-size: 9pt;
+            background-color: white;
+            overflow-y: auto;
+            padding: 8px;
+            border: thin solid #BED6E0;
+        }
+
+        /* Estilos de mensajes */
+        .message {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .message-user {
+            color: #0066cc;
+        }
+
+        .message-ai {
+            color: #cc6600;
+        }
+
+        .message-timestamp {
+            font-size: 7pt;
+            color: #999;
+            margin-left: 5px;
+        }
+
+        .message-content {
+            margin-left: 10px;
+            white-space: pre-wrap;
+        }
+
+        /* Separador */
+        #handle {
+            background-image: url("assets/chat-window/30417.png");
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 10px;
+            cursor: ns-resize;
+        }
+
+        /* Área de envío */
+        #send-area {
+            display: flex;
+            flex-direction: column;
+            min-height: 130px;
+            height: 200px;
+        }
+
+        #text-options {
+            background-image: url("assets/background/chat_editheader.png");
+            border: thin solid #bed6e0;
+            height: 29px;
+            margin: 0;
+            padding: 2px;
+        }
+
+        .textoption {
+            height: 24px;
+            width: auto;
+            padding: 0 4px;
+            float: left;
+        }
+
+        .noarrow {
+            width: 32px;
+        }
+
+        #message-input {
+            height: 100%;
+            margin: 0;
+            border-top: none;
+            font-size: 10pt;
+            padding: 8px;
+        }
+
+        #message-input:focus {
+            outline: none;
+        }
+
+        #bottom-controls {
+            display: flex;
+            justify-content: space-between;
+            height: 24px;
+            margin: 0;
+            position: relative;
+        }
+
+        .editortab {
+            width: 26px;
+            height: 24px;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: thin solid #bed6e0;
+            border-top: none;
+            background-color: white;
+        }
+
+        .selected {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 25px;
+            border-top: 2px solid white;
+        }
+
+        #send-button {
+            height: 21px;
+            padding: 0 18px;
+            margin: 2px;
+            font-size: 8pt;
+            color: #001563;
+            background-image: url("assets/general/button_inside.png");
+            background-size: 100% auto;
+            border: 3px solid transparent;
+            border-image: url("assets/general/button_border.png") 3;
+            cursor: pointer;
+        }
+
+        #send-button:hover:not(:disabled) {
+            border-image: url("assets/general/button_border_focus.png") 3;
+        }
+
+        #send-button:active:not(:disabled) {
+            padding: 0 20px;
+            filter: brightness(93%);
+            border: thin solid #286088;
+            border-radius: 3px;
+            box-shadow: inset 1px 1px 2px #00000077;
+        }
+
+        #send-button:disabled {
+            background-image: none;
+            background-color: #f0f0f0;
+            border-image: url("assets/general/button_border_disabled.png") 3;
+            color: #c9c1c1;
+            cursor: not-allowed;
+        }
+
+        /* Scrollbars personalizados */
+        ::-webkit-scrollbar {
+            width: 17px;
+            cursor: pointer;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: white;
+            border-left: thin solid #E2EAF3;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: url("assets/scrollbar/circle_hover.png") no-repeat center, url("assets/scrollbar/bar.png") no-repeat;
+            background-size: auto, 100% 100%;
+            border: thin solid #A8C1DA;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: url("assets/scrollbar/circle_hover.png") no-repeat center, url("assets/scrollbar/bar_hover.png") no-repeat;
+            background-size: auto, 100% 100%;
+            border: thin solid #4A95C9;
+        }
+
+        ::-webkit-scrollbar-button:single-button:vertical:decrement {
+            background-image: url("assets/scrollbar/arrow_up.png");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        ::-webkit-scrollbar-button:single-button:vertical:increment {
+            background-image: url("assets/scrollbar/arrow_down.png");
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        /* Estados y alertas */
+        .connection-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-connected {
+            background-color: #00aa00;
+        }
+
+        .status-disconnected {
+            background-color: #cc0000;
+        }
+
+        .status-connecting {
+            background-color: #ffaa00;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: #ECF6F9;
+            margin: 15% auto;
+            padding: 20px;
+            border: thin solid #707070;
+            border-radius: 8px;
+            width: 400px;
+            font-family: "Tahoma", sans-serif;
+            font-size: 8pt;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-close {
+            font-size: 16pt;
+            font-weight: bold;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main {
+                flex-direction: column;
+            }
+
+            #chats-panel {
+                width: 100%;
+                max-width: none;
+                height: 40%;
+            }
+
+            #chat-panel {
+                margin-left: 0;
+                margin-top: 8px;
+                height: 60%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <!-- Panel de chats (izquierdo) -->
+        <div class="mainwindow" id="chats-panel">
+            <div class="header">
+                <div class="titlebar">
+                    <img src="assets/general/live_logo.png" alt="Windows Live Logo">
+                    <img id="title" src="assets/general/title_text.png">
+                </div>
+                <div class="ai-info">
+                    <img id="ai-avatar" src="assets/01CAT.jpg" alt="AI Avatar">
+                    <img id="ai-avatar-frame" src="assets/background/frame_48.png">
+                    <div class="ai-profile">
+                        <button class="aerobutton" id="ai-status-btn">
+                            <h3>MSN-AI Assistant</h3>
+                            <p id="ai-connection-status">(Conectando...)</p>
+                            <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
+                        </button>
+                        <button class="aerobutton" id="model-selector">
+                            <p style="margin: 0;" id="current-model">Detectando modelo...</p>
+                            <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chats-nav">
+                <ul class="iconbar" id="left">
+                    <button class="aerobutton chataction" id="new-chat-btn" title="Nuevo Chat" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="import-btn" title="Importar Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="export-btn" title="Exportar Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
+                </ul>
+                <ul class="iconbar" id="right">
+                    <button class="aerobutton chataction smallarrowbtn" id="settings-btn" title="Configuración">
+                        <img src="assets/contacts-window/1489.png" style="height: 16px;">
+                        <img class="arrowdown" src="assets/general/small_arrow.svg">
+                    </button>
+                    <button class="aerobutton chataction" id="help-btn" title="Ayuda" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
+                </ul>
+            </div>
+
+            <div class="chat-search">
+                <input id="chat-search-input" type="text" placeholder="Buscar en chats...">
+                <button class="searchbar-btn aerobutton" id="search-btn" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
+                <button class="searchbar-btn aerobutton" id="clear-search-btn" style="background:url(assets/contacts-window/1132.png) no-repeat center;"></button>
+            </div>
+
+            <ul class="chat-list" id="chat-list">
+                <!-- Los chats se cargarán dinámicamente -->
+            </ul>
+
+            <div id="chats-footer">
+                <span style="color: #9bb3d4; font-size: 7pt;">MSN-AI v1.0</span>
+                <div>
+                    <span class="connection-status" id="connection-indicator"></span>
+                    <span style="font-size: 7pt;" id="connection-text">Desconectado</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de chat (derecho) -->
+        <div class="mainwindow" id="chat-panel">
+            <div class="header">
+                <div id="chat-info">
+                    <img id="chat-icon" src="assets/chat-window/61.ico">
+                    <div id="chat-text">
+                        <span id="chat-contact-name">Selecciona un chat</span>
+                        <span id="chat-status-message">Bienvenido a MSN-AI</span>
+                    </div>
+                </div>
+                <div id="chat-navbars">
+                    <ul class="chatnav" id="left">
+                        <button class="aerobutton chat-nav-action" title="Formatear texto" style="background:url(assets/chat-window/1441.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" title="Emoticons" style="background:url(assets/chat-window/1444.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" title="Enviar archivo" style="background:url(assets/chat-window/1447.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" title="Imagen" style="background:url(assets/chat-window/1442.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" title="Juegos" style="background:url(assets/chat-window/1443.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" title="Actividades" style="background:url(assets/chat-window/326.png) no-repeat center;"></button>
+                    </ul>
+                    <ul class="chatnav" id="right">
+                        <button class="aerobutton chat-nav-action smallarrowbtn" title="Más opciones">
+                            <img src="assets/chat-window/1489.png" style="height: 16px;">
+                            <img class="arrowdown" src="assets/general/small_arrow_black.svg">
+                        </button>
+                        <button class="aerobutton chat-nav-action" title="Videollamada" style="background:url(assets/chat-window/329.png) no-repeat center;"></button>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="conversation">
+                <div id="messages-container">
+                    <div id="messages-display">
+                        <div id="ai-thinking">
+                            <img src="assets/chat-window/1539.png" alt="">
+                            <p class="thinking-dots">La IA está pensando<span id="dots">...</span></p>
+                        </div>
+                        <div id="messages-area">
+                            <div class="message">
+                                <span style="color: #666; font-size: 7pt; font-style: italic;">
+                                    Bienvenido a MSN-AI - Tu asistente de IA con la nostalgia de Windows Live Messenger<br>
+                                    Selecciona un chat existente o crea uno nuevo para comenzar.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="handle"></div>
+
+                    <div id="send-area">
+                        <ul id="text-options">
+                            <button class="aerobutton textoption smallarrowbtn" title="Fuente">
+                                <img src="assets/chat-window/412.png">
+                                <img class="arrowdown" src="assets/general/small_arrow_black.svg">
+                            </button>
+                            <button class="aerobutton textoption smallarrowbtn" title="Emoticons">
+                                <img src="assets/chat-window/1487.png">
+                                <img class="arrowdown" src="assets/general/small_arrow_black.svg">
+                            </button>
+                            <button class="aerobutton textoption noarrow" title="Negrita" style="background: url(assets/chat-window/414.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" title="Cursiva" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
+                            <button class="textoption" title="Subrayado" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
+                            <button class="aerobutton textoption noarrow" title="Color" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
+                        </ul>
+
+                        <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." disabled></textarea>
+
+                        <div id="bottom-controls">
+                            <button class="editortab selected">
+                                <img src="assets/chat-window/963.png">
+                            </button>
+                            <button class="editortab unselected">
+                                <img src="assets/chat-window/961.png">
+                            </button>
+                            <div></div>
+                                <button id="send-button" disabled>Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Configuración</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" id="sounds-enabled" checked> Activar sonidos
+                </label><br><br>
+                <label>
+                    Servidor Ollama:
+                    <input type="text" id="ollama-server" value="http://localhost:11434" style="width: 200px;">
+                </label><br><br>
+                <label>
+                    Modelo de IA:
+                    <select id="model-select">
+                        <option value="mistral:7b">Mistral 7B (Recomendado)</option>
+                        <option value="llama3:8b">Llama 3 8B</option>
+                        <option value="phi3:mini">Phi3 Mini</option>
+                        <option value="codellama">CodeLlama</option>
+                    </select>
+                </label><br><br>
+                <button class="aerobutton" id="test-connection">Probar Conexión</button>
+                <button class="aerobutton" id="save-settings">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="export-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Exportar Chats</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div>
+                <p>Exporta todos tus chats en formato JSON para respaldar o migrar.</p>
+                <button class="aerobutton" id="download-chats">Descargar Chats</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Importar Chats</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div>
+                <p>Selecciona un archivo JSON de chats exportado previamente.</p>
+                <input type="file" id="import-file" accept=".json">
+                <br><br>
+                <button class="aerobutton" id="import-chats-btn">Importar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements para sonidos -->
+    <audio id="sound-login" preload="auto">
+        <source src="assets/sounds/login.wav" type="audio/wav">
+    </audio>
+    <audio id="sound-message-in" preload="auto">
+        <source src="assets/sounds/message_in.wav" type="audio/wav">
+    </audio>
+    <audio id="sound-message-out" preload="auto">
+        <source src="assets/sounds/message_out.wav" type="audio/wav">
+    </audio>
+    <audio id="sound-nudge" preload="auto">
+        <source src="assets/sounds/nudge.wav" type="audio/wav">
+    </audio>
+    <audio id="sound-calling" preload="auto">
+        <source src="assets/sounds/calling.wav" type="audio/wav">
+    </audio>
+
+    <script>
+        // ===================
+        // SISTEMA MSN-AI
+        // ===================
+
+        class MSNAI {
+            constructor() {
+                this.chats = [];
+                this.currentChatId = null;
+                this.settings = {
+                    soundsEnabled: true,
+                    ollamaServer: 'http://localhost:11434',
+                    selectedModel: 'mistral:7b',
+                    apiTimeout: 30000
+                };
+                this.isConnected = false;
+                this.availableModels = [];
+                this.sounds = {};
+
+                this.init();
+            }
+
+            async init() {
+                console.log('Iniciando MSN-AI...');
+
+                // Cargar configuración y chats desde localStorage
+                this.loadSettings();
+                this.loadChats();
+
+                // Inicializar sonidos
+                this.initSounds();
+
+                // Configurar eventos
+                this.setupEventListeners();
+
+                // Verificar conexión con Ollama
+                await this.checkConnection();
+
+                // Renderizar interfaz
+                this.renderChatList();
+
+                // Reproducir sonido de inicio
+                this.playSound('login');
+
+                console.log('MSN-AI iniciado correctamente');
+            }
+
+            // ===================
+            // GESTIÓN DE SONIDOS
+            // ===================
+
+            initSounds() {
+                const soundIds = ['login', 'message-in', 'message-out', 'nudge', 'calling'];
+                soundIds.forEach(id => {
+                    const audio = document.getElementById(`sound-${id}`);
+                    if (audio) {
+                        this.sounds[id] = audio;
+                        audio.volume = 0.5;
+                    }
+                });
+            }
+
+            playSound(soundName) {
+                if (!this.settings.soundsEnabled) return;
+
+                const sound = this.sounds[soundName];
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.play().catch(e => console.log('No se pudo reproducir sonido:', soundName));
+                }
+            }
+
+            // ===================
+            // GESTIÓN DE DATOS
+            // ===================
+
+            loadSettings() {
+                const saved = localStorage.getItem('msnai-settings');
+                if (saved) {
+                    this.settings = { ...this.settings, ...JSON.parse(saved) };
+                }
+                this.updateSettingsUI();
+            }
+
+            saveSettings() {
+                localStorage.setItem('msnai-settings', JSON.stringify(this.settings));
+                this.updateSettingsUI();
+            }
+
+            loadChats() {
+                const saved = localStorage.getItem('msnai-chats');
+                if (saved) {
+                    this.chats = JSON.parse(saved);
+                } else {
+                    // Chat de bienvenida por defecto
+                    this.chats = [{
+                        id: 'welcome-' + Date.now(),
+                        title: 'Bienvenida a MSN-AI',
+                        date: new Date().toISOString(),
+                        model: this.settings.selectedModel,
+                        messages: [
+                            {
+                                type: 'ai',
+                                content: '¡Hola! Soy tu asistente de IA integrado en esta nostálgica interfaz de Windows Live Messenger. ¿En qué puedo ayudarte hoy?',
+                                timestamp: new Date().toISOString()
+                            }
+                        ]
+                    }];
+                }
+            }
+
+            saveChats() {
+                localStorage.setItem('msnai-chats', JSON.stringify(this.chats));
+            }
+
+            // ===================
+            // CONEXIÓN CON OLLAMA
+            // ===================
+
+            async checkConnection() {
+                this.updateConnectionStatus('connecting');
+
+                try {
+                    const response = await fetch(`${this.settings.ollamaServer}/api/tags`, {
+                        method: 'GET',
+                        timeout: 5000
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.availableModels = data.models || [];
+                        this.isConnected = true;
+                        this.updateConnectionStatus('connected');
+                        this.updateModelStatus();
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Error conectando con Ollama:', error);
+                }
+
+                this.isConnected = false;
+                this.updateConnectionStatus('disconnected');
+                return false;
+            }
+
+            async sendToAI(message, chatId) {
+                if (!this.isConnected) {
+                    throw new Error('No hay conexión con Ollama');
+                }
+
+                const chat = this.chats.find(c => c.id === chatId);
+                if (!chat) {
+                    throw new Error('Chat no encontrado');
+                }
+
+                // Construir contexto de la conversación
+                const context = chat.messages
+                    .slice(-10) // Últimos 10 mensajes para contexto
+                    .map(msg => `${msg.type === 'user' ? 'Usuario' : 'Asistente'}: ${msg.content}`)
+                    .join('\n');
+
+                const prompt = context ? `${context}\nUsuario: ${message}` : message;
+
+                try {
+                    const response = await fetch(`${this.settings.ollamaServer}/api/generate`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: chat.model,
+                            prompt: prompt,
+                            stream: false,
+                            options: {
+                                temperature: 0.7,
+                                max_tokens: 2000
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error del servidor: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.response || 'Lo siento, no pude generar una respuesta.';
+
+                } catch (error) {
+                    console.error('Error enviando mensaje a IA:', error);
+                    throw error;
+                }
+            }
+
+            // ===================
+            // GESTIÓN DE CHATS
+            // ===================
+
+            createNewChat() {
+                const chatId = 'chat-' + Date.now();
+                const newChat = {
+                    id: chatId,
+                    title: `Nuevo chat ${this.chats.length + 1}`,
+                    date: new Date().toISOString(),
+                    model: this.settings.selectedModel,
+                    messages: []
+                };
+
+                this.chats.unshift(newChat);
+                this.saveChats();
+                this.renderChatList();
+                this.selectChat(chatId);
+
+                this.playSound('nudge');
+            }
+
+            selectChat(chatId) {
+                this.currentChatId = chatId;
+                const chat = this.chats.find(c => c.id === chatId);
+
+                if (!chat) return;
+
+                // Actualizar UI
+                document.querySelectorAll('.chat-item').forEach(item => {
+                    item.classList.remove('active');
+                });
+
+                const chatElement = document.querySelector(`[data-chat-id="${chatId}"]`);
+                if (chatElement) {
+                    chatElement.classList.add('active');
+                }
+
+                // Actualizar header del chat
+                document.getElementById('chat-contact-name').textContent = chat.title;
+                document.getElementById('chat-status-message').textContent = `Modelo: ${chat.model} - ${chat.messages.length} mensajes`;
+
+                // Renderizar mensajes
+                this.renderMessages(chat);
+
+                // Habilitar input
+                document.getElementById('message-input').disabled = false;
+                document.getElementById('send-button').disabled = false;
+            }
+
+            async sendMessage() {
+                const input = document.getElementById('message-input');
+                const message = input.value.trim();
+
+                if (!message || !this.currentChatId) return;
+
+                const chat = this.chats.find(c => c.id === this.currentChatId);
+                if (!chat) return;
+
+                // Limpiar input
+                input.value = '';
+
+                // Agregar mensaje del usuario
+                const userMessage = {
+                    type: 'user',
+                    content: message,
+                    timestamp: new Date().toISOString()
+                };
+
+                chat.messages.push(userMessage);
+                chat.title = this.generateChatTitle(chat);
+
+                // Renderizar mensaje del usuario inmediatamente
+                this.renderMessages(chat);
+                this.playSound('message-out');
+
+                // Mostrar indicador de "pensando"
+                this.showAIThinking(true);
+
+                try {
+                    // Enviar a IA
+                    const aiResponse = await this.sendToAI(message, this.currentChatId);
+
+                    // Agregar respuesta de la IA
+                    const aiMessage = {
+                        type: 'ai',
+                        content: aiResponse,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    chat.messages.push(aiMessage);
+
+                    // Actualizar UI
+                    this.renderMessages(chat);
+                    this.playSound('message-in');
+
+                } catch (error) {
+                    console.error('Error enviando mensaje:', error);
+
+                    // Mensaje de error
+                    const errorMessage = {
+                        type: 'ai',
+                        content: `Error: ${error.message}. Verifica que Ollama esté ejecutándose y el modelo esté disponible.`,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    chat.messages.push(errorMessage);
+                    this.renderMessages(chat);
+                }
+
+                // Ocultar indicador de "pensando"
+                this.showAIThinking(false);
+
+                // Guardar cambios
+                this.saveChats();
+                this.renderChatList();
+            }
+
+            generateChatTitle(chat) {
+                if (chat.messages.length === 0) return 'Nuevo chat';
+
+                const firstMessage = chat.messages.find(m => m.type === 'user');
+                if (!firstMessage) return 'Nuevo chat';
+
+                const title = firstMessage.content.substring(0, 50);
+                return title.length < firstMessage.content.length ? title + '...' : title;
+            }
+
+            deleteChat(chatId) {
+                if (!confirm('¿Estás seguro de que quieres eliminar este chat?')) return;
+
+                this.chats = this.chats.filter(c => c.id !== chatId);
+                this.saveChats();
+                this.renderChatList();
+
+                if (this.currentChatId === chatId) {
+                    this.currentChatId = null;
+                    this.clearChatArea();
+                }
+            }
+
+            // ===================
+            // RENDERIZADO DE UI
+            // ===================
+
+            renderChatList() {
+                const chatList = document.getElementById('chat-list');
+                chatList.innerHTML = '';
+
+                if (this.chats.length === 0) {
+                    chatList.innerHTML = '<li style="padding: 20px; text-align: center; color: #666;">No hay chats. Crea uno nuevo.</li>';
+                    return;
+                }
+
+                this.chats.forEach(chat => {
+                    const chatElement = document.createElement('li');
+                    chatElement.className = 'chat-item';
+                    chatElement.setAttribute('data-chat-id', chat.id);
+
+                    const lastMessage = chat.messages.length > 0
+                        ? chat.messages[chat.messages.length - 1].content.substring(0, 60) + '...'
+                        : 'Sin mensajes';
+
+                    const date = new Date(chat.date).toLocaleDateString('es-ES', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: '2-digit'
+                    });
+
+                    chatElement.innerHTML = `
+                        <div class="chat-title">${chat.title}</div>
+                        <div class="chat-preview">${lastMessage}</div>
+                        <div class="chat-date">${date}</div>
+                    `;
+
+                    chatElement.addEventListener('click', () => this.selectChat(chat.id));
+                    chatElement.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        this.showChatContextMenu(e, chat.id);
+                    });
+
+                    chatList.appendChild(chatElement);
+                });
+            }
+
+            renderMessages(chat) {
+                const messagesArea = document.getElementById('messages-area');
+                messagesArea.innerHTML = '';
+
+                chat.messages.forEach(message => {
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message';
+
+                    const time = new Date(message.timestamp).toLocaleTimeString('es-ES', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
+                    const senderClass = message.type === 'user' ? 'message-user' : 'message-ai';
+                    const sender = message.type === 'user' ? 'Tú' : 'IA';
+
+                    messageElement.innerHTML = `
+                        <span class="${senderClass}"><strong>${sender}</strong></span>
+                        <span class="message-timestamp">${time}</span>
+                        <div class="message-content">${this.formatMessage(message.content)}</div>
+                    `;
+
+                    messagesArea.appendChild(messageElement);
+                });
+
+                // Scroll al final
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+            }
+
+            formatMessage(content) {
+                // Formateo básico de mensajes
+                return content
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/`(.*?)`/g, '<code style="background: #f0f0f0; padding: 2px 4px; border-radius: 2px;">$1</code>');
+            }
+
+            showAIThinking(show) {
+                const thinkingElement = document.getElementById('ai-thinking');
+                if (show) {
+                    thinkingElement.style.display = 'flex';
+                    this.startThinkingAnimation();
+                } else {
+                    thinkingElement.style.display = 'none';
+                    this.stopThinkingAnimation();
+                }
+            }
+
+            startThinkingAnimation() {
+                const dots = document.getElementById('dots');
+                this.thinkingInterval = setInterval(() => {
+                    const current = dots.textContent;
+                    dots.textContent = current.length >= 3 ? '.' : current + '.';
+                }, 500);
+            }
+
+            stopThinkingAnimation() {
+                if (this.thinkingInterval) {
+                    clearInterval(this.thinkingInterval);
+                    this.thinkingInterval = null;
+                }
+            }
+
+            clearChatArea() {
+                document.getElementById('chat-contact-name').textContent = 'Selecciona un chat';
+                document.getElementById('chat-status-message').textContent = 'Bienvenido a MSN-AI';
+                document.getElementById('messages-area').innerHTML = `
+                    <div class="message">
+                        <span style="color: #666; font-size: 7pt; font-style: italic;">
+                            Selecciona un chat de la lista o crea uno nuevo para comenzar.
+                        </span>
+                    </div>
+                `;
+                document.getElementById('message-input').disabled = true;
+                document.getElementById('send-button').disabled = true;
+            }
+
+            updateConnectionStatus(status) {
+                const indicator = document.getElementById('connection-indicator');
+                const text = document.getElementById('connection-text');
+                const aiStatus = document.getElementById('ai-connection-status');
+
+                switch (status) {
+                    case 'connected':
+                        indicator.className = 'connection-status status-connected';
+                        text.textContent = 'Conectado';
+                        aiStatus.textContent = '(Online)';
+                        break;
+                    case 'connecting':
+                        indicator.className = 'connection-status status-connecting';
+                        text.textContent = 'Conectando...';
+                        aiStatus.textContent = '(Conectando...)';
+                        break;
+                    case 'disconnected':
+                        indicator.className = 'connection-status status-disconnected';
+                        text.textContent = 'Desconectado';
+                        aiStatus.textContent = '(Sin conexión)';
+                        break;
+                }
+            }
+
+            updateModelStatus() {
+                const modelElement = document.getElementById('current-model');
+                if (this.availableModels.length > 0) {
+                    const current = this.availableModels.find(m => m.name === this.settings.selectedModel);
+                    if (current) {
+                        modelElement.textContent = `${current.name} (${(current.size / 1024 / 1024 / 1024).toFixed(1)}GB)`;
+                    } else {
+                        modelElement.textContent = `${this.settings.selectedModel} (No disponible)`;
+                    }
+                } else {
+                    modelElement.textContent = 'No hay modelos disponibles';
+                }
+            }
+
+            updateSettingsUI() {
+                document.getElementById('sounds-enabled').checked = this.settings.soundsEnabled;
+                document.getElementById('ollama-server').value = this.settings.ollamaServer;
+                document.getElementById('model-select').value = this.settings.selectedModel;
+            }
+
+            // ===================
+            // IMPORTAR/EXPORTAR
+            // ===================
+
+            exportChats() {
+                const data = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    chats: this.chats,
+                    settings: this.settings
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `msn-ai-chats-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                URL.revokeObjectURL(url);
+
+                this.playSound('nudge');
+            }
+
+            importChats(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+
+                        if (data.chats && Array.isArray(data.chats)) {
+                            if (confirm(`¿Importar ${data.chats.length} chats? Esto se agregará a tus chats existentes.`)) {
+                                data.chats.forEach(chat => {
+                                    chat.id = 'imported-' + Date.now() + '-' + Math.random();
+                                });
+
+                                this.chats = [...data.chats, ...this.chats];
+                                this.saveChats();
+                                this.renderChatList();
+
+                                this.playSound('login');
+                                alert(`¡${data.chats.length} chats importados exitosamente!`);
+                            }
+                        } else {
+                            alert('Archivo JSON inválido o sin chats.');
+                        }
+                    } catch (error) {
+                        console.error('Error importando chats:', error);
+                        alert('Error al leer el archivo. Verifica que sea un JSON válido.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            // ===================
+            // EVENT LISTENERS
+            // ===================
+
+            setupEventListeners() {
+                // Envío de mensajes
+                document.getElementById('send-button').addEventListener('click', () => {
+                    this.sendMessage();
+                });
+
+                document.getElementById('message-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                // Botones de navegación
+                document.getElementById('new-chat-btn').addEventListener('click', () => {
+                    this.createNewChat();
+                });
+
+                document.getElementById('export-btn').addEventListener('click', () => {
+                    document.getElementById('export-modal').style.display = 'block';
+                });
+
+                document.getElementById('import-btn').addEventListener('click', () => {
+                    document.getElementById('import-modal').style.display = 'block';
+                });
+
+                document.getElementById('settings-btn').addEventListener('click', () => {
+                    document.getElementById('settings-modal').style.display = 'block';
+                });
+
+                // Búsqueda de chats
+                document.getElementById('chat-search-input').addEventListener('input', (e) => {
+                    this.filterChats(e.target.value);
+                });
+
+                document.getElementById('clear-search-btn').addEventListener('click', () => {
+                    document.getElementById('chat-search-input').value = '';
+                    this.filterChats('');
+                });
+
+                // Modales
+                document.querySelectorAll('.modal-close').forEach(closeBtn => {
+                    closeBtn.addEventListener('click', () => {
+                        closeBtn.closest('.modal').style.display = 'none';
+                    });
+                });
+
+                // Cerrar modal al hacer click fuera
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Configuración
+                document.getElementById('save-settings').addEventListener('click', () => {
+                    this.settings.soundsEnabled = document.getElementById('sounds-enabled').checked;
+                    this.settings.ollamaServer = document.getElementById('ollama-server').value;
+                    this.settings.selectedModel = document.getElementById('model-select').value;
+
+                    this.saveSettings();
+                    this.checkConnection();
+
+                    document.getElementById('settings-modal').style.display = 'none';
+
+                    alert('Configuración guardada exitosamente.');
+                });
+
+                document.getElementById('test-connection').addEventListener('click', async () => {
+                    const success = await this.checkConnection();
+                    alert(success ? 'Conexión exitosa con Ollama!' : 'No se pudo conectar con Ollama. Verifica que esté ejecutándose.');
+                });
+
+                // Export/Import
+                document.getElementById('download-chats').addEventListener('click', () => {
+                    this.exportChats();
+                    document.getElementById('export-modal').style.display = 'none';
+                });
+
+                document.getElementById('import-chats-btn').addEventListener('click', () => {
+                    const file = document.getElementById('import-file').files[0];
+                    if (file) {
+                        this.importChats(file);
+                        document.getElementById('import-modal').style.display = 'none';
+                        document.getElementById('import-file').value = '';
+                    } else {
+                        alert('Por favor selecciona un archivo.');
+                    }
+                });
+
+                // Reconexión automática cada 30 segundos si está desconectado
+                setInterval(() => {
+                    if (!this.isConnected) {
+                        this.checkConnection();
+                    }
+                }, 30000);
+
+                // Actualizar modelos disponibles cada 60 segundos
+                setInterval(() => {
+                    if (this.isConnected) {
+                        this.updateAvailableModels();
+                    }
+                }, 60000);
+            }
+
+            async updateAvailableModels() {
+                try {
+                    const response = await fetch(`${this.settings.ollamaServer}/api/tags`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.availableModels = data.models || [];
+                        this.updateModelStatus();
+                        this.updateModelSelect();
+                    }
+                } catch (error) {
+                    console.error('Error actualizando modelos:', error);
+                }
+            }
+
+            updateModelSelect() {
+                const select = document.getElementById('model-select');
+                const currentValue = select.value;
+
+                // Limpiar opciones actuales
+                select.innerHTML = '';
+
+                // Agregar modelos disponibles
+                this.availableModels.forEach(model => {
+                    const option = document.createElement('option');
+                    option.value = model.name;
+                    option.textContent = `${model.name} (${(model.size / 1024 / 1024 / 1024).toFixed(1)}GB)`;
+                    select.appendChild(option);
+                });
+
+                // Restaurar selección o usar el primero disponible
+                if (this.availableModels.some(m => m.name === currentValue)) {
+                    select.value = currentValue;
+                } else if (this.availableModels.length > 0) {
+                    select.value = this.availableModels[0].name;
+                }
+            }
+
+            filterChats(query) {
+                const chatItems = document.querySelectorAll('.chat-item');
+                const searchTerm = query.toLowerCase();
+
+                chatItems.forEach(item => {
+                    const title = item.querySelector('.chat-title').textContent.toLowerCase();
+                    const preview = item.querySelector('.chat-preview').textContent.toLowerCase();
+
+                    if (title.includes(searchTerm) || preview.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            showChatContextMenu(event, chatId) {
+                // Implementación básica de menú contextual
+                if (confirm('¿Eliminar este chat?')) {
+                    this.deleteChat(chatId);
+                }
+            }
+        }
+
+        // ===================
+        // INICIALIZACIÓN
+        // ===================
+
+        // Esperar a que cargue el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            window.msnai = new MSNAI();
+        });
+
+        // Manejar errores globales
+        window.addEventListener('error', (e) => {
+            console.error('Error global:', e.error);
+        });
+
+        // Prevenir pérdida de datos al cerrar
+        window.addEventListener('beforeunload', (e) => {
+            if (window.msnai && window.msnai.chats.length > 1) {
+                e.preventDefault();
+                e.returnValue = '¿Estás seguro de que quieres salir? Los chats se guardarán automáticamente.';
+            }
+        });
+
+    </script>
+
+</body>
+</html>
