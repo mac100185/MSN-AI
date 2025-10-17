@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>MSN-AI - Windows Live Messenger with AI</title>
     <link rel="icon" type="image/png" href="assets/general/logo.png" />
 
@@ -129,27 +130,46 @@
             width: 100%;
             box-sizing: border-box;
             padding: 8px 14px;
+            align-items: center; /* Centrar verticalmente */
         }
 
-        #ai-avatar-frame {
+        /* Contenedor para avatar + marco */
+        .ai-avatar-container {
+            position: relative;
+            width: 62px;
             height: 62px;
-            width: auto;
-            position: absolute;
-            top: 42px;
-            left: 19px;
+            margin-right: 14px; /* Separación de los botones */
+            flex-shrink: 0; /* No reducir tamaño */
         }
 
         #ai-avatar {
+            width: 48px;
             height: 48px;
-            width: auto;
             border-radius: 2px;
+            object-fit: cover;
+            position: absolute;
+            top: 7px; /* Centrar dentro del marco */
+            left: 7px; /* Centrar dentro del marco */
+            z-index: 1;
+        }
+
+        #ai-avatar-frame {
+            width: 62px;
+            height: 62px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 2;
         }
 
         .ai-profile {
-            margin: auto;
-            margin-left: 14px;
-            margin-top: 3px;
+            flex: 1; /* Ocupar el resto del espacio */
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
             height: 100%;
+            justify-content: center;
         }
 
         #ai-status-btn {
@@ -763,8 +783,10 @@
                     <img id="title" src="assets/general/title_text.png">
                 </div>
                 <div class="ai-info">
-                    <img id="ai-avatar" src="assets/01CAT.jpg" alt="AI Avatar">
-                    <img id="ai-avatar-frame" src="assets/background/frame_48.png">
+                    <div class="ai-avatar-container">
+                        <img id="ai-avatar" src="assets/images/profile.jpeg" alt="AI Avatar">
+                        <img id="ai-avatar-frame" src="assets/background/frame_48.png">
+                    </div>
                     <div class="ai-profile">
                         <button class="aerobutton" id="ai-status-btn">
                             <h3>MSN-AI Assistant</h3>
