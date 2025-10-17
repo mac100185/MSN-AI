@@ -1216,67 +1216,52 @@
                 return false;
             }
 
-            async sendToAI(message, chatId, onToken) {
+            async sendToAI(message, chatId) {
                 if (!this.isConnected) {
                     throw new Error('No hay conexión con Ollama');
                 }
+
                 const chat = this.chats.find(c => c.id === chatId);
                 if (!chat) {
                     throw new Error('Chat no encontrado');
                 }
-                // ✅ CORREGIDO: usar \n real
+
+                // Construir contexto de la conversación
                 const context = chat.messages
-                    .slice(-10)
+                    .slice(-10) // Últimos 10 mensajes para contexto
                     .map(msg => `${msg.type === 'user' ? 'Usuario' : 'Asistente'}: ${msg.content}`)
-                    .join('\n'); // ← aquí
-                const prompt = context ? `${context}\nUsuario: ${message}` : message; // ← y aquí
+                    .join('\n');
 
-                const response = await fetch(`${this.settings.ollamaServer}/api/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        model: chat.model,
-                        prompt: prompt,
-                        stream: true,
-                        options: {
-                            temperature: 0.7,
-                            max_tokens: 2000
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error del servidor: ${response.status}`);
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let fullResponse = '';
+                const prompt = context ? `${context}\nUsuario: ${message}` : message;
 
                 try {
-                    while (true) {
-                        const { done, value } = await reader.read();
-                        if (done) break;
-                        const chunk = decoder.decode(value, { stream: true });
-                        // ✅ CORREGIDO: split por \n real
-                        const lines = chunk.split('\n').filter(line => line.trim() !== '');
-                        for (const line of lines) {
-                            try {
-                                const json = JSON.parse(line);
-                                if (json.response) {
-                                    fullResponse += json.response;
-                                    onToken(json.response);
-                                }
-                                if (json.done) break;
-                            } catch (e) {
-                                console.warn('Línea no JSON:', line);
+                    const response = await fetch(`${this.settings.ollamaServer}/api/generate`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: chat.model,
+                            prompt: prompt,
+                            stream: false,
+                            options: {
+                                temperature: 0.7,
+                                max_tokens: 2000
                             }
-                        }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error del servidor: ${response.status}`);
                     }
-                } finally {
-                    reader.releaseLock();
+
+                    const data = await response.json();
+                    return data.response || 'Lo siento, no pude generar una respuesta.';
+
+                } catch (error) {
+                    console.error('Error enviando mensaje a IA:', error);
+                    throw error;
                 }
-                return fullResponse;
             }
 
             // ===================
@@ -1332,11 +1317,13 @@
             async sendMessage() {
                 const input = document.getElementById('message-input');
                 const message = input.value.trim();
+
                 if (!message || !this.currentChatId) return;
 
                 const chat = this.chats.find(c => c.id === this.currentChatId);
                 if (!chat) return;
 
+                // Limpiar input
                 input.value = '';
 
                 // Agregar mensaje del usuario
@@ -1345,42 +1332,54 @@
                     content: message,
                     timestamp: new Date().toISOString()
                 };
+
                 chat.messages.push(userMessage);
                 chat.title = this.generateChatTitle(chat);
+
+                // Renderizar mensaje del usuario inmediatamente
                 this.renderMessages(chat);
                 this.playSound('message-out');
 
-                // Crear un mensaje temporal para la IA (vacío)
-                const aiMessage = {
-                    type: 'ai',
-                    content: '',
-                    timestamp: new Date().toISOString()
-                };
-                chat.messages.push(aiMessage);
-                this.renderMessages(chat); // Renderiza el mensaje vacío (solo "IA: ")
-
+                // Mostrar indicador de "pensando"
                 this.showAIThinking(true);
 
                 try {
-                    // Función que se llama con cada nuevo token
-                    const onToken = (token) => {
-                        aiMessage.content += token;
-                        this.renderMessages(chat); // Actualiza el DOM con el nuevo texto
+                    // Enviar a IA
+                    const aiResponse = await this.sendToAI(message, this.currentChatId);
+
+                    // Agregar respuesta de la IA
+                    const aiMessage = {
+                        type: 'ai',
+                        content: aiResponse,
+                        timestamp: new Date().toISOString()
                     };
 
-                    // Enviar y esperar a que termine
-                    await this.sendToAI(message, this.currentChatId, onToken);
+                    chat.messages.push(aiMessage);
 
+                    // Actualizar UI
+                    this.renderMessages(chat);
                     this.playSound('message-in');
+
                 } catch (error) {
                     console.error('Error enviando mensaje:', error);
-                    aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+
+                    // Mensaje de error
+                    const errorMessage = {
+                        type: 'ai',
+                        content: `Error: ${error.message}. Verifica que Ollama esté ejecutándose y el modelo esté disponible.`,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    chat.messages.push(errorMessage);
                     this.renderMessages(chat);
-                } finally {
-                    this.showAIThinking(false);
-                    this.saveChats();
-                    this.renderChatList();
                 }
+
+                // Ocultar indicador de "pensando"
+                this.showAIThinking(false);
+
+                // Guardar cambios
+                this.saveChats();
+                this.renderChatList();
             }
 
             generateChatTitle(chat) {
