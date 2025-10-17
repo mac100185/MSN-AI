@@ -789,7 +789,7 @@
                     </div>
                     <div class="ai-profile">
                         <button class="aerobutton" id="ai-status-btn">
-                            <h3>MSN-AI Assistant</h3>
+                            <h3>MSN-AI Assistante IA</h3>
                             <p id="ai-connection-status">(Conectando...)</p>
                             <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
                         </button>
@@ -803,23 +803,23 @@
 
             <div id="chats-nav">
                 <ul class="iconbar" id="left">
-                    <button class="aerobutton chataction" id="new-chat-btn" title="Nuevo Chat" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="import-btn" title="Importar Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="export-btn" title="Exportar Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="new-chat-btn" title="Nuevo Chat" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="import-btn" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="export-btn" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
                 </ul>
                 <ul class="iconbar" id="right">
-                    <button class="aerobutton chataction smallarrowbtn" id="settings-btn" title="Configuración">
+                    <button class="aerobutton chataction smallarrowbtn" id="settings-btn" title="Configuración del modelo IA">
                         <img src="assets/contacts-window/1489.png" style="height: 16px;">
                         <img class="arrowdown" src="assets/general/small_arrow.svg">
                     </button>
-                    <button class="aerobutton chataction" id="clear-history-btn" title="Limpiar Historial" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="order-history-btn" title="Ordenar Historial" style="background:url(assets/contacts-window/1132.png) no-repeat center;"></button>
                 </ul>
             </div>
 
             <div class="chat-search">
                 <input id="chat-search-input" type="text" placeholder="Buscar en chats...">
-                <button class="searchbar-btn aerobutton" id="export-chats-btn" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
-                <button class="searchbar-btn aerobutton" id="clear-search-btn" style="background:url(assets/contacts-window/1132.png) no-repeat center;"></button>
+                <button class="searchbar-btn aerobutton" id="export-selected-chats-btn" title="Exportar Chats Seleccionados" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
+                <button class="searchbar-btn aerobutton" id="clear-search-btn" title="Limpiar Búsqueda" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
             </div>
 
             <ul class="chat-list" id="chat-list">
@@ -884,19 +884,19 @@
                     <div id="handle"></div>
 
                     <div id="send-area">
-                        <ul id="text-options">
-                            <button class="aerobutton textoption smallarrowbtn" title="Fuente">
+                        <ul id="emoticos-selection">
+                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-natural-btn" title="Naturales">
                                 <img src="assets/chat-window/412.png">
                                 <img class="arrowdown" src="assets/general/small_arrow_black.svg">
                             </button>
-                            <button class="aerobutton textoption smallarrowbtn" title="Emoticons">
+                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-amor-btn" title="Amor">
                                 <img src="assets/chat-window/1487.png">
                                 <img class="arrowdown" src="assets/general/small_arrow_black.svg">
                             </button>
-                            <button class="aerobutton textoption noarrow" title="Negrita" style="background: url(assets/chat-window/414.png) no-repeat center;"></button>
-                            <button class="aerobutton textoption noarrow" title="Cursiva" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
-                            <button class="textoption" title="Subrayado" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
-                            <button class="aerobutton textoption noarrow" title="Color" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="enviar-sumbido-btn" title="Sumbido" style="background: url(assets/chat-window/414.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="texto-por-voz-btn" title="Dictado" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
+                            <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
+                            <button class="aerobutton textoption noarrow" id="editor-texto-btn" title="Editor de Texto" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
                         </ul>
 
                         <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." disabled></textarea>
@@ -922,7 +922,7 @@
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Configuración</h3>
+                <h3>Configuración del Modelo de IA</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div>
@@ -942,7 +942,7 @@
                         <option value="codellama">CodeLlama</option>
                     </select>
                 </label><br><br>
-                <button class="aerobutton" id="test-connection">Probar Conexión</button>
+                <button class="aerobutton" id="test-connection">Probar Conexión...</button>
                 <button class="aerobutton" id="save-settings">Guardar</button>
             </div>
         </div>
