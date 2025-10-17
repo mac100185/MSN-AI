@@ -5,6 +5,7 @@
 # License: GNU General Public License v3.0
 # Description: Docker-based startup for MSN-AI on Windows with intelligent setup
 
+
 Write-Host "🐳 MSN-AI v1.0.0 - Docker Edition" -ForegroundColor Cyan
 Write-Host "=================================="
 Write-Host "📧 Desarrollado por: Alan Mac-Arthur García Díaz" -ForegroundColor Green
