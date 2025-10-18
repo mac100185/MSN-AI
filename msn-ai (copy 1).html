@@ -25,31 +25,9 @@
                     <div class="ai-profile">
                         <button class="aerobutton" id="ai-status-btn">
                             <h3>MSN-AI Assistante IA</h3>
-                            <div style="display: flex; align-items: center; gap: 4px;">
-                                <img id="status-icon" src="assets/status/online.png" alt="Estado" style="width: 16px; height: 16px;">
-                                <p id="ai-connection-status">(Online)</p>
-                            </div>
+                            <p id="ai-connection-status">(Conectando...)</p>
                             <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
                         </button>
-                        <!-- Menú desplegable de estados -->
-                        <div id="status-menu" class="emoticon-picker" style="display:none; position:absolute; top:100%; left:0; z-index:1001; background:white; border:1px solid #ccc; padding:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
-                            <div class="status-option" data-status="online" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
-                                <img src="assets/status/online.png" alt="Online" style="width:16px; height:16px;">
-                                <span>Online</span>
-                            </div>
-                            <div class="status-option" data-status="away" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
-                                <img src="assets/status/away.png" alt="Away" style="width:16px; height:16px;">
-                                <span>Away</span>
-                            </div>
-                            <div class="status-option" data-status="busy" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
-                                <img src="assets/status/busy.png" alt="Busy" style="width:16px; height:16px;">
-                                <span>Busy</span>
-                            </div>
-                            <div class="status-option" data-status="invisible" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
-                                <img src="assets/status/invisible.png" alt="Invisible" style="width:16px; height:16px;">
-                                <span>Invisible</span>
-                            </div>
-                        </div>
                         <button class="aerobutton" id="model-selector">
                             <p style="margin: 0;" id="current-model">Detectando modelo...</p>
                             <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
