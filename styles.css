@@ -173,38 +173,34 @@ a {
     align-items: center;
 }
 
-#ai-status-btn > h3 {
-    font-size: 10pt;
-    font-weight: 600;
-    color: white;
-    margin: 0;
-}
-
-#ai-connection-status {
-    margin: 0;
-    font-size: 8pt;
-    color: #b9dde7;
-    margin-left: 8px;
-}
-
 #model-selector {
-    padding: 0;
+    padding: 3px 8px; /* ✅ Ajustar padding para igualar altura */
     margin: 0;
     height: fit-content;
     display: flex;
-    text-align: start;
     align-items: center;
+    text-align: start;
     color: #b9dde7;
-    padding-top: 2px;
-    padding-bottom: 3px;
     font-size: 8pt;
+    width: 100%;
 }
-
+#model-selector > p {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .arrowchats {
-    margin-left: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
     fill: #b9dde7 !important;
 }
 
+#status-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0; /* ✅ No permitir que se reduzca */
+}
 /* Navegación de chats */
 #chats-nav {
     background-image: url("assets/background/msgres_navbar.png");
@@ -860,15 +856,6 @@ a {
 /* ===== CORRECCIÓN PARA MENÚ DE ESTADOS ===== */
 
 /* Asegurar que ai-profile sea contenedor de posicionamiento */
-.ai-profile {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    height: 100%;
-    justify-content: center;
-    position: relative; /* ✅ CRÍTICO: permite posicionamiento absoluto del menú */
-}
 
 /* Ajustar el botón de estado */
 #ai-status-btn {
@@ -878,13 +865,6 @@ a {
     text-align: start;
     align-items: center;
     position: relative; /* ✅ Referencia para el menú */
-}
-
-#ai-status-btn > h3 {
-    font-size: 10pt;
-    font-weight: 600;
-    color: white;
-    margin: 0;
 }
 
 /* Menú de estados */
@@ -942,4 +922,46 @@ a {
     align-items: center;
     position: relative; /* ✅ Contexto de apilamiento */
     z-index: 1; /* Base para elementos hijos */
+}
+
+#ai-status-btn {
+    padding: 1px 8px;
+    height: fit-content;
+    display: flex;
+    flex-direction: column; /* ✅ Cambiar a columna para apilar elementos */
+    align-items: flex-start; /* ✅ Alinear a la izquierda */
+    text-align: left;
+    width: 100%; /* ✅ Ocupar todo el ancho disponible */
+    gap: 1px; /* Espacio entre elementos */
+}
+#ai-status-btn > h3 {
+    font-size: 10pt;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+    white-space: nowrap; /* Evitar saltos de línea */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#ai-status-btn > div {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%; /* ✅ Asegurar que ocupe el ancho completo */
+}
+#ai-connection-status {
+    margin: 0;
+    font-size: 8pt;
+    color: #b9dde7;
+    white-space: nowrap; /* ✅ Evitar saltos de línea en el estado */
+}
+.ai-profile {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    height: 100%;
+    justify-content: center;
+    position: relative;
+    min-width: 0; /* ✅ Permitir que el flex funcione correctamente */
 }

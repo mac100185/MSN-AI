@@ -24,12 +24,12 @@
                     </div>
                     <div class="ai-profile">
                         <button class="aerobutton" id="ai-status-btn">
-                            <h3>MSN-AI Assistante IA</h3>
-                            <div style="display: flex; align-items: center; gap: 4px;">
+                            <h3>MSN-AI Asistente de IA</h3>
+                            <div style="display: flex; align-items: center; gap: 4px; width: 100%;">
                                 <img id="status-icon" src="assets/status/online.png" alt="Estado" style="width: 16px; height: 16px;">
-                                <p id="ai-connection-status">(Online)</p>
+                                <p id="ai-connection-status" style="margin: 0; font-size: 8pt; color: #b9dde7;">(Online)</p>
+                                <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg" style="margin-left: auto;">
                             </div>
-                            <img class="arrowdown arrowchats" src="assets/general/small_arrow_lightblue.svg">
                         </button>
                         <!-- Menú desplegable de estados -->
                         <div id="status-menu" class="emoticon-picker" style="display:none; position:absolute; top:100%; left:0; z-index:1001; background:white; border:1px solid #ccc; padding:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
@@ -177,31 +177,72 @@
     </div>
 
     <!-- Modales -->
+
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Configuración del Modelo de IA</h3>
                 <span class="modal-close">&times;</span>
             </div>
-            <div>
-                <label>
-                    <input type="checkbox" id="sounds-enabled" checked> Activar sonidos
-                </label><br><br>
-                <label>
-                    Servidor Ollama:
-                    <input type="text" id="ollama-server" placeholder="Se detectará automáticamente..." style="width: 200px;">
-                </label><br><br>
-                <label>
-                    Modelo de IA:
-                    <select id="model-select">
-                        <option value="mistral:7b">Mistral 7B (Recomendado)</option>
-                        <option value="llama3:8b">Llama 3 8B</option>
-                        <option value="phi3:mini">Phi3 Mini</option>
-                        <option value="codellama">CodeLlama</option>
+            <div style="padding: 10px 0;">
+                <!-- ========== SONIDOS ========== -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="sounds-enabled" checked style="margin-right: 8px;">
+                        <span>Activar sonidos</span>
+                    </label>
+                </div>
+
+                <!-- ========== NOTIFICACIONES DE ESTADO ========== -->
+                <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" id="notify-status-changes" checked style="margin-right: 8px;">
+                        <span>Notificar cambios de estado a la IA</span>
+                    </label>
+                    <p style="margin: 8px 0 0 24px; font-size: 7pt; color: #666; line-height: 1.4;">
+                        Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.
+                    </p>
+                </div>
+
+                <!-- ========== SERVIDOR OLLAMA ========== -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                        Servidor Ollama:
+                    </label>
+                    <input
+                        type="text"
+                        id="ollama-server"
+                        placeholder="http://localhost:11434"
+                        style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: Tahoma;">
+                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                        Dirección del servidor Ollama. Déjalo vacío para autodetección.
+                    </p>
+                </div>
+
+                <!-- ========== MODELO DE IA ========== -->
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                        Modelo de IA:
+                    </label>
+                    <select
+                        id="model-select"
+                        style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; font-family: Tahoma;">
+                        <option value="">Cargando modelos...</option>
                     </select>
-                </label><br><br>
-                <button class="aerobutton" id="test-connection">Probar Conexión...</button>
-                <button class="aerobutton" id="save-settings">Guardar</button>
+                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                        Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.
+                    </p>
+                </div>
+
+                <!-- ========== BOTONES ========== -->
+                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                    <button class="aerobutton" id="test-connection" style="margin-right: 8px; padding: 6px 12px;">
+                        🔌 Probar Conexión
+                    </button>
+                    <button class="aerobutton" id="save-settings" style="padding: 6px 12px; font-weight: bold;">
+                        💾 Guardar
+                    </button>
+                </div>
             </div>
         </div>
     </div>

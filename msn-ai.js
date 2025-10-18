@@ -26,13 +26,14 @@ class MSNAI {
       ollamaServer: defaultServer,
       selectedModel: "",
       apiTimeout: 30000,
+      notifyStatusChanges: true,
     };
     this.currentStatus = "online"; // Estado inicial
     this.init();
   }
 
   // =================== FUNCIONES NUEVAS ===================
-  updateStatusDisplay(status) {
+  updateStatusDisplay(status, skipNotification = false) {
     const statusIcon = document.getElementById("status-icon");
     const statusText = document.getElementById("ai-connection-status");
 
@@ -41,12 +42,97 @@ class MSNAI {
     statusIcon.src = iconPath;
 
     // Actualizar el texto
-    statusText.textContent = `(${status.charAt(0).toUpperCase() + status.slice(1)})`;
+    const statusNames = {
+      online: "Online",
+      away: "Away",
+      busy: "Busy",
+      invisible: "Invisible",
+    };
 
-    // Guardar el estado
+    statusText.textContent = `(${statusNames[status] || status})`;
+
+    // Guardar el estado anterior para comparar
+    const previousStatus = this.currentStatus;
     this.currentStatus = status;
-    localStorage.setItem("msnai-current-status", status); // Persistir en localStorage
+    localStorage.setItem("msnai-current-status", status);
+
+    // ===== NOTIFICAR A LA IA AUTOMÁTICAMENTE (SI ESTÁ ACTIVADO) =====
+    // ✅ AÑADIR: No notificar si skipNotification es true (usado en init)
+    if (
+      !skipNotification &&
+      this.currentChatId &&
+      previousStatus !== status &&
+      this.settings.notifyStatusChanges
+    ) {
+      this.notifyStatusChangeToAI(status, previousStatus);
+    }
   }
+  //------------------------------------------
+  // =================== NUEVA FUNCIÓN: NOTIFICAR CAMBIO DE ESTADO ===================
+  // =================== NUEVA FUNCIÓN: NOTIFICAR CAMBIO DE ESTADO ===================
+  async notifyStatusChangeToAI(newStatus, oldStatus) {
+    const chat = this.chats.find((c) => c.id === this.currentChatId);
+    if (!chat) return;
+
+    // Mensajes personalizados según el estado
+    const statusMessages = {
+      online:
+        "He cambiado mi estado a Online. Estoy disponible para conversar.",
+      away: "He cambiado mi estado a Away. Estoy ausente pero puedes dejarme un mensaje.",
+      busy: "He cambiado mi estado a Busy. Estoy ocupado pero responderé cuando pueda.",
+      invisible:
+        "He cambiado mi estado a Invisible. Prefiero no ser visto en este momento.",
+    };
+
+    const userMessage =
+      statusMessages[newStatus] || `He cambiado mi estado a ${newStatus}.`;
+
+    // Crear mensaje del usuario (sistema)
+    const systemMessage = {
+      type: "user",
+      content: userMessage,
+      timestamp: new Date().toISOString(),
+      isSystem: true, // Marcador para distinguir mensajes automáticos
+    };
+
+    chat.messages.push(systemMessage);
+    this.renderMessages(chat);
+    this.saveChats();
+    this.playSound("message-out");
+
+    // Crear mensaje vacío para la respuesta de la IA
+    const aiMessage = {
+      type: "ai",
+      content: "",
+      timestamp: new Date().toISOString(),
+    };
+    chat.messages.push(aiMessage);
+    this.renderMessages(chat);
+    this.showAIThinking(true);
+
+    try {
+      // Enviar contexto del cambio de estado a la IA
+      const contextPrompt = `El usuario ha cambiado su estado de "${oldStatus}" a "${newStatus}". ${userMessage} Responde de manera breve y amigable reconociendo este cambio de estado.`;
+
+      const onToken = (token) => {
+        aiMessage.content += token;
+        this.renderMessages(chat);
+      };
+
+      await this.sendToAI(contextPrompt, this.currentChatId, onToken);
+      this.playSound("message-in");
+    } catch (error) {
+      console.error("Error notificando cambio de estado:", error);
+      aiMessage.content = `He notado tu cambio de estado a ${newStatus}. ¿En qué puedo ayudarte?`;
+      this.renderMessages(chat);
+    } finally {
+      this.showAIThinking(false);
+      this.saveChats();
+      this.renderChatList();
+    }
+  }
+
+  //----------------------------------------
   insertEmojiAtCursor(emoji) {
     const input = document.getElementById("message-input");
     if (input.disabled) return;
@@ -732,30 +818,42 @@ class MSNAI {
       chatList.appendChild(chatElement);
     });
   }
-
+  //-------------------------------------
+  // =================== ACTUALIZACIÓN EN RENDERMESSAGES ===================
   renderMessages(chat) {
     const messagesArea = document.getElementById("messages-area");
     messagesArea.innerHTML = "";
+
     chat.messages.forEach((message) => {
       const messageElement = document.createElement("div");
       messageElement.className = "message";
+
       const time = new Date(message.timestamp).toLocaleTimeString("es-ES", {
         hour: "2-digit",
         minute: "2-digit",
       });
+
       const senderClass =
         message.type === "user" ? "message-user" : "message-ai";
       const sender = message.type === "user" ? "Tú" : "IA";
+
+      // Añadir indicador visual para mensajes de sistema
+      const systemIndicator = message.isSystem
+        ? '<span style="color: #999; font-size: 7pt; margin-left: 5px;">(sistema)</span>'
+        : "";
+
       messageElement.innerHTML = `
-                <span class="${senderClass}"><strong>${sender}</strong></span>
-                <span class="message-timestamp">${time}</span>
-                <div class="message-content">${this.formatMessage(message.content)}</div>
-            `;
+      <span class="${senderClass}"><strong>${sender}</strong>${systemIndicator}</span>
+      <span class="message-timestamp">${time}</span>
+      <div class="message-content">${this.formatMessage(message.content)}</div>
+    `;
+
       messagesArea.appendChild(messageElement);
     });
+
     messagesArea.scrollTop = messagesArea.scrollHeight;
   }
-
+  //-------------------------------------
   formatMessage(content) {
     return content
       .replace(/\n/g, "<br>")
@@ -847,16 +945,20 @@ class MSNAI {
       modelElement.textContent = "No hay modelos disponibles";
     }
   }
-
+  //----------------------------------
   updateSettingsUI() {
     const soundsEnabledEl = document.getElementById("sounds-enabled");
     const ollamaServerEl = document.getElementById("ollama-server");
     const modelSelectEl = document.getElementById("model-select");
+    const notifyStatusEl = document.getElementById("notify-status-changes"); // ✅ NUEVO
+
     if (soundsEnabledEl) soundsEnabledEl.checked = this.settings.soundsEnabled;
     if (ollamaServerEl) ollamaServerEl.value = this.settings.ollamaServer;
     if (modelSelectEl) modelSelectEl.value = this.settings.selectedModel;
+    if (notifyStatusEl)
+      notifyStatusEl.checked = this.settings.notifyStatusChanges; // ✅ NUEVO
   }
-
+  //--------------------------------
   exportChats() {
     const data = {
       version: "1.0",
@@ -908,7 +1010,7 @@ class MSNAI {
     };
     reader.readAsText(file);
   }
-
+  //---------------------------
   setupEventListeners() {
     // Eventos existentes
     document
@@ -937,13 +1039,57 @@ class MSNAI {
         "click",
         () => (document.getElementById("import-modal").style.display = "block"),
       );
+    // Botón de configuración (abrir modal)--------------------
+    // En setupEventListeners(), reemplaza/añade estos eventos:
+    document.getElementById("settings-btn").addEventListener("click", () => {
+      document.getElementById("settings-modal").style.display = "block";
+    });
+
+    // AÑADE ESTOS EVENTOS SI NO EXISTEN:
     document
-      .getElementById("settings-btn")
-      .addEventListener(
-        "click",
-        () =>
-          (document.getElementById("settings-modal").style.display = "block"),
-      );
+      .getElementById("test-connection")
+      .addEventListener("click", async () => {
+        const btn = document.getElementById("test-connection");
+        btn.textContent = "Probando...";
+        btn.disabled = true;
+
+        const connected = await this.checkConnection();
+
+        if (connected) {
+          alert(
+            `✅ Conexión exitosa!\n\nModelos disponibles: ${this.availableModels.length}\n\nServidor: ${this.settings.ollamaServer}`,
+          );
+        } else {
+          alert(`❌ No se pudo conectar`);
+        }
+
+        btn.textContent = "🔌 Probar Conexión";
+        btn.disabled = false;
+      });
+
+    document.getElementById("save-settings").addEventListener("click", () => {
+      this.settings.soundsEnabled =
+        document.getElementById("sounds-enabled").checked;
+      this.settings.ollamaServer = document
+        .getElementById("ollama-server")
+        .value.trim();
+      this.settings.selectedModel =
+        document.getElementById("model-select").value;
+      this.settings.notifyStatusChanges = document.getElementById(
+        "notify-status-changes",
+      ).checked;
+
+      this.saveSettings();
+      this.updateModelStatus();
+
+      alert("✅ Configuración guardada");
+      document.getElementById("settings-modal").style.display = "none";
+    });
+
+    document.getElementById("model-select").addEventListener("change", (e) => {
+      this.settings.selectedModel = e.target.value;
+    });
+    //--------------------------------------------------------------
     document
       .getElementById("chat-search-input")
       .addEventListener("input", (e) => this.filterChats(e.target.value));
@@ -1076,7 +1222,7 @@ class MSNAI {
         document.getElementById("delete-chat-modal").style.display = "none";
       });
   }
-
+  //-----------------------------------------------
   async updateAvailableModels() {
     try {
       const response = await fetch(`${this.settings.ollamaServer}/api/tags`);
@@ -1142,19 +1288,27 @@ class MSNAI {
     this.chatToDelete = chatId; // Guardar temporalmente el ID del chat a eliminar
     document.getElementById("delete-chat-modal").style.display = "block";
   }
-
+  /////---------------------------------------------
   async init() {
     console.log("🚀 Iniciando MSN-AI...");
+
     this.loadSettings();
-    // Cargar el estado guardado
+
+    // ✅ CARGAR Y APLICAR EL ESTADO GUARDADO
     const savedStatus = localStorage.getItem("msnai-current-status");
     if (
       savedStatus &&
       ["online", "away", "busy", "invisible"].includes(savedStatus)
     ) {
       this.currentStatus = savedStatus;
+      // ✅ IMPORTANTE: Actualizar la UI inmediatamente
       this.updateStatusDisplay(savedStatus);
+    } else {
+      // Si no hay estado guardado, establecer online por defecto
+      this.currentStatus = "online";
+      this.updateStatusDisplay("online");
     }
+
     this.loadChats();
     this.initSounds();
     this.setupEventListeners();
@@ -1162,9 +1316,10 @@ class MSNAI {
     this.renderChatList();
     this.createNewChat();
     this.playSound("login");
+
     console.log("✅ MSN-AI iniciado correctamente");
   }
-
+  ////------------------------------
   async autoConfigureConnection() {
     console.log(`🔧 Configurando conexión automática...`);
     const connected = await this.checkConnection();
