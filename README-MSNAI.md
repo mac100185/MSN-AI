@@ -2,13 +2,13 @@
 
 ![MSN-AI Logo](assets/general/logo.png)
 
-**Versión 1.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 2.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 ## 🎯 Descripción
 
 MSN-AI es una aplicación web que combina la nostálgica interfaz de Windows Live Messenger 8.5 con la potencia de los modelos de IA local ejecutados a través de Ollama. 
 
-**🐳 NOVEDAD v1.1.0**: Ahora disponible en **DOS ediciones completas**:
+**🐳 NOVEDAD v2.1.0**: Ahora con **instalación simplificada**:
 - **Docker Edition**: Instalación de un comando, cero configuración
 - **Local Edition**: Máximo rendimiento con instalación tradicional
 
@@ -26,27 +26,53 @@ Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de 
 - Efectos visuales Aero fieles al original
 - Scrollbars personalizados estilo Windows Vista/7
 
+### 🎭 Estados de presencia (como MSN clásico)
+- **Online** 🟢 - Disponible para chatear
+- **Away** 🟡 - Ausente temporalmente
+- **Busy** 🔴 - Ocupado, no molestar
+- **Invisible** ⚪ - Aparecer como desconectado
+- **Notificación a IA** - Opción para que la IA sepa tu estado actual
+
 ### 🤖 IA integrada
 - Soporte para múltiples modelos de IA (Mistral, Llama, Phi3, etc.)
 - Conversaciones contextuales inteligentes
 - Detección automática de modelos disponibles
 - Reconexión automática con Ollama
 - **Detector inteligente de hardware** en ambas ediciones
+- Notificaciones de cambios de estado opcionales
 
 ### 💾 Gestión de datos
 - Almacenamiento local en el navegador (localStorage)
 - Historial completo de conversaciones
-- Sistema de búsqueda en chats
-- Exportación e importación de chats en JSON
+- **Búsqueda avanzada**: En todos los chats o dentro de un chat específico
+- **Exportación flexible**: Todos los chats o solo los seleccionados
+- Importación de chats en JSON
 - **Volúmenes persistentes** en Docker Edition
+- **Ordenar historial** por fecha (ascendente/descendente)
+
+### 📝 Edición de texto avanzada
+- **Ajuste de tamaño de fuente** - Aumentar/disminuir para mejor legibilidad
+- **Emoticones** - Categorías: Naturales 😊 y Amor ❤️
+- **Formato de texto** - Negrita, cursiva, subrayado
+- **Subir archivos de texto** - Carga archivos .txt directamente al chat
+- **Dictado por voz** 🎤 - Transcripción de voz a texto (Web Speech API)
+- **Zumbido/Nudge** 📳 - Envía "sacudidas" como en MSN original
 
 ### 🔊 Experiencia inmersiva
-- Sonidos auténticos de MSN (login, mensajes, notificaciones)
+- Sonidos auténticos de MSN (login, mensajes, notificaciones, nudge)
 - Indicadores visuales de estado de conexión
 - Animaciones de "IA pensando"
 - Interfaz completamente responsive
 
-### 🐳 Docker Edition (NUEVO v1.1.0)
+### 🛠️ Funcionalidades avanzadas
+- **Imprimir chat actual** - Genera versión imprimible de la conversación
+- **Exportar chat individual** - Descarga solo la conversación abierta
+- **Limpiar chat** - Borra mensajes sin eliminar el chat completo
+- **Cerrar chat** - Cierra la vista sin eliminar historial
+- **Búsqueda con resaltado** - Encuentra texto en conversaciones
+- **Modal de información** - Acceso rápido a contacto y documentación
+
+### 🐳 Docker Edition (v2.1.0 - Instalación Simplificada)
 - **Instalación de cero prerequisitos** - Solo requiere Docker
 - **Containerización completa** - Aislamiento total del sistema
 - **Instalación automática de Docker** si no está presente
@@ -228,13 +254,88 @@ ps aux | grep -E "(python.*http|ollama|start-msnai)"
 - Los mensajes se cargan automáticamente
 
 #### Buscar chats
-- Usar la barra de búsqueda superior
+- **Buscar en todos los chats**: Usar la barra de búsqueda superior
+- **Buscar en chat actual**: Botón de lupa en la barra del chat
 - Busca en títulos y contenido de mensajes
-- Filtrado en tiempo real
+- Filtrado en tiempo real con resaltado
+
+#### Ordenar historial
+- Botón "Ordenar Historial" en la barra de navegación
+- Alterna entre orden ascendente y descendente por fecha
+- Mantiene el orden entre sesiones
+
+#### Exportar chats
+1. **Exportar todos**: Clic en botón de exportar (icono de carpeta)
+2. **Exportar seleccionados**: Selecciona chats → botón "Exportar Seleccionados"
+3. **Exportar chat actual**: Botón en barra del chat activo
+4. Se descarga archivo JSON con las conversaciones
+
+#### Importar chats
+1. Clic en botón de importar
+2. Seleccionar archivo JSON exportado previamente
+3. Los chats se agregan al historial existente
+
+#### Limpiar chat
+- Botón "Limpiar chat" (escoba) en barra superior
+- Borra todos los mensajes del chat actual
+- Mantiene el chat en el historial
+
+#### Cerrar chat
+- Botón "Cerrar chat" (X) en barra superior
+- Cierra la vista actual sin eliminar
+- Sugiere crear nuevo chat
 
 #### Eliminar chat
 - Clic derecho sobre un chat → Confirmar eliminación
-- **⚠️ Acción irreversible**
+- Modal de confirmación para evitar errores
+- **⚠️ Acción irreversible - elimina todo el historial**
+
+#### Imprimir chat
+- Botón "Imprimir" en barra del chat
+- Genera versión imprimible de la conversación
+- Abre diálogo de impresión del navegador
+
+### Edición de texto y mensajes
+
+#### Cambiar estado de presencia
+- Clic en el botón de estado (debajo del avatar)
+- Seleccionar: Online, Away, Busy o Invisible
+- El icono y texto se actualizan inmediatamente
+- **Opcional**: Notificar cambio a la IA en chat activo
+
+#### Ajustar tamaño de texto
+- **Aumentar**: Botón "+" en barra del chat
+- **Disminuir**: Botón "-" en barra del chat
+- Rango: 10px a 32px
+- Se aplica solo al chat actual
+
+#### Usar emoticones
+- **Naturales** 😊: Botón con cara sonriente
+- **Amor** ❤️: Botón con corazón
+- Picker desplegable con selección visual
+- Se insertan en el área de texto
+
+#### Formato de texto
+- Botón "Editor de texto" en área de envío
+- **N** = Negrita, **C** = Cursiva, **S** = Subrayado
+- Se aplica al texto seleccionado
+
+#### Enviar zumbido/nudge
+- Botón "Sumbido" (📳) en área de envío
+- Reproduce sonido y animación de sacudida
+- Funcionalidad clásica de MSN
+
+#### Dictado por voz
+- Botón "Dictado" (🎤) en área de envío
+- Requiere permisos de micrófono
+- Transcribe voz a texto automáticamente
+- Compatible con navegadores modernos (Chrome, Edge)
+
+#### Subir archivo de texto
+- Botón "Subir archivo" en barra del chat
+- Seleccionar archivo .txt
+- El contenido se carga en el área de mensaje
+- Perfecto para consultas largas o código
 
 ### Configuración
 
@@ -242,6 +343,8 @@ ps aux | grep -E "(python.*http|ollama|start-msnai)"
 - Clic en el botón de engranaje (esquina superior derecha)
 
 #### Opciones disponibles
+- **Activar sonidos**: Checkbox para habilitar/deshabilitar efectos de audio
+- **Notificar cambios de estado a la IA**: La IA recibirá un mensaje automático cuando cambies tu estado (Online/Away/Busy/Invisible)
 - **Sonidos**: Activar/desactivar efectos de sonido
 - **Servidor Ollama**: Cambiar URL del servidor (por defecto: `http://localhost:11434`)
 - **Modelo de IA**: Seleccionar modelo preferido para nuevos chats
@@ -300,7 +403,7 @@ ps aux | grep -E "(python.*http|ollama|start-msnai)"
 | `message_in.wav` | Mensaje recibido | Cuando la IA responde |
 | `message_out.wav` | Mensaje enviado | Al enviar tu mensaje |
 | `nudge.wav` | Zumbido/notificación | Al crear nuevo chat y exportar |
-| `calling.wav` | Sonido de llamada | Futuras funcionalidades |
+| `calling.wav` | Sonido de llamada | Reservado para futuras funcionalidades |
 
 ## ⚙️ Configuración avanzada
 
@@ -581,8 +684,13 @@ const response = await fetch(`${ollamaUrl}/api/generate`, {
 - [ ] **Mobile**: PWA (Progressive Web App) para móviles
 
 ### [1.3.0] - Funcionalidades avanzadas
+- [x] **Emoticons**: Integrados (Naturales y Amor) ✅
+- [x] **Dictado por voz**: Speech-to-text implementado ✅
+- [x] **Estados de presencia**: Online/Away/Busy/Invisible ✅
+- [x] **Búsqueda avanzada**: En chats y dentro de chats ✅
+- [x] **Editor de texto**: Formato y ajuste de tamaño ✅
 - [ ] **Temas**: Modo oscuro, colores personalizables
-- [ ] **Emoticons**: Animados estilo MSN original
+- [ ] **Emoticons animados**: Versión animada estilo MSN original
 - [ ] **IA múltiple**: Varios modelos simultáneos
 - [ ] **Plugins**: Sistema de extensiones
 - [ ] **Cifrado**: End-to-end para chats sensibles
@@ -598,8 +706,10 @@ const response = await fetch(`${ollamaUrl}/api/generate`, {
 - [ ] **RAG**: Retrieval-Augmented Generation con documentos
 - [ ] **Code execution**: Ejecución de código en sandbox
 - [ ] **Multimodal**: Soporte para imágenes y archivos
-- [ ] **Voice**: Text-to-speech y speech-to-text
+- [ ] **Voice mejorado**: Text-to-speech para respuestas de IA
 - [ ] **Memoria extendida**: Base de datos vectorial
+- [ ] **Compartir chats**: Generar links para compartir conversaciones
+- [ ] **Backup automático**: Exportación programada de chats
 
 ## 📊 Métricas y estadísticas
 
@@ -765,8 +875,8 @@ cd MSN-AI
 
 *"Donde cada mensaje es una conexión entre el pasado que amamos y el futuro que construimos"*
 
-**MSN-AI v1.1.0 - Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
-**Licenciado bajo GPL-3.0 | Enero 2025**
+**MSN-AI v2.1.0 - Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
+**Licenciado bajo GPL-3.0 | Diciembre 2024**
 
 **🐳 Docker Edition | 💻 Local Edition | 🎯 Tu elección, tu experiencia**
 **Causa**: localStorage del navegador fue limpiado
@@ -843,9 +953,17 @@ msnai.on('message', (message) => {
 ### Estructura del proyecto
 ```
 MSN-AI/
-├── msn-ai.html          # Aplicación principal (todo en uno)
+├── msn-ai.html          # Aplicación principal HTML
+├── msn-ai.js            # Lógica JavaScript (modularizado)
+├── styles.css           # Estilos CSS (modularizado)
 ├── ai_check_all.sh      # Script de detección de hardware
-├── backup/              # Respaldos de archivos originales
+├── docker/              # Configuración Docker v2.1.0
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── docker-entrypoint.sh
+│   ├── healthcheck.sh
+│   ├── scripts/
+│   └── README-DOCKER.md
 ├── assets/              # Recursos multimedia
 │   ├── sounds/          # Efectos de sonido
 │   ├── background/      # Imágenes de fondo
@@ -865,14 +983,29 @@ MSN-AI/
 5. Crear Pull Request
 
 ### Roadmap
+
+#### ✅ Implementado en v2.1.0
+- [x] Estados de presencia (Online, Away, Busy, Invisible)
+- [x] Emoticones (Naturales y Amor)
+- [x] Dictado por voz (Speech-to-text)
+- [x] Editor de texto avanzado (formato y tamaño)
+- [x] Búsqueda avanzada en chats
+- [x] Subir archivos de texto
+- [x] Zumbido/Nudge manual
+- [x] Exportación selectiva de chats
+- [x] Imprimir y ordenar historial
+
+#### 🔮 Próximas versiones
 - [ ] Soporte para más modelos de IA (Claude, GPT local)
 - [ ] Sistema de plugins para extensiones
-- [ ] Temas personalizables
+- [ ] Temas personalizables (modo oscuro)
+- [ ] Emoticones animados estilo MSN
 - [ ] Integración con servicios de nube
-- [ ] App móvil híbrida
+- [ ] App móvil híbrida (PWA)
 - [ ] Cifrado end-to-end para chats
 - [ ] Colaboración en tiempo real
 - [ ] Integración con Escargot/MSN servers
+- [ ] Text-to-speech para respuestas de IA
 
 ## 📄 Licencia y Términos Legales
 
@@ -956,7 +1089,7 @@ Ver el archivo [LICENSE](LICENSE) para el texto completo.
 
 **¡Disfruta de la nostalgia con el poder de la IA moderna! 🚀✨**
 
-*MSN-AI v1.0.0 - Donde el pasado se encuentra con el futuro*
+*MSN-AI v2.1.0 - Donde el pasado se encuentra con el futuro*
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**

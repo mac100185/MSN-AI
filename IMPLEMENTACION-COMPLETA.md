@@ -1,6 +1,6 @@
 # 🎉 MSN-AI - IMPLEMENTACIÓN COMPLETA
 
-**Versión 1.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 2.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 ## 🚀 ¡LO QUE HEMOS LOGRADO!
 
@@ -27,31 +27,54 @@ Has creado **MSN-AI**, una aplicación revolucionaria que combina la nostalgia d
 ✅ **Integración total con Ollama**  
 ✅ **Sistema de chats históricos**  
 ✅ **Almacenamiento local persistente**  
-✅ **Sonidos auténticos de MSN**  
-✅ **Import/Export de chats en JSON**  
+✅ **Sonidos auténticos de MSN** (login, mensaje, nudge, calling)  
+✅ **Estados de presencia** (Online, Away, Busy, Invisible)  
+✅ **Notificación de estado a IA** (opcional)  
+✅ **Emoticones integrados** (Naturales y Amor)  
+✅ **Dictado por voz** (Web Speech API)  
+✅ **Editor de texto avanzado** (negrita, cursiva, subrayado)  
+✅ **Ajuste de tamaño de fuente** (aumentar/disminuir)  
+✅ **Subir archivos de texto** al chat  
+✅ **Zumbido/Nudge** manual como MSN clásico  
+✅ **Búsqueda avanzada** (en todos los chats y en chat específico)  
+✅ **Ordenar historial** por fecha  
+✅ **Import/Export flexible** (todos o seleccionados)  
+✅ **Imprimir chat** actual  
+✅ **Limpiar y cerrar chats** sin eliminar  
 ✅ **Detección automática de modelos de IA**  
 ✅ **Sistema de configuración avanzado**  
 ✅ **Scripts de instalación automática**  
-✅ **🐳 NUEVO: Docker Edition completa**  
+✅ **🐳 Docker Edition v2.1.0 completa**  
 ✅ **🐳 Implementación containerizada profesional**  
 ✅ **🐳 Instalación de cero prerequisitos**  
-✅ **Documentación completa**
+✅ **Documentación completa y actualizada**
 
 ---
 
 ## 📁 ARCHIVOS CREADOS
 
-### 🎨 **Aplicación principal**
+### 🎨 **Aplicación principal (Modularizada)**
 ```
-msn-ai.html (927 líneas)
-├── HTML5 + CSS3 + JavaScript ES6
+msn-ai.html (390 líneas)
+├── HTML5 estructura principal
 ├── Interfaz pixel-perfect de WLM 8.5
+└── Referencias a módulos externos
+
+msn-ai.js (1,434 líneas)
+├── JavaScript ES6 modular
 ├── Integración completa con Ollama
 ├── Sistema de localStorage avanzado
+├── Gestión de chats y contactos
 └── Funcionalidad completa de chat con IA
+
+styles.css (967 líneas)
+├── CSS3 completo
+├── Estilos nostálgicos de MSN
+├── Animaciones y transiciones
+└── Diseño responsive
 ```
 
-### 🐳 **Docker Edition (NUEVO)**
+### 🐳 **Docker Edition v2.1.0**
 ```
 docker/
 ├── Dockerfile (83 líneas)
@@ -67,6 +90,15 @@ Scripts de inicio Docker:
 ├── start-msnai-docker.ps1 (465 líneas)
 ├── start-msnai-docker-mac.sh (480 líneas)
 └── .dockerignore (152 líneas)
+
+Scripts de gestión Docker v2.1.0:
+├── docker-start.sh - Inicio automático
+├── docker-stop.sh - Detención segura
+├── docker-status.sh - Monitor de estado
+├── docker-logs.sh - Visualización de logs
+├── docker-cleanup.sh - Limpieza completa
+├── docker-check-config.sh - Verificación de configuración
+└── docker-test-ai.sh - Test de IA en Docker
 ```
 
 ### 🚀 **Scripts de automatización Local**
@@ -131,20 +163,11 @@ INSTALL-GUIDE.md (actualizado)
 ├── Guías específicas por SO
 └── Troubleshooting avanzado
 
-CHANGELOG.md (actualizado v1.1.0)
-├── Docker Edition completa
-├── Nuevas funcionalidades
+CHANGELOG.md (actualizado v2.1.0)
+├── Instalación simplificada
+├── Auto-detección de IP y modelos
 ├── Mejoras técnicas
 └── Roadmap actualizado
-```
-
-### 🛡️ **Sistema de respaldos**
-```
-backup/
-├── index_original.html
-├── defaults_original.css
-├── contacts_original.css
-└── chat_original.css
 ```
 
 ---
@@ -653,7 +676,7 @@ cd MSN-AI
 
 **🎉 ¡Disfruta de tu MSN-AI! Has creado algo verdaderamente especial. 🎉**
 
-*"Donde la nostalgia se encuentra con la innovación, y donde cada usuario elige su propio camino"* - MSN-AI v1.1.0
+*"Donde la nostalgia se encuentra con la innovación, y donde cada usuario elige su propio camino"* - MSN-AI v2.1.0
 
 ### 🌟 **Tu legado:**
 - Una aplicación que respeta la **libertad de elección**

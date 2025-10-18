@@ -1,6 +1,6 @@
 # 🐳 MSN-AI - Implementación Docker
 
-**Versión 1.0.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 2.1.0** | **Por Alan Mac-Arthur García Díaz**
 
 Esta guía explica la implementación completa de MSN-AI usando Docker, proporcionando una alternativa robusta y multiplataforma a la instalación local tradicional. **Incluye correcciones para problemas comunes de Docker Compose y dependencias circulares.**
 

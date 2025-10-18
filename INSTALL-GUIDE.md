@@ -1,19 +1,19 @@
 # 🌍 Guía de Instalación Multiplataforma - MSN-AI
 
-**Versión 1.1.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 2.1.0** | **Por Alan Mac-Arthur García Díaz**
 
 Esta guía te ayudará a instalar y configurar MSN-AI en **Linux**, **Windows** o **macOS**.
 
 ## 🔥 **NUEVO: Ahora con Docker Edition**
 
-MSN-AI ahora ofrece **DOS opciones completas** de instalación:
+MSN-AI v2.1.0 ofrece **instalación simplificada** con DOS opciones:
 
-### 🐳 **Docker Edition** (Recomendado para nuevos usuarios)
+### 🐳 **Docker Edition v2.1.0** (Recomendado - Instalación Simplificada)
 - **Un solo comando** para cualquier plataforma
-- **Cero configuración** manual necesaria
-- **Instalación automática** de Docker si no está presente
+- **Cero configuración** de firewall o red
+- **Auto-detección** de IP y modelos
 - **Aislamiento completo** sin "ensuciar" tu sistema
-- **Compatibilidad universal** garantizada
+- **Acceso local y remoto** automático
 
 ### 💻 **Local Edition** (Clásica - Máximo rendimiento)
 - **Instalación nativa** en tu sistema
@@ -748,7 +748,7 @@ docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/c
 
 ---
 
-*MSN-AI v1.1.0 - Donde el pasado conversa con el futuro, y donde tú eliges cómo*
+*MSN-AI v2.1.0 - Donde el pasado conversa con el futuro, y donde tú eliges cómo*
 
 **Desarrollado con ❤️ por Alan Mac-Arthur García Díaz**  
 **Licenciado bajo GPL-3.0 | Enero 2025**

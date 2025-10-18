@@ -4,7 +4,7 @@
 
 > *Donde la nostalgia se encuentra con la inteligencia artificial moderna*
 
-**Versión 1.0.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 2.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 ## 🎯 ¿Qué es MSN-AI?
 
@@ -18,7 +18,16 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 - 🤖 **IA local integrada** - Compatible con Mistral, Llama, Phi3 y más
 - 💾 **Historial persistente** - Tus chats se guardan automáticamente
 - 🔊 **Sonidos originales** - Efectos auténticos de MSN
-- 📤 **Import/Export** - Migra tus conversaciones fácilmente
+- 🎭 **Estados de presencia** - Online, Away, Busy, Invisible (como MSN clásico)
+- 😊 **Emoticones integrados** - Naturales y de amor
+- 🎤 **Dictado por voz** - Escribe con tu voz
+- 📝 **Editor de texto** - Formato (negrita, cursiva, subrayado) y ajuste de tamaño
+- 📄 **Subir archivos** - Carga archivos de texto a la conversación
+- 🔍 **Búsqueda avanzada** - Busca en todos los chats o dentro de uno específico
+- 📳 **Zumbidos** - Envía "nudges" como en MSN original
+- 📤 **Import/Export** - Migra tus conversaciones fácilmente (todos o seleccionados)
+- 🖨️ **Imprimir chats** - Imprime tus conversaciones
+- 📢 **Notificaciones de estado** - La IA puede saber cuando cambias tu estado
 - 🌐 **100% Local** - Sin dependencias de servicios externos
 - ⚡ **Instalación automática** - Un comando y listo
 
@@ -257,8 +266,10 @@ ollama pull mistral:7b  # Modelo recomendado
 
 ```
 MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
-├── msn-ai.html              # 🎯 Aplicación principal (TODO EN UNO)
-├── 🐳 DOCKER EDITION v1.1.0 (CORREGIDO):
+├── msn-ai.html              # 🎯 Aplicación principal HTML
+├── msn-ai.js                # 💻 Lógica JavaScript (modularizado)
+├── styles.css               # 🎨 Estilos CSS (modularizado)
+├── 🐳 DOCKER EDITION v2.1.0:
 │   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux (FIXED)
 │   ├── start-msnai-docker.ps1      # 🪟 Inicio Docker Windows
 │   ├── start-msnai-docker-mac.sh   # 🍎 Inicio Docker macOS
@@ -267,6 +278,8 @@ MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 │   ├── 🆕 docker-cleanup.sh        # 🧹 Limpieza completa + NUCLEAR MSN-AI
 │   ├── 🆕 docker-logs.sh           # 📋 Visualizador logs
 │   ├── 🆕 docker-status.sh         # 📊 Monitor estado
+│   ├── 🆕 docker-check-config.sh   # ⚙️ Verificación configuración
+│   ├── 🆕 docker-test-ai.sh        # 🤖 Test de IA en Docker
 │   ├── docker/                     # 📁 Configuración Docker
 │   │   ├── Dockerfile              # 🏗️ Imagen principal
 │   │   ├── docker-compose.yml      # 🎼 Orquestación (sin version obsoleta)
@@ -300,7 +313,6 @@ MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 │   ├── general/             # 🖼️ Elementos UI generales
 │   ├── scrollbar/           # 🖼️ Elementos personalizados
 │   └── status/              # 🖼️ Iconos de estado
-└── backup/                  # 🛡️ Respaldos de archivos originales
 ```
 
 ### 🌐 **Clonar repositorio:**
@@ -310,6 +322,15 @@ cd MSN-AI
 ```
 
 ## 🎮 Uso básico
+
+### 🎭 Selector de Estado
+Cambia tu estado de presencia (como en MSN clásico):
+- **Online** 🟢 - Disponible
+- **Away** 🟡 - Ausente
+- **Busy** 🔴 - Ocupado
+- **Invisible** ⚪ - Invisible
+
+**Bonus**: Activa la opción "Notificar cambios de estado a la IA" en configuración para que la IA sepa cuando cambias tu estado.
 
 ### Crear nuevo chat
 1. Clic en el botón **"+"** 
@@ -322,11 +343,29 @@ cd MSN-AI
 3. Escucha el sonido de envío
 4. La IA responde con sonido de recepción
 
+### 📝 Herramientas de edición de texto
+- **Aumentar/Disminuir tamaño** - Ajusta el tamaño de fuente del chat
+- **Emoticones** - Naturales 😊 y Amor ❤️
+- **Zumbido** 📳 - Envía un "nudge" como en MSN clásico
+- **Dictado por voz** 🎤 - Dicta tus mensajes (requiere permisos de micrófono)
+- **Formato de texto** - Negrita, cursiva, subrayado
+- **Subir archivo** 📄 - Carga archivos de texto al chat
+
 ### Gestionar chats
-- **Buscar**: Usa la barra de búsqueda superior
-- **Exportar**: Botón de exportar → Descarga JSON
+- **Buscar en todos los chats**: Usa la barra de búsqueda superior
+- **Buscar en chat actual**: Botón de lupa en la barra del chat
+- **Ordenar historial**: Organiza tus chats por fecha
+- **Exportar todos**: Botón de exportar → Descarga JSON
+- **Exportar seleccionados**: Selecciona chats y exporta solo esos
 - **Importar**: Botón de importar → Selecciona archivo JSON
+- **Limpiar chat**: Borra mensajes sin eliminar el chat
+- **Cerrar chat**: Cierra la vista actual
+- **Eliminar chat**: Elimina permanentemente (con confirmación)
 - **Configurar**: Botón de engranaje → Ajustes avanzados
+
+### 🖨️ Funciones adicionales
+- **Exportar chat actual** - Descarga solo la conversación abierta
+- **Imprimir chat** - Imprime la conversación actual
 
 ## 🔊 Experiencia auditiva
 
@@ -342,14 +381,16 @@ cd MSN-AI
 
 Accede desde el botón de **engranaje** en la interfaz:
 
-- 🔊 **Sonidos**: Activar/desactivar efectos
-- 🌐 **Servidor Ollama**: Configurar URL (por defecto: `localhost:11434`)
-- 🤖 **Modelo de IA**: Seleccionar modelo preferido
+- 🔊 **Sonidos**: Activar/desactivar efectos auténticos de MSN
+- 📢 **Notificar cambios de estado**: La IA sabrá cuando cambias tu estado (Online/Away/Busy/Invisible)
+- 🌐 **Servidor Ollama**: Configurar URL (autodetección o manual)
+- 🤖 **Modelo de IA**: Seleccionar modelo preferido (Mistral, Llama, Phi3, etc.)
+- 🔌 **Probar conexión**: Verifica la conexión con Ollama
 - 🧪 **Test de conexión**: Verificar conectividad
 
 ## 🆘 Solución de problemas
 
-### 🐳 **Problemas Docker v1.1.0 - CORREGIDOS**
+### 🐳 **Problemas Docker - CORREGIDOS en v2.1.0**
 
 #### ✅ "docker-compose: command not found" - SOLUCIONADO
 ```bash
@@ -593,7 +634,7 @@ Revive la época dorada del MSN mientras conversas con la IA más avanzada. Una 
 git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
 ```
 
-### 🐳 Docker v1.1.0 (Recomendado - Issues Fixed):
+### 🐳 Docker v2.1.0 (Recomendado - Instalación Simplificada):
 ```bash
 # 1. Clonar e iniciar:
 git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
