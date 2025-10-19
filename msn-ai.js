@@ -1011,6 +1011,20 @@ class MSNAI {
     reader.readAsText(file);
   }
   //---------------------------
+  // Helper para registrar event listeners con verificacion
+  addEventListenerSafe(elementId, event, handler) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.addEventListener(event, handler);
+      console.log(`✅ Event listener registrado: ${elementId}`);
+      return true;
+    } else {
+      console.warn(`⚠️ Elemento no encontrado: ${elementId}`);
+      return false;
+    }
+  }
+
+  //---------------------------
   setupEventListeners() {
     // Eventos existentes
     document
@@ -1027,29 +1041,45 @@ class MSNAI {
     document
       .getElementById("new-chat-btn")
       .addEventListener("click", () => this.createNewChat());
-    document
-      .getElementById("export-btn")
-      .addEventListener(
-        "click",
-        () => (document.getElementById("export-modal").style.display = "block"),
-      );
-    document
-      .getElementById("import-btn")
-      .addEventListener(
-        "click",
-        () => (document.getElementById("import-modal").style.display = "block"),
-      );
-
-    // Event listeners para los botones dentro de los modales de import/export
-    document.getElementById("download-chats").addEventListener("click", () => {
-      this.exportChats();
-      document.getElementById("export-modal").style.display = "none";
+    document.getElementById("export-btn").addEventListener("click", () => {
+      console.log("📤 Abriendo modal de exportación...");
+      const exportModal = document.getElementById("export-modal");
+      if (exportModal) {
+        exportModal.style.display = "block";
+        console.log("✅ Modal de exportación abierto");
+      } else {
+        console.error("❌ Modal de exportación no encontrado");
+      }
+    });
+    document.getElementById("import-btn").addEventListener("click", () => {
+      console.log("📥 Abriendo modal de importación...");
+      const importModal = document.getElementById("import-modal");
+      if (importModal) {
+        importModal.style.display = "block";
+        console.log("✅ Modal de importación abierto");
+      } else {
+        console.error("❌ Modal de importación no encontrado");
+      }
     });
 
-    document
-      .getElementById("import-chats-btn")
-      .addEventListener("click", () => {
+    // Event listeners para los botones dentro de los modales de import/export
+    // Usar setTimeout para asegurar que los elementos del modal esten disponibles
+    setTimeout(() => {
+      this.addEventListenerSafe("download-chats", "click", () => {
+        console.log("🔽 Exportando chats...");
+        this.exportChats();
+        const exportModal = document.getElementById("export-modal");
+        if (exportModal) exportModal.style.display = "none";
+      });
+
+      this.addEventListenerSafe("import-chats-btn", "click", () => {
+        console.log("🔼 Importando chats...");
         const fileInput = document.getElementById("import-file");
+        if (!fileInput) {
+          console.error("❌ import-file element not found");
+          alert("Error: No se encontró el selector de archivos");
+          return;
+        }
         const file = fileInput.files[0];
         if (!file) {
           alert("Por favor selecciona un archivo JSON primero");
@@ -1060,9 +1090,11 @@ class MSNAI {
           return;
         }
         this.importChats(file);
-        document.getElementById("import-modal").style.display = "none";
+        const importModal = document.getElementById("import-modal");
+        if (importModal) importModal.style.display = "none";
         fileInput.value = "";
       });
+    }, 100);
 
     // Botón de configuración (abrir modal)--------------------
     // En setupEventListeners(), reemplaza/añade estos eventos:
