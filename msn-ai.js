@@ -193,7 +193,7 @@ class MSNAI {
     });
   }
 
-  sendNudge() {
+  async sendNudge() {
     const chatPanel = document.getElementById("chat-panel");
     chatPanel.style.animation = "nudge 0.5s ease";
     setTimeout(() => (chatPanel.style.animation = ""), 500);
@@ -211,17 +211,33 @@ class MSNAI {
     this.renderMessages(chat);
     this.saveChats();
 
-    setTimeout(() => {
-      const aiResponse = {
-        type: "ai",
-        content: "¡Sí! Estoy aquí. ¿En qué puedo ayudarte?",
-        timestamp: new Date().toISOString(),
+    // Crear mensaje de IA vacío para streaming
+    const aiMessage = {
+      type: "ai",
+      content: "",
+      timestamp: new Date().toISOString(),
+    };
+    chat.messages.push(aiMessage);
+    this.renderMessages(chat);
+    this.showAIThinking(true);
+
+    try {
+      const onToken = (token) => {
+        aiMessage.content += token;
+        this.renderMessages(chat);
       };
-      chat.messages.push(aiResponse);
-      this.renderMessages(chat);
-      this.saveChats();
+
+      await this.sendToAI("¿Estás allí?", this.currentChatId, onToken);
       this.playSound("message-in");
-    }, 800);
+    } catch (error) {
+      console.error("Error enviando sumbido:", error);
+      aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+      this.renderMessages(chat);
+    } finally {
+      this.showAIThinking(false);
+      this.saveChats();
+      this.renderChatList();
+    }
   }
 
   startVoiceInput() {
