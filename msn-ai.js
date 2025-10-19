@@ -11,6 +11,9 @@ class MSNAI {
     this.fontSize = 14;
     this.chatSortOrder = "asc"; // valor inicial: ascendente
     this.pendingFileAttachment = null;
+    this.abortController = null; // Controlador para detener respuestas de IA
+    this.isAIResponding = false; // Estado de si la IA está respondiendo
+    this.wasAborted = false; // Flag para saber si se abortó la última respuesta
     const currentHost = window.location.hostname;
     const isRemoteAccess =
       currentHost !== "localhost" && currentHost !== "127.0.0.1";
@@ -120,12 +123,37 @@ class MSNAI {
       };
 
       await this.sendToAI(contextPrompt, this.currentChatId, onToken);
+
       this.playSound("message-in");
     } catch (error) {
       console.error("Error notificando cambio de estado:", error);
-      aiMessage.content = `He notado tu cambio de estado a ${newStatus}. ¿En qué puedo ayudarte?`;
+
+      // No mostrar error si fue un abort intencional
+      if (error.name === "AbortError") {
+        if (aiMessage.content) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else {
+          aiMessage.content = `He notado tu cambio de estado a ${newStatus}.`;
+        }
+      } else {
+        aiMessage.content = `He notado tu cambio de estado a ${newStatus}. ¿En qué puedo ayudarte?`;
+      }
       this.renderMessages(chat);
     } finally {
+      // Verificar si fue abortado y añadir marcador SIEMPRE
+      if (this.wasAborted) {
+        if (
+          aiMessage.content &&
+          !aiMessage.content.includes("[⏹️ Respuesta detenida")
+        ) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else if (!aiMessage.content) {
+          aiMessage.content = "[⏹️ Respuesta detenida]";
+        }
+        this.renderMessages(chat);
+        this.wasAborted = false;
+      }
+
       this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
@@ -228,12 +256,37 @@ class MSNAI {
       };
 
       await this.sendToAI("¿Estás allí?", this.currentChatId, onToken);
+
       this.playSound("message-in");
     } catch (error) {
       console.error("Error enviando sumbido:", error);
-      aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+
+      // No mostrar error si fue un abort intencional
+      if (error.name === "AbortError") {
+        if (aiMessage.content) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else {
+          aiMessage.content = "Sumbido enviado (respuesta detenida)";
+        }
+      } else {
+        aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+      }
       this.renderMessages(chat);
     } finally {
+      // Verificar si fue abortado y añadir marcador SIEMPRE
+      if (this.wasAborted) {
+        if (
+          aiMessage.content &&
+          !aiMessage.content.includes("[⏹️ Respuesta detenida")
+        ) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else if (!aiMessage.content) {
+          aiMessage.content = "[⏹️ Respuesta detenida]";
+        }
+        this.renderMessages(chat);
+        this.wasAborted = false;
+      }
+
       this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
@@ -505,13 +558,43 @@ class MSNAI {
         this.renderMessages(chat);
       };
 
-      await this.sendToAI(actualMessageToSend, this.currentChatId, onToken);
+      const response = await this.sendToAI(
+        actualMessageToSend,
+        this.currentChatId,
+        onToken,
+      );
+
       this.playSound("message-in");
     } catch (error) {
       console.error("Error enviando mensaje:", error);
-      aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+
+      // No mostrar error si fue un abort intencional
+      if (error.name === "AbortError") {
+        // La respuesta parcial ya está en aiMessage.content
+        if (aiMessage.content) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else {
+          aiMessage.content = "[⏹️ Respuesta detenida]";
+        }
+      } else {
+        aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+      }
       this.renderMessages(chat);
     } finally {
+      // Verificar si fue abortado y añadir marcador SIEMPRE
+      if (this.wasAborted) {
+        if (
+          aiMessage.content &&
+          !aiMessage.content.includes("[⏹️ Respuesta detenida")
+        ) {
+          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        } else if (!aiMessage.content) {
+          aiMessage.content = "[⏹️ Respuesta detenida antes de comenzar]";
+        }
+        this.renderMessages(chat);
+        this.wasAborted = false;
+      }
+
       this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
@@ -640,6 +723,15 @@ class MSNAI {
     if (!this.isConnected) throw new Error("No hay conexión con Ollama");
     const chat = this.chats.find((c) => c.id === chatId);
     if (!chat) throw new Error("Chat no encontrado");
+
+    // Crear nuevo AbortController para esta solicitud
+    this.abortController = new AbortController();
+    this.isAIResponding = true;
+
+    // Mostrar botón de detener
+    const stopBtn = document.getElementById("detener-respuesta-ia-btn");
+    if (stopBtn) stopBtn.style.display = "inline-block";
+
     const context = chat.messages
       .slice(-10)
       .map(
@@ -648,43 +740,84 @@ class MSNAI {
       )
       .join("\n");
     const prompt = context ? `${context}\nUsuario: ${message}` : message;
-    const response = await fetch(`${this.settings.ollamaServer}/api/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: chat.model,
-        prompt: prompt,
-        stream: true,
-        options: { temperature: 0.7, max_tokens: 2000 },
-      }),
-    });
-    if (!response.ok) throw new Error(`Error del servidor: ${response.status}`);
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullResponse = "";
+
+    let fullResponse = ""; // Mover fuera del try para que sea accesible en catch
+
     try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split("\n").filter((line) => line.trim() !== "");
-        for (const line of lines) {
-          try {
-            const json = JSON.parse(line);
-            if (json.response) {
-              fullResponse += json.response;
-              onToken(json.response);
+      const response = await fetch(
+        `${this.settings.ollamaServer}/api/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: chat.model,
+            prompt: prompt,
+            stream: true,
+            options: { temperature: 0.7, max_tokens: 2000 },
+          }),
+          signal: this.abortController.signal, // Añadir señal de aborto
+        },
+      );
+
+      if (!response.ok)
+        throw new Error(`Error del servidor: ${response.status}`);
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+
+          for (const line of lines) {
+            try {
+              const json = JSON.parse(line);
+              if (json.response) {
+                fullResponse += json.response;
+                onToken(json.response);
+              }
+              if (json.done) break;
+            } catch (e) {
+              console.warn("Línea no JSON:", line);
             }
-            if (json.done) break;
-          } catch (e) {
-            console.warn("Línea no JSON:", line);
           }
         }
+      } finally {
+        reader.releaseLock();
       }
+
+      return fullResponse;
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("⏹️ Respuesta de IA detenida por el usuario");
+        this.wasAborted = true;
+        // fullResponse contiene lo generado hasta el momento del abort
+        // No lanzar error, solo retornar lo que se generó
+        return fullResponse;
+      }
+      throw error;
     } finally {
-      reader.releaseLock();
+      // Ocultar botón de detener y limpiar estado
+      this.isAIResponding = false;
+      if (stopBtn) stopBtn.style.display = "none";
+      this.abortController = null;
     }
-    return fullResponse;
+  }
+
+  stopAIResponse() {
+    if (this.abortController && this.isAIResponding) {
+      console.log("🛑 Deteniendo respuesta de IA...");
+      this.abortController.abort();
+      this.showAIThinking(false);
+      this.playSound("nudge");
+
+      // El mensaje se marcará automáticamente en sendMessage cuando termine
+      // No necesitamos añadir el marcador aquí porque se hace después del abort
+    }
   }
 
   createNewChat() {
@@ -718,6 +851,19 @@ class MSNAI {
     this.renderMessages(chat);
     document.getElementById("message-input").disabled = false;
     document.getElementById("send-button").disabled = false;
+
+    // Cambiar automáticamente el modelo al seleccionar un chat
+    if (this.settings.selectedModel !== chat.model && chat.model) {
+      this.settings.selectedModel = chat.model;
+      this.saveSettings();
+      this.updateModelSelect();
+      this.updateModelStatus();
+
+      // Actualizar visualmente los headers de modelo
+      this.updateModelHeadersVisual();
+
+      console.log(`🤖 Modelo cambiado automáticamente a: ${chat.model}`);
+    }
   }
 
   generateChatTitle(chat) {
@@ -741,100 +887,281 @@ class MSNAI {
   renderChatList() {
     const chatList = document.getElementById("chat-list");
     chatList.innerHTML = "";
+
     if (this.chats.length === 0) {
       chatList.innerHTML =
         '<li style="padding: 20px; text-align: center; color: #666;">No hay chats. Crea uno nuevo.</li>';
       return;
     }
-    this.chats.forEach((chat) => {
-      const chatElement = document.createElement("li");
-      chatElement.className = "chat-item";
-      chatElement.setAttribute("data-chat-id", chat.id);
 
-      const lastMessage =
-        chat.messages.length > 0
-          ? chat.messages[chat.messages.length - 1].content.substring(0, 60) +
-            "..."
-          : "Sin mensajes";
-      const date = new Date(chat.date).toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
+    // Agrupar chats por modelo
+    const chatsByModel = {};
+    this.chats.forEach((chat) => {
+      const model = chat.model || "Sin modelo";
+      if (!chatsByModel[model]) {
+        chatsByModel[model] = [];
+      }
+      chatsByModel[model].push(chat);
+    });
+
+    // Renderizar cada grupo de modelo
+    Object.keys(chatsByModel).forEach((modelName) => {
+      const chatsInModel = chatsByModel[modelName];
+
+      // Crear elemento de grupo/categoría del modelo
+      const modelGroup = document.createElement("li");
+      modelGroup.className = "model-group";
+      modelGroup.style.padding = "0";
+      modelGroup.style.margin = "0";
+
+      // Header del modelo (con ícono y nombre)
+      const modelHeader = document.createElement("div");
+      modelHeader.className = "model-header";
+      modelHeader.style.display = "flex";
+      modelHeader.style.alignItems = "center";
+      modelHeader.style.padding = "8px 10px";
+      modelHeader.style.cursor = "pointer";
+      modelHeader.style.backgroundColor = "#e8f0f8";
+      modelHeader.style.borderBottom = "1px solid #ccc";
+      modelHeader.style.fontWeight = "bold";
+      modelHeader.style.fontSize = "11px";
+
+      // Ícono del modelo (imagen de avatar)
+      const arrowIcon = document.createElement("img");
+      arrowIcon.src = "assets/contacts-window/37.png"; // Verde (expandido)
+      arrowIcon.style.width = "14px";
+      arrowIcon.style.height = "14px";
+      arrowIcon.style.marginRight = "8px";
+      arrowIcon.dataset.expanded = "true";
+
+      // Nombre del modelo
+      const modelNameSpan = document.createElement("span");
+      modelNameSpan.textContent = `${modelName} (${chatsInModel.length})`;
+      modelNameSpan.style.flex = "1";
+
+      // Indicador visual si es el modelo actualmente seleccionado
+      if (this.settings.selectedModel === modelName) {
+        modelHeader.style.backgroundColor = "#d0e5f5";
+        modelHeader.style.fontWeight = "900";
+      }
+
+      // Ensamblar header
+      modelHeader.appendChild(arrowIcon);
+      modelHeader.appendChild(modelNameSpan);
+
+      // Contenedor de chats dentro del grupo
+      const chatsContainer = document.createElement("ul");
+      chatsContainer.className = "model-chats-container";
+      chatsContainer.style.listStyle = "none";
+      chatsContainer.style.padding = "0";
+      chatsContainer.style.margin = "0";
+
+      // Límite de chats visibles inicialmente
+      const maxVisible = 3;
+
+      // Renderizar cada chat del modelo
+      chatsInModel.forEach((chat, index) => {
+        const chatElement = this.createChatElement(chat);
+
+        // Ocultar chats adicionales si hay más de maxVisible
+        if (index >= maxVisible) {
+          chatElement.style.display = "none";
+          chatElement.dataset.hiddenChat = "true";
+        }
+
+        chatsContainer.appendChild(chatElement);
       });
 
-      // Ícono de persona (avatar) para selección
-      const avatarIcon = document.createElement("img");
-      avatarIcon.className = "chat-select-avatar";
-      avatarIcon.dataset.chatId = chat.id;
-      avatarIcon.style.width = "14px";
-      avatarIcon.style.height = "14px";
-      avatarIcon.style.margin = "0 8px 0 5px"; // Margen izquierdo para alinear
-      avatarIcon.style.cursor = "pointer";
+      // Botón "Ver más" si hay más de 3 chats
+      if (chatsInModel.length > maxVisible) {
+        const showMoreBtn = document.createElement("li");
+        showMoreBtn.className = "show-more-btn";
+        showMoreBtn.style.padding = "5px 10px 5px 30px";
+        showMoreBtn.style.cursor = "pointer";
+        showMoreBtn.style.fontSize = "10px";
+        showMoreBtn.style.color = "#0066cc";
+        showMoreBtn.style.fontStyle = "italic";
+        showMoreBtn.textContent = `▼ Ver ${chatsInModel.length - maxVisible} más...`;
+        showMoreBtn.dataset.expanded = "false";
 
-      // Determinar si está seleccionado (por defecto no)
-      const isSelected = chat.selected || false;
-      avatarIcon.src = isSelected
-        ? "assets/contacts-window/37.png" // Verde (conectado) - Ajusta la ruta si es necesario
-        : "assets/contacts-window/38.png"; // Gris (no conectado) - Ajusta la ruta si es necesario
+        showMoreBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const isExpanded = showMoreBtn.dataset.expanded === "true";
 
-      // Contenedor para el contenido del chat
-      const contentDiv = document.createElement("div");
-      contentDiv.style.flex = "1";
-      contentDiv.style.minWidth = "0";
-      contentDiv.style.padding = "0";
-      contentDiv.style.display = "flex";
-      contentDiv.style.flexDirection = "column";
-      contentDiv.style.marginLeft = "8px";
-      contentDiv.style.alignItems = "flex-start";
+          // Mostrar/ocultar chats adicionales
+          const hiddenChats = chatsContainer.querySelectorAll(
+            '[data-hidden-chat="true"]',
+          );
+          hiddenChats.forEach((chatEl) => {
+            chatEl.style.display = isExpanded ? "none" : "flex";
+          });
 
-      const titleDiv = document.createElement("div");
-      titleDiv.className = "chat-title";
-      titleDiv.textContent = chat.title;
+          // Actualizar texto del botón
+          showMoreBtn.dataset.expanded = isExpanded ? "false" : "true";
+          showMoreBtn.textContent = isExpanded
+            ? `▼ Ver ${chatsInModel.length - maxVisible} más...`
+            : `▲ Ver menos`;
+        });
 
-      const previewDiv = document.createElement("div");
-      previewDiv.className = "chat-preview";
-      previewDiv.textContent = lastMessage;
+        chatsContainer.appendChild(showMoreBtn);
+      }
 
-      const dateDiv = document.createElement("div");
-      dateDiv.className = "chat-date";
-      dateDiv.textContent = date;
+      // Toggle del grupo completo y cambio automático de modelo
+      modelHeader.addEventListener("click", () => {
+        const isExpanded = arrowIcon.dataset.expanded === "true";
+        arrowIcon.dataset.expanded = isExpanded ? "false" : "true";
 
-      contentDiv.appendChild(titleDiv);
-      contentDiv.appendChild(previewDiv);
-      contentDiv.appendChild(dateDiv);
+        // Cambiar icono según estado
+        arrowIcon.src = isExpanded
+          ? "assets/contacts-window/38.png" // Gris (colapsado)
+          : "assets/contacts-window/37.png"; // Verde (expandido)
 
-      // Ensamblar el ítem
-      chatElement.style.display = "flex";
-      chatElement.style.alignItems = "flex-start"; // Centrar verticalmente todo
-      chatElement.style.padding = "5px 10px";
-      chatElement.style.cursor = "pointer";
-      chatElement.appendChild(avatarIcon);
-      chatElement.appendChild(contentDiv);
+        chatsContainer.style.display = isExpanded ? "none" : "block";
 
-      // Eventos
-      chatElement.addEventListener("click", (e) => {
-        if (!e.target.matches(".chat-select-avatar")) {
-          this.selectChat(chat.id);
+        // Cambiar automáticamente el modelo seleccionado
+        if (
+          this.settings.selectedModel !== modelName &&
+          modelName !== "Sin modelo"
+        ) {
+          this.settings.selectedModel = modelName;
+          this.saveSettings();
+          this.updateModelSelect();
+          this.updateModelStatus();
+
+          // Actualizar visualmente todos los headers de modelo
+          this.updateModelHeadersVisual();
+
+          console.log(`🤖 Modelo cambiado automáticamente a: ${modelName}`);
         }
       });
-      chatElement.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        this.showChatContextMenu(e, chat.id);
-      });
 
-      // Evento click en el avatar para alternar selección
-      avatarIcon.addEventListener("click", (e) => {
-        e.stopPropagation(); // Evitar que se seleccione el chat
-        chat.selected = !chat.selected; // Alternar estado
-        avatarIcon.src = chat.selected
-          ? "assets/contacts-window/37.png" // Verde
-          : "assets/contacts-window/38.png"; // Gris
-      });
-
-      chatList.appendChild(chatElement);
+      modelGroup.appendChild(modelHeader);
+      modelGroup.appendChild(chatsContainer);
+      chatList.appendChild(modelGroup);
     });
   }
-  //-------------------------------------
+
+  updateModelHeadersVisual() {
+    // Actualizar todos los headers de modelo para reflejar el modelo seleccionado
+    document.querySelectorAll(".model-header").forEach((header) => {
+      const modelNameSpan = header.querySelector("span");
+      if (modelNameSpan) {
+        const modelNameMatch = modelNameSpan.textContent.match(/^(.+?)\s*\(/);
+        const modelName = modelNameMatch
+          ? modelNameMatch[1]
+          : modelNameSpan.textContent;
+
+        if (this.settings.selectedModel === modelName) {
+          header.style.backgroundColor = "#d0e5f5";
+          header.style.fontWeight = "900";
+        } else {
+          header.style.backgroundColor = "#e8f0f8";
+          header.style.fontWeight = "bold";
+        }
+      }
+    });
+  }
+
+  createChatElement(chat) {
+    const chatElement = document.createElement("li");
+    chatElement.className = "chat-item";
+    chatElement.setAttribute("data-chat-id", chat.id);
+
+    // Ícono de persona (avatar) para selección
+    const avatarIcon = document.createElement("img");
+    avatarIcon.className = "chat-select-avatar";
+    avatarIcon.dataset.chatId = chat.id;
+    avatarIcon.style.width = "14px";
+    avatarIcon.style.height = "14px";
+    avatarIcon.style.margin = "0 8px 0 5px";
+    avatarIcon.style.cursor = "pointer";
+
+    // Determinar si está seleccionado (por defecto no)
+    const isSelected = chat.selected || false;
+    avatarIcon.src = isSelected
+      ? "assets/contacts-window/37.png"
+      : "assets/contacts-window/38.png";
+
+    // Toggle selección al hacer clic en el avatar
+    avatarIcon.addEventListener("click", (e) => {
+      e.stopPropagation();
+      chat.selected = !chat.selected;
+      avatarIcon.src = chat.selected
+        ? "assets/contacts-window/37.png"
+        : "assets/contacts-window/38.png";
+      this.saveChats();
+    });
+
+    // Contenedor para el contenido del chat
+    const contentDiv = document.createElement("div");
+    contentDiv.style.flex = "1";
+    contentDiv.style.minWidth = "0";
+    contentDiv.style.padding = "0";
+    contentDiv.style.display = "flex";
+    contentDiv.style.flexDirection = "column";
+    contentDiv.style.marginLeft = "8px";
+    contentDiv.style.alignItems = "flex-start";
+
+    const titleDiv = document.createElement("div");
+    titleDiv.className = "chat-title";
+    titleDiv.textContent = chat.title;
+
+    // Último mensaje
+    const lastMessage =
+      chat.messages.length > 0
+        ? chat.messages[chat.messages.length - 1].content.substring(0, 50) +
+          (chat.messages[chat.messages.length - 1].content.length > 50
+            ? "..."
+            : "")
+        : "Sin mensajes";
+
+    const previewDiv = document.createElement("div");
+    previewDiv.className = "chat-preview";
+    previewDiv.textContent = lastMessage;
+
+    // Fecha
+    const date = new Date(chat.date).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "chat-date";
+    dateDiv.textContent = date;
+
+    contentDiv.appendChild(titleDiv);
+    contentDiv.appendChild(previewDiv);
+    contentDiv.appendChild(dateDiv);
+
+    // Ensamblar el ítem
+    chatElement.style.display = "flex";
+    chatElement.style.alignItems = "flex-start";
+    chatElement.style.padding = "5px 10px";
+    chatElement.style.cursor = "pointer";
+    chatElement.appendChild(avatarIcon);
+    chatElement.appendChild(contentDiv);
+
+    // Evento click para seleccionar chat
+    chatElement.addEventListener("click", (e) => {
+      if (!e.target.matches(".chat-select-avatar")) {
+        this.selectChat(chat.id);
+      }
+    });
+
+    // Evento contextmenu para eliminar chat
+    chatElement.addEventListener("contextmenu", (e) => {
+      this.showChatContextMenu(e, chat.id);
+    });
+
+    // Marcar como activo si es el chat actual
+    if (this.currentChatId === chat.id) {
+      chatElement.classList.add("active");
+    }
+
+    return chatElement;
+  }
+
   // =================== ACTUALIZACIÓN EN RENDERMESSAGES ===================
   renderMessages(chat) {
     const messagesArea = document.getElementById("messages-area");
@@ -1057,6 +1384,11 @@ class MSNAI {
     document
       .getElementById("new-chat-btn")
       .addEventListener("click", () => this.createNewChat());
+
+    // Botón detener respuesta IA
+    document
+      .getElementById("detener-respuesta-ia-btn")
+      .addEventListener("click", () => this.stopAIResponse());
     document.getElementById("export-btn").addEventListener("click", () => {
       console.log("📤 Abriendo modal de exportación...");
       const exportModal = document.getElementById("export-modal");
@@ -1342,17 +1674,57 @@ class MSNAI {
   }
 
   filterChats(query) {
-    const chatItems = document.querySelectorAll(".chat-item");
     const searchTerm = query.toLowerCase();
+    const chatItems = document.querySelectorAll(".chat-item");
+    const modelGroups = document.querySelectorAll(".model-group");
+
+    if (!searchTerm) {
+      // Si no hay búsqueda, mostrar todos los chats y grupos
+      chatItems.forEach((item) => {
+        item.style.display = "flex";
+      });
+      modelGroups.forEach((group) => {
+        group.style.display = "block";
+      });
+      return;
+    }
+
+    // Filtrar chats individuales
+    const visibleModels = new Set();
     chatItems.forEach((item) => {
       const title = item.querySelector(".chat-title").textContent.toLowerCase();
       const preview = item
         .querySelector(".chat-preview")
         .textContent.toLowerCase();
-      item.style.display =
-        title.includes(searchTerm) || preview.includes(searchTerm)
-          ? "flex"
-          : "none";
+      const matches =
+        title.includes(searchTerm) || preview.includes(searchTerm);
+
+      item.style.display = matches ? "flex" : "none";
+
+      // Si el chat coincide, marcar su grupo de modelo como visible
+      if (matches) {
+        const modelGroup = item.closest(".model-group");
+        if (modelGroup) {
+          visibleModels.add(modelGroup);
+        }
+      }
+    });
+
+    // Ocultar grupos de modelos sin chats visibles
+    modelGroups.forEach((group) => {
+      if (visibleModels.has(group)) {
+        group.style.display = "block";
+        // Expandir el grupo si está colapsado
+        const chatsContainer = group.querySelector(".model-chats-container");
+        const arrowIcon = group.querySelector(".model-header span");
+        if (chatsContainer && arrowIcon) {
+          chatsContainer.style.display = "block";
+          arrowIcon.dataset.expanded = "true";
+          arrowIcon.style.transform = "rotate(0deg)";
+        }
+      } else {
+        group.style.display = "none";
+      }
     });
   }
 
@@ -1374,12 +1746,12 @@ class MSNAI {
       ["online", "away", "busy", "invisible"].includes(savedStatus)
     ) {
       this.currentStatus = savedStatus;
-      // ✅ IMPORTANTE: Actualizar la UI inmediatamente
-      this.updateStatusDisplay(savedStatus);
+      // ✅ IMPORTANTE: Actualizar la UI inmediatamente sin notificar
+      this.updateStatusDisplay(savedStatus, true);
     } else {
       // Si no hay estado guardado, establecer online por defecto
       this.currentStatus = "online";
-      this.updateStatusDisplay("online");
+      this.updateStatusDisplay("online", true);
     }
 
     this.loadChats();

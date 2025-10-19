@@ -301,6 +301,56 @@ a {
     background-color: #d2eaf6;
 }
 
+/* Estilos para agrupamiento por modelo */
+.model-group {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.model-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    cursor: pointer;
+    background-color: #e8f0f8;
+    border-bottom: 1px solid #ccc;
+    font-weight: bold;
+    font-size: 11px;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.model-header img {
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.model-header:hover {
+    background-color: #d0e5f5;
+}
+
+.model-chats-container {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.show-more-btn {
+    padding: 5px 10px 5px 30px;
+    cursor: pointer;
+    font-size: 10px;
+    color: #0066cc;
+    font-style: italic;
+    transition: background-color 0.2s;
+}
+
+.show-more-btn:hover {
+    background-color: #f0f8ff;
+}
+
 .chat-title {
     font-weight: bold;
     margin: 0;
@@ -553,6 +603,28 @@ a {
     width: auto;
     padding: 0 4px;
     float: left;
+}
+
+/* Botón detener respuesta IA */
+#detener-respuesta-ia-btn {
+    background-color: #ff4444 !important;
+    animation: pulse-stop 1.5s ease-in-out infinite;
+}
+
+#detener-respuesta-ia-btn:hover {
+    background-color: #cc0000 !important;
+}
+
+@keyframes pulse-stop {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.05);
+    }
 }
 
 .noarrow {
