@@ -17,7 +17,7 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 
 ### ✨ Características principales
 
-- 🎨 **Interfaz auténtica** de Windows Live Messenger 8.5
+- 🎨 **Interfaz** de Windows Live Messenger 8.5
 - 🤖 **IA local integrada** - Compatible con Mistral, Llama, Phi3 y más
 - 💾 **Historial persistente** - Tus chats se guardan automáticamente
 - 🔊 **Sonidos originales** - Efectos auténticos de MSN
