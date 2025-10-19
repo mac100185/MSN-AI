@@ -1079,16 +1079,16 @@ class MSNAI {
     // Determinar si está seleccionado (por defecto no)
     const isSelected = chat.selected || false;
     avatarIcon.src = isSelected
-      ? "assets/contacts-window/37.png"
-      : "assets/contacts-window/38.png";
+      ? "assets/contacts-window/40.png"
+      : "assets/contacts-window/39.png";
 
     // Toggle selección al hacer clic en el avatar
     avatarIcon.addEventListener("click", (e) => {
       e.stopPropagation();
       chat.selected = !chat.selected;
       avatarIcon.src = chat.selected
-        ? "assets/contacts-window/37.png"
-        : "assets/contacts-window/38.png";
+        ? "assets/contacts-window/40.png"
+        : "assets/contacts-window/39.png";
       this.saveChats();
     });
 
