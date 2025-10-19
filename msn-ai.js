@@ -1039,6 +1039,31 @@ class MSNAI {
         "click",
         () => (document.getElementById("import-modal").style.display = "block"),
       );
+
+    // Event listeners para los botones dentro de los modales de import/export
+    document.getElementById("download-chats").addEventListener("click", () => {
+      this.exportChats();
+      document.getElementById("export-modal").style.display = "none";
+    });
+
+    document
+      .getElementById("import-chats-btn")
+      .addEventListener("click", () => {
+        const fileInput = document.getElementById("import-file");
+        const file = fileInput.files[0];
+        if (!file) {
+          alert("Por favor selecciona un archivo JSON primero");
+          return;
+        }
+        if (!file.name.endsWith(".json")) {
+          alert("Por favor selecciona un archivo JSON válido");
+          return;
+        }
+        this.importChats(file);
+        document.getElementById("import-modal").style.display = "none";
+        fileInput.value = "";
+      });
+
     // Botón de configuración (abrir modal)--------------------
     // En setupEventListeners(), reemplaza/añade estos eventos:
     document.getElementById("settings-btn").addEventListener("click", () => {

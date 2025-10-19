@@ -12,6 +12,7 @@
 
 - [Requisitos del Sistema](#requisitos-del-sistema)
 - [Instalación Rápida](#instalación-rápida)
+- [Crear Acceso Directo en el Escritorio](#crear-acceso-directo-en-el-escritorio)
 - [Problema Común: Scripts Bloqueados](#problema-común-scripts-bloqueados)
 - [Instalación de Ollama](#instalación-de-ollama)
 - [Modo Local (Recomendado)](#modo-local-recomendado)
@@ -82,7 +83,27 @@ Unblock-File -Path .\ai_check_all.ps1
 4. Abre una NUEVA ventana de PowerShell
 5. Navega al directorio MSN-AI y ejecuta `.\start-msnai.ps1 --auto` nuevamente
 
-### Paso 5 (Opcional): Verificar Hardware y Obtener Recomendaciones
+### Paso 5: Crear Acceso Directo en el Escritorio (Recomendado)
+
+Para mayor comodidad, puedes crear un acceso directo que te permita iniciar MSN-AI con solo hacer doble clic:
+
+```powershell
+.\create-desktop-shortcut.ps1
+```
+
+Esto creará un acceso directo llamado "MSN-AI" en tu escritorio. Una vez creado:
+- Haz doble clic en el acceso directo "MSN-AI" en tu escritorio
+- Se abrirá PowerShell y MSN-AI se iniciará automáticamente
+- Para cerrar: Presiona Ctrl+C en la ventana de PowerShell
+
+**Ventajas del acceso directo:**
+- ✅ No necesitas abrir PowerShell manualmente
+- ✅ No necesitas ejecutar comandos cada vez
+- ✅ No necesitas navegar al directorio MSN-AI
+- ✅ Inicio con un solo doble clic
+- ✅ Omite automáticamente las políticas de ejecución
+
+### Paso 6 (Opcional): Verificar Hardware y Obtener Recomendaciones
 
 ```powershell
 .\ai_check_all.ps1
@@ -154,6 +175,105 @@ Get-Item .\start-msnai.ps1 | Get-ItemProperty -Name "Zone.Identifier" -ErrorActi
 ```
 
 Si devuelve algo, el archivo está bloqueado. Si no devuelve nada, está desbloqueado.
+
+---
+
+## 🖱️ Crear Acceso Directo en el Escritorio
+
+Para facilitar el inicio de MSN-AI, puedes crear un acceso directo en tu escritorio que inicie la aplicación con solo hacer doble clic.
+
+### ¿Por qué usar un acceso directo?
+
+**Problemas que resuelve:**
+- ❌ Abrir PowerShell manualmente cada vez
+- ❌ Navegar al directorio MSN-AI
+- ❌ Escribir comandos para iniciar
+- ❌ Configurar políticas de ejecución cada vez
+- ❌ Desbloquear archivos repetidamente
+
+**Solución:**
+- ✅ Doble clic en el acceso directo
+- ✅ MSN-AI se inicia automáticamente
+- ✅ Sin comandos ni configuración
+
+### Crear el Acceso Directo
+
+#### Método Automático (Recomendado)
+
+1. **Abre PowerShell y navega al directorio MSN-AI:**
+   ```powershell
+   cd MSN-AI
+   ```
+
+2. **Ejecuta el script creador de acceso directo:**
+   ```powershell
+   .\create-desktop-shortcut.ps1
+   ```
+
+3. **Sigue las instrucciones en pantalla:**
+   - Confirma que quieres crear el acceso directo
+   - El script creará "MSN-AI.lnk" en tu escritorio
+   - Opcionalmente, puedes probarlo inmediatamente
+
+4. **¡Listo! Ahora puedes:**
+   - Ir a tu escritorio
+   - Hacer doble clic en "MSN-AI"
+   - La aplicación se iniciará automáticamente
+
+#### Método Manual
+
+Si el script automático no funciona, puedes crear el acceso directo manualmente:
+
+1. **Clic derecho en el escritorio → Nuevo → Acceso directo**
+
+2. **En "Ubicación del elemento", pega:**
+   ```
+   powershell.exe -ExecutionPolicy Bypass -NoProfile -File "D:\MSN-AI\start-msnai.ps1" --auto
+   ```
+   *Nota: Reemplaza `D:\MSN-AI\` con la ruta real donde tienes MSN-AI*
+
+3. **Nombre:** `MSN-AI`
+
+4. **Clic derecho en el acceso directo → Propiedades**
+
+5. **En "Iniciar en", pon la ruta de tu directorio MSN-AI:**
+   ```
+   D:\MSN-AI
+   ```
+   *Nota: Reemplaza con tu ruta real*
+
+6. **Aplicar → Aceptar**
+
+### Usar el Acceso Directo
+
+**Para iniciar MSN-AI:**
+1. Doble clic en el acceso directo "MSN-AI" en tu escritorio
+2. Se abrirá una ventana de PowerShell
+3. MSN-AI se iniciará automáticamente
+4. Tu navegador abrirá la aplicación
+
+**Para cerrar MSN-AI:**
+1. Ve a la ventana de PowerShell que se abrió
+2. Presiona **Ctrl + C**
+3. Espera a que el script limpie los procesos
+4. **NO cierres** la ventana sin presionar Ctrl+C
+
+### Notas Importantes
+
+⚠️ **La ventana de PowerShell debe permanecer abierta:**
+- Mientras uses MSN-AI, la ventana de PowerShell debe estar abierta
+- Es el servidor que sirve la aplicación
+- Si cierras PowerShell sin Ctrl+C, dejarás procesos huérfanos
+
+✅ **El acceso directo omite políticas de ejecución:**
+- Usa `-ExecutionPolicy Bypass` automáticamente
+- No necesitas ejecutar `Set-ExecutionPolicy` cada vez
+- No necesitas ejecutar `Unblock-File` cada vez
+
+💡 **Puedes crear múltiples accesos directos:**
+- En el escritorio
+- En la barra de tareas (arrastra el acceso directo)
+- En el menú inicio (copia el acceso directo)
 
 ---
 
@@ -501,7 +621,9 @@ git pull origin main
 # Desbloquea los scripts si se actualizaron
 Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\ai_check_all.ps1
-.\start-msnai.ps1 --auto
+Unblock-File -Path .\create-desktop-shortcut.ps1
+# Recrea el acceso directo si es necesario
+.\create-desktop-shortcut.ps1
 ```
 
 ### ¿Puedo ejecutar MSN-AI en segundo plano?
@@ -524,6 +646,17 @@ $script:ServerPort = 8000  # Cambia a tu puerto deseado
 
 **Sí**, una vez descargado todo (incluyendo modelos de IA), MSN-AI funciona completamente offline.
 
+### ¿Puedo mover MSN-AI a otra carpeta después de crear el acceso directo?
+
+**No**, el acceso directo contiene la ruta absoluta. Si mueves MSN-AI:
+1. Elimina el acceso directo antiguo del escritorio
+2. Navega a la nueva ubicación en PowerShell
+3. Ejecuta `.\create-desktop-shortcut.ps1` nuevamente
+
+### ¿El acceso directo funciona sin PowerShell abierto?
+
+**No**, el acceso directo abre PowerShell automáticamente. PowerShell es necesario para ejecutar el servidor web que sirve MSN-AI.
+
 ---
 
 ## 📚 Recursos Adicionales
@@ -539,6 +672,7 @@ $script:ServerPort = 8000  # Cambia a tu puerto deseado
 
 ### Instalación Completa
 ```powershell
+# Instalación completa
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -549,9 +683,17 @@ Unblock-File -Path .\ai_check_all.ps1
 # Si Ollama no está instalado, el script te guiará.
 # Después de instalar, cierra PowerShell, abre una nueva ventana y ejecuta:
 # .\start-msnai.ps1 --auto
+
+# Crear acceso directo en el escritorio (recomendado)
+.\create-desktop-shortcut.ps1
 ```
 
 ### Inicio Rápido (después de instalación)
+
+**Con acceso directo (recomendado):**
+- Doble clic en "MSN-AI" en el escritorio
+
+**Sin acceso directo:**
 ```powershell
 cd MSN-AI
 .\start-msnai.ps1 --auto

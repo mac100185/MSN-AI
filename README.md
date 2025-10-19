@@ -98,6 +98,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\start-msnai-docker.ps1
 Unblock-File -Path .\ai_check_all.ps1
+Unblock-File -Path .\create-desktop-shortcut.ps1
 
 # 4. Iniciar aplicación
 .\start-msnai.ps1 --auto
@@ -106,7 +107,12 @@ Unblock-File -Path .\ai_check_all.ps1
 #       Después de instalar Ollama, CIERRA PowerShell y abre una NUEVA ventana.
 #       Luego ejecuta nuevamente: .\start-msnai.ps1 --auto
 
-# 5. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
+# 5. (RECOMENDADO) Crear acceso directo en el escritorio
+.\create-desktop-shortcut.ps1
+# Esto crea un acceso directo "MSN-AI" en tu escritorio
+# Podrás iniciar MSN-AI con solo hacer doble clic
+
+# 6. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
 .\ai_check_all.ps1
 ```
 
