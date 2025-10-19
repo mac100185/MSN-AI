@@ -79,10 +79,6 @@ while [[ $# -gt 0 ]]; do
             INTERACTIVE=false
             shift
             ;;
-        --yes|-y)
-            INTERACTIVE=false
-            shift
-            ;;
         --help|-h)
             echo ""
             echo "Uso: $0 [opciones]"
@@ -96,7 +92,6 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Opciones de control:"
             echo "  --force, -f       Forzar eliminación sin confirmación"
-            echo "  --yes, -y         Responder 'sí' a todas las preguntas"
             echo "  --help, -h        Mostrar esta ayuda"
             echo ""
             echo "Ejemplos:"
@@ -136,9 +131,24 @@ echo "🔍 Analizando instalación MSN-AI Docker..."
 
 # Check what exists
 CONTAINERS_EXIST=$(docker ps -aq --filter "label=com.msnai.service" 2>/dev/null | wc -l)
+# Also check for containers by name pattern
+CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | sort -u | wc -l)
+CONTAINERS_EXIST=$((CONTAINERS_EXIST + CONTAINERS_BY_NAME))
+
 IMAGES_EXIST=$(docker images --filter "label=com.msnai.service" -q 2>/dev/null | wc -l)
+# Also check for images by name pattern
+IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" 2>/dev/null || echo 0)
+IMAGES_EXIST=$((IMAGES_EXIST + IMAGES_BY_NAME))
+
 VOLUMES_EXIST=$(docker volume ls --filter "label=com.msnai.volume" -q 2>/dev/null | wc -l)
+# Also check for volumes by name pattern
+VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+VOLUMES_EXIST=$((VOLUMES_EXIST + VOLUMES_BY_NAME))
+
 NETWORKS_EXIST=$(docker network ls --filter "label=com.msnai.network" -q 2>/dev/null | wc -l)
+# Also check for networks by name pattern
+NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+NETWORKS_EXIST=$((NETWORKS_EXIST + NETWORKS_BY_NAME))
 
 echo ""
 echo "📊 Estado actual:"
@@ -279,6 +289,23 @@ if [ "$CONTAINERS_EXIST" -gt 0 ]; then
         docker rm -f $REMAINING_CONTAINERS >/dev/null 2>&1 || true
     fi
 
+    # Also cleanup containers by name pattern (docker-msn-ai, docker-ai-setup)
+    DOCKER_NAMED_CONTAINERS=$(docker ps -aq 2>/dev/null | xargs -r docker inspect --format='{{.Name}} {{.Id}}' 2>/dev/null | grep -E "(docker-msn-ai|docker-ai-setup)" | awk '{print $2}')
+    if [ -n "$DOCKER_NAMED_CONTAINERS" ]; then
+        echo "   Limpiando contenedores docker-msn-ai y docker-ai-setup..."
+        docker stop $DOCKER_NAMED_CONTAINERS >/dev/null 2>&1 || true
+        docker rm -f $DOCKER_NAMED_CONTAINERS >/dev/null 2>&1 || true
+    fi
+
+    # Cleanup containers by name patterns
+    echo "   Limpiando contenedores por nombre..."
+    docker ps -aq --filter "name=msn-ai" 2>/dev/null | xargs -r docker stop >/dev/null 2>&1 || true
+    docker ps -aq --filter "name=msn-ai" 2>/dev/null | xargs -r docker rm -f >/dev/null 2>&1 || true
+    docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null | xargs -r docker stop >/dev/null 2>&1 || true
+    docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null | xargs -r docker rm -f >/dev/null 2>&1 || true
+    docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | xargs -r docker stop >/dev/null 2>&1 || true
+    docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | xargs -r docker rm -f >/dev/null 2>&1 || true
+
     echo "   ✅ Contenedores eliminados"
 else
     echo ""
@@ -301,6 +328,11 @@ if [ "$REMOVE_IMAGES" = true ]; then
     docker rmi -f msn-ai-app >/dev/null 2>&1 || true
     docker rmi -f msn-ai_msn-ai >/dev/null 2>&1 || true
     docker rmi -f msn-ai_ai-setup >/dev/null 2>&1 || true
+    docker rmi -f docker-msn-ai >/dev/null 2>&1 || true
+    docker rmi -f docker-ai-setup >/dev/null 2>&1 || true
+
+    # Remove any images containing msn-ai or docker-ai-setup in the name
+    docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep -iE "(msn-ai|docker-msn-ai|docker-ai-setup)" | awk '{print $2}' | xargs -r docker rmi -f >/dev/null 2>&1 || true
 
     echo "   ✅ Imágenes eliminadas"
 fi
@@ -352,22 +384,33 @@ if [ "$NUCLEAR_CLEANUP" = true ]; then
     # Find and stop MSN-AI related containers (by name pattern)
     echo "   🛑 Buscando y deteniendo contenedores MSN-AI adicionales..."
     MSNAI_CONTAINERS=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null)
+    DOCKER_AI_CONTAINERS=$(docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null)
+    DOCKER_SETUP_CONTAINERS=$(docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null)
+
     if [ -n "$MSNAI_CONTAINERS" ]; then
         docker stop $MSNAI_CONTAINERS >/dev/null 2>&1 || true
         docker rm -f $MSNAI_CONTAINERS >/dev/null 2>&1 || true
     fi
+    if [ -n "$DOCKER_AI_CONTAINERS" ]; then
+        docker stop $DOCKER_AI_CONTAINERS >/dev/null 2>&1 || true
+        docker rm -f $DOCKER_AI_CONTAINERS >/dev/null 2>&1 || true
+    fi
+    if [ -n "$DOCKER_SETUP_CONTAINERS" ]; then
+        docker stop $DOCKER_SETUP_CONTAINERS >/dev/null 2>&1 || true
+        docker rm -f $DOCKER_SETUP_CONTAINERS >/dev/null 2>&1 || true
+    fi
 
     # Remove MSN-AI images (by name pattern and labels)
     echo "   📦 Eliminando imágenes MSN-AI huérfanas..."
-    docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep -E "(msn-ai|msnai)" | awk '{print $2}' | xargs -r docker rmi -f >/dev/null 2>&1 || true
+    docker images --format "{{.Repository}}:{{.Tag}} {{.ID}}" | grep -iE "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" | awk '{print $2}' | xargs -r docker rmi -f >/dev/null 2>&1 || true
 
     # Remove MSN-AI volumes (by name pattern)
     echo "   💾 Eliminando volúmenes MSN-AI huérfanos..."
-    docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" | xargs -r docker volume rm -f >/dev/null 2>&1 || true
+    docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" | xargs -r docker volume rm -f >/dev/null 2>&1 || true
 
     # Remove MSN-AI networks (by name pattern)
     echo "   🌐 Eliminando redes MSN-AI huérfanas..."
-    docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" | xargs -r docker network rm >/dev/null 2>&1 || true
+    docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" | xargs -r docker network rm >/dev/null 2>&1 || true
 
     # Clean MSN-AI related build cache
     echo "   🗄️ Limpiando cache de build MSN-AI..."
@@ -385,17 +428,32 @@ echo ""
 echo "🔍 Verificando limpieza final..."
 
 FINAL_CONTAINERS=$(docker ps -aq --filter "label=com.msnai.service" 2>/dev/null | wc -l)
+# Also check by name
+FINAL_CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | sort -u | wc -l)
+FINAL_CONTAINERS=$((FINAL_CONTAINERS + FINAL_CONTAINERS_BY_NAME))
+
 FINAL_IMAGES=$(docker images --filter "label=com.msnai.service" -q 2>/dev/null | wc -l)
+# Also check by name
+FINAL_IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" 2>/dev/null || echo 0)
+FINAL_IMAGES=$((FINAL_IMAGES + FINAL_IMAGES_BY_NAME))
+
 FINAL_VOLUMES=$(docker volume ls --filter "label=com.msnai.volume" -q 2>/dev/null | wc -l)
+# Also check by name
+FINAL_VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+FINAL_VOLUMES=$((FINAL_VOLUMES + FINAL_VOLUMES_BY_NAME))
+
 FINAL_NETWORKS=$(docker network ls --filter "label=com.msnai.network" -q 2>/dev/null | wc -l)
+# Also check by name
+FINAL_NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+FINAL_NETWORKS=$((FINAL_NETWORKS + FINAL_NETWORKS_BY_NAME))
 
 echo ""
 if [ "$NUCLEAR_CLEANUP" = true ]; then
     # Get MSN-AI specific stats after nuclear cleanup
-    REMAINING_MSNAI_CONTAINERS=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null | wc -l)
-    REMAINING_MSNAI_IMAGES=$(docker images --format "{{.Repository}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
-    REMAINING_MSNAI_VOLUMES=$(docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
-    REMAINING_MSNAI_NETWORKS=$(docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai)" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_CONTAINERS=$(docker ps -aq 2>/dev/null | xargs -r docker inspect --format='{{.Name}}' 2>/dev/null | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" | wc -l)
+    REMAINING_MSNAI_IMAGES=$(docker images --format "{{.Repository}}" | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_VOLUMES=$(docker volume ls --format "{{.Name}}" | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" 2>/dev/null | wc -l)
+    REMAINING_MSNAI_NETWORKS=$(docker network ls --format "{{.Name}}" | grep -E "(msn-ai|msnai|docker-msn-ai|docker-ai-setup)" 2>/dev/null | wc -l)
 
     echo "📊 Estado final MSN-AI después de limpieza nuclear:"
     echo "   🐳 Contenedores MSN-AI restantes: $REMAINING_MSNAI_CONTAINERS"
