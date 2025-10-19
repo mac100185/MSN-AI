@@ -1,0 +1,218 @@
+{
+  "language_name": "Deutsch",
+  "language_code": "de",
+
+  "app_title": "MSN-AI",
+  "app_description": "KI-Chat im Messenger-Stil",
+
+  "status": {
+    "online": "Online",
+    "away": "Abwesend",
+    "busy": "Beschäftigt",
+    "invisible": "Unsichtbar",
+    "connecting": "Verbinden...",
+    "connected": "Verbunden",
+    "disconnected": "Getrennt"
+  },
+
+  "menu": {
+    "new_chat": "Neuer Chat",
+    "settings": "Einstellungen",
+    "export_import": "Exportieren/Importieren",
+    "help": "Hilfe",
+    "info": "Information"
+  },
+
+  "buttons": {
+    "send": "Senden",
+    "cancel": "Abbrechen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "export": "Exportieren",
+    "import": "Importieren",
+    "apply": "Anwenden",
+    "test_connection": "Verbindung testen",
+    "search": "Suchen",
+    "clear": "Löschen",
+    "order_history": "Verlauf sortieren",
+    "export_selected": "Ausgewählte exportieren",
+    "nudge": "Anstoßen senden",
+    "voice_input": "Spracheingabe",
+    "clear_chat": "Aktuellen Chat löschen",
+    "increase_font": "Größe erhöhen",
+    "decrease_font": "Größe verringern",
+    "upload_file": "Datei anhängen",
+    "export_chat": "Chat exportieren",
+    "print_chat": "Chat drucken",
+    "search_chat": "Im Chat suchen",
+    "close_chat": "Chat schließen",
+    "stop_response": "KI-Antwort stoppen"
+  },
+
+  "tooltips": {
+    "new_chat": "Neuen Chat erstellen",
+    "settings": "KI-Modell Einstellungen",
+    "export_import": "Chats exportieren oder importieren",
+    "nudge": "Anstoßen senden",
+    "emoticon_natural": "Natürliche Emoticons",
+    "emoticon_love": "Liebes-Emoticons",
+    "voice_input": "Sprachdiktat",
+    "upload_file": "Textdatei anhängen",
+    "text_format": "Textformat (Fett, Kursiv, Unterstrichen)",
+    "increase_font": "Schriftgröße erhöhen",
+    "decrease_font": "Schriftgröße verringern",
+    "export_chat": "Aktuellen Chat als Textdatei exportieren",
+    "print_chat": "Aktuellen Chat drucken",
+    "search_chat": "Im aktuellen Chat suchen",
+    "close_chat": "Aktuellen Chat schließen und neuen erstellen"
+  },
+
+  "settings": {
+    "title": "KI-Modell Einstellungen",
+    "sounds_enabled": "Töne aktiviert",
+    "ollama_server": "Ollama-Server",
+    "select_model": "Modell auswählen",
+    "no_models": "Keine Modelle installiert",
+    "no_connection": "Keine Verbindung - Einstellungen überprüfen",
+    "api_timeout": "Zeitüberschreitung (ms)",
+    "notify_status_changes": "Statusänderungen an KI melden",
+    "language": "Schnittstellensprache",
+    "connection_success": "Verbindung erfolgreich!\n\nVerfügbare Modelle: {count}\n\nServer: {server}",
+    "connection_failed": "Verbindung fehlgeschlagen",
+    "settings_saved": "Einstellungen gespeichert"
+  },
+
+  "export_import": {
+    "export_title": "Chats exportieren",
+    "export_description": "Laden Sie Ihre Chats im JSON-Format zur Sicherung herunter.",
+    "export_all": "Alle Chats exportieren",
+    "export_selected": "Ausgewählte Chats exportieren",
+    "export_selected_info": "Markieren Sie Chats in der Liste mit dem Avatar-Symbol.",
+    "import_title": "Chats importieren",
+    "import_description": "Wählen Sie eine zuvor exportierte JSON-Chat-Datei aus.",
+    "import_button": "Importieren",
+    "no_selected": "Keine Chats zum Exportieren ausgewählt."
+  },
+
+  "import_conflict": {
+    "title": "Doppelter Chat erkannt",
+    "chat_title": "Titel",
+    "model": "Modell",
+    "existing_count": "Vorhandener Chat",
+    "imported_count": "Zu importierender Chat",
+    "messages_suffix": "Nachricht(en)",
+    "warning": "WARNUNG: Der zu importierende Chat hat WENIGER Nachrichten. Ersetzen würde zu Datenverlust führen.",
+    "warning_blocked": "KANN NICHT ERSETZEN: Daten würden verloren gehen.",
+    "question": "Was möchten Sie tun?",
+    "option_merge": "Zusammenführen",
+    "option_merge_desc": "Beide Chats kombinieren und alle Nachrichten behalten",
+    "option_replace": "Ersetzen",
+    "option_replace_desc": "Vorhandenen Chat durch importierten ersetzen",
+    "option_skip": "Überspringen",
+    "option_skip_desc": "Diesen Chat nicht importieren",
+    "option_skip_all": "Alle überspringen",
+    "option_skip_all_desc": "Diesen und verbleibende Konflikte überspringen",
+    "counter": "Konflikt {current} von {total}",
+    "auto_skipped": "Dieser Chat wird automatisch übersprungen."
+  },
+
+  "import_summary": {
+    "title": "Import abgeschlossen",
+    "imported": "Chat(s) importiert",
+    "merged": "Chat(s) zusammengeführt",
+    "replaced": "Chat(s) ersetzt",
+    "skipped": "Chat(s) übersprungen",
+    "no_changes": "Keine Änderungen vorgenommen."
+  },
+
+  "delete_chat": {
+    "title": "Chat löschen",
+    "message": "Sind Sie sicher, dass Sie diesen Chat löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "confirm": "Löschen",
+    "cancel": "Abbrechen"
+  },
+
+  "search_chat": {
+    "title": "Im Chat suchen",
+    "placeholder": "Geben Sie Ihre Suche ein...",
+    "search_button": "Suchen",
+    "clear_button": "Hervorhebung löschen"
+  },
+
+  "info": {
+    "title": "Über MSN-AI",
+    "version": "Version",
+    "description": "KI-Chat-System inspiriert von Windows Live Messenger.",
+    "features": "Hauptfunktionen:",
+    "feature_1": "Echtzeit-Chat mit KI-Modellen (Ollama)",
+    "feature_2": "Nostalgische MSN Messenger-Oberfläche",
+    "feature_3": "Verwaltung mehrerer Chats und Modelle",
+    "feature_4": "Export und Import von Konversationen",
+    "feature_5": "Mehrsprachige Unterstützung",
+    "feature_6": "Emoticons und Textformatierung",
+    "credits": "Mit ❤️ für die Community entwickelt"
+  },
+
+  "chat": {
+    "select_chat": "Wählen Sie einen Chat",
+    "welcome_message": "Wählen Sie einen Chat aus der Liste oder erstellen Sie einen neuen, um zu beginnen.",
+    "new_chat_title": "Neuer Chat {number}",
+    "no_chats": "Keine Chats. Erstellen Sie einen neuen.",
+    "no_models": "Keine Modelle installiert. Installieren Sie Modelle in Ollama.",
+    "model_info": "Modell: {model} - {count} Nachrichten",
+    "ai_thinking": "KI denkt nach",
+    "you": "Sie",
+    "ai": "KI",
+    "system": "System",
+    "response_stopped": "Antwort vom Benutzer gestoppt",
+    "response_stopped_before": "Antwort vor dem Start gestoppt",
+    "search_placeholder": "In Chats suchen..."
+  },
+
+  "messages": {
+    "status_changed": "Ich habe meinen Status auf {status} geändert. {message}",
+    "status_online": "Ich bin verfügbar zum Chatten.",
+    "status_away": "Ich bin abwesend, aber Sie können mir eine Nachricht hinterlassen.",
+    "status_busy": "Ich bin beschäftigt, aber ich werde antworten, wenn ich kann.",
+    "status_invisible": "Ich möchte derzeit nicht gesehen werden.",
+    "nudge_sent": "Bist du da?",
+    "nudge_received": "Anstoßen gesendet (Antwort gestoppt)",
+    "file_attached": "Angehängte Datei: {filename}",
+    "no_message": "keine zusätzliche Nachricht"
+  },
+
+  "errors": {
+    "no_connection": "Keine Verbindung zu Ollama",
+    "chat_not_found": "Chat nicht gefunden",
+    "server_error": "Serverfehler: {status}",
+    "verify_ollama": "Überprüfen Sie, ob Ollama läuft.",
+    "file_not_found": "Dateiauswahl nicht gefunden",
+    "invalid_json": "Ungültige JSON-Datei oder keine Chats.",
+    "invalid_file": "Fehler beim Lesen der Datei. Überprüfen Sie, ob es sich um eine gültige JSON handelt.",
+    "select_file_first": "Bitte wählen Sie zuerst eine JSON-Datei aus",
+    "select_valid_json": "Bitte wählen Sie eine gültige JSON-Datei aus",
+    "only_txt_files": "Nur .txt-Dateien sind erlaubt",
+    "select_text_to_format": "Wählen Sie Text zum Formatieren aus",
+    "voice_not_supported": "Ihr Browser unterstützt keine Spracherkennung.",
+    "close_chat_confirm": "Diesen Chat schließen und einen neuen erstellen?"
+  },
+
+  "connection": {
+    "status": "Verbindungsstatus:",
+    "current_model": "Aktuelles Modell:",
+    "no_models_available": "Keine Modelle verfügbar",
+    "model_not_available": "{model} (Nicht verfügbar)",
+    "checking": "Verbindung zu Ollama wird überprüft...",
+    "server": "Server: {server}",
+    "models_found": "Gefundene Modelle: {count}",
+    "success": "Verbindung erfolgreich.",
+    "failed": "Fehler beim Verbinden mit Ollama"
+  },
+
+  "format": {
+    "bold": "Fett",
+    "italic": "Kursiv",
+    "underline": "Unterstrichen"
+  }
+}

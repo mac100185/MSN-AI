@@ -800,11 +800,12 @@ a {
 
 .modal-content {
     background-color: #ecf6f9;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border: thin solid #707070;
     border-radius: 8px;
     width: 400px;
+    max-width: 90%;
     font-family: "Tahoma", sans-serif;
     font-size: 8pt;
 }
@@ -877,11 +878,12 @@ a {
 }
 #info-modal .modal-content {
     background-color: #ecf6f9;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border: thin solid #707070;
     border-radius: 8px;
     width: 400px;
+    max-width: 90%;
     font-family: "Tahoma", sans-serif;
     font-size: 8pt;
 }
@@ -923,6 +925,8 @@ a {
 /* Modal de búsqueda */
 #search-chat-modal .modal-content {
     width: 320px;
+    max-width: 90%;
+    margin: 5% auto;
 }
 
 /* ===== CORRECCIÓN PARA MENÚ DE ESTADOS ===== */
@@ -1050,7 +1054,25 @@ a {
 #import-summary-modal .modal-content {
     width: 500px;
     max-width: 90%;
-    margin: 15% auto;
+    margin: 5% auto;
+}
+
+#settings-modal .modal-content {
+    width: 450px;
+    max-width: 90%;
+    margin: 5% auto;
+}
+
+#export-modal .modal-content {
+    width: 400px;
+    max-width: 90%;
+    margin: 5% auto;
+}
+
+#delete-chat-modal .modal-content {
+    width: 400px;
+    max-width: 90%;
+    margin: 5% auto;
 }
 
 #import-conflict-modal label {

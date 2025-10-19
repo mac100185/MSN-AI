@@ -1,0 +1,218 @@
+{
+  "language_name": "Español",
+  "language_code": "es",
+
+  "app_title": "MSN-AI",
+  "app_description": "Chat con IA estilo Messenger",
+
+  "status": {
+    "online": "En línea",
+    "away": "Ausente",
+    "busy": "Ocupado",
+    "invisible": "Invisible",
+    "connecting": "Conectando...",
+    "connected": "Conectado",
+    "disconnected": "Desconectado"
+  },
+
+  "menu": {
+    "new_chat": "Nuevo Chat",
+    "settings": "Configuración",
+    "export_import": "Exportar/Importar",
+    "help": "Ayuda",
+    "info": "Información"
+  },
+
+  "buttons": {
+    "send": "Enviar",
+    "cancel": "Cancelar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "export": "Exportar",
+    "import": "Importar",
+    "apply": "Aplicar",
+    "test_connection": "Probar Conexión",
+    "search": "Buscar",
+    "clear": "Limpiar",
+    "order_history": "Ordenar Historial",
+    "export_selected": "Exportar Seleccionados",
+    "nudge": "Enviar Zumbido",
+    "voice_input": "Texto por Voz",
+    "clear_chat": "Limpiar Chat Actual",
+    "increase_font": "Aumentar Tamaño",
+    "decrease_font": "Disminuir Tamaño",
+    "upload_file": "Adjuntar Archivo",
+    "export_chat": "Exportar Chat",
+    "print_chat": "Imprimir Chat",
+    "search_chat": "Buscar en Chat",
+    "close_chat": "Cerrar Chat",
+    "stop_response": "Detener Respuesta de IA"
+  },
+
+  "tooltips": {
+    "new_chat": "Crear un nuevo chat",
+    "settings": "Configuración del modelo de IA",
+    "export_import": "Exportar o importar chats",
+    "nudge": "Enviar un zumbido",
+    "emoticon_natural": "Emoticonos naturales",
+    "emoticon_love": "Emoticonos de amor",
+    "voice_input": "Dictado por voz",
+    "upload_file": "Adjuntar archivo de texto",
+    "text_format": "Formato de texto (Negrita, Cursiva, Subrayado)",
+    "increase_font": "Aumentar tamaño de fuente",
+    "decrease_font": "Disminuir tamaño de fuente",
+    "export_chat": "Exportar chat actual a archivo de texto",
+    "print_chat": "Imprimir chat actual",
+    "search_chat": "Buscar en el chat actual",
+    "close_chat": "Cerrar chat actual y crear uno nuevo"
+  },
+
+  "settings": {
+    "title": "Configuración del Modelo de IA",
+    "sounds_enabled": "Sonidos habilitados",
+    "ollama_server": "Servidor Ollama",
+    "select_model": "Seleccionar Modelo",
+    "no_models": "No hay modelos instalados",
+    "no_connection": "Sin conexión - Verifica configuración",
+    "api_timeout": "Tiempo de espera (ms)",
+    "notify_status_changes": "Notificar cambios de estado a la IA",
+    "language": "Idioma de la interfaz",
+    "connection_success": "¡Conexión exitosa!\n\nModelos disponibles: {count}\n\nServidor: {server}",
+    "connection_failed": "No se pudo conectar",
+    "settings_saved": "Configuración guardada"
+  },
+
+  "export_import": {
+    "export_title": "Exportar Chats",
+    "export_description": "Descarga tus chats en formato JSON para hacer respaldo.",
+    "export_all": "Exportar todos los chats",
+    "export_selected": "Exportar chats seleccionados",
+    "export_selected_info": "Marca los chats en la lista usando el ícono de avatar.",
+    "import_title": "Importar Chats",
+    "import_description": "Selecciona un archivo JSON de chats exportado previamente.",
+    "import_button": "Importar",
+    "no_selected": "No hay chats seleccionados para exportar."
+  },
+
+  "import_conflict": {
+    "title": "Chat Duplicado Detectado",
+    "chat_title": "Título",
+    "model": "Modelo",
+    "existing_count": "Chat existente",
+    "imported_count": "Chat a importar",
+    "messages_suffix": "mensaje(s)",
+    "warning": "ADVERTENCIA: El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.",
+    "warning_blocked": "NO SE PUEDE REEMPLAZAR: Se perdería información.",
+    "question": "¿Qué deseas hacer?",
+    "option_merge": "Unir",
+    "option_merge_desc": "Combinar ambos chats manteniendo todos los mensajes",
+    "option_replace": "Reemplazar",
+    "option_replace_desc": "Sustituir el chat existente por el importado",
+    "option_skip": "Omitir",
+    "option_skip_desc": "No importar este chat",
+    "option_skip_all": "Omitir todos",
+    "option_skip_all_desc": "Omitir este y los restantes conflictos",
+    "counter": "Conflicto {current} de {total}",
+    "auto_skipped": "Este chat será omitido automáticamente."
+  },
+
+  "import_summary": {
+    "title": "Importación Completada",
+    "imported": "chat(s) importado(s)",
+    "merged": "chat(s) unido(s)",
+    "replaced": "chat(s) reemplazado(s)",
+    "skipped": "chat(s) omitido(s)",
+    "no_changes": "No se realizaron cambios."
+  },
+
+  "delete_chat": {
+    "title": "Eliminar chat",
+    "message": "¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.",
+    "confirm": "Eliminar",
+    "cancel": "Cancelar"
+  },
+
+  "search_chat": {
+    "title": "Buscar en el Chat",
+    "placeholder": "Escribe tu búsqueda...",
+    "search_button": "Buscar",
+    "clear_button": "Limpiar Resaltado"
+  },
+
+  "info": {
+    "title": "Acerca de MSN-AI",
+    "version": "Versión",
+    "description": "Sistema de chat con IA inspirado en Windows Live Messenger.",
+    "features": "Características principales:",
+    "feature_1": "Chat en tiempo real con modelos de IA (Ollama)",
+    "feature_2": "Interfaz nostálgica estilo MSN Messenger",
+    "feature_3": "Gestión de múltiples chats y modelos",
+    "feature_4": "Exportación e importación de conversaciones",
+    "feature_5": "Soporte multilenguaje",
+    "feature_6": "Emoticonos y formato de texto",
+    "credits": "Desarrollado con ❤️ para la comunidad"
+  },
+
+  "chat": {
+    "select_chat": "Selecciona un chat",
+    "welcome_message": "Selecciona un chat de la lista o crea uno nuevo para comenzar.",
+    "new_chat_title": "Nuevo chat {number}",
+    "no_chats": "No hay chats. Crea uno nuevo.",
+    "no_models": "No hay modelos instalados. Instala modelos en Ollama.",
+    "model_info": "Modelo: {model} - {count} mensajes",
+    "ai_thinking": "IA está pensando",
+    "you": "Tú",
+    "ai": "IA",
+    "system": "sistema",
+    "response_stopped": "Respuesta detenida por el usuario",
+    "response_stopped_before": "Respuesta detenida antes de comenzar",
+    "search_placeholder": "Buscar en chats..."
+  },
+
+  "messages": {
+    "status_changed": "He cambiado mi estado a {status}. {message}",
+    "status_online": "Estoy disponible para conversar.",
+    "status_away": "Estoy ausente pero puedes dejarme un mensaje.",
+    "status_busy": "Estoy ocupado pero responderé cuando pueda.",
+    "status_invisible": "Prefiero no ser visto en este momento.",
+    "nudge_sent": "¿Estás allí?",
+    "nudge_received": "Zumbido enviado (respuesta detenida)",
+    "file_attached": "Archivo adjunto: {filename}",
+    "no_message": "sin mensaje adicional"
+  },
+
+  "errors": {
+    "no_connection": "No hay conexión con Ollama",
+    "chat_not_found": "Chat no encontrado",
+    "server_error": "Error del servidor: {status}",
+    "verify_ollama": "Verifica que Ollama esté ejecutándose.",
+    "file_not_found": "No se encontró el selector de archivos",
+    "invalid_json": "Archivo JSON inválido o sin chats.",
+    "invalid_file": "Error al leer el archivo. Verifica que sea un JSON válido.",
+    "select_file_first": "Por favor selecciona un archivo JSON primero",
+    "select_valid_json": "Por favor selecciona un archivo JSON válido",
+    "only_txt_files": "Solo se permiten archivos .txt",
+    "select_text_to_format": "Selecciona texto para formatear",
+    "voice_not_supported": "Tu navegador no soporta reconocimiento de voz.",
+    "close_chat_confirm": "¿Cerrar este chat y crear uno nuevo?"
+  },
+
+  "connection": {
+    "status": "Estado de conexión:",
+    "current_model": "Modelo actual:",
+    "no_models_available": "No hay modelos disponibles",
+    "model_not_available": "{model} (No disponible)",
+    "checking": "Verificando conexión con Ollama...",
+    "server": "Servidor: {server}",
+    "models_found": "Modelos encontrados: {count}",
+    "success": "Conexión exitosa.",
+    "failed": "Error conectando con Ollama"
+  },
+
+  "format": {
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "underline": "Subrayado"
+  }
+}

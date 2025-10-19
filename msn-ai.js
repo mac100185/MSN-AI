@@ -16,6 +16,9 @@ class MSNAI {
     this.wasAborted = false; // Flag para saber si se abortó la última respuesta
     this.accumulatedResponses = {}; // Mapa de respuestas acumuladas por chatId
     this.unreadChats = new Set(); // Set de chatIds con mensajes no leídos
+    this.translations = {}; // Diccionario de traducciones
+    this.availableLanguages = []; // Idiomas disponibles
+    this.currentLanguage = "es"; // Idioma por defecto
     const currentHost = window.location.hostname;
     const isRemoteAccess =
       currentHost !== "localhost" && currentHost !== "127.0.0.1";
@@ -32,9 +35,255 @@ class MSNAI {
       selectedModel: "",
       apiTimeout: 30000,
       notifyStatusChanges: true,
+      language: "es",
     };
     this.currentStatus = "online"; // Estado inicial
     this.init();
+  }
+
+  // =================== SISTEMA DE TRADUCCIÓN ===================
+  async loadLanguages() {
+    const languages = ["es", "en", "de"];
+    for (const lang of languages) {
+      try {
+        const response = await fetch(`lang/${lang}.json`);
+        if (response.ok) {
+          const translations = await response.json();
+          this.availableLanguages.push({
+            code: lang,
+            name: translations.language_name,
+            data: translations,
+          });
+          console.log(
+            `✅ Idioma cargado: ${translations.language_name} (${lang})`,
+          );
+        }
+      } catch (error) {
+        console.warn(`⚠️ No se pudo cargar idioma: ${lang}`, error);
+      }
+    }
+
+    // Cargar idioma guardado o español por defecto
+    const savedLang = localStorage.getItem("msnai-language") || "es";
+    await this.setLanguage(savedLang);
+    this.updateLanguageSelect();
+  }
+
+  async setLanguage(langCode) {
+    const langData = this.availableLanguages.find((l) => l.code === langCode);
+    if (langData) {
+      this.currentLanguage = langCode;
+      this.translations = langData.data;
+      this.settings.language = langCode;
+      localStorage.setItem("msnai-language", langCode);
+      console.log(`🌍 Idioma establecido: ${langData.name}`);
+
+      // Actualizar toda la interfaz
+      this.updateUI();
+    } else {
+      console.warn(`⚠️ Idioma no disponible: ${langCode}, usando español`);
+      this.currentLanguage = "es";
+    }
+  }
+
+  t(key, replacements = {}) {
+    // Obtener traducción por clave (soporta notación de punto)
+    const keys = key.split(".");
+    let value = this.translations;
+
+    for (const k of keys) {
+      if (value && typeof value === "object") {
+        value = value[k];
+      } else {
+        return key; // Retornar la clave si no se encuentra traducción
+      }
+    }
+
+    // Reemplazar variables {variable}
+    if (typeof value === "string" && Object.keys(replacements).length > 0) {
+      return value.replace(/\{(\w+)\}/g, (match, key) => {
+        return replacements[key] !== undefined ? replacements[key] : match;
+      });
+    }
+
+    return value || key;
+  }
+
+  updateLanguageSelect() {
+    const select = document.getElementById("language-select");
+    if (!select) return;
+
+    select.innerHTML = "";
+    this.availableLanguages.forEach((lang) => {
+      const option = document.createElement("option");
+      option.value = lang.code;
+      option.textContent = lang.name;
+      if (lang.code === this.currentLanguage) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+  }
+
+  updateUI() {
+    // Actualizar todos los textos de la interfaz
+    this.updateStaticTexts();
+    this.updateButtons();
+    this.updateModals();
+    this.updatePlaceholders();
+    this.renderChatList();
+    if (this.currentChatId) {
+      const chat = this.chats.find((c) => c.id === this.currentChatId);
+      if (chat) {
+        this.renderMessages(chat);
+      }
+    }
+  }
+
+  updateStaticTexts() {
+    // Actualizar textos estáticos
+    const elements = {
+      "ai-connection-status": () =>
+        `(${this.t(`status.${this.currentStatus}`)})`,
+      "connection-text": () =>
+        this.t(`status.${this.isConnected ? "connected" : "disconnected"}`),
+    };
+
+    Object.keys(elements).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = elements[id]();
+    });
+  }
+
+  updateButtons() {
+    // Actualizar textos de botones
+    const buttonMap = {
+      "send-button": "buttons.send",
+      "test-connection": "buttons.test_connection",
+      "save-settings": "buttons.save",
+      "confirm-delete-btn": "buttons.delete",
+      "cancel-delete-btn": "buttons.cancel",
+      "conflict-apply-btn": "buttons.apply",
+      "close-summary-btn": "buttons.close",
+      "do-search-btn": "buttons.search",
+      "clear-search-highlight": "buttons.clear",
+      "import-chats-btn": "buttons.import",
+      "download-chats": "buttons.export",
+    };
+
+    Object.keys(buttonMap).forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        const text = this.t(buttonMap[id]);
+        // Mantener iconos si existen
+        const icon = el.innerHTML.match(/^[^\w\s]+\s*/);
+        if (icon) {
+          el.textContent = icon[0] + text;
+        } else {
+          el.textContent = text;
+        }
+      }
+    });
+  }
+
+  updateModals() {
+    // Actualizar títulos de modales
+    const modalTitles = {
+      "settings-modal": "settings.title",
+      "export-modal": "export_import.export_title",
+      "import-modal": "export_import.import_title",
+      "delete-chat-modal": "delete_chat.title",
+      "search-chat-modal": "search_chat.title",
+      "info-modal": "info.title",
+      "import-conflict-modal": "import_conflict.title",
+      "import-summary-modal": "import_summary.title",
+    };
+
+    Object.keys(modalTitles).forEach((id) => {
+      const modal = document.getElementById(id);
+      if (modal) {
+        const h3 = modal.querySelector(".modal-header h3");
+        if (h3) h3.textContent = this.t(modalTitles[id]);
+      }
+    });
+
+    // Actualizar contenidos específicos de modales
+    this.updateSettingsModal();
+    this.updateDeleteModal();
+    this.updateSearchModal();
+    this.updateExportImportModal();
+  }
+
+  updateSettingsModal() {
+    const modal = document.getElementById("settings-modal");
+    if (!modal) return;
+
+    // Actualizar labels
+    const labels = modal.querySelectorAll("label");
+    labels.forEach((label) => {
+      const checkbox = label.querySelector('input[type="checkbox"]');
+      if (checkbox) {
+        const span = label.querySelector("span");
+        if (span) {
+          if (checkbox.id === "sounds-enabled") {
+            span.textContent = this.t("settings.sounds_enabled");
+          } else if (checkbox.id === "notify-status-changes") {
+            span.textContent = this.t("settings.notify_status_changes");
+          }
+        }
+      }
+    });
+
+    // Actualizar labels de campos
+    const serverLabel = modal.querySelector(
+      'label[style*="font-weight: bold"]',
+    );
+    if (serverLabel && serverLabel.textContent.includes("Ollama")) {
+      serverLabel.childNodes[0].textContent =
+        this.t("settings.ollama_server") + ":";
+    }
+  }
+
+  updateDeleteModal() {
+    const modal = document.getElementById("delete-chat-modal");
+    if (!modal) return;
+
+    const p = modal.querySelector("p");
+    if (p) p.textContent = this.t("delete_chat.message");
+  }
+
+  updateSearchModal() {
+    const modal = document.getElementById("search-chat-modal");
+    if (!modal) return;
+
+    const input = modal.querySelector("#search-term-input");
+    if (input) input.placeholder = this.t("search_chat.placeholder");
+  }
+
+  updateExportImportModal() {
+    const exportModal = document.getElementById("export-modal");
+    if (exportModal) {
+      const p = exportModal.querySelector("p");
+      if (p) p.textContent = this.t("export_import.export_description");
+    }
+
+    const importModal = document.getElementById("import-modal");
+    if (importModal) {
+      const p = importModal.querySelector("p");
+      if (p) p.textContent = this.t("export_import.import_description");
+    }
+  }
+
+  updatePlaceholders() {
+    const input = document.getElementById("message-input");
+    if (input) {
+      input.placeholder = this.t("chat.search_placeholder");
+    }
+
+    const searchInput = document.getElementById("chat-search-input");
+    if (searchInput) {
+      searchInput.placeholder = this.t("chat.search_placeholder");
+    }
   }
 
   // =================== FUNCIONES NUEVAS ===================
@@ -325,7 +574,7 @@ class MSNAI {
     if (
       !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
     ) {
-      alert("Tu navegador no soporta reconocimiento de voz.");
+      alert(this.t("errors.voice_not_supported"));
       return;
     }
     const recognition = new (window.SpeechRecognition ||
@@ -364,7 +613,7 @@ class MSNAI {
       const file = e.target.files[0];
       if (!file) return;
       if (!file.name.endsWith(".txt") || file.type !== "text/plain") {
-        alert("Solo se permiten archivos .txt");
+        alert(this.t("errors.only_txt_files"));
         return;
       }
       const reader = new FileReader();
@@ -402,7 +651,7 @@ class MSNAI {
         const end = input.selectionEnd;
         const selected = input.value.substring(start, end);
         if (!selected) {
-          alert("Selecciona texto para formatear");
+          alert(this.t("errors.select_text_to_format"));
           return;
         }
         let wrapped = selected;
@@ -453,7 +702,7 @@ class MSNAI {
     const selectedChats = this.chats.filter((chat) => chat.selected);
 
     if (selectedChats.length === 0) {
-      alert("No hay chats seleccionados para exportar.");
+      alert(this.t("export_import.no_selected"));
       return;
     }
 
@@ -524,7 +773,7 @@ class MSNAI {
   }
 
   closeCurrentChat() {
-    if (confirm("¿Cerrar este chat y crear uno nuevo?")) {
+    if (confirm(this.t("errors.close_chat_confirm"))) {
       this.createNewChat();
     }
   }
@@ -615,7 +864,7 @@ class MSNAI {
           aiMessage.content = "[⏹️ Respuesta detenida]";
         }
       } else {
-        aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+        aiMessage.content = `${this.t("errors.server_error", { status: error.message })}. ${this.t("errors.verify_ollama")}`;
       }
       if (this.currentChatId === chat.id) {
         this.renderMessages(chat);
@@ -761,9 +1010,9 @@ class MSNAI {
   }
 
   async sendToAI(message, chatId, onToken) {
-    if (!this.isConnected) throw new Error("No hay conexión con Ollama");
+    if (!this.isConnected) throw new Error(this.t("errors.no_connection"));
     const chat = this.chats.find((c) => c.id === chatId);
-    if (!chat) throw new Error("Chat no encontrado");
+    if (!chat) throw new Error(this.t("errors.chat_not_found"));
 
     // Crear nuevo AbortController para este chat específico
     this.abortControllers[chatId] = new AbortController();
@@ -803,7 +1052,9 @@ class MSNAI {
       );
 
       if (!response.ok)
-        throw new Error(`Error del servidor: ${response.status}`);
+        throw new Error(
+          this.t("errors.server_error", { status: response.status }),
+        );
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -902,7 +1153,7 @@ class MSNAI {
     const chatId = "chat-" + Date.now();
     const newChat = {
       id: chatId,
-      title: `Nuevo chat ${this.chats.length + 1}`,
+      title: this.t("chat.new_chat_title", { number: this.chats.length + 1 }),
       date: new Date().toISOString(),
       model: this.settings.selectedModel,
       messages: [],
@@ -928,8 +1179,10 @@ class MSNAI {
     const chatElement = document.querySelector(`[data-chat-id="${chatId}"]`);
     if (chatElement) chatElement.classList.add("active");
     document.getElementById("chat-contact-name").textContent = chat.title;
-    document.getElementById("chat-status-message").textContent =
-      `Modelo: ${chat.model} - ${chat.messages.length} mensajes`;
+    document.getElementById("chat-status-message").textContent = this.t(
+      "chat.model_info",
+      { model: chat.model, count: chat.messages.length },
+    );
 
     // Si hay respuesta acumulada pendiente, actualizarla
     if (this.accumulatedResponses[chatId]) {
@@ -1005,8 +1258,7 @@ class MSNAI {
 
     // Si no hay modelos ni chats
     if (Object.keys(chatsByModel).length === 0) {
-      chatList.innerHTML =
-        '<li style="padding: 20px; text-align: center; color: #666;">No hay modelos instalados. Instala modelos en Ollama.</li>';
+      chatList.innerHTML = `<li style="padding: 20px; text-align: center; color: #666;">${this.t("chat.no_models")}</li>`;
       return;
     }
 
@@ -1290,11 +1542,12 @@ class MSNAI {
 
       const senderClass =
         message.type === "user" ? "message-user" : "message-ai";
-      const sender = message.type === "user" ? "Tú" : "IA";
+      const sender =
+        message.type === "user" ? this.t("chat.you") : this.t("chat.ai");
 
       // Añadir indicador visual para mensajes de sistema
       const systemIndicator = message.isSystem
-        ? '<span style="color: #999; font-size: 7pt; margin-left: 5px;">(sistema)</span>'
+        ? `<span style="color: #999; font-size: 7pt; margin-left: 5px;">(${this.t("chat.system")})</span>`
         : "";
 
       messageElement.innerHTML = `
@@ -1348,13 +1601,13 @@ class MSNAI {
 
   clearChatArea() {
     document.getElementById("chat-contact-name").textContent =
-      "Selecciona un chat";
+      this.t("chat.select_chat");
     document.getElementById("chat-status-message").textContent =
-      "Bienvenido a MSN-AI";
+      this.t("app_title");
     document.getElementById("messages-area").innerHTML = `
             <div class="message">
                 <span style="color: #666; font-size: 7pt; font-style: italic;">
-                    Selecciona un chat de la lista o crea uno nuevo para comenzar.
+                    ${this.t("chat.welcome_message")}
                 </span>
             </div>
         `;
@@ -1369,18 +1622,18 @@ class MSNAI {
     switch (status) {
       case "connected":
         indicator.className = "connection-status status-connected";
-        text.textContent = "Conectado";
-        aiStatus.textContent = "(Online)";
+        text.textContent = this.t("status.connected");
+        aiStatus.textContent = `(${this.t("status.online")})`;
         break;
       case "connecting":
         indicator.className = "connection-status status-connecting";
-        text.textContent = "Conectando...";
-        aiStatus.textContent = "(Conectando...)";
+        text.textContent = this.t("status.connecting");
+        aiStatus.textContent = `(${this.t("status.connecting")})`;
         break;
       case "disconnected":
         indicator.className = "connection-status status-disconnected";
-        text.textContent = "Desconectado";
-        aiStatus.textContent = "(Sin conexión)";
+        text.textContent = this.t("status.disconnected");
+        aiStatus.textContent = `(${this.t("connection.no_models_available")})`;
         break;
     }
   }
@@ -1443,11 +1696,11 @@ class MSNAI {
         if (data.chats && Array.isArray(data.chats)) {
           this.processImportedChats(data.chats);
         } else {
-          alert("Archivo JSON inválido o sin chats.");
+          alert(this.t("errors.invalid_json"));
         }
       } catch (error) {
         console.error("Error importando chats:", error);
-        alert("Error al leer el archivo. Verifica que sea un JSON válido.");
+        alert(this.t("errors.invalid_file"));
       }
     };
     reader.readAsText(file);
@@ -1830,16 +2083,16 @@ class MSNAI {
         const fileInput = document.getElementById("import-file");
         if (!fileInput) {
           console.error("❌ import-file element not found");
-          alert("Error: No se encontró el selector de archivos");
+          alert(this.t("errors.file_not_found"));
           return;
         }
         const file = fileInput.files[0];
         if (!file) {
-          alert("Por favor selecciona un archivo JSON primero");
+          alert(this.t("errors.select_file_first"));
           return;
         }
         if (!file.name.endsWith(".json")) {
-          alert("Por favor selecciona un archivo JSON válido");
+          alert(this.t("errors.select_valid_json"));
           return;
         }
         this.importChats(file);
@@ -1867,10 +2120,13 @@ class MSNAI {
 
         if (connected) {
           alert(
-            `✅ Conexión exitosa!\n\nModelos disponibles: ${this.availableModels.length}\n\nServidor: ${this.settings.ollamaServer}`,
+            this.t("settings.connection_success", {
+              count: this.availableModels.length,
+              server: this.settings.ollamaServer,
+            }),
           );
         } else {
-          alert(`❌ No se pudo conectar`);
+          alert(this.t("settings.connection_failed"));
         }
 
         btn.textContent = "🔌 Probar Conexión";
@@ -1889,16 +2145,32 @@ class MSNAI {
         "notify-status-changes",
       ).checked;
 
+      // Guardar idioma seleccionado
+      const selectedLang = document.getElementById("language-select").value;
+      if (selectedLang && selectedLang !== this.currentLanguage) {
+        this.setLanguage(selectedLang);
+      }
+
       this.saveSettings();
       this.updateModelStatus();
 
-      alert("✅ Configuración guardada");
+      alert(this.t("settings.settings_saved"));
       document.getElementById("settings-modal").style.display = "none";
     });
 
     document.getElementById("model-select").addEventListener("change", (e) => {
       this.settings.selectedModel = e.target.value;
     });
+
+    // Event listener para cambio de idioma
+    document
+      .getElementById("language-select")
+      .addEventListener("change", (e) => {
+        const newLang = e.target.value;
+        if (newLang && newLang !== this.currentLanguage) {
+          this.setLanguage(newLang);
+        }
+      });
     //--------------------------------------------------------------
     document
       .getElementById("chat-search-input")
@@ -2148,6 +2420,9 @@ class MSNAI {
   /////---------------------------------------------
   async init() {
     console.log("🚀 Iniciando MSN-AI...");
+
+    // Cargar idiomas primero
+    await this.loadLanguages();
 
     this.loadSettings();
 
