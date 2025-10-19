@@ -1,12 +1,13 @@
 # 🚀 MSN-AI - Windows Live Messenger con IA Local
-<p align="center">
-  <img src="assets/screenshots/msn-ai-v2.1.0.png" alt="MSN-AI v2.1.0 - Interfaz principal" width="850"/>
-</p>
 ![MSN-AI](assets/general/logo.png)
 
 > *Donde la nostalgia se encuentra con la inteligencia artificial moderna*
 
 **Versión 2.1.0** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+
+<p align="center">
+  <img src="assets/screenshots/msn-ai-v2.1.0.png" alt="MSN-AI v2.1.0 - Interfaz principal" width="850"/>
+</p>
 
 ## 🎯 ¿Qué es MSN-AI?
 
