@@ -3,7 +3,42 @@
 # Autor: Alan Mac-Arthur Garcia Diaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # Licencia: GNU General Public License v3.0
+# GitHub: https://github.com/mac100185/MSN-AI
 # Descripcion: Inicia MSN-AI con verificaciones automaticas en Windows
+#
+# ============================================
+# INSTRUCCIONES DE USO
+# ============================================
+#
+# IMPORTANTE: Si descargaste este archivo de Internet, primero debes desbloquearlo:
+#
+#   Unblock-File -Path .\start-msnai.ps1
+#
+# Luego puedes ejecutarlo de las siguientes formas:
+#
+# 1. Modo automatico (inicia directamente con servidor local):
+#   .\start-msnai.ps1 --auto
+#   .\start-msnai.ps1 -auto
+#   .\start-msnai.ps1 auto
+#
+# 2. Modo interactivo (te pregunta que opcion elegir):
+#   .\start-msnai.ps1
+#
+# OPCIONES DISPONIBLES:
+#   1) Servidor local - Recomendado, requiere Python instalado
+#   2) Archivo directo - Sin servidor, puede tener limitaciones CORS
+#   3) Solo verificar - Verifica el sistema sin iniciar la aplicacion
+#
+# REQUISITOS:
+#   - Python 3.x (para modo servidor)
+#   - Ollama (opcional, para funcionalidad de IA)
+#   - Navegador web moderno (Chrome, Edge, Firefox, etc.)
+#
+# DETENER EL SERVIDOR:
+#   Presiona Ctrl+C en la ventana de PowerShell donde se ejecuta el script
+#   NO cierres la ventana sin presionar Ctrl+C para evitar procesos huerfanos
+#
+# ============================================
 
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "     MSN-AI v1.0.0 - Iniciando aplicacion" -ForegroundColor Green
@@ -39,24 +74,64 @@ function Test-Ollama {
 
     if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
         Write-Host "Ollama no esta instalado" -ForegroundColor Yellow
-        $install = Read-Host "Deseas instalarlo automaticamente? (s/n)"
+        Write-Host ""
+        Write-Host "IMPORTANTE: Ollama requiere instalacion manual" -ForegroundColor Yellow
+        Write-Host ""
+        $install = Read-Host "Deseas abrir la pagina de descarga de Ollama? (s/n)"
 
         if ($install -eq "s" -or $install -eq "S") {
-            Write-Host "Instalando Ollama..." -ForegroundColor Green
-            try {
-                $tempPath = "$env:TEMP\OllamaSetup.exe"
-                Invoke-WebRequest -Uri "https://ollama.com/download/OllamaSetup.exe" -OutFile $tempPath
-                Start-Process -FilePath $tempPath -Wait
-                Write-Host "Ollama instalado correctamente" -ForegroundColor Green
-                Write-Host "Reinicia PowerShell para usar Ollama" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "Abriendo pagina de descarga de Ollama..." -ForegroundColor Green
+            Start-Process "https://ollama.com/download"
+            Write-Host ""
+            Write-Host "============================================" -ForegroundColor Yellow
+            Write-Host "  INSTRUCCIONES DE INSTALACION DE OLLAMA" -ForegroundColor Yellow
+            Write-Host "============================================" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "1. Descarga OllamaSetup.exe desde la pagina que se abrio" -ForegroundColor White
+            Write-Host "2. Ejecuta el instalador" -ForegroundColor White
+            Write-Host "3. Sigue el asistente de instalacion" -ForegroundColor White
+            Write-Host "4. Una vez instalado, CIERRA esta ventana de PowerShell" -ForegroundColor White
+            Write-Host "5. Abre una NUEVA ventana de PowerShell" -ForegroundColor White
+            Write-Host "6. Navega al directorio MSN-AI" -ForegroundColor White
+            Write-Host "7. Ejecuta nuevamente: .\start-msnai.ps1 --auto" -ForegroundColor White
+            Write-Host ""
+            Write-Host "NOTA: Despues de instalar Ollama, este script debe ejecutarse" -ForegroundColor Yellow
+            Write-Host "      en una NUEVA sesion de PowerShell para detectar Ollama." -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "============================================" -ForegroundColor Yellow
+            Write-Host ""
+            
+            $continue = Read-Host "Ya instalaste Ollama y abriste una nueva PowerShell? (s/n)"
+            if ($continue -ne "s" -and $continue -ne "S") {
+                Write-Host ""
+                Write-Host "Por favor, completa la instalacion de Ollama y ejecuta este script nuevamente" -ForegroundColor Yellow
+                Write-Host ""
+                Read-Host "Presiona Enter para salir"
+                exit 0
             }
-            catch {
-                Write-Host "Error instalando Ollama: $_" -ForegroundColor Red
-                return $false
+            
+            # Re-verificar si Ollama esta disponible ahora
+            if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
+                Write-Host ""
+                Write-Host "Ollama aun no esta disponible en esta sesion de PowerShell" -ForegroundColor Red
+                Write-Host "Debes CERRAR esta ventana y abrir una NUEVA PowerShell" -ForegroundColor Yellow
+                Write-Host ""
+                Read-Host "Presiona Enter para salir"
+                exit 0
             }
         }
         else {
-            Write-Host "Continuando sin Ollama (funcionalidad limitada)" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "Continuando sin Ollama (funcionalidad de IA limitada)" -ForegroundColor Yellow
+            Write-Host "La aplicacion funcionara pero no podras chatear con IA" -ForegroundColor Yellow
+            Write-Host ""
+            Write-Host "Para instalar Ollama mas tarde:" -ForegroundColor Cyan
+            Write-Host "  1. Ve a: https://ollama.com/download" -ForegroundColor White
+            Write-Host "  2. Descarga e instala OllamaSetup.exe" -ForegroundColor White
+            Write-Host "  3. Reinicia PowerShell y ejecuta: ollama pull mistral:7b" -ForegroundColor White
+            Write-Host ""
+            Start-Sleep -Seconds 3
             return $false
         }
     }
@@ -64,8 +139,9 @@ function Test-Ollama {
     # Verificar si Ollama esta ejecutandose
     $ollamaRunning = Get-Process -Name "ollama*" -ErrorAction SilentlyContinue
     if (-not $ollamaRunning) {
-        Write-Host "Iniciando Ollama..." -ForegroundColor Yellow
+        Write-Host "Iniciando servicio Ollama..." -ForegroundColor Yellow
         try {
+            # Iniciar Ollama serve en segundo plano
             $script:OllamaProcess = Start-Process -FilePath "ollama" -ArgumentList "serve" -PassThru -WindowStyle Hidden
             Start-Sleep -Seconds 5
 
@@ -74,11 +150,13 @@ function Test-Ollama {
                 Write-Host "Ollama iniciado correctamente" -ForegroundColor Green
             }
             else {
-                Write-Host "Ollama puede no haberse iniciado correctamente" -ForegroundColor Yellow
+                Write-Host "Advertencia: Ollama puede no haberse iniciado correctamente" -ForegroundColor Yellow
+                Write-Host "Puedes iniciarlo manualmente con: ollama serve" -ForegroundColor Yellow
             }
         }
         catch {
-            Write-Host "Error iniciando Ollama: $_" -ForegroundColor Yellow
+            Write-Host "Advertencia: No se pudo iniciar Ollama automaticamente" -ForegroundColor Yellow
+            Write-Host "Error: $_" -ForegroundColor Yellow
             Write-Host "Intenta iniciarlo manualmente con: ollama serve" -ForegroundColor Yellow
             return $false
         }
@@ -88,7 +166,7 @@ function Test-Ollama {
     }
 
     # Verificar modelos disponibles
-    Write-Host "Verificando modelos de IA..." -ForegroundColor Cyan
+    Write-Host "Verificando modelos de IA instalados..." -ForegroundColor Cyan
     Start-Sleep -Seconds 2
     try {
         $modelsOutput = & ollama list 2>&1
@@ -96,31 +174,47 @@ function Test-Ollama {
         $modelCount = ($modelLines | Measure-Object).Count
 
         if ($modelCount -eq 0) {
-            Write-Host "No hay modelos instalados" -ForegroundColor Yellow
-            $installModel = Read-Host "Deseas instalar mistral:7b (recomendado)? (s/n)"
+            Write-Host "No hay modelos de IA instalados" -ForegroundColor Yellow
+            Write-Host ""
+            $installModel = Read-Host "Deseas instalar el modelo mistral:7b (recomendado, 4.1GB)? (s/n)"
 
             if ($installModel -eq "s" -or $installModel -eq "S") {
-                Write-Host "Descargando mistral:7b (esto puede tardar varios minutos)..." -ForegroundColor Green
+                Write-Host ""
+                Write-Host "Descargando modelo mistral:7b..." -ForegroundColor Green
+                Write-Host "NOTA: Esto puede tardar varios minutos dependiendo de tu conexion" -ForegroundColor Yellow
+                Write-Host "      El modelo pesa aproximadamente 4.1 GB" -ForegroundColor Yellow
+                Write-Host ""
+                
                 & ollama pull mistral:7b
+                
                 if ($LASTEXITCODE -eq 0) {
+                    Write-Host ""
                     Write-Host "Modelo instalado correctamente" -ForegroundColor Green
                 }
                 else {
-                    Write-Host "Error instalando modelo" -ForegroundColor Red
+                    Write-Host ""
+                    Write-Host "Error al instalar el modelo" -ForegroundColor Red
+                    Write-Host "Puedes instalarlo manualmente mas tarde con: ollama pull mistral:7b" -ForegroundColor Yellow
                     return $false
                 }
             }
             else {
-                Write-Host "Continuando sin modelos (funcionalidad limitada)" -ForegroundColor Yellow
+                Write-Host ""
+                Write-Host "Continuando sin modelos de IA" -ForegroundColor Yellow
+                Write-Host "Puedes instalar modelos mas tarde con: ollama pull mistral:7b" -ForegroundColor Cyan
+                Write-Host ""
+                Start-Sleep -Seconds 2
             }
         }
         else {
-            Write-Host "Modelos disponibles: $modelCount" -ForegroundColor Green
+            Write-Host "Modelos de IA disponibles: $modelCount" -ForegroundColor Green
+            Write-Host "Modelos instalados:" -ForegroundColor Cyan
             $modelLines | Select-Object -First 5 | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
         }
     }
     catch {
         Write-Host "No se pudieron verificar los modelos: $_" -ForegroundColor Yellow
+        Write-Host "El servicio de Ollama puede no estar respondiendo correctamente" -ForegroundColor Yellow
     }
 
     return $true
@@ -177,7 +271,7 @@ function Start-WebServer {
     while (-not (Test-PortAvailable -Port $script:ServerPort)) {
         $script:ServerPort++
         if ($script:ServerPort -gt 8020) {
-            Write-Host "No se encontro puerto disponible" -ForegroundColor Red
+            Write-Host "No se encontro puerto disponible (8000-8020 todos ocupados)" -ForegroundColor Red
             return $false
         }
     }
@@ -197,7 +291,7 @@ function Start-WebServer {
 
     if ($pythonCmd) {
         try {
-            Write-Host "Usando $pythonCmd para el servidor..." -ForegroundColor Green
+            Write-Host "Usando $pythonCmd para el servidor HTTP..." -ForegroundColor Green
 
             $psi = New-Object System.Diagnostics.ProcessStartInfo
             $psi.FileName = $pythonCmd
@@ -215,7 +309,7 @@ function Start-WebServer {
 
             if (-not $script:ServerProcess.HasExited) {
                 $script:ServerUrl = "http://localhost:$script:ServerPort"
-                Write-Host "Servidor iniciado correctamente" -ForegroundColor Green
+                Write-Host "Servidor HTTP iniciado correctamente" -ForegroundColor Green
                 return $true
             }
             else {
@@ -229,9 +323,16 @@ function Start-WebServer {
         }
     }
     else {
-        Write-Host "Python no esta instalado" -ForegroundColor Yellow
-        Write-Host "Instala Python desde: https://www.python.org/downloads/" -ForegroundColor Yellow
-        Write-Host "O usa el modo archivo directo (opcion 2)" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Python no esta instalado" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Necesitas Python para usar el modo servidor (recomendado)" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Opciones:" -ForegroundColor Cyan
+        Write-Host "  1. Instala Python desde: https://www.python.org/downloads/" -ForegroundColor White
+        Write-Host "     Durante la instalacion, marca: 'Add Python to PATH'" -ForegroundColor White
+        Write-Host "  2. O usa el modo archivo directo (opcion 2 del menu)" -ForegroundColor White
+        Write-Host ""
         return $false
     }
 }
@@ -240,7 +341,7 @@ function Start-WebServer {
 function Open-Application {
     param([string]$url)
 
-    Write-Host "Abriendo MSN-AI..." -ForegroundColor Cyan
+    Write-Host "Abriendo MSN-AI en el navegador..." -ForegroundColor Cyan
 
     try {
         if ([string]::IsNullOrEmpty($script:BrowserPath) -or $script:BrowserName -eq "Default") {
@@ -263,7 +364,7 @@ function Open-Application {
 # Funcion de limpieza
 function Stop-Services {
     Write-Host ""
-    Write-Host "Limpiando procesos MSN-AI..." -ForegroundColor Cyan
+    Write-Host "Deteniendo servicios MSN-AI..." -ForegroundColor Cyan
 
     if ($null -ne $script:ServerProcess -and -not $script:ServerProcess.HasExited) {
         Write-Host "Deteniendo servidor web..." -ForegroundColor Yellow
@@ -273,24 +374,26 @@ function Stop-Services {
             Write-Host "Servidor web detenido" -ForegroundColor Green
         }
         catch {
-            Write-Host "Error deteniendo servidor web: $_" -ForegroundColor Yellow
+            Write-Host "Advertencia al detener servidor web: $_" -ForegroundColor Yellow
         }
     }
 
     if ($null -ne $script:OllamaProcess -and -not $script:OllamaProcess.HasExited) {
-        Write-Host "Deteniendo Ollama..." -ForegroundColor Yellow
+        Write-Host "Deteniendo servicio Ollama (iniciado por este script)..." -ForegroundColor Yellow
         try {
             $script:OllamaProcess.Kill()
             $script:OllamaProcess.WaitForExit(5000)
             Write-Host "Ollama detenido" -ForegroundColor Green
         }
         catch {
-            Write-Host "Error deteniendo Ollama: $_" -ForegroundColor Yellow
+            Write-Host "Advertencia al detener Ollama: $_" -ForegroundColor Yellow
         }
     }
 
     Write-Host "Limpieza completada" -ForegroundColor Green
+    Write-Host ""
     Write-Host "Gracias por usar MSN-AI v1.0.0!" -ForegroundColor Cyan
+    Write-Host "Reporta problemas en: https://github.com/mac100185/MSN-AI/issues" -ForegroundColor Yellow
 }
 
 # Registrar manejador de salida
@@ -331,8 +434,8 @@ if ($autoMode) {
     $method = "1"
 }
 else {
-    Write-Host "  1) Servidor local (recomendado)"
-    Write-Host "  2) Archivo directo (puede tener limitaciones)"
+    Write-Host "  1) Servidor local (recomendado, requiere Python)"
+    Write-Host "  2) Archivo directo (puede tener limitaciones CORS)"
     Write-Host "  3) Solo verificar sistema"
     Write-Host ""
     $method = Read-Host "Selecciona una opcion (1-3)"
@@ -347,6 +450,7 @@ Write-Host ""
 switch ($method) {
     "1" {
         Write-Host "Iniciando con servidor local..." -ForegroundColor Cyan
+        Write-Host ""
         $serverStarted = Start-WebServer
 
         if ($serverStarted -and $null -ne $script:ServerProcess) {
@@ -364,16 +468,17 @@ switch ($method) {
                 Write-Host "Ollama: Funcionando" -ForegroundColor Green
             }
             else {
-                Write-Host "Ollama: No disponible" -ForegroundColor Yellow
+                Write-Host "Ollama: No disponible (funcionalidad limitada)" -ForegroundColor Yellow
             }
             Write-Host "Navegador: $script:BrowserName" -ForegroundColor Green
+            Write-Host "Puerto: $script:ServerPort" -ForegroundColor Cyan
             Write-Host ""
-            Write-Host "Instrucciones:" -ForegroundColor Yellow
-            Write-Host "  - Manten esta ventana abierta" -ForegroundColor White
-            Write-Host "  - Para detener: presiona Ctrl+C" -ForegroundColor White
+            Write-Host "IMPORTANTE:" -ForegroundColor Yellow
+            Write-Host "  - Manten esta ventana de PowerShell abierta" -ForegroundColor White
+            Write-Host "  - Para detener correctamente: presiona Ctrl+C" -ForegroundColor White
+            Write-Host "  - NO cierres esta ventana sin presionar Ctrl+C" -ForegroundColor White
             Write-Host ""
-            Write-Host "Servidor activo en puerto $script:ServerPort" -ForegroundColor Green
-            Write-Host "Presiona Ctrl+C para detener" -ForegroundColor Green
+            Write-Host "Servidor activo... Esperando (Ctrl+C para detener)" -ForegroundColor Green
             Write-Host ""
 
             try {
@@ -396,9 +501,12 @@ switch ($method) {
         else {
             Write-Host ""
             Write-Host "No se pudo iniciar el servidor web" -ForegroundColor Red
-            Write-Host "Instala Python desde: https://www.python.org/downloads/" -ForegroundColor Yellow
-            Write-Host "O ejecuta de nuevo y elige opcion 2" -ForegroundColor Yellow
             Write-Host ""
+            Write-Host "Soluciones:" -ForegroundColor Yellow
+            Write-Host "  1. Instala Python: https://www.python.org/downloads/" -ForegroundColor White
+            Write-Host "  2. Ejecuta de nuevo este script y elige opcion 2 (archivo directo)" -ForegroundColor White
+            Write-Host ""
+            Read-Host "Presiona Enter para salir"
         }
     }
 
@@ -407,23 +515,26 @@ switch ($method) {
         $currentPath = (Get-Location).Path
         $directUrl = "file:///$($currentPath.Replace('\', '/'))/msn-ai.html"
 
-        Write-Host "URL: $directUrl" -ForegroundColor Gray
+        Write-Host "Ruta: $currentPath\msn-ai.html" -ForegroundColor Gray
         Write-Host ""
 
         $opened = Open-Application $directUrl
 
         if (-not $opened) {
             Write-Host ""
-            Write-Host "Intenta abrir manualmente:" -ForegroundColor Yellow
+            Write-Host "No se pudo abrir automaticamente" -ForegroundColor Yellow
+            Write-Host "Abre manualmente el archivo:" -ForegroundColor Cyan
             Write-Host "  $currentPath\msn-ai.html" -ForegroundColor White
+            Write-Host ""
         }
 
         Write-Host ""
         Write-Host "============================================" -ForegroundColor Cyan
-        Write-Host "     MSN-AI v1.0.0 - Modo archivo" -ForegroundColor Green
+        Write-Host "     MSN-AI v1.0.0 - Modo archivo directo" -ForegroundColor Green
         Write-Host "============================================" -ForegroundColor Cyan
         Write-Host ""
-        Write-Host "Advertencia: Algunas funciones pueden estar limitadas" -ForegroundColor Yellow
+        Write-Host "ADVERTENCIA: Modo archivo directo" -ForegroundColor Yellow
+        Write-Host "Algunas funciones pueden estar limitadas por politicas CORS" -ForegroundColor Yellow
         Write-Host ""
         if ($ollamaOk) {
             Write-Host "Ollama: Funcionando" -ForegroundColor Green
@@ -432,50 +543,65 @@ switch ($method) {
             Write-Host "Ollama: No disponible" -ForegroundColor Red
         }
         Write-Host ""
-        Write-Host "Si tienes problemas, usa el modo servidor (opcion 1)" -ForegroundColor Yellow
+        Write-Host "Si tienes problemas, usa el modo servidor (opcion 1)" -ForegroundColor Cyan
+        Write-Host "Requiere tener Python instalado" -ForegroundColor Gray
         Write-Host ""
         Write-Host "Puedes cerrar esta ventana de forma segura" -ForegroundColor Green
         Write-Host ""
+        Read-Host "Presiona Enter para salir"
     }
 
     "3" {
-        Write-Host "Verificacion del sistema:" -ForegroundColor Cyan
+        Write-Host "Verificacion del sistema completada:" -ForegroundColor Cyan
         Write-Host "============================================"
         Write-Host ""
         Write-Host "MSN-AI: Archivo principal encontrado" -ForegroundColor Green
+        
         if ($ollamaOk) {
-            Write-Host "Ollama: Funcionando correctamente" -ForegroundColor Green
+            Write-Host "Ollama: Instalado y funcionando" -ForegroundColor Green
         }
         else {
             Write-Host "Ollama: No disponible" -ForegroundColor Red
+            Write-Host "  Instala desde: https://ollama.com/download" -ForegroundColor Yellow
         }
+        
+        if (Get-Command python -ErrorAction SilentlyContinue) {
+            $pythonVersion = python --version 2>&1
+            Write-Host "Python: $pythonVersion" -ForegroundColor Green
+        }
+        else {
+            Write-Host "Python: No instalado" -ForegroundColor Yellow
+            Write-Host "  Instala desde: https://www.python.org/downloads/" -ForegroundColor Yellow
+        }
+        
         Write-Host "Navegador: $script:BrowserName detectado" -ForegroundColor Green
         Write-Host ""
-        Write-Host "Para iniciar MSN-AI:" -ForegroundColor Yellow
-        Write-Host "  .\start-msnai.ps1" -ForegroundColor White
-        Write-Host "  O en modo automatico:" -ForegroundColor White
+        Write-Host "Para iniciar MSN-AI:" -ForegroundColor Cyan
         Write-Host "  .\start-msnai.ps1 --auto" -ForegroundColor White
+        Write-Host ""
+        Write-Host "O en modo interactivo:" -ForegroundColor Cyan
+        Write-Host "  .\start-msnai.ps1" -ForegroundColor White
         Write-Host ""
 
         if (-not $ollamaOk) {
-            Write-Host "Advertencia: Ollama no esta disponible" -ForegroundColor Yellow
-            Write-Host "Instala Ollama desde: https://ollama.com/download" -ForegroundColor White
+            Write-Host "NOTA: Sin Ollama, MSN-AI tendra funcionalidad limitada" -ForegroundColor Yellow
+            Write-Host "      No podras usar las funciones de chat con IA" -ForegroundColor Yellow
             Write-Host ""
         }
+        
+        Read-Host "Presiona Enter para salir"
     }
 
     default {
         Write-Host "Opcion no valida: '$method'" -ForegroundColor Red
         Write-Host "Por favor, elige 1, 2 o 3" -ForegroundColor Yellow
         Write-Host ""
+        Read-Host "Presiona Enter para salir"
         exit 1
     }
 }
 
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "     Script completado" -ForegroundColor Cyan
+Write-Host "     Script finalizado" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
-Write-Host "Problemas? alan.mac.arthur.garcia.diaz@gmail.com" -ForegroundColor Yellow
-Write-Host "Licencia: GPL-3.0" -ForegroundColor Green
-Write-Host "GitHub: https://github.com/mac100185/MSN-AI" -ForegroundColor Cyan
 Write-Host ""

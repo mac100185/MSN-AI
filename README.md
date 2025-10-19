@@ -94,10 +94,14 @@ cd MSN-AI
 # 2. Habilitar scripts (solo la primera vez)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# 3. Configurar IA (opcional)
+# 3. Desbloquear scripts descargados de Internet (IMPORTANTE)
+Unblock-File -Path .\start-msnai.ps1
+Unblock-File -Path .\ai_check_all.ps1
+
+# 4. Configurar IA (opcional)
 .\ai_check_all.ps1
 
-# 4. Iniciar aplicación
+# 5. Iniciar aplicación
 .\start-msnai.ps1 --auto
 ```
 

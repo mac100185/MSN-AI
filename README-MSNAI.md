@@ -146,15 +146,45 @@ git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
 ```
 
+#### 🪟 Instrucciones específicas para Windows:
+```powershell
+# 1. Clonar repositorio
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+
+# 2. Habilitar ejecución de scripts (solo la primera vez)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# 3. IMPORTANTE: Desbloquear scripts descargados de Internet
+Unblock-File -Path .\start-msnai.ps1
+Unblock-File -Path .\start-msnai-docker.ps1
+Unblock-File -Path .\ai_check_all.ps1
+
+# 4. Iniciar aplicación
+# Docker Edition:
+.\start-msnai-docker.ps1 --auto
+
+# Local Edition:
+.\start-msnai.ps1 --auto
+```
+
 ### 🎮 Uso - Ambas ediciones
 
 #### 🚀 Inicio inmediato
 ```bash
+# Linux/macOS:
 # Docker Edition:
 ./start-msnai-docker.sh --auto
 
 # Local Edition:
 ./start-msnai.sh --auto
+
+# Windows (PowerShell):
+# Docker Edition:
+.\start-msnai-docker.ps1 --auto
+
+# Local Edition:
+.\start-msnai.ps1 --auto
 
 # ¡La aplicación se abre automáticamente!
 ```

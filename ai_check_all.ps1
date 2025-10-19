@@ -1,16 +1,43 @@
 # ai_check_all.ps1 - Script para Windows
-# Nota para Windows: 
-# La detección de VRAM exacta requiere nvidia-smi, que sí está disponible si tienes los drivers de NVIDIA.
-# Si quieres mayor precisión, podríamos invocar nvidia-smi desde PowerShell.
-# Ollama para Windows está en versión preview, pero funciona bien.
+# Version: 1.0.0
+# Autor: Alan Mac-Arthur Garcia Diaz
+# Email: alan.mac.arthur.garcia.diaz@gmail.com
+# Licencia: GNU General Public License v3.0
+# GitHub: https://github.com/mac100185/MSN-AI
+# Descripcion: Detecta hardware y recomienda modelos de IA para MSN-AI
+#
+# ============================================
+# INSTRUCCIONES DE USO
+# ============================================
+#
+# IMPORTANTE: Si descargaste este archivo de Internet, primero debes desbloquearlo:
+#
+#   Unblock-File -Path .\ai_check_all.ps1
+#
+# Luego configura la politica de ejecucion (solo la primera vez):
+#
+#   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+#
+# Finalmente ejecuta el script:
+#
+#   .\ai_check_all.ps1
+#
+# QUE HACE ESTE SCRIPT:
+#   - Detecta CPU, RAM y GPU de tu sistema
+#   - Verifica si Ollama esta instalado
+#   - Recomienda modelos de IA segun tu hardware
+#   - Instala automaticamente el modelo recomendado (opcional)
+#
+# NOTA TECNICA:
+#   - La deteccion de VRAM exacta requiere nvidia-smi (incluido con drivers NVIDIA)
+#   - Ollama para Windows funciona en version estable
+#
+# ============================================
 
-# ¿Cómo usarlo?
-# Windows:
-# Abre PowerShell como usuario normal.
-# Ejecuta: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser (una sola vez).
-# Luego: .\ai_check_all.ps1
-
-Write-Host "=== Verificando hardware del sistema ===" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host "  Verificando hardware del sistema" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host ""
 
 # CPU cores
 $CPU_CORES = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
@@ -22,60 +49,243 @@ $RAM_GB = [Math]::Floor((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemo
 $NVIDIA_GPUS = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -like "*NVIDIA*" }
 if ($NVIDIA_GPUS) {
     $GPU_DETECTED = $true
-    # Nota: PowerShell no puede leer VRAM directamente sin herramientas externas.
-    # Asumiremos 8 GB si hay GPU NVIDIA (valor típico en laptops), o preguntaremos.
-    Write-Host "GPU NVIDIA detectada (no se puede leer VRAM automáticamente en PowerShell)" -ForegroundColor Yellow
-    $VRAM_GB = 8  # Valor por defecto conservador; podrías pedir al usuario que lo ingrese
-} else {
+    Write-Host "GPU NVIDIA detectada: $($NVIDIA_GPUS[0].Name)" -ForegroundColor Green
+    
+    # Intentar obtener VRAM con nvidia-smi
+    if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
+        try {
+            $nvidiaOutput = nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>$null
+            if ($nvidiaOutput) {
+                $VRAM_MB = [int]($nvidiaOutput.Trim())
+                $VRAM_GB = [Math]::Floor($VRAM_MB / 1024)
+                Write-Host "VRAM detectada: $VRAM_GB GB" -ForegroundColor Green
+            }
+            else {
+                $VRAM_GB = 8
+                Write-Host "VRAM: Usando valor estimado de 8 GB" -ForegroundColor Yellow
+            }
+        }
+        catch {
+            $VRAM_GB = 8
+            Write-Host "VRAM: Usando valor estimado de 8 GB" -ForegroundColor Yellow
+        }
+    }
+    else {
+        $VRAM_GB = 8
+        Write-Host "VRAM: Usando valor estimado de 8 GB" -ForegroundColor Yellow
+        Write-Host "Para deteccion exacta, asegurate de tener nvidia-smi instalado" -ForegroundColor Gray
+    }
+}
+else {
     $GPU_DETECTED = $false
     $VRAM_GB = 0
-}
-
-Write-Host "CPU: $CPU_CORES núcleos"
-Write-Host "RAM: $RAM_GB GB"
-if ($GPU_DETECTED) {
-    Write-Host "GPU NVIDIA detectada"
-    Write-Host "VRAM estimada: ${VRAM_GB} GB (valor por defecto; ajusta si es necesario)"
-} else {
-    Write-Host "No se detectó GPU NVIDIA"
+    Write-Host "GPU NVIDIA: No detectada (modo CPU)" -ForegroundColor Yellow
 }
 
 Write-Host ""
-Write-Host "=== Análisis y recomendación ===" -ForegroundColor Cyan
+Write-Host "Resumen del sistema:" -ForegroundColor Cyan
+Write-Host "  CPU: $CPU_CORES nucleos logicos"
+Write-Host "  RAM: $RAM_GB GB"
+if ($GPU_DETECTED) {
+    Write-Host "  GPU: NVIDIA detectada"
+    Write-Host "  VRAM: $VRAM_GB GB"
+}
+else {
+    Write-Host "  GPU: No detectada (usara CPU)"
+}
 
+Write-Host ""
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host "  Analisis y recomendacion de modelo IA" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Logica de recomendacion de modelos
 if ($GPU_DETECTED) {
     if ($VRAM_GB -ge 24) {
         $MODEL = "llama3:8b"
-        $LEVEL = "Avanzado (programación y tareas generales)"
-    } else {
-        $MODEL = "mistral:7b"
-        $LEVEL = "Eficiente (recomendado para laptops con GPU media)"
+        $LEVEL = "Avanzado - Excelente para programacion y tareas complejas"
+        $SIZE = "4.7 GB"
     }
-} else {
+    elseif ($VRAM_GB -ge 12) {
+        $MODEL = "mistral:7b"
+        $LEVEL = "Equilibrado - Recomendado para GPUs medias-altas"
+        $SIZE = "4.1 GB"
+    }
+    elseif ($VRAM_GB -ge 6) {
+        $MODEL = "phi3:mini"
+        $LEVEL = "Ligero - Optimizado para GPUs con VRAM limitada"
+        $SIZE = "2.3 GB"
+    }
+    else {
+        $MODEL = "tinyllama"
+        $LEVEL = "Ultra ligero - Para GPUs con muy poca VRAM"
+        $SIZE = "637 MB"
+    }
+}
+else {
     if ($RAM_GB -ge 32) {
         $MODEL = "mistral:7b"
-        $LEVEL = "Eficiente (modo CPU posible)"
-    } else {
+        $LEVEL = "Equilibrado - Posible en CPU con RAM suficiente (lento)"
+        $SIZE = "4.1 GB"
+    }
+    elseif ($RAM_GB -ge 16) {
         $MODEL = "phi3:mini"
-        $LEVEL = "Ligero (para equipos sin GPU y poca RAM)"
+        $LEVEL = "Ligero - Recomendado para modo CPU"
+        $SIZE = "2.3 GB"
+    }
+    elseif ($RAM_GB -ge 8) {
+        $MODEL = "tinyllama"
+        $LEVEL = "Ultra ligero - Para sistemas con recursos limitados"
+        $SIZE = "637 MB"
+    }
+    else {
+        $MODEL = "tinyllama"
+        $LEVEL = "Ultra ligero - Unica opcion viable con poca RAM"
+        $SIZE = "637 MB"
+        Write-Host "ADVERTENCIA: Tu sistema tiene poca RAM ($RAM_GB GB)" -ForegroundColor Red
+        Write-Host "El rendimiento de IA sera muy limitado" -ForegroundColor Red
+        Write-Host ""
     }
 }
 
-Write-Host "Modelo recomendado: $MODEL"
-Write-Host "Nivel de capacidad: $LEVEL"
+Write-Host "Modelo recomendado para tu sistema:" -ForegroundColor Green
+Write-Host ""
+Write-Host "  Modelo: $MODEL" -ForegroundColor Cyan
+Write-Host "  Tamano: $SIZE" -ForegroundColor Yellow
+Write-Host "  Nivel: $LEVEL" -ForegroundColor White
+Write-Host ""
+Write-Host "Otros modelos disponibles:" -ForegroundColor Cyan
+Write-Host "  - tinyllama (637 MB) - Ultra ligero y rapido"
+Write-Host "  - phi3:mini (2.3 GB) - Ligero y eficiente"
+Write-Host "  - mistral:7b (4.1 GB) - Equilibrado (recomendado general)"
+Write-Host "  - llama3:8b (4.7 GB) - Avanzado para tareas complejas"
+Write-Host "  - codellama:7b (3.8 GB) - Especializado en programacion"
 Write-Host ""
 
-$CONFIRM = Read-Host "¿Deseas instalar Ollama y el modelo recomendado ahora? (s/n)"
-if ($CONFIRM -eq "s" -or $CONFIRM -eq "S") {
-    if (!(Get-Command ollama -ErrorAction SilentlyContinue)) {
-        Write-Host "Instalando Ollama..." -ForegroundColor Green
-        # Descargar e instalar Ollama para Windows (versión preview)
-        Invoke-WebRequest -Uri "https://ollama.com/download/OllamaSetup.exe" -OutFile "$env:TEMP\OllamaSetup.exe"
-        Start-Process -FilePath "$env:TEMP\OllamaSetup.exe" -Wait
+# Verificar si Ollama esta instalado
+if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
+    Write-Host "Ollama no esta instalado" -ForegroundColor Red
+    Write-Host ""
+    $installOllama = Read-Host "Deseas abrir la pagina de descarga de Ollama? (s/n)"
+    
+    if ($installOllama -eq "s" -or $installOllama -eq "S") {
+        Write-Host ""
+        Write-Host "Abriendo pagina de descarga de Ollama..." -ForegroundColor Green
+        Start-Process "https://ollama.com/download"
+        Write-Host ""
+        Write-Host "============================================" -ForegroundColor Yellow
+        Write-Host "  INSTRUCCIONES DE INSTALACION" -ForegroundColor Yellow
+        Write-Host "============================================" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "1. Descarga OllamaSetup.exe desde la pagina" -ForegroundColor White
+        Write-Host "2. Ejecuta el instalador" -ForegroundColor White
+        Write-Host "3. Completa el asistente de instalacion" -ForegroundColor White
+        Write-Host "4. IMPORTANTE: Cierra esta ventana de PowerShell" -ForegroundColor Yellow
+        Write-Host "5. Abre una NUEVA ventana de PowerShell" -ForegroundColor Yellow
+        Write-Host "6. Ejecuta nuevamente este script: .\ai_check_all.ps1" -ForegroundColor White
+        Write-Host ""
+        Write-Host "NOTA: Debes usar una NUEVA sesion de PowerShell" -ForegroundColor Yellow
+        Write-Host "      despues de instalar Ollama para que se detecte" -ForegroundColor Yellow
+        Write-Host "============================================" -ForegroundColor Yellow
+        Write-Host ""
+        Read-Host "Presiona Enter para salir"
+        exit 0
     }
-    Write-Host "Descargando modelo $MODEL ..." -ForegroundColor Green
-    ollama pull $MODEL
-    Write-Host "Listo. Puedes probarlo con: ollama run $MODEL" -ForegroundColor Green
-} else {
-    Write-Host "Instalación omitida. Puedes hacerlo manualmente más tarde."
+    else {
+        Write-Host ""
+        Write-Host "Instalacion cancelada" -ForegroundColor Yellow
+        Write-Host "Puedes instalar Ollama mas tarde desde: https://ollama.com/download" -ForegroundColor Cyan
+        Write-Host ""
+        Read-Host "Presiona Enter para salir"
+        exit 0
+    }
 }
+
+# Si Ollama esta instalado, ofrecer instalar el modelo
+Write-Host "Ollama esta instalado correctamente" -ForegroundColor Green
+Write-Host ""
+
+# Verificar modelos ya instalados
+Write-Host "Verificando modelos ya instalados..." -ForegroundColor Cyan
+try {
+    $installedModels = & ollama list 2>&1
+    $modelLines = $installedModels | Select-String -Pattern "^\w" | Where-Object { $_ -notmatch "^NAME" }
+    
+    if ($modelLines) {
+        Write-Host "Modelos ya instalados:" -ForegroundColor Green
+        $modelLines | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
+        Write-Host ""
+    }
+}
+catch {
+    Write-Host "No se pudieron verificar los modelos instalados" -ForegroundColor Yellow
+}
+
+$CONFIRM = Read-Host "Deseas instalar el modelo recomendado ($MODEL - $SIZE)? (s/n)"
+if ($CONFIRM -eq "s" -or $CONFIRM -eq "S") {
+    Write-Host ""
+    Write-Host "Descargando modelo $MODEL..." -ForegroundColor Green
+    Write-Host "IMPORTANTE: Esto puede tardar varios minutos" -ForegroundColor Yellow
+    Write-Host "            Tamano de descarga: $SIZE" -ForegroundColor Yellow
+    Write-Host ""
+    
+    & ollama pull $MODEL
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host ""
+        Write-Host "============================================" -ForegroundColor Green
+        Write-Host "  Instalacion completada exitosamente" -ForegroundColor Green
+        Write-Host "============================================" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "El modelo $MODEL esta listo para usar" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "Puedes probarlo con:" -ForegroundColor Cyan
+        Write-Host "  ollama run $MODEL" -ForegroundColor White
+        Write-Host ""
+        Write-Host "O iniciar MSN-AI con:" -ForegroundColor Cyan
+        Write-Host "  .\start-msnai.ps1 --auto" -ForegroundColor White
+        Write-Host ""
+    }
+    else {
+        Write-Host ""
+        Write-Host "Error al descargar el modelo" -ForegroundColor Red
+        Write-Host ""
+        Write-Host "Posibles causas:" -ForegroundColor Yellow
+        Write-Host "  - Problema de conexion a internet" -ForegroundColor White
+        Write-Host "  - Espacio en disco insuficiente" -ForegroundColor White
+        Write-Host "  - Servicio Ollama no esta ejecutandose" -ForegroundColor White
+        Write-Host ""
+        Write-Host "Intenta manualmente:" -ForegroundColor Cyan
+        Write-Host "  1. Verifica tu conexion a internet" -ForegroundColor White
+        Write-Host "  2. Asegurate de tener al menos 5GB libres en disco" -ForegroundColor White
+        Write-Host "  3. Ejecuta: ollama serve" -ForegroundColor White
+        Write-Host "  4. En otra ventana: ollama pull $MODEL" -ForegroundColor White
+        Write-Host ""
+    }
+}
+else {
+    Write-Host ""
+    Write-Host "Instalacion de modelo omitida" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Puedes instalar un modelo mas tarde con:" -ForegroundColor Cyan
+    Write-Host "  ollama pull $MODEL" -ForegroundColor White
+    Write-Host ""
+    Write-Host "O cualquier otro modelo:" -ForegroundColor Cyan
+    Write-Host "  ollama pull tinyllama" -ForegroundColor White
+    Write-Host "  ollama pull phi3:mini" -ForegroundColor White
+    Write-Host "  ollama pull mistral:7b" -ForegroundColor White
+    Write-Host ""
+}
+
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host "  Verificacion completada" -ForegroundColor Cyan
+Write-Host "============================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "Siguiente paso: Iniciar MSN-AI" -ForegroundColor Green
+Write-Host "  .\start-msnai.ps1 --auto" -ForegroundColor White
+Write-Host ""
+Write-Host "Documentacion: https://github.com/mac100185/MSN-AI" -ForegroundColor Cyan
+Write-Host "Soporte: alan.mac.arthur.garcia.diaz@gmail.com" -ForegroundColor Yellow
+Write-Host ""
+Read-Host "Presiona Enter para salir"
