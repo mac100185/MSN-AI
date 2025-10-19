@@ -276,6 +276,24 @@
         </div>
     </div>
 
+    <!-- Modal de resumen de importación -->
+    <div id="import-summary-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Importación Completada</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <div id="import-summary-content" style="padding: 10px;">
+                    <!-- El contenido se llenará dinámicamente -->
+                </div>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="aerobutton" id="close-summary-btn">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Audio elements para sonidos -->
     <audio id="sound-login" preload="auto">
         <source src="assets/sounds/login.wav" type="audio/wav">
@@ -379,6 +397,57 @@
                 <div style="text-align: right; margin-top: 15px;">
                     <button class="aerobutton" id="cancel-delete-btn">Cancelar</button>
                     <button class="aerobutton" id="confirm-delete-btn" style="margin-left: 8px;">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de conflictos de importación -->
+    <div id="import-conflict-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Chat Duplicado Detectado</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <div id="conflict-info" style="background: #f0f0f0; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                    <p style="margin: 5px 0;"><strong>📋 Título:</strong> <span id="conflict-title"></span></p>
+                    <p style="margin: 5px 0;"><strong>🤖 Modelo:</strong> <span id="conflict-model"></span></p>
+                    <p style="margin: 5px 0;"><strong>Chat existente:</strong> <span id="conflict-existing-count"></span> mensaje(s)</p>
+                    <p style="margin: 5px 0;"><strong>Chat a importar:</strong> <span id="conflict-imported-count"></span> mensaje(s)</p>
+                </div>
+
+                <div id="conflict-warning" style="background: #fff3cd; padding: 12px; border-radius: 4px; margin-bottom: 15px; display: none;">
+                    <p style="margin: 0; color: #856404;">⚠️ <strong>ADVERTENCIA:</strong> El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.</p>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <p style="font-weight: bold; margin-bottom: 10px;">¿Qué deseas hacer?</p>
+
+                    <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
+                        <input type="radio" name="conflict-action" value="merge" checked style="margin-right: 8px;">
+                        <strong>Unir</strong> - Combinar ambos chats manteniendo todos los mensajes
+                    </label>
+
+                    <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;" id="replace-option">
+                        <input type="radio" name="conflict-action" value="replace" style="margin-right: 8px;">
+                        <strong>Reemplazar</strong> - Sustituir el chat existente por el importado
+                    </label>
+
+                    <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
+                        <input type="radio" name="conflict-action" value="skip" style="margin-right: 8px;">
+                        <strong>Omitir</strong> - No importar este chat
+                    </label>
+
+                    <label style="display: block; padding: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
+                        <input type="radio" name="conflict-action" value="skip-all" style="margin-right: 8px;">
+                        <strong>Omitir todos</strong> - Omitir este y los restantes conflictos
+                    </label>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px;">
+                    <span id="conflict-counter" style="margin-right: 15px; color: #666;">Conflicto 1 de 1</span>
+                    <button class="aerobutton" id="conflict-apply-btn">Aplicar</button>
                 </div>
             </div>
         </div>

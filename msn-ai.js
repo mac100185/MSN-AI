@@ -11,9 +11,11 @@ class MSNAI {
     this.fontSize = 14;
     this.chatSortOrder = "asc"; // valor inicial: ascendente
     this.pendingFileAttachment = null;
-    this.abortController = null; // Controlador para detener respuestas de IA
-    this.isAIResponding = false; // Estado de si la IA está respondiendo
+    this.abortControllers = {}; // Mapa de controladores por chatId
+    this.respondingChats = new Set(); // Set de chatIds que están recibiendo respuesta
     this.wasAborted = false; // Flag para saber si se abortó la última respuesta
+    this.accumulatedResponses = {}; // Mapa de respuestas acumuladas por chatId
+    this.unreadChats = new Set(); // Set de chatIds con mensajes no leídos
     const currentHost = window.location.hostname;
     const isRemoteAccess =
       currentHost !== "localhost" && currentHost !== "127.0.0.1";
@@ -111,18 +113,28 @@ class MSNAI {
     };
     chat.messages.push(aiMessage);
     this.renderMessages(chat);
-    this.showAIThinking(true);
+
+    // Mostrar thinking solo si es el chat actual
+    if (this.currentChatId === chat.id) {
+      this.showAIThinking(true);
+    }
 
     try {
       // Enviar contexto del cambio de estado a la IA
       const contextPrompt = `El usuario ha cambiado su estado de "${oldStatus}" a "${newStatus}". ${userMessage} Responde de manera breve y amigable reconociendo este cambio de estado.`;
 
       const onToken = (token) => {
-        aiMessage.content += token;
-        this.renderMessages(chat);
+        // Acumular en el sistema de respuestas
+        this.accumulatedResponses[chat.id] += token;
+        aiMessage.content = this.accumulatedResponses[chat.id];
+
+        // Solo renderizar si es el chat actual
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
       };
 
-      await this.sendToAI(contextPrompt, this.currentChatId, onToken);
+      await this.sendToAI(contextPrompt, chat.id, onToken);
 
       this.playSound("message-in");
     } catch (error) {
@@ -138,7 +150,9 @@ class MSNAI {
       } else {
         aiMessage.content = `He notado tu cambio de estado a ${newStatus}. ¿En qué puedo ayudarte?`;
       }
-      this.renderMessages(chat);
+      if (this.currentChatId === chat.id) {
+        this.renderMessages(chat);
+      }
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
@@ -150,11 +164,12 @@ class MSNAI {
         } else if (!aiMessage.content) {
           aiMessage.content = "[⏹️ Respuesta detenida]";
         }
-        this.renderMessages(chat);
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
         this.wasAborted = false;
       }
 
-      this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
     }
@@ -247,15 +262,25 @@ class MSNAI {
     };
     chat.messages.push(aiMessage);
     this.renderMessages(chat);
-    this.showAIThinking(true);
+
+    // Mostrar thinking solo si es el chat actual
+    if (this.currentChatId === chat.id) {
+      this.showAIThinking(true);
+    }
 
     try {
       const onToken = (token) => {
-        aiMessage.content += token;
-        this.renderMessages(chat);
+        // Acumular en el sistema de respuestas
+        this.accumulatedResponses[chat.id] += token;
+        aiMessage.content = this.accumulatedResponses[chat.id];
+
+        // Solo renderizar si es el chat actual
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
       };
 
-      await this.sendToAI("¿Estás allí?", this.currentChatId, onToken);
+      await this.sendToAI("¿Estás allí?", chat.id, onToken);
 
       this.playSound("message-in");
     } catch (error) {
@@ -271,7 +296,9 @@ class MSNAI {
       } else {
         aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
       }
-      this.renderMessages(chat);
+      if (this.currentChatId === chat.id) {
+        this.renderMessages(chat);
+      }
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
@@ -283,11 +310,12 @@ class MSNAI {
         } else if (!aiMessage.content) {
           aiMessage.content = "[⏹️ Respuesta detenida]";
         }
-        this.renderMessages(chat);
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
         this.wasAborted = false;
       }
 
-      this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
     }
@@ -545,7 +573,11 @@ class MSNAI {
     };
     chat.messages.push(aiMessage);
     this.renderMessages(chat);
-    this.showAIThinking(true);
+
+    // Mostrar thinking solo si es el chat actual
+    if (this.currentChatId === chat.id) {
+      this.showAIThinking(true);
+    }
 
     try {
       let actualMessageToSend = displayedMessage;
@@ -554,13 +586,19 @@ class MSNAI {
       }
 
       const onToken = (token) => {
-        aiMessage.content += token;
-        this.renderMessages(chat);
+        // Acumular en el sistema de respuestas
+        this.accumulatedResponses[chat.id] += token;
+        aiMessage.content = this.accumulatedResponses[chat.id];
+
+        // Solo renderizar si es el chat actual
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
       };
 
       const response = await this.sendToAI(
         actualMessageToSend,
-        this.currentChatId,
+        chat.id,
         onToken,
       );
 
@@ -579,7 +617,9 @@ class MSNAI {
       } else {
         aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
       }
-      this.renderMessages(chat);
+      if (this.currentChatId === chat.id) {
+        this.renderMessages(chat);
+      }
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
@@ -591,11 +631,12 @@ class MSNAI {
         } else if (!aiMessage.content) {
           aiMessage.content = "[⏹️ Respuesta detenida antes de comenzar]";
         }
-        this.renderMessages(chat);
+        if (this.currentChatId === chat.id) {
+          this.renderMessages(chat);
+        }
         this.wasAborted = false;
       }
 
-      this.showAIThinking(false);
       this.saveChats();
       this.renderChatList();
     }
@@ -724,13 +765,15 @@ class MSNAI {
     const chat = this.chats.find((c) => c.id === chatId);
     if (!chat) throw new Error("Chat no encontrado");
 
-    // Crear nuevo AbortController para esta solicitud
-    this.abortController = new AbortController();
-    this.isAIResponding = true;
+    // Crear nuevo AbortController para este chat específico
+    this.abortControllers[chatId] = new AbortController();
+    this.respondingChats.add(chatId);
 
-    // Mostrar botón de detener
-    const stopBtn = document.getElementById("detener-respuesta-ia-btn");
-    if (stopBtn) stopBtn.style.display = "inline-block";
+    // Inicializar acumulador de respuesta para este chat
+    this.accumulatedResponses[chatId] = "";
+
+    // Mostrar botón de detener solo si estamos en este chat
+    this.updateStopButtonVisibility();
 
     const context = chat.messages
       .slice(-10)
@@ -755,7 +798,7 @@ class MSNAI {
             stream: true,
             options: { temperature: 0.7, max_tokens: 2000 },
           }),
-          signal: this.abortController.signal, // Añadir señal de aborto
+          signal: this.abortControllers[chatId].signal, // Añadir señal de aborto específica del chat
         },
       );
 
@@ -778,6 +821,7 @@ class MSNAI {
               const json = JSON.parse(line);
               if (json.response) {
                 fullResponse += json.response;
+                // Llamar onToken que ya maneja la acumulación
                 onToken(json.response);
               }
               if (json.done) break;
@@ -801,22 +845,56 @@ class MSNAI {
       }
       throw error;
     } finally {
-      // Ocultar botón de detener y limpiar estado
-      this.isAIResponding = false;
-      if (stopBtn) stopBtn.style.display = "none";
-      this.abortController = null;
+      // Asegurar que la respuesta acumulada se guarde en el mensaje
+      const chat = this.chats.find((c) => c.id === chatId);
+      if (chat && chat.messages.length > 0) {
+        const lastMessage = chat.messages[chat.messages.length - 1];
+        if (lastMessage.type === "ai" && this.accumulatedResponses[chatId]) {
+          lastMessage.content = this.accumulatedResponses[chatId];
+        }
+      }
+
+      // Limpiar estado de este chat
+      this.respondingChats.delete(chatId);
+      delete this.abortControllers[chatId];
+      delete this.accumulatedResponses[chatId];
+
+      // Marcar como no leído si no es el chat actual
+      if (this.currentChatId !== chatId) {
+        this.unreadChats.add(chatId);
+        this.renderChatList();
+      }
+
+      // Actualizar visibilidad del botón de detener
+      this.updateStopButtonVisibility();
+
+      // Actualizar thinking indicator solo si es el chat actual
+      if (this.currentChatId === chatId) {
+        this.showAIThinking(false);
+      }
+    }
+  }
+
+  updateStopButtonVisibility() {
+    const stopBtn = document.getElementById("detener-respuesta-ia-btn");
+    if (stopBtn) {
+      // Mostrar botón solo si el chat actual está respondiendo
+      stopBtn.style.display = this.respondingChats.has(this.currentChatId)
+        ? "inline-block"
+        : "none";
     }
   }
 
   stopAIResponse() {
-    if (this.abortController && this.isAIResponding) {
-      console.log("🛑 Deteniendo respuesta de IA...");
-      this.abortController.abort();
-      this.showAIThinking(false);
-      this.playSound("nudge");
-
-      // El mensaje se marcará automáticamente en sendMessage cuando termine
-      // No necesitamos añadir el marcador aquí porque se hace después del abort
+    // Detener la respuesta del chat actual si está respondiendo
+    if (this.currentChatId && this.respondingChats.has(this.currentChatId)) {
+      const abortController = this.abortControllers[this.currentChatId];
+      if (abortController) {
+        console.log("🛑 Deteniendo respuesta de IA...");
+        abortController.abort();
+        this.showAIThinking(false);
+        this.playSound("nudge");
+      }
     }
   }
 
@@ -840,6 +918,10 @@ class MSNAI {
     this.currentChatId = chatId;
     const chat = this.chats.find((c) => c.id === chatId);
     if (!chat) return;
+
+    // Marcar como leído
+    this.unreadChats.delete(chatId);
+
     document
       .querySelectorAll(".chat-item")
       .forEach((item) => item.classList.remove("active"));
@@ -848,9 +930,25 @@ class MSNAI {
     document.getElementById("chat-contact-name").textContent = chat.title;
     document.getElementById("chat-status-message").textContent =
       `Modelo: ${chat.model} - ${chat.messages.length} mensajes`;
+
+    // Si hay respuesta acumulada pendiente, actualizarla
+    if (this.accumulatedResponses[chatId]) {
+      const lastMessage = chat.messages[chat.messages.length - 1];
+      if (lastMessage && lastMessage.type === "ai") {
+        lastMessage.content = this.accumulatedResponses[chatId];
+      }
+    }
+
     this.renderMessages(chat);
+    this.renderChatList(); // Re-renderizar para actualizar indicador de no leído
     document.getElementById("message-input").disabled = false;
     document.getElementById("send-button").disabled = false;
+
+    // Actualizar visibilidad del botón de detener según el chat seleccionado
+    this.updateStopButtonVisibility();
+
+    // Actualizar thinking indicator según el chat seleccionado
+    this.showAIThinking(this.respondingChats.has(chatId));
 
     // Cambiar automáticamente el modelo al seleccionar un chat
     if (this.settings.selectedModel !== chat.model && chat.model) {
@@ -888,12 +986,6 @@ class MSNAI {
     const chatList = document.getElementById("chat-list");
     chatList.innerHTML = "";
 
-    if (this.chats.length === 0) {
-      chatList.innerHTML =
-        '<li style="padding: 20px; text-align: center; color: #666;">No hay chats. Crea uno nuevo.</li>';
-      return;
-    }
-
     // Agrupar chats por modelo
     const chatsByModel = {};
     this.chats.forEach((chat) => {
@@ -903,6 +995,20 @@ class MSNAI {
       }
       chatsByModel[model].push(chat);
     });
+
+    // Agregar modelos instalados que no tienen chats
+    this.availableModels.forEach((model) => {
+      if (!chatsByModel[model.name]) {
+        chatsByModel[model.name] = [];
+      }
+    });
+
+    // Si no hay modelos ni chats
+    if (Object.keys(chatsByModel).length === 0) {
+      chatList.innerHTML =
+        '<li style="padding: 20px; text-align: center; color: #666;">No hay modelos instalados. Instala modelos en Ollama.</li>';
+      return;
+    }
 
     // Renderizar cada grupo de modelo
     Object.keys(chatsByModel).forEach((modelName) => {
@@ -1105,6 +1211,12 @@ class MSNAI {
     const titleDiv = document.createElement("div");
     titleDiv.className = "chat-title";
     titleDiv.textContent = chat.title;
+
+    // Resaltar en verde si no está leído
+    if (this.unreadChats.has(chat.id)) {
+      titleDiv.style.color = "#00aa00";
+      titleDiv.style.fontWeight = "bold";
+    }
 
     // Último mensaje
     const lastMessage =
@@ -1329,20 +1441,7 @@ class MSNAI {
       try {
         const data = JSON.parse(e.target.result);
         if (data.chats && Array.isArray(data.chats)) {
-          if (
-            confirm(
-              `¿Importar ${data.chats.length} chats? Esto se agregará a tus chats existentes.`,
-            )
-          ) {
-            data.chats.forEach((chat) => {
-              chat.id = "imported-" + Date.now() + "-" + Math.random();
-            });
-            this.chats = [...data.chats, ...this.chats];
-            this.saveChats();
-            this.renderChatList();
-            this.playSound("login");
-            alert(`¡${data.chats.length} chats importados exitosamente!`);
-          }
+          this.processImportedChats(data.chats);
         } else {
           alert("Archivo JSON inválido o sin chats.");
         }
@@ -1352,6 +1451,312 @@ class MSNAI {
       }
     };
     reader.readAsText(file);
+  }
+
+  async processImportedChats(importedChats) {
+    let imported = 0;
+    let skipped = 0;
+    let merged = 0;
+    let replaced = 0;
+    const conflicts = [];
+
+    for (const importedChat of importedChats) {
+      const duplicate = this.findDuplicateChat(importedChat);
+
+      if (!duplicate) {
+        // No existe, importar directamente
+        importedChat.id = "imported-" + Date.now() + "-" + Math.random();
+        this.chats.unshift(importedChat);
+        imported++;
+      } else {
+        // Existe duplicado, agregar a la lista de conflictos
+        conflicts.push({ imported: importedChat, existing: duplicate });
+      }
+    }
+
+    // Si hay conflictos, mostrar modal de resolución
+    if (conflicts.length > 0) {
+      const result = await this.showImportConflictModal(conflicts);
+      imported += result.imported;
+      merged += result.merged;
+      replaced += result.replaced;
+      skipped += result.skipped;
+    }
+
+    this.saveChats();
+    this.renderChatList();
+    this.playSound("login");
+
+    // Mostrar resumen en modal personalizado
+    this.showImportSummary(imported, merged, replaced, skipped);
+  }
+
+  findDuplicateChat(importedChat) {
+    return this.chats.find((existingChat) => {
+      // Comparar por modelo y título similar
+      if (existingChat.model !== importedChat.model) return false;
+
+      // Comparar títulos (normalizado)
+      const existingTitle = existingChat.title.trim().toLowerCase();
+      const importedTitle = importedChat.title.trim().toLowerCase();
+
+      if (existingTitle === importedTitle) return true;
+
+      // También comparar por primer mensaje del usuario si existe
+      const existingFirstMsg = existingChat.messages.find(
+        (m) => m.type === "user",
+      );
+      const importedFirstMsg = importedChat.messages.find(
+        (m) => m.type === "user",
+      );
+
+      if (existingFirstMsg && importedFirstMsg) {
+        return (
+          existingFirstMsg.content.substring(0, 100) ===
+          importedFirstMsg.content.substring(0, 100)
+        );
+      }
+
+      return false;
+    });
+  }
+
+  async showImportConflictModal(conflicts) {
+    return new Promise((resolve) => {
+      let currentIndex = 0;
+      let imported = 0,
+        merged = 0,
+        replaced = 0,
+        skipped = 0;
+
+      const modal = document.getElementById("import-conflict-modal");
+      const titleEl = document.getElementById("conflict-title");
+      const modelEl = document.getElementById("conflict-model");
+      const existingCountEl = document.getElementById(
+        "conflict-existing-count",
+      );
+      const importedCountEl = document.getElementById(
+        "conflict-imported-count",
+      );
+      const warningEl = document.getElementById("conflict-warning");
+      const counterEl = document.getElementById("conflict-counter");
+      const applyBtn = document.getElementById("conflict-apply-btn");
+      const replaceOption = document.getElementById("replace-option");
+
+      const showConflict = () => {
+        if (currentIndex >= conflicts.length) {
+          modal.style.display = "none";
+          resolve({ imported, merged, replaced, skipped });
+          return;
+        }
+
+        const conflict = conflicts[currentIndex];
+        const existingChat = conflict.existing;
+        const importedChat = conflict.imported;
+
+        // Comparar cantidad de información
+        const existingMsgCount = existingChat.messages.length;
+        const importedMsgCount = importedChat.messages.length;
+        const wouldLoseInfo = importedMsgCount < existingMsgCount;
+
+        // Actualizar contenido del modal
+        titleEl.textContent = existingChat.title;
+        modelEl.textContent = existingChat.model;
+        existingCountEl.textContent = existingMsgCount;
+        importedCountEl.textContent = importedMsgCount;
+        counterEl.textContent = `Conflicto ${currentIndex + 1} de ${conflicts.length}`;
+
+        // Mostrar/ocultar advertencia
+        if (wouldLoseInfo) {
+          warningEl.style.display = "block";
+          replaceOption.style.opacity = "0.5";
+          replaceOption.style.pointerEvents = "none";
+          const replaceRadio = replaceOption.querySelector(
+            'input[type="radio"]',
+          );
+          replaceRadio.disabled = true;
+        } else {
+          warningEl.style.display = "none";
+          replaceOption.style.opacity = "1";
+          replaceOption.style.pointerEvents = "auto";
+          const replaceRadio = replaceOption.querySelector(
+            'input[type="radio"]',
+          );
+          replaceRadio.disabled = false;
+        }
+
+        // Resetear selección a "Unir" por defecto
+        document.querySelector(
+          'input[name="conflict-action"][value="merge"]',
+        ).checked = true;
+
+        // Mostrar modal
+        modal.style.display = "block";
+
+        // Manejar clic en aplicar
+        const handleApply = () => {
+          const selectedAction = document.querySelector(
+            'input[name="conflict-action"]:checked',
+          ).value;
+
+          if (selectedAction === "skip-all") {
+            skipped += conflicts.length - currentIndex;
+            applyBtn.removeEventListener("click", handleApply);
+            modal.style.display = "none";
+            resolve({ imported, merged, replaced, skipped });
+            return;
+          }
+
+          if (selectedAction === "replace") {
+            if (wouldLoseInfo) {
+              // Mostrar advertencia en el modal en lugar de alert
+              const warningEl = document.getElementById("conflict-warning");
+              const warningText = warningEl.querySelector("p");
+              warningText.innerHTML =
+                `⚠️ <strong>NO SE PUEDE REEMPLAZAR:</strong> Se perdería información.<br>` +
+                `Chat existente: ${existingMsgCount} mensajes<br>` +
+                `Chat a importar: ${importedMsgCount} mensajes<br><br>` +
+                `Este chat será omitido automáticamente.`;
+              warningEl.style.background = "#f8d7da";
+              warningEl.style.display = "block";
+
+              // Auto-omitir después de 2 segundos
+              setTimeout(() => {
+                warningEl.style.display = "none";
+                warningText.innerHTML = `⚠️ <strong>ADVERTENCIA:</strong> El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.`;
+                warningEl.style.background = "#fff3cd";
+              }, 2000);
+
+              skipped++;
+            } else {
+              const index = this.chats.indexOf(existingChat);
+              importedChat.id = existingChat.id;
+              this.chats[index] = importedChat;
+              replaced++;
+            }
+          } else if (selectedAction === "merge") {
+            this.mergeChats(existingChat, importedChat);
+            merged++;
+          } else if (selectedAction === "skip") {
+            skipped++;
+          }
+
+          currentIndex++;
+          applyBtn.removeEventListener("click", handleApply);
+          showConflict();
+        };
+
+        applyBtn.addEventListener("click", handleApply);
+      };
+
+      showConflict();
+    });
+  }
+
+  mergeChats(existingChat, importedChat) {
+    // Unión inteligente: detectar mensajes parciales y completarlos
+    const existingMsgMap = new Map();
+
+    // Indexar mensajes existentes por timestamp y tipo
+    existingChat.messages.forEach((msg, index) => {
+      const key = `${msg.timestamp}-${msg.type}`;
+      existingMsgMap.set(key, { msg, index });
+    });
+
+    let addedCount = 0;
+    let updatedCount = 0;
+
+    // Procesar mensajes importados
+    importedChat.messages.forEach((importedMsg) => {
+      const key = `${importedMsg.timestamp}-${importedMsg.type}`;
+
+      if (existingMsgMap.has(key)) {
+        // Existe un mensaje con mismo timestamp y tipo
+        const existing = existingMsgMap.get(key);
+        const existingContent = existing.msg.content;
+        const importedContent = importedMsg.content;
+
+        // Verificar si el contenido importado es una extensión del existente
+        if (
+          importedContent.length > existingContent.length &&
+          importedContent.startsWith(existingContent)
+        ) {
+          // El mensaje importado contiene más información
+          existing.msg.content = importedContent;
+          updatedCount++;
+          console.log(`✅ Mensaje actualizado con contenido extendido`);
+        } else if (
+          existingContent.length > importedContent.length &&
+          existingContent.startsWith(importedContent)
+        ) {
+          // El mensaje existente ya tiene más información, no hacer nada
+          console.log(
+            `ℹ️ Mensaje existente ya tiene más contenido, no se actualiza`,
+          );
+        } else if (existingContent !== importedContent) {
+          // Contenidos diferentes, verificar si uno contiene al otro parcialmente
+          // o si son completamente diferentes
+          if (
+            !existingContent.includes(importedContent) &&
+            !importedContent.includes(existingContent)
+          ) {
+            // Son diferentes, agregar el importado como nuevo mensaje
+            existingChat.messages.push(importedMsg);
+            addedCount++;
+          }
+        }
+        // Si son idénticos, no hacer nada
+      } else {
+        // No existe, agregarlo como nuevo mensaje
+        existingChat.messages.push(importedMsg);
+        addedCount++;
+      }
+    });
+
+    // Ordenar mensajes por timestamp
+    existingChat.messages.sort(
+      (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
+    );
+
+    // Actualizar fecha si el chat importado es más reciente
+    const existingDate = new Date(existingChat.date);
+    const importedDate = new Date(importedChat.date);
+    if (importedDate > existingDate) {
+      existingChat.date = importedChat.date;
+    }
+
+    console.log(
+      `✅ Chat unido: ${addedCount} mensaje(s) nuevo(s), ${updatedCount} mensaje(s) actualizado(s)`,
+    );
+  }
+
+  showImportSummary(imported, merged, replaced, skipped) {
+    const modal = document.getElementById("import-summary-modal");
+    const content = document.getElementById("import-summary-content");
+
+    let html = '<div style="line-height: 1.8;">';
+
+    if (imported > 0) {
+      html += `<p style="margin: 8px 0;">✅ <strong>${imported}</strong> chat(s) importado(s)</p>`;
+    }
+    if (merged > 0) {
+      html += `<p style="margin: 8px 0;">🔀 <strong>${merged}</strong> chat(s) unido(s)</p>`;
+    }
+    if (replaced > 0) {
+      html += `<p style="margin: 8px 0;">♻️ <strong>${replaced}</strong> chat(s) reemplazado(s)</p>`;
+    }
+    if (skipped > 0) {
+      html += `<p style="margin: 8px 0;">⏭️ <strong>${skipped}</strong> chat(s) omitido(s)</p>`;
+    }
+
+    if (imported === 0 && merged === 0 && replaced === 0 && skipped === 0) {
+      html +=
+        '<p style="margin: 8px 0; color: #666;">No se realizaron cambios.</p>';
+    }
+
+    html += "</div>";
+    content.innerHTML = html;
+    modal.style.display = "block";
   }
   //---------------------------
   // Helper para registrar event listeners con verificacion
@@ -1625,6 +2030,13 @@ class MSNAI {
       .addEventListener("click", () => {
         this.chatToDelete = null;
         document.getElementById("delete-chat-modal").style.display = "none";
+      });
+
+    // Cerrar modal de resumen de importación
+    document
+      .getElementById("close-summary-btn")
+      .addEventListener("click", () => {
+        document.getElementById("import-summary-modal").style.display = "none";
       });
   }
   //-----------------------------------------------

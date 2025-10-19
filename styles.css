@@ -1037,3 +1037,41 @@ a {
     position: relative;
     min-width: 0; /* ✅ Permitir que el flex funcione correctamente */
 }
+
+/* ===================
+   MODAL DE CONFLICTOS DE IMPORTACIÓN
+   =================== */
+#import-conflict-modal .modal-content {
+    width: 600px;
+    max-width: 90%;
+    margin: 5% auto;
+}
+
+#import-summary-modal .modal-content {
+    width: 500px;
+    max-width: 90%;
+    margin: 15% auto;
+}
+
+#import-conflict-modal label {
+    transition: all 0.2s ease;
+}
+
+#import-conflict-modal label:hover {
+    background: #f0f8ff !important;
+    border-color: #0066cc !important;
+}
+
+#import-conflict-modal input[type="radio"]:checked + strong {
+    color: #0066cc;
+}
+
+#import-conflict-modal label:has(input[type="radio"]:checked) {
+    background: #e6f3ff !important;
+    border-color: #0066cc !important;
+    border-width: 2px;
+}
+
+#import-conflict-modal input[type="radio"] {
+    cursor: pointer;
+}
