@@ -1,6 +1,6 @@
 # 🚀 MSN-AI - Windows Live Messenger con IA Local
 <p align="center">
-  <img src="screenshots/msn-ai-v2.1.0.png" alt="MSN-AI v2.1.0 - Interfaz principal" width="850"/>
+  <img src="assets/screenshots/msn-ai-v2.1.0.png" alt="MSN-AI v2.1.0 - Interfaz principal" width="850"/>
 </p>
 ![MSN-AI](assets/general/logo.png)
 
