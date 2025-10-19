@@ -166,6 +166,13 @@ Unblock-File -Path .\ai_check_all.ps1
 
 # Local Edition:
 .\start-msnai.ps1 --auto
+
+# NOTA: Si Ollama no está instalado, el script te guiará para instalarlo.
+#       Después de instalar Ollama, CIERRA PowerShell y abre una NUEVA ventana.
+#       Luego ejecuta nuevamente el comando de inicio.
+
+# 5. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
+.\ai_check_all.ps1
 ```
 
 ### 🎮 Uso - Ambas ediciones

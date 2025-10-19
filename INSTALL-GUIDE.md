@@ -369,14 +369,18 @@ cd "C:\Users\TuUsuario\Documents\MSN-AI"
 # O donde hayas extraído los archivos
 ```
 
-#### 4. Configurar IA (recomendado)
-```powershell
-.\ai_check_all.ps1
-```
-
-#### 5. Iniciar MSN-AI
+#### 4. Iniciar MSN-AI
 ```powershell
 .\start-msnai.ps1 --auto
+
+# NOTA: Si Ollama no está instalado, el script te guiará para instalarlo.
+#       Después de instalar Ollama, CIERRA PowerShell y abre una NUEVA ventana.
+#       Luego ejecuta nuevamente: .\start-msnai.ps1 --auto
+```
+
+#### 5. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
+```powershell
+.\ai_check_all.ps1
 ```
 
 ### 🔧 Configuración específica local para Windows

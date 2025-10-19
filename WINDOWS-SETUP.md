@@ -13,6 +13,7 @@
 - [Requisitos del Sistema](#requisitos-del-sistema)
 - [Instalación Rápida](#instalación-rápida)
 - [Problema Común: Scripts Bloqueados](#problema-común-scripts-bloqueados)
+- [Instalación de Ollama](#instalación-de-ollama)
 - [Modo Local (Recomendado)](#modo-local-recomendado)
 - [Modo Docker](#modo-docker)
 - [Solución de Problemas](#solución-de-problemas)
@@ -64,15 +65,7 @@ Unblock-File -Path .\start-msnai-docker.ps1
 Unblock-File -Path .\ai_check_all.ps1
 ```
 
-### Paso 4: Verificar Hardware (Opcional)
-
-```powershell
-.\ai_check_all.ps1
-```
-
-Este script detectará tu hardware y recomendará el mejor modelo de IA.
-
-### Paso 5: Iniciar MSN-AI
+### Paso 4: Iniciar MSN-AI
 
 ```powershell
 # Modo automático (recomendado)
@@ -81,6 +74,25 @@ Este script detectará tu hardware y recomendará el mejor modelo de IA.
 # Modo interactivo (te pregunta opciones)
 .\start-msnai.ps1
 ```
+
+**NOTA IMPORTANTE:** Si Ollama no está instalado, el script te guiará para instalarlo:
+1. Te preguntará si quieres abrir la página de descarga
+2. Descarga e instala OllamaSetup.exe desde https://ollama.com/download
+3. **IMPORTANTE:** Después de instalar Ollama, CIERRA PowerShell
+4. Abre una NUEVA ventana de PowerShell
+5. Navega al directorio MSN-AI y ejecuta `.\start-msnai.ps1 --auto` nuevamente
+
+### Paso 5 (Opcional): Verificar Hardware y Obtener Recomendaciones
+
+```powershell
+.\ai_check_all.ps1
+```
+
+Este script:
+- Detecta tu CPU, RAM y GPU
+- Recomienda el mejor modelo de IA según tu hardware
+- Te ayuda a instalar Ollama si no lo tienes
+- Descarga el modelo recomendado automáticamente
 
 ---
 
@@ -145,6 +157,111 @@ Si devuelve algo, el archivo está bloqueado. Si no devuelve nada, está desbloq
 
 ---
 
+## 🤖 Instalación de Ollama
+
+Ollama es el motor de IA que permite a MSN-AI tener conversaciones inteligentes. Su instalación es **opcional**, pero altamente recomendada para aprovechar todas las funciones.
+
+### ¿Cuándo instalar Ollama?
+
+El script `start-msnai.ps1` detecta automáticamente si Ollama está instalado:
+- Si **NO está instalado**: Te guiará paso a paso para instalarlo
+- Si **YA está instalado**: Verificará los modelos disponibles
+
+### Proceso de Instalación Guiada
+
+1. **Ejecuta MSN-AI por primera vez:**
+   ```powershell
+   .\start-msnai.ps1 --auto
+   ```
+
+2. **El script detecta que Ollama no está instalado y pregunta:**
+   ```
+   Ollama no esta instalado
+   
+   Deseas abrir la pagina de descarga de Ollama? (s/n):
+   ```
+
+3. **Responde "s" (sí):**
+   - Se abrirá automáticamente: https://ollama.com/download
+   - Verás instrucciones claras en pantalla
+
+4. **Descarga e instala Ollama:**
+   - Descarga **OllamaSetup.exe** desde la página
+   - Ejecuta el instalador
+   - Sigue el asistente de instalación (Next, Next, Install)
+   - Espera a que complete la instalación
+
+5. **⚠️ PASO CRÍTICO - Reiniciar PowerShell:**
+   - **CIERRA** completamente la ventana de PowerShell actual
+   - **ABRE** una nueva ventana de PowerShell
+   - Navega al directorio: `cd MSN-AI`
+
+6. **Ejecuta el script nuevamente:**
+   ```powershell
+   .\start-msnai.ps1 --auto
+   ```
+
+7. **Ahora Ollama es detectado y puedes instalar modelos:**
+   ```
+   Ollama ya esta ejecutandose
+   Verificando modelos de IA instalados...
+   No hay modelos de IA instalados
+   
+   Deseas instalar el modelo mistral:7b (recomendado, 4.1GB)? (s/n):
+   ```
+
+### ¿Por qué debo reiniciar PowerShell?
+
+Windows actualiza las variables de entorno (especialmente el PATH) solo cuando se abre una nueva sesión de terminal. PowerShell necesita reiniciarse para "ver" que Ollama está instalado y disponible en el sistema.
+
+### Instalar Modelos de IA
+
+Después de instalar Ollama, necesitas descargar al menos un modelo de IA. El script te lo preguntará automáticamente.
+
+**Modelos recomendados según hardware:**
+
+| Hardware | Modelo Recomendado | Tamaño | Descripción |
+|----------|-------------------|--------|-------------|
+| GPU 24GB+ VRAM | `llama3:8b` | 4.7 GB | Avanzado, excelente para tareas complejas |
+| GPU 12-24GB VRAM | `mistral:7b` | 4.1 GB | Equilibrado, recomendado general |
+| GPU 6-12GB VRAM | `phi3:mini` | 2.3 GB | Ligero y eficiente |
+| Sin GPU, 32GB+ RAM | `mistral:7b` | 4.1 GB | Funciona en CPU (lento) |
+| Sin GPU, 16-32GB RAM | `phi3:mini` | 2.3 GB | Optimizado para CPU |
+| Recursos limitados | `tinyllama` | 637 MB | Ultra ligero |
+
+**Para instalar un modelo manualmente:**
+```powershell
+ollama pull mistral:7b
+# O cualquier otro modelo
+ollama pull phi3:mini
+ollama pull tinyllama
+```
+
+### Verificar Instalación de Ollama
+
+```powershell
+# Verificar que Ollama está instalado
+ollama --version
+
+# Ver modelos instalados
+ollama list
+
+# Probar un modelo
+ollama run mistral:7b
+```
+
+### Usar MSN-AI sin Ollama
+
+Si decides no instalar Ollama (respondiendo "n" cuando el script pregunta):
+- ✅ MSN-AI funcionará normalmente
+- ✅ Tendrás la interfaz completa de MSN Messenger
+- ❌ NO podrás usar las funciones de chat con IA
+- ❌ El asistente inteligente no estará disponible
+
+Puedes instalar Ollama en cualquier momento y ejecutar el script nuevamente.
+
+---
+
 ## 💻 Modo Local (Recomendado)
 
 ### Ventajas
@@ -170,11 +287,15 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\ai_check_all.ps1
 
-# 4. Verificar hardware (opcional)
-.\ai_check_all.ps1
-
-# 5. Iniciar aplicación
+# 4. Iniciar aplicación
 .\start-msnai.ps1 --auto
+
+# NOTA: Si Ollama no está instalado, el script te guiará para instalarlo.
+#       Después de instalar Ollama, CIERRA PowerShell y abre una NUEVA ventana.
+#       Luego ejecuta nuevamente: .\start-msnai.ps1 --auto
+
+# 5. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
+.\ai_check_all.ps1
 ```
 
 ### Opciones de Inicio
@@ -227,6 +348,9 @@ Unblock-File -Path .\start-msnai-docker.ps1
 
 # 4. Iniciar aplicación (instalará Docker si falta)
 .\start-msnai-docker.ps1 --auto
+
+# NOTA: Si Docker no está instalado, el script abrirá la página de descarga
+#       y te guiará en el proceso de instalación.
 ```
 
 ### Gestión de Contenedores
@@ -290,13 +414,25 @@ cd MSN-AI
 
 ### Error: "Ollama no está instalado"
 
-**Solución Automática:**
-El script te preguntará si deseas instalar Ollama automáticamente. Responde **"s"** (sí).
+**Comportamiento del script:**
+El script `start-msnai.ps1` detectará que Ollama no está instalado y te preguntará si quieres abrir la página de descarga.
 
-**Solución Manual:**
-1. Descarga Ollama desde: https://ollama.com/download
-2. Instala el ejecutable
-3. Ejecuta: `ollama pull mistral:7b`
+**Pasos a seguir:**
+1. Cuando el script pregunte, responde **"s"** (sí)
+2. Se abrirá automáticamente: https://ollama.com/download
+3. Descarga **OllamaSetup.exe**
+4. Ejecuta el instalador y completa el asistente de instalación
+5. **IMPORTANTE:** Después de instalar, CIERRA la ventana de PowerShell
+6. Abre una **NUEVA** ventana de PowerShell
+7. Navega al directorio: `cd MSN-AI`
+8. Ejecuta nuevamente: `.\start-msnai.ps1 --auto`
+9. Ahora Ollama será detectado y podrás instalar modelos de IA
+
+**¿Por qué debo reiniciar PowerShell?**
+Windows actualiza las variables de entorno (PATH) solo al abrir una nueva sesión. PowerShell necesita reiniciarse para detectar que Ollama está instalado.
+
+**Alternativa - Continuar sin Ollama:**
+Puedes responder **"n"** (no) cuando el script pregunte, y MSN-AI se ejecutará sin funciones de IA.
 
 ### El navegador no se abre automáticamente
 
@@ -339,26 +475,32 @@ Stop-Process -Id XXXX
 
 ### ¿Necesito permisos de administrador?
 
-**No.** MSN-AI se ejecuta con permisos de usuario normal. Solo necesitas habilitar la ejecución de scripts (paso único).
+**No.** MSN-AI se ejecuta con permisos de usuario normal. Solo necesitas habilitar la ejecución de scripts con `Set-ExecutionPolicy` (paso único, no requiere admin).
 
 ### ¿Puedo usar MSN-AI sin Ollama?
 
-**Sí**, pero con funcionalidad limitada. La aplicación funcionará, pero no podrás chatear con la IA. Solo tendrás la interfaz de MSN.
+**Sí**, pero con funcionalidad limitada. La aplicación funcionará perfectamente, pero no podrás usar las funciones de chat con IA. Tendrás la interfaz completa de MSN pero sin el asistente de inteligencia artificial.
 
 ### ¿Qué modelo de IA debo instalar?
 
-Ejecuta `.\ai_check_all.ps1` para que detecte tu hardware y recomiende el mejor modelo.
+El script `.\ai_check_all.ps1` detecta automáticamente tu hardware y recomienda el mejor modelo.
 
 **Recomendaciones generales:**
-- **8GB+ RAM:** `mistral:7b` (recomendado)
-- **16GB+ RAM:** `llama2:13b` o `mixtral:8x7b`
-- **32GB+ RAM con GPU:** `llama2:70b` o `codellama:34b`
+- **GPU 24GB+ VRAM:** `llama3:8b` (4.7 GB)
+- **GPU 12-24GB VRAM:** `mistral:7b` (4.1 GB) - Recomendado general
+- **GPU 6-12GB VRAM:** `phi3:mini` (2.3 GB)
+- **Sin GPU, 32GB+ RAM:** `mistral:7b` (4.1 GB)
+- **Sin GPU, 16-32GB RAM:** `phi3:mini` (2.3 GB)
+- **Recursos limitados:** `tinyllama` (637 MB)
 
 ### ¿Cómo actualizo MSN-AI?
 
 ```powershell
 cd MSN-AI
 git pull origin main
+# Desbloquea los scripts si se actualizaron
+Unblock-File -Path .\start-msnai.ps1
+Unblock-File -Path .\ai_check_all.ps1
 .\start-msnai.ps1 --auto
 ```
 
@@ -402,8 +544,11 @@ cd MSN-AI
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\ai_check_all.ps1
-.\ai_check_all.ps1
 .\start-msnai.ps1 --auto
+
+# Si Ollama no está instalado, el script te guiará.
+# Después de instalar, cierra PowerShell, abre una nueva ventana y ejecuta:
+# .\start-msnai.ps1 --auto
 ```
 
 ### Inicio Rápido (después de instalación)

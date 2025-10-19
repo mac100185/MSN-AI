@@ -96,13 +96,18 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # 3. Desbloquear scripts descargados de Internet (IMPORTANTE)
 Unblock-File -Path .\start-msnai.ps1
+Unblock-File -Path .\start-msnai-docker.ps1
 Unblock-File -Path .\ai_check_all.ps1
 
-# 4. Configurar IA (opcional)
-.\ai_check_all.ps1
-
-# 5. Iniciar aplicación
+# 4. Iniciar aplicación
 .\start-msnai.ps1 --auto
+
+# NOTA: Si Ollama no está instalado, el script te guiará para instalarlo.
+#       Después de instalar Ollama, CIERRA PowerShell y abre una NUEVA ventana.
+#       Luego ejecuta nuevamente: .\start-msnai.ps1 --auto
+
+# 5. (Opcional) Verificar hardware y obtener recomendaciones de modelos IA
+.\ai_check_all.ps1
 ```
 
 #### 🍎 macOS
