@@ -293,24 +293,33 @@ function Start-WebServer {
         try {
             Write-Host "Usando $pythonCmd para el servidor HTTP..." -ForegroundColor Green
 
-            $psi = New-Object System.Diagnostics.ProcessStartInfo
-            $psi.FileName = $pythonCmd
-            $psi.Arguments = "-m http.server $script:ServerPort"
-            $psi.UseShellExecute = $false
-            $psi.CreateNoWindow = $true
-            $psi.RedirectStandardOutput = $true
-            $psi.RedirectStandardError = $true
+            # Iniciar servidor Python sin capturar salidas (para evitar bloqueos)
+            $script:ServerProcess = Start-Process -FilePath $pythonCmd -ArgumentList "-m","http.server","$script:ServerPort" -PassThru -WindowStyle Hidden
+            
+            # Esperar mas tiempo para que el servidor se inicie completamente
+            Write-Host "Esperando a que el servidor se inicie..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 5
 
-            $script:ServerProcess = New-Object System.Diagnostics.Process
-            $script:ServerProcess.StartInfo = $psi
-            $script:ServerProcess.Start() | Out-Null
-
-            Start-Sleep -Seconds 2
-
-            if (-not $script:ServerProcess.HasExited) {
-                $script:ServerUrl = "http://localhost:$script:ServerPort"
-                Write-Host "Servidor HTTP iniciado correctamente" -ForegroundColor Green
-                return $true
+            # Verificar que el servidor no se haya detenido
+            if ($null -ne $script:ServerProcess -and -not $script:ServerProcess.HasExited) {
+                # Intentar hacer una conexion de prueba al servidor
+                try {
+                    $testUrl = "http://localhost:$script:ServerPort"
+                    $response = Invoke-WebRequest -Uri $testUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
+                    
+                    if ($response.StatusCode -eq 200) {
+                        $script:ServerUrl = $testUrl
+                        Write-Host "Servidor HTTP verificado y funcionando correctamente" -ForegroundColor Green
+                        return $true
+                    }
+                }
+                catch {
+                    Write-Host "Advertencia: El servidor puede no estar respondiendo correctamente" -ForegroundColor Yellow
+                    Write-Host "Error: $_" -ForegroundColor Gray
+                    # Aun asi, intentamos continuar
+                    $script:ServerUrl = "http://localhost:$script:ServerPort"
+                    return $true
+                }
             }
             else {
                 Write-Host "El servidor se detuvo inesperadamente" -ForegroundColor Red
