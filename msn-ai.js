@@ -368,6 +368,10 @@ class MSNAI {
     this.updateButtons();
     this.updateModals();
     this.updatePlaceholders();
+    // Actualizar el texto del estado actual sin notificar
+    if (this.currentStatus) {
+      this.updateStatusDisplay(this.currentStatus, true);
+    }
     this.renderChatList();
     if (this.currentChatId) {
       const chat = this.chats.find((c) => c.id === this.currentChatId);
@@ -493,24 +497,40 @@ class MSNAI {
     const statusIcon = document.getElementById("status-icon");
     const statusText = document.getElementById("ai-connection-status");
 
+    // Verificar que los elementos existan
+    if (!statusIcon || !statusText) {
+      console.warn(
+        "⚠️ Elementos del DOM no encontrados aún, intentando más tarde...",
+      );
+      // Intentar de nuevo después de que el DOM esté listo
+      setTimeout(() => {
+        const icon = document.getElementById("status-icon");
+        const text = document.getElementById("ai-connection-status");
+        if (icon && text) {
+          icon.src = `assets/status/${status}.png`;
+          text.textContent = `(${this.t(`status.${status}`)})`;
+          console.log(`✅ Estado actualizado (reintento): ${status}`);
+        }
+      }, 100);
+      return;
+    }
+
     // Mapear el estado a la ruta del ícono
     const iconPath = `assets/status/${status}.png`;
     statusIcon.src = iconPath;
 
-    // Actualizar el texto
-    const statusNames = {
-      online: "Online",
-      away: "Away",
-      busy: "Busy",
-      invisible: "Invisible",
-    };
-
-    statusText.textContent = `(${statusNames[status] || status})`;
+    // Actualizar el texto usando el sistema de traducción i18n
+    statusText.textContent = `(${this.t(`status.${status}`)})`;
 
     // Guardar el estado anterior para comparar
     const previousStatus = this.currentStatus;
     this.currentStatus = status;
     localStorage.setItem("msnai-current-status", status);
+
+    console.log(`🔄 Estado actualizado a: ${status}`);
+    console.log(
+      `   Guardado en localStorage: msnai-current-status = ${status}`,
+    );
 
     // ===== NOTIFICAR A LA IA AUTOMÁTICAMENTE (SI ESTÁ ACTIVADO) =====
     // ✅ AÑADIR: No notificar si skipNotification es true (usado en init)
@@ -530,18 +550,14 @@ class MSNAI {
     const chat = this.chats.find((c) => c.id === this.currentChatId);
     if (!chat) return;
 
-    // Mensajes personalizados según el estado
-    const statusMessages = {
-      online:
-        "He cambiado mi estado a Online. Estoy disponible para conversar.",
-      away: "He cambiado mi estado a Away. Estoy ausente pero puedes dejarme un mensaje.",
-      busy: "He cambiado mi estado a Busy. Estoy ocupado pero responderé cuando pueda.",
-      invisible:
-        "He cambiado mi estado a Invisible. Prefiero no ser visto en este momento.",
-    };
-
-    const userMessage =
-      statusMessages[newStatus] || `He cambiado mi estado a ${newStatus}.`;
+    // Mensajes personalizados según el estado usando traducciones i18n
+    const statusName = this.t(`status.${newStatus}`);
+    const statusMessage =
+      this.t(`messages.status_${newStatus}`) || this.t("messages.no_message");
+    const userMessage = this.t("messages.status_changed", {
+      status: statusName,
+      message: statusMessage,
+    });
 
     // Crear mensaje del usuario (sistema)
     const systemMessage = {
@@ -572,7 +588,9 @@ class MSNAI {
 
     try {
       // Enviar contexto del cambio de estado a la IA
-      const contextPrompt = `El usuario ha cambiado su estado de "${oldStatus}" a "${newStatus}". ${userMessage} Responde de manera breve y amigable reconociendo este cambio de estado.`;
+      const oldStatusName = this.t(`status.${oldStatus}`);
+      const newStatusName = this.t(`status.${newStatus}`);
+      const contextPrompt = `El usuario ha cambiado su estado de "${oldStatusName}" a "${newStatusName}". ${userMessage} Responde de manera breve y amigable reconociendo este cambio de estado.`;
 
       const onToken = (token) => {
         // Acumular en el sistema de respuestas
@@ -596,10 +614,12 @@ class MSNAI {
         if (aiMessage.content) {
           aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
-          aiMessage.content = `He notado tu cambio de estado a ${newStatus}.`;
+          const statusName = this.t(`status.${newStatus}`);
+          aiMessage.content = `He notado tu cambio de estado a ${statusName}.`;
         }
       } else {
-        aiMessage.content = `He notado tu cambio de estado a ${newStatus}. ¿En qué puedo ayudarte?`;
+        const statusName = this.t(`status.${newStatus}`);
+        aiMessage.content = `He notado tu cambio de estado a ${statusName}. ¿En qué puedo ayudarte?`;
       }
       if (this.currentChatId === chat.id) {
         this.renderMessages(chat);
@@ -1811,22 +1831,18 @@ class MSNAI {
   updateConnectionStatus(status) {
     const indicator = document.getElementById("connection-indicator");
     const text = document.getElementById("connection-text");
-    const aiStatus = document.getElementById("ai-connection-status");
     switch (status) {
       case "connected":
         indicator.className = "connection-status status-connected";
         text.textContent = this.t("status.connected");
-        aiStatus.textContent = `(${this.t("status.online")})`;
         break;
       case "connecting":
         indicator.className = "connection-status status-connecting";
         text.textContent = this.t("status.connecting");
-        aiStatus.textContent = `(${this.t("status.connecting")})`;
         break;
       case "disconnected":
         indicator.className = "connection-status status-disconnected";
         text.textContent = this.t("status.disconnected");
-        aiStatus.textContent = `(${this.t("connection.no_models_available")})`;
         break;
     }
   }
@@ -2619,25 +2635,41 @@ class MSNAI {
   async init() {
     console.log("🚀 Iniciando MSN-AI...");
 
-    // Cargar idiomas primero
-    await this.loadLanguages();
-
-    this.loadSettings();
-
-    // ✅ CARGAR Y APLICAR EL ESTADO GUARDADO
+    // ✅ CARGAR EL ESTADO GUARDADO PRIMERO (antes de cargar idiomas)
+    // Esto evita que updateUI() sobrescriba el estado durante loadLanguages()
     const savedStatus = localStorage.getItem("msnai-current-status");
+    console.log(`📊 Estado guardado en localStorage: "${savedStatus}"`);
     if (
       savedStatus &&
       ["online", "away", "busy", "invisible"].includes(savedStatus)
     ) {
       this.currentStatus = savedStatus;
-      // ✅ IMPORTANTE: Actualizar la UI inmediatamente sin notificar
-      this.updateStatusDisplay(savedStatus, true);
+      console.log(`✅ Estado restaurado: ${savedStatus}`);
     } else {
       // Si no hay estado guardado, establecer online por defecto
+      console.log(
+        `⚠️ No hay estado guardado o no es válido, usando "online" por defecto`,
+      );
       this.currentStatus = "online";
-      this.updateStatusDisplay("online", true);
     }
+
+    // Cargar idiomas (esto llamará a updateUI que ahora usará el currentStatus correcto)
+    await this.loadLanguages();
+
+    this.loadSettings();
+
+    // Actualizar la UI con el estado correcto después de cargar idiomas
+    this.updateStatusDisplay(this.currentStatus, true);
+
+    console.log(`🔍 Verificando elementos del DOM:`);
+    const statusIcon = document.getElementById("status-icon");
+    const statusText = document.getElementById("ai-connection-status");
+    console.log(
+      `   status-icon: ${statusIcon ? statusIcon.src : "NO ENCONTRADO"}`,
+    );
+    console.log(
+      `   ai-connection-status: ${statusText ? statusText.textContent : "NO ENCONTRADO"}`,
+    );
 
     this.loadChats();
     this.initSounds();
