@@ -43,23 +43,259 @@ class MSNAI {
 
   // =================== SISTEMA DE TRADUCCIÓN ===================
   async loadLanguages() {
-    const languages = ["es", "en", "de"];
-    for (const lang of languages) {
+    console.log(`🌍 Detectando archivos de idioma en lang/...`);
+
+    // Lista de códigos ISO 639-1 más comunes para intentar cargar
+    // Se incluyen los idiomas más hablados del mundo y variantes regionales comunes
+    const commonLanguages = [
+      "aa",
+      "ab",
+      "af",
+      "ak",
+      "am",
+      "an",
+      "ar",
+      "as",
+      "av",
+      "ay",
+      "az",
+      "ba",
+      "be",
+      "bg",
+      "bh",
+      "bi",
+      "bm",
+      "bn",
+      "bo",
+      "br",
+      "bs",
+      "ca",
+      "ce",
+      "ch",
+      "co",
+      "cr",
+      "cs",
+      "cu",
+      "cv",
+      "cy",
+      "da",
+      "de",
+      "dv",
+      "dz",
+      "ee",
+      "el",
+      "en",
+      "eo",
+      "es",
+      "et",
+      "eu",
+      "fa",
+      "ff",
+      "fi",
+      "fj",
+      "fo",
+      "fr",
+      "fy",
+      "ga",
+      "gd",
+      "gl",
+      "gn",
+      "gu",
+      "gv",
+      "ha",
+      "he",
+      "hi",
+      "ho",
+      "hr",
+      "ht",
+      "hu",
+      "hy",
+      "hz",
+      "ia",
+      "id",
+      "ie",
+      "ig",
+      "ii",
+      "ik",
+      "io",
+      "is",
+      "it",
+      "iu",
+      "ja",
+      "jv",
+      "ka",
+      "kg",
+      "ki",
+      "kj",
+      "kk",
+      "kl",
+      "km",
+      "kn",
+      "ko",
+      "kr",
+      "ks",
+      "ku",
+      "kv",
+      "kw",
+      "ky",
+      "la",
+      "lb",
+      "lg",
+      "li",
+      "ln",
+      "lo",
+      "lt",
+      "lu",
+      "lv",
+      "mg",
+      "mh",
+      "mi",
+      "mk",
+      "ml",
+      "mn",
+      "mr",
+      "ms",
+      "mt",
+      "my",
+      "na",
+      "nb",
+      "nd",
+      "ne",
+      "ng",
+      "nl",
+      "nn",
+      "no",
+      "nr",
+      "nv",
+      "ny",
+      "oc",
+      "oj",
+      "om",
+      "or",
+      "os",
+      "pa",
+      "pi",
+      "pl",
+      "ps",
+      "pt",
+      "qu",
+      "rm",
+      "rn",
+      "ro",
+      "ru",
+      "rw",
+      "sa",
+      "sc",
+      "sd",
+      "se",
+      "sg",
+      "si",
+      "sk",
+      "sl",
+      "sm",
+      "sn",
+      "so",
+      "sq",
+      "sr",
+      "ss",
+      "st",
+      "su",
+      "sv",
+      "sw",
+      "ta",
+      "te",
+      "tg",
+      "th",
+      "ti",
+      "tk",
+      "tl",
+      "tn",
+      "to",
+      "tr",
+      "ts",
+      "tt",
+      "tw",
+      "ty",
+      "ug",
+      "uk",
+      "ur",
+      "uz",
+      "ve",
+      "vi",
+      "vo",
+      "wa",
+      "wo",
+      "xh",
+      "yi",
+      "yo",
+      "za",
+      "zh",
+      "zu",
+    ];
+
+    // Intentar cargar cada posible archivo de idioma de forma concurrente
+    // pero con límite para no sobrecargar el navegador
+    const batchSize = 10; // Cargar 10 archivos a la vez
+    const allLanguages = [];
+
+    for (let i = 0; i < commonLanguages.length; i += batchSize) {
+      const batch = commonLanguages.slice(i, i + batchSize);
+      const loadPromises = batch.map(async (lang) => {
+        try {
+          const response = await fetch(`lang/${lang}.json`);
+          if (response.ok) {
+            const translations = await response.json();
+            // Verificar que tenga la estructura correcta
+            if (translations.language_name) {
+              return {
+                code: lang,
+                name: translations.language_name,
+                data: translations,
+              };
+            }
+          }
+          return null;
+        } catch (error) {
+          // Silenciar errores para archivos no encontrados (esperado)
+          return null;
+        }
+      });
+
+      const results = await Promise.all(loadPromises);
+      allLanguages.push(...results.filter((lang) => lang !== null));
+    }
+
+    // Asignar y ordenar los idiomas encontrados
+    this.availableLanguages = allLanguages;
+    this.availableLanguages.sort((a, b) => a.code.localeCompare(b.code));
+
+    console.log(
+      `✅ ${this.availableLanguages.length} idiomas detectados y cargados:`,
+    );
+    this.availableLanguages.forEach((lang) => {
+      console.log(`   - ${lang.name} (${lang.code})`);
+    });
+
+    // Si no se encontró ningún idioma, intentar cargar español como mínimo
+    if (this.availableLanguages.length === 0) {
+      console.warn(
+        "⚠️ No se encontraron archivos de idioma, intentando cargar español...",
+      );
       try {
-        const response = await fetch(`lang/${lang}.json`);
+        const response = await fetch("lang/es.json");
         if (response.ok) {
           const translations = await response.json();
           this.availableLanguages.push({
-            code: lang,
-            name: translations.language_name,
+            code: "es",
+            name: translations.language_name || "Español",
             data: translations,
           });
-          console.log(
-            `✅ Idioma cargado: ${translations.language_name} (${lang})`,
-          );
         }
       } catch (error) {
-        console.warn(`⚠️ No se pudo cargar idioma: ${lang}`, error);
+        console.error(
+          "❌ Error crítico: No se pudo cargar ningún idioma",
+          error,
+        );
       }
     }
 
