@@ -1,0 +1,235 @@
+{
+  "language_name": "हिन्दी",
+  "language_code": "hi",
+
+  "app_title": "MSN-AI",
+  "app_description": "MSN-AI एआई सहायक",
+
+  "status": {
+    "online": "ऑनलाइन",
+    "away": "दूर",
+    "busy": "व्यस्त",
+    "invisible": "अदृश्य",
+    "connecting": "कनेक्ट हो रहा है...",
+    "connected": "कनेक्टेड",
+    "disconnected": "डिस्कनेक्टेड"
+  },
+
+  "menu": {
+    "new_chat": "नई चैट",
+    "settings": "सेटिंग्स",
+    "export_import": "निर्यात/आयात",
+    "help": "मदद",
+    "info": "जानकारी"
+  },
+
+  "buttons": {
+    "send": "भेजें",
+    "cancel": "रद्द करें",
+    "close": "बंद करें",
+    "save": "सहेजें",
+    "delete": "हटाएं",
+    "export": "निर्यात करें",
+    "import": "आयात करें",
+    "apply": "लागू करें",
+    "test_connection": "कनेक्शन परीक्षण",
+    "search": "खोजें",
+    "clear": "साफ़ करें",
+    "order_history": "इतिहास क्रमबद्ध करें",
+    "export_selected": "चयनित निर्यात करें",
+    "nudge": "नज करें",
+    "voice_input": "वॉइस इनपुट",
+    "clear_chat": "वर्तमान चैट साफ़ करें",
+    "increase_font": "फ़ॉन्ट बढ़ाएं",
+    "decrease_font": "फ़ॉन्ट घटाएं",
+    "upload_file": "फ़ाइल संलग्न करें",
+    "export_chat": "चैट निर्यात करें",
+    "print_chat": "चैट प्रिंट करें",
+    "search_chat": "चैट में खोजें",
+    "close_chat": "चैट बंद करें",
+    "stop_response": "एआई प्रतिक्रिया रोकें"
+  },
+
+  "tooltips": {
+    "new_chat": "नई चैट बनाएं",
+    "settings": "एआई मॉडल सेटिंग्स",
+    "export_import": "चैट निर्यात या आयात करें",
+    "nudge": "नज भेजें",
+    "emoticon_natural": "प्राकृतिक इमोटिकॉन्स",
+    "emoticon_love": "प्रेम इमोटिकॉन्स",
+    "voice_input": "वॉइस डिक्टेशन",
+    "upload_file": "टेक्स्ट फ़ाइल संलग्न करें",
+    "text_format": "टेक्स्ट प्रारूप (बोल्ड, इटैलिक, अंडरलाइन)",
+    "increase_font": "फ़ॉन्ट आकार बढ़ाएं",
+    "decrease_font": "फ़ॉन्ट आकार घटाएं",
+    "export_chat": "वर्तमान चैट को टेक्स्ट फ़ाइल में निर्यात करें",
+    "print_chat": "वर्तमान चैट प्रिंट करें",
+    "search_chat": "वर्तमान चैट में खोजें",
+    "close_chat": "वर्तमान चैट बंद करें और नई बनाएं"
+  },
+
+  "settings": {
+    "title": "एआई मॉडल सेटिंग्स",
+    "sounds_enabled": "ध्वनि सक्षम",
+    "ollama_server": "Ollama सर्वर",
+    "ollama_server_description": "Ollama सर्वर पता। स्वतः पहचान के लिए खाली छोड़ें।",
+    "select_model": "एआई मॉडल",
+    "model_description": "नई चैट के लिए उपयोग किया जाने वाला मॉडल। मौजूदा चैट अपना मॉडल रखती हैं।",
+    "no_models": "कोई मॉडल इंस्टॉल नहीं",
+    "no_connection": "कोई कनेक्शन नहीं - सेटिंग्स जांचें",
+    "api_timeout": "टाइमआउट (ms)",
+    "notify_status_changes": "स्थिति परिवर्तन एआई को सूचित करें",
+    "notify_status_changes_description": "जब आप अपनी स्थिति बदलते हैं (ऑनलाइन, दूर, व्यस्त, अदृश्य), तो सक्रिय चैट में एआई को स्वचालित रूप से सूचित किया जाएगा।",
+    "language": "इंटरफ़ेस भाषा",
+    "language_description": "मेनू, बटन और सिस्टम संदेश इस भाषा में प्रदर्शित होंगे।",
+    "connection_success": "कनेक्शन सफल!\n\nउपलब्ध मॉडल: {count}\n\nसर्वर: {server}",
+    "connection_failed": "कनेक्ट नहीं हो सका",
+    "settings_saved": "सेटिंग्स सहेजी गईं",
+    "testing_connection": "परीक्षण कर रहे हैं..."
+  },
+
+  "export_import": {
+    "export_title": "चैट निर्यात करें",
+    "export_description": "पहले निर्यात की गई JSON चैट फ़ाइल चुनें।",
+    "export_description_full": "बैकअप या माइग्रेशन के लिए अपनी सभी चैट को JSON प्रारूप में निर्यात करें।",
+    "export_all": "सभी चैट निर्यात करें",
+    "export_selected": "चयनित चैट निर्यात करें",
+    "export_selected_info": "अवतार आइकन का उपयोग करके सूची में चैट चिह्नित करें।",
+    "import_title": "चैट आयात करें",
+    "import_description": "पहले निर्यात की गई JSON चैट फ़ाइल चुनें।",
+    "import_button": "आयात करें",
+    "no_selected": "निर्यात के लिए कोई चैट चयनित नहीं।",
+    "download_chats": "चैट डाउनलोड करें"
+  },
+
+  "import_conflict": {
+    "title": "डुप्लिकेट चैट का पता चला",
+    "chat_title": "शीर्षक",
+    "model": "मॉडल",
+    "existing_count": "मौजूदा चैट",
+    "imported_count": "आयात करने के लिए चैट",
+    "messages_suffix": "संदेश",
+    "warning": "चेतावनी: आयात करने के लिए चैट में कम संदेश हैं। प्रतिस्थापन से डेटा हानि होगी।",
+    "warning_blocked": "प्रतिस्थापित नहीं किया जा सकता: डेटा खो जाएगा।",
+    "question": "आप क्या करना चाहते हैं?",
+    "option_merge": "मर्ज करें",
+    "option_merge_desc": "सभी संदेशों को रखते हुए दोनों चैट को संयोजित करें",
+    "option_replace": "प्रतिस्थापित करें",
+    "option_replace_desc": "मौजूदा चैट को आयातित चैट से बदलें",
+    "option_skip": "छोड़ें",
+    "option_skip_desc": "इस चैट को आयात न करें",
+    "option_skip_all": "सभी छोड़ें",
+    "option_skip_all_desc": "इसे और शेष संघर्षों को छोड़ें",
+    "counter": "संघर्ष {current} का {total}",
+    "auto_skipped": "यह चैट स्वचालित रूप से छोड़ दी जाएगी।"
+  },
+
+  "import_summary": {
+    "title": "आयात पूर्ण",
+    "imported": "चैट आयातित",
+    "merged": "चैट मर्ज की गईं",
+    "replaced": "चैट प्रतिस्थापित",
+    "skipped": "चैट छोड़ी गईं",
+    "no_changes": "कोई परिवर्तन नहीं किए गए।"
+  },
+
+  "delete_chat": {
+    "title": "चैट हटाएं",
+    "message": "क्या आप वाकई इस चैट को हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+    "confirm": "हटाएं",
+    "cancel": "रद्द करें"
+  },
+
+  "search_chat": {
+    "title": "चैट में खोजें",
+    "placeholder": "अपनी खोज टाइप करें...",
+    "search_button": "खोजें",
+    "clear_button": "हाइलाइट साफ़ करें"
+  },
+
+  "info": {
+    "title": "MSN-AI के बारे में",
+    "version": "संस्करण",
+    "description": "Windows Live Messenger से प्रेरित एआई चैट सिस्टम।",
+    "features": "मुख्य विशेषताएं:",
+    "feature_1": "एआई मॉडल (Ollama) के साथ रीयल-टाइम चैट",
+    "feature_2": "नॉस्टैल्जिक MSN Messenger शैली इंटरफ़ेस",
+    "feature_3": "एकाधिक चैट और मॉडल प्रबंधन",
+    "feature_4": "वार्तालाप निर्यात और आयात",
+    "feature_5": "बहुभाषी समर्थन",
+    "feature_6": "इमोटिकॉन्स और टेक्स्ट स्वरूपण",
+    "credits": "समुदाय के लिए ❤️ के साथ विकसित",
+    "contact_title": "संपर्क",
+    "contact_thanks": "<strong>MSN-AI</strong> में आपकी रुचि के लिए धन्यवाद।",
+    "contact_name": "नाम",
+    "contact_email": "ईमेल",
+    "contact_project": "परियोजना",
+    "contact_message_1": "यह एक व्यक्तिगत ओपन सोर्स प्रोजेक्ट है। यदि प्रतिक्रिया तत्काल नहीं है तो कृपया धैर्य रखें।",
+    "contact_message_2": "संपर्क करने से पहले, सुनिश्चित करें कि आपने GitHub रिपॉजिटरी में दस्तावेज़ीकरण और स्रोत कोड की समीक्षा की है।"
+  },
+
+  "chat": {
+    "select_chat": "एक चैट चुनें",
+    "welcome_message": "शुरू करने के लिए सूची से एक चैट चुनें या नई बनाएं।",
+    "new_chat_title": "नई चैट {number}",
+    "no_chats": "कोई चैट नहीं। नई बनाएं।",
+    "no_models": "कोई मॉडल इंस्टॉल नहीं। Ollama में मॉडल इंस्टॉल करें।",
+    "model_info": "मॉडल: {model} - {count} संदेश",
+    "ai_thinking": "एआई सोच रहा है",
+    "you": "आप",
+    "ai": "एआई",
+    "system": "सिस्टम",
+    "response_stopped": "उपयोगकर्ता द्वारा प्रतिक्रिया रोकी गई",
+    "response_stopped_before": "शुरू होने से पहले प्रतिक्रिया रोकी गई",
+    "search_placeholder": "चैट में खोजें...",
+    "show_more": "{count} और देखें...",
+    "show_less": "कम दिखाएं"
+  },
+
+  "messages": {
+    "status_changed": "मैंने अपनी स्थिति {status} में बदल दी है। {message}",
+    "status_online": "मैं चैट के लिए उपलब्ध हूं।",
+    "status_away": "मैं दूर हूं लेकिन आप मुझे संदेश छोड़ सकते हैं।",
+    "status_busy": "मैं व्यस्त हूं लेकिन जब मैं कर सकता हूं तब जवाब दूंगा।",
+    "status_invisible": "मैं इस समय दिखाई नहीं देना पसंद करता हूं।",
+    "nudge_sent": "क्या आप वहाँ हैं?",
+    "nudge_received": "नज भेजा गया (प्रतिक्रिया रोकी गई)",
+    "nudge_stopped": "प्रतिक्रिया रोकी गई",
+    "file_attached": "संलग्न फ़ाइल: {filename}",
+    "no_message": "कोई अतिरिक्त संदेश नहीं"
+  },
+
+  "errors": {
+    "no_connection": "Ollama से कोई कनेक्शन नहीं",
+    "chat_not_found": "चैट नहीं मिली",
+    "server_error": "सर्वर त्रुटि: {status}",
+    "verify_ollama": "सत्यापित करें कि Ollama चल रहा है।",
+    "file_not_found": "फ़ाइल चयनकर्ता नहीं मिला",
+    "invalid_json": "अमान्य JSON फ़ाइल या कोई चैट नहीं।",
+    "invalid_file": "फ़ाइल पढ़ने में त्रुटि। सत्यापित करें कि यह मान्य JSON है।",
+    "select_file_first": "कृपया पहले एक JSON फ़ाइल चुनें",
+    "select_valid_json": "कृपया एक मान्य JSON फ़ाइल चुनें",
+    "only_txt_files": "केवल .txt फ़ाइलों की अनुमति है",
+    "select_text_to_format": "स्वरूपित करने के लिए टेक्स्ट चुनें",
+    "voice_not_supported": "आपका ब्राउज़र वॉइस पहचान का समर्थन नहीं करता।",
+    "close_chat_confirm": "इस चैट को बंद करें और नई बनाएं?"
+  },
+
+  "connection": {
+    "status": "कनेक्शन स्थिति:",
+    "current_model": "वर्तमान मॉडल:",
+    "no_models_available": "कोई मॉडल उपलब्ध नहीं",
+    "model_not_available": "{model} (उपलब्ध नहीं)",
+    "checking": "Ollama से कनेक्शन की जांच की जा रही है...",
+    "server": "सर्वर: {server}",
+    "models_found": "मिले मॉडल: {count}",
+    "success": "कनेक्शन सफल।",
+    "failed": "Ollama से कनेक्ट करने में त्रुटि"
+  },
+
+  "format": {
+    "bold": "बोल्ड",
+    "italic": "इटैलिक",
+    "underline": "अंडरलाइन"
+  }
+}

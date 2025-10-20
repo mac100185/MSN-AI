@@ -1,0 +1,235 @@
+{
+  "language_name": "中文",
+  "language_code": "zh",
+
+  "app_title": "MSN-AI",
+  "app_description": "MSN-AI 人工智能助手",
+
+  "status": {
+    "online": "在线",
+    "away": "离开",
+    "busy": "忙碌",
+    "invisible": "隐身",
+    "connecting": "连接中...",
+    "connected": "已连接",
+    "disconnected": "已断开"
+  },
+
+  "menu": {
+    "new_chat": "新建聊天",
+    "settings": "设置",
+    "export_import": "导出/导入",
+    "help": "帮助",
+    "info": "信息"
+  },
+
+  "buttons": {
+    "send": "发送",
+    "cancel": "取消",
+    "close": "关闭",
+    "save": "保存",
+    "delete": "删除",
+    "export": "导出",
+    "import": "导入",
+    "apply": "应用",
+    "test_connection": "测试连接",
+    "search": "搜索",
+    "clear": "清除",
+    "order_history": "排序历史",
+    "export_selected": "导出选中项",
+    "nudge": "发送提醒",
+    "voice_input": "语音输入",
+    "clear_chat": "清空当前聊天",
+    "increase_font": "增大字体",
+    "decrease_font": "减小字体",
+    "upload_file": "附加文件",
+    "export_chat": "导出聊天",
+    "print_chat": "打印聊天",
+    "search_chat": "在聊天中搜索",
+    "close_chat": "关闭聊天",
+    "stop_response": "停止AI响应"
+  },
+
+  "tooltips": {
+    "new_chat": "创建新聊天",
+    "settings": "AI模型设置",
+    "export_import": "导出或导入聊天",
+    "nudge": "发送提醒",
+    "emoticon_natural": "自然表情",
+    "emoticon_love": "爱心表情",
+    "voice_input": "语音输入",
+    "upload_file": "附加文本文件",
+    "text_format": "文本格式（粗体、斜体、下划线）",
+    "increase_font": "增大字体大小",
+    "decrease_font": "减小字体大小",
+    "export_chat": "将当前聊天导出为文本文件",
+    "print_chat": "打印当前聊天",
+    "search_chat": "在当前聊天中搜索",
+    "close_chat": "关闭当前聊天并创建新聊天"
+  },
+
+  "settings": {
+    "title": "AI模型设置",
+    "sounds_enabled": "启用声音",
+    "ollama_server": "Ollama服务器",
+    "ollama_server_description": "Ollama服务器地址。留空自动检测。",
+    "select_model": "AI模型",
+    "model_description": "用于新聊天的模型。现有聊天保持其模型。",
+    "no_models": "未安装模型",
+    "no_connection": "无连接 - 检查设置",
+    "api_timeout": "超时（毫秒）",
+    "notify_status_changes": "向AI通知状态更改",
+    "notify_status_changes_description": "当您更改状态（在线、离开、忙碌、隐身）时，AI将在活动聊天中自动收到通知。",
+    "language": "界面语言",
+    "language_description": "菜单、按钮和系统消息将以此语言显示。",
+    "connection_success": "连接成功！\n\n可用模型：{count}\n\n服务器：{server}",
+    "connection_failed": "无法连接",
+    "settings_saved": "设置已保存",
+    "testing_connection": "测试中..."
+  },
+
+  "export_import": {
+    "export_title": "导出聊天",
+    "export_description": "选择之前导出的JSON聊天文件。",
+    "export_description_full": "将所有聊天导出为JSON格式以备份或迁移。",
+    "export_all": "导出所有聊天",
+    "export_selected": "导出选中的聊天",
+    "export_selected_info": "使用头像图标在列表中标记聊天。",
+    "import_title": "导入聊天",
+    "import_description": "选择之前导出的JSON聊天文件。",
+    "import_button": "导入",
+    "no_selected": "未选择要导出的聊天。",
+    "download_chats": "下载聊天"
+  },
+
+  "import_conflict": {
+    "title": "检测到重复聊天",
+    "chat_title": "标题",
+    "model": "模型",
+    "existing_count": "现有聊天",
+    "imported_count": "要导入的聊天",
+    "messages_suffix": "条消息",
+    "warning": "警告：要导入的聊天消息较少。替换会导致数据丢失。",
+    "warning_blocked": "无法替换：会丢失数据。",
+    "question": "您想怎么做？",
+    "option_merge": "合并",
+    "option_merge_desc": "合并两个聊天并保留所有消息",
+    "option_replace": "替换",
+    "option_replace_desc": "用导入的聊天替换现有聊天",
+    "option_skip": "跳过",
+    "option_skip_desc": "不导入此聊天",
+    "option_skip_all": "全部跳过",
+    "option_skip_all_desc": "跳过此聊天及其余冲突",
+    "counter": "冲突 {current}/{total}",
+    "auto_skipped": "此聊天将自动跳过。"
+  },
+
+  "import_summary": {
+    "title": "导入完成",
+    "imported": "个聊天已导入",
+    "merged": "个聊天已合并",
+    "replaced": "个聊天已替换",
+    "skipped": "个聊天已跳过",
+    "no_changes": "未进行任何更改。"
+  },
+
+  "delete_chat": {
+    "title": "删除聊天",
+    "message": "确定要删除此聊天吗？此操作无法撤消。",
+    "confirm": "删除",
+    "cancel": "取消"
+  },
+
+  "search_chat": {
+    "title": "在聊天中搜索",
+    "placeholder": "输入搜索内容...",
+    "search_button": "搜索",
+    "clear_button": "清除高亮"
+  },
+
+  "info": {
+    "title": "关于MSN-AI",
+    "version": "版本",
+    "description": "灵感来自Windows Live Messenger的AI聊天系统。",
+    "features": "主要功能：",
+    "feature_1": "与AI模型（Ollama）实时聊天",
+    "feature_2": "怀旧的MSN Messenger风格界面",
+    "feature_3": "多聊天和多模型管理",
+    "feature_4": "对话导出和导入",
+    "feature_5": "多语言支持",
+    "feature_6": "表情符号和文本格式",
+    "credits": "用❤️为社区开发",
+    "contact_title": "联系方式",
+    "contact_thanks": "感谢您对<strong>MSN-AI</strong>的关注。",
+    "contact_name": "姓名",
+    "contact_email": "电子邮件",
+    "contact_project": "项目",
+    "contact_message_1": "这是一个个人开源项目。如果响应不及时，请耐心等待。",
+    "contact_message_2": "在联系之前，请确保已查看GitHub存储库中的文档和源代码。"
+  },
+
+  "chat": {
+    "select_chat": "选择聊天",
+    "welcome_message": "从列表中选择聊天或创建新聊天开始。",
+    "new_chat_title": "新聊天 {number}",
+    "no_chats": "没有聊天。创建新聊天。",
+    "no_models": "未安装模型。在Ollama中安装模型。",
+    "model_info": "模型：{model} - {count} 条消息",
+    "ai_thinking": "AI正在思考",
+    "you": "您",
+    "ai": "AI",
+    "system": "系统",
+    "response_stopped": "用户停止了响应",
+    "response_stopped_before": "响应在开始前停止",
+    "search_placeholder": "在聊天中搜索...",
+    "show_more": "查看更多 {count} 个...",
+    "show_less": "显示更少"
+  },
+
+  "messages": {
+    "status_changed": "我已将状态更改为{status}。{message}",
+    "status_online": "我现在可以聊天。",
+    "status_away": "我暂时离开，但您可以给我留言。",
+    "status_busy": "我现在很忙，但会尽快回复。",
+    "status_invisible": "我现在不想被看到。",
+    "nudge_sent": "你在吗？",
+    "nudge_received": "提醒已发送（响应已停止）",
+    "nudge_stopped": "响应已停止",
+    "file_attached": "附件：{filename}",
+    "no_message": "无附加消息"
+  },
+
+  "errors": {
+    "no_connection": "无法连接到Ollama",
+    "chat_not_found": "未找到聊天",
+    "server_error": "服务器错误：{status}",
+    "verify_ollama": "确认Ollama正在运行。",
+    "file_not_found": "未找到文件选择器",
+    "invalid_json": "无效的JSON文件或没有聊天。",
+    "invalid_file": "读取文件时出错。验证它是有效的JSON。",
+    "select_file_first": "请先选择JSON文件",
+    "select_valid_json": "请选择有效的JSON文件",
+    "only_txt_files": "只允许.txt文件",
+    "select_text_to_format": "选择要格式化的文本",
+    "voice_not_supported": "您的浏览器不支持语音识别。",
+    "close_chat_confirm": "关闭此聊天并创建新聊天？"
+  },
+
+  "connection": {
+    "status": "连接状态：",
+    "current_model": "当前模型：",
+    "no_models_available": "没有可用的模型",
+    "model_not_available": "{model}（不可用）",
+    "checking": "正在检查与Ollama的连接...",
+    "server": "服务器：{server}",
+    "models_found": "找到的模型：{count}",
+    "success": "连接成功。",
+    "failed": "连接Ollama时出错"
+  },
+
+  "format": {
+    "bold": "粗体",
+    "italic": "斜体",
+    "underline": "下划线"
+  }
+}
