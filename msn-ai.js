@@ -1713,6 +1713,7 @@ class MSNAI {
 
     // Ensamblar el ítem
     chatElement.style.display = "flex";
+    chatElement.style.flexDirection = "row";
     chatElement.style.alignItems = "flex-start";
     chatElement.style.padding = "5px 10px";
     chatElement.style.cursor = "pointer";
@@ -1721,6 +1722,7 @@ class MSNAI {
 
     // Evento click para seleccionar chat
     chatElement.addEventListener("click", (e) => {
+      // No activar si se hizo clic en el avatar
       if (!e.target.matches(".chat-select-avatar")) {
         this.selectChat(chat.id);
       }
@@ -2524,6 +2526,74 @@ class MSNAI {
       .addEventListener("click", () => {
         document.getElementById("import-summary-modal").style.display = "none";
       });
+
+    // Event listeners para el menú contextual de chats
+    document
+      .getElementById("context-edit-title")
+      .addEventListener("click", () => {
+        this.hideContextMenu();
+        this.showEditTitleModal(this.contextMenuChatId);
+      });
+
+    document
+      .getElementById("context-export-chat")
+      .addEventListener("click", () => {
+        this.hideContextMenu();
+        this.exportSingleChat(this.contextMenuChatId);
+      });
+
+    document
+      .getElementById("context-delete-chat")
+      .addEventListener("click", () => {
+        this.hideContextMenu();
+        this.chatToDelete = this.contextMenuChatId;
+        document.getElementById("delete-chat-modal").style.display = "block";
+      });
+
+    // Cerrar menú contextual al hacer clic fuera de él
+    document.addEventListener("click", (e) => {
+      const contextMenu = document.getElementById("chat-context-menu");
+      if (contextMenu && !contextMenu.contains(e.target)) {
+        this.hideContextMenu();
+      }
+    });
+
+    // Event listeners para el modal de editar título
+    document
+      .getElementById("confirm-edit-title-btn")
+      .addEventListener("click", () => {
+        const input = document.getElementById("new-title-input");
+        const success = this.editChatTitle(this.chatToEdit, input.value);
+        if (success) {
+          document.getElementById("edit-title-modal").style.display = "none";
+          this.chatToEdit = null;
+        }
+      });
+
+    document
+      .getElementById("cancel-edit-title-btn")
+      .addEventListener("click", () => {
+        this.chatToEdit = null;
+        document.getElementById("edit-title-modal").style.display = "none";
+      });
+
+    // Cerrar modal de editar título con la "X"
+    document
+      .querySelector("#edit-title-modal .modal-close")
+      .addEventListener("click", () => {
+        this.chatToEdit = null;
+        document.getElementById("edit-title-modal").style.display = "none";
+      });
+
+    // Permitir guardar con Enter en el input de editar título
+    document
+      .getElementById("new-title-input")
+      .addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          document.getElementById("confirm-edit-title-btn").click();
+        }
+      });
   }
   //-----------------------------------------------
   async updateAvailableModels() {
@@ -2628,8 +2698,157 @@ class MSNAI {
 
   showChatContextMenu(event, chatId) {
     event.preventDefault(); // Evitar el menú contextual nativo
-    this.chatToDelete = chatId; // Guardar temporalmente el ID del chat a eliminar
-    document.getElementById("delete-chat-modal").style.display = "block";
+
+    // Guardar el ID del chat actual para las acciones del menú
+    this.contextMenuChatId = chatId;
+
+    // Obtener el menú contextual
+    const contextMenu = document.getElementById("chat-context-menu");
+
+    // Aplicar traducciones directamente
+    const editTitleSpan = contextMenu.querySelector("#context-edit-title span");
+    const exportChatSpan = contextMenu.querySelector(
+      "#context-export-chat span",
+    );
+    const deleteChatSpan = contextMenu.querySelector(
+      "#context-delete-chat span",
+    );
+
+    console.log("🔍 DEBUG - Translations object:", this.translations);
+    console.log("🔍 DEBUG - context_menu:", this.translations?.context_menu);
+
+    // Verificar que translations esté cargado
+    if (this.translations && this.translations.context_menu) {
+      if (editTitleSpan)
+        editTitleSpan.textContent =
+          this.translations.context_menu.edit_title || "Editar título";
+      if (exportChatSpan)
+        exportChatSpan.textContent =
+          this.translations.context_menu.export_chat || "Exportar chat";
+      if (deleteChatSpan)
+        deleteChatSpan.textContent =
+          this.translations.context_menu.delete_chat || "Eliminar chat";
+    } else {
+      // Fallback si translations no está cargado
+      if (editTitleSpan) editTitleSpan.textContent = "Editar título";
+      if (exportChatSpan) exportChatSpan.textContent = "Exportar chat";
+      if (deleteChatSpan) deleteChatSpan.textContent = "Eliminar chat";
+    }
+
+    // Posicionar el menú en la posición del clic
+    contextMenu.style.left = event.pageX + "px";
+    contextMenu.style.top = event.pageY + "px";
+    contextMenu.style.display = "block";
+
+    console.log("📋 Menú contextual mostrado para chat:", chatId);
+  }
+
+  hideContextMenu() {
+    const contextMenu = document.getElementById("chat-context-menu");
+    if (contextMenu) {
+      contextMenu.style.display = "none";
+    }
+  }
+
+  showEditTitleModal(chatId) {
+    const chat = this.chats.find((c) => c.id === chatId);
+    if (!chat) return;
+
+    this.chatToEdit = chatId;
+    const input = document.getElementById("new-title-input");
+    input.value = chat.title;
+
+    // Aplicar traducciones directamente al modal
+    const modal = document.getElementById("edit-title-modal");
+    const titleH3 = document.getElementById("edit-title-modal-title");
+    const label = document.getElementById("edit-title-modal-label");
+    const cancelBtn = document.querySelector("#cancel-edit-title-btn span");
+    const confirmBtn = document.querySelector("#confirm-edit-title-btn span");
+
+    console.log("🔍 DEBUG Modal - Translations:", this.translations);
+    console.log("🔍 DEBUG Modal - edit_title:", this.translations?.edit_title);
+    console.log("🔍 DEBUG Modal - buttons:", this.translations?.buttons);
+
+    // Verificar que translations esté cargado
+    if (
+      this.translations &&
+      this.translations.edit_title &&
+      this.translations.buttons
+    ) {
+      if (titleH3)
+        titleH3.textContent =
+          this.translations.edit_title.title || "Editar título del chat";
+      if (label)
+        label.textContent =
+          this.translations.edit_title.label || "Nuevo título:";
+      if (cancelBtn)
+        cancelBtn.textContent = this.translations.buttons.cancel || "Cancelar";
+      if (confirmBtn)
+        confirmBtn.textContent = this.translations.buttons.save || "Guardar";
+    } else {
+      // Fallback si translations no está cargado
+      if (titleH3) titleH3.textContent = "Editar título del chat";
+      if (label) label.textContent = "Nuevo título:";
+      if (cancelBtn) cancelBtn.textContent = "Cancelar";
+      if (confirmBtn) confirmBtn.textContent = "Guardar";
+    }
+
+    modal.style.display = "block";
+
+    // Enfocar y seleccionar el texto
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 100);
+
+    console.log("✏️ Modal de edición abierto para:", chat.title);
+  }
+
+  editChatTitle(chatId, newTitle) {
+    const chat = this.chats.find((c) => c.id === chatId);
+    if (!chat) return;
+
+    const trimmedTitle = newTitle.trim();
+    if (!trimmedTitle) {
+      alert(this.t("edit_title.error"));
+      return false;
+    }
+
+    chat.title = trimmedTitle;
+    this.saveChats();
+    this.renderChatList();
+
+    // Si es el chat actual, actualizar también el nombre en el header
+    if (this.currentChatId === chatId) {
+      document.getElementById("chat-contact-name").textContent = trimmedTitle;
+    }
+
+    console.log("✅ Título actualizado:", trimmedTitle);
+    return true;
+  }
+
+  exportSingleChat(chatId) {
+    const chat = this.chats.find((c) => c.id === chatId);
+    if (!chat) return;
+
+    // Exportar como JSON (formato completo)
+    const data = {
+      version: "1.0",
+      exportDate: new Date().toISOString(),
+      chats: [chat],
+    };
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `chat-${chat.title.replace(/\s+/g, "_")}-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    console.log("📤 Chat exportado:", chat.title);
+    this.playSound("message-out");
   }
   /////---------------------------------------------
   async init() {

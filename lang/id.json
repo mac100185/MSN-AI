@@ -123,6 +123,21 @@
     "skipped": "obrolan dilewati",
     "no_changes": "Tidak ada perubahan yang dilakukan."
   },
+
+  "context_menu": {
+    "edit_title": "Edit judul",
+    "export_chat": "Ekspor obrolan",
+    "delete_chat": "Hapus obrolan"
+  },
+
+  "edit_title": {
+    "title": "Edit judul obrolan",
+    "label": "Judul baru:",
+    "placeholder": "Masukkan judul obrolan baru",
+    "success": "Judul berhasil diperbarui",
+    "error": "Judul tidak boleh kosong"
+  },
+
   "delete_chat": {
     "title": "Hapus obrolan",
     "message": "Apakah Anda yakin ingin menghapus obrolan ini? Tindakan ini tidak dapat dibatalkan.",

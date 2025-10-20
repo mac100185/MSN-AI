@@ -120,9 +120,24 @@
     "imported": "trò chuyện đã nhập",
     "merged": "trò chuyện đã hợp nhất",
     "replaced": "trò chuyện đã thay thế",
-    "skipped": "trò chuyện đã bỏ qua",
+    "skipped": "cuộc trò chuyện đã bỏ qua",
     "no_changes": "Không có thay đổi nào được thực hiện."
   },
+
+  "context_menu": {
+    "edit_title": "Chỉnh sửa tiêu đề",
+    "export_chat": "Xuất trò chuyện",
+    "delete_chat": "Xóa trò chuyện"
+  },
+
+  "edit_title": {
+    "title": "Chỉnh sửa tiêu đề trò chuyện",
+    "label": "Tiêu đề mới:",
+    "placeholder": "Nhập tiêu đề trò chuyện mới",
+    "success": "Tiêu đề đã được cập nhật thành công",
+    "error": "Tiêu đề không được để trống"
+  },
+
   "delete_chat": {
     "title": "Xóa trò chuyện",
     "message": "Bạn có chắc chắn muốn xóa trò chuyện này không? Hành động này không thể hoàn tác.",

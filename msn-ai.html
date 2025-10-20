@@ -400,6 +400,42 @@
       </div>
     </div>
 
+    <!-- Menú contextual para chats -->
+    <div id="chat-context-menu" class="context-menu" style="display: none; position: absolute; z-index: 10000;">
+        <ul style="list-style: none; margin: 0; padding: 0;">
+            <li id="context-edit-title" class="context-menu-item">
+                <img src="assets/contacts-window/1131.png" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">
+                <span></span>
+            </li>
+            <li id="context-export-chat" class="context-menu-item">
+                <img src="assets/contacts-window/1484.png" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">
+                <span></span>
+            </li>
+            <li id="context-delete-chat" class="context-menu-item">
+                <img src="assets/contacts-window/329.png" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">
+                <span></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Modal para editar título del chat -->
+    <div id="edit-title-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="edit-title-modal-title"></h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <label id="edit-title-modal-label" for="new-title-input" style="display: block; margin-bottom: 8px; font-weight: bold;"></label>
+                <input type="text" id="new-title-input" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 9pt; box-sizing: border-box;">
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="aerobutton" id="cancel-edit-title-btn"><span></span></button>
+                    <button class="aerobutton" id="confirm-edit-title-btn" style="margin-left: 8px;"><span></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de confirmación para eliminar chat -->
     <div id="delete-chat-modal" class="modal">
         <div class="modal-content">

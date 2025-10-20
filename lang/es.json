@@ -133,6 +133,20 @@
     "no_changes": "No se realizaron cambios."
   },
 
+  "context_menu": {
+    "edit_title": "Editar título",
+    "export_chat": "Exportar chat",
+    "delete_chat": "Eliminar chat"
+  },
+
+  "edit_title": {
+    "title": "Editar título del chat",
+    "label": "Nuevo título:",
+    "placeholder": "Ingresa el nuevo título del chat",
+    "success": "Título actualizado correctamente",
+    "error": "El título no puede estar vacío"
+  },
+
   "delete_chat": {
     "title": "Eliminar chat",
     "message": "¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.",

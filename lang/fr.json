@@ -133,6 +133,20 @@
     "no_changes": "Aucune modification effectuée."
   },
 
+  "context_menu": {
+    "edit_title": "Modifier le titre",
+    "export_chat": "Exporter le chat",
+    "delete_chat": "Supprimer le chat"
+  },
+
+  "edit_title": {
+    "title": "Modifier le titre du chat",
+    "label": "Nouveau titre:",
+    "placeholder": "Entrez le nouveau titre du chat",
+    "success": "Titre mis à jour avec succès",
+    "error": "Le titre ne peut pas être vide"
+  },
+
   "delete_chat": {
     "title": "Supprimer le chat",
     "message": "Êtes-vous sûr de vouloir supprimer ce chat ? Cette action ne peut pas être annulée.",

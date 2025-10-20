@@ -284,10 +284,10 @@ a {
     height: auto;
     max-height: 70px;
     width: 100%;
-    overflow: hidden;
+    overflow: visible;
     background-color: white;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding: 5px 10px;
     cursor: pointer;
     border-bottom: 1px solid #f0f0f0;
@@ -359,6 +359,29 @@ a {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.chat-title-edit {
+    font-weight: bold;
+    margin: 0;
+    font-size: 8pt;
+    color: #333;
+    background-color: #fff;
+    box-sizing: border-box;
+    border: 1px solid #0066cc;
+    border-radius: 2px;
+    padding: 2px 4px;
+    font-family: inherit;
+    z-index: 1000;
+    position: relative;
+}
+
+.chat-title-edit:focus {
+    border-color: #0066cc;
+    background-color: #f0f8ff;
+    outline: none;
 }
 
 .chat-preview {
@@ -787,6 +810,42 @@ a {
 }
 
 /* Modales */
+/* Menú contextual */
+.context-menu {
+    background-color: #ffffff;
+    border: 1px solid #999;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    min-width: 180px;
+    font-family: "Tahoma", sans-serif;
+    font-size: 8pt;
+}
+
+.context-menu-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.context-menu-item:last-child {
+    border-bottom: none;
+}
+
+.context-menu-item:hover {
+    background-color: #e8f0f8;
+}
+
+.context-menu-item img {
+    flex-shrink: 0;
+}
+
+.context-menu-item span {
+    user-select: none;
+}
+
 .modal {
     display: none;
     position: fixed;

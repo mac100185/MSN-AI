@@ -123,6 +123,21 @@
     "skipped": "aruskipawi(naka) sart'ata",
     "no_changes": "Janiwa kuna mayjt'awinakakiti lurañataki."
   },
+
+  "context_menu": {
+    "edit_title": "Sutimpa mayjt'ayaña",
+    "export_chat": "Aruskipawi mistsuña",
+    "delete_chat": "Aruskipawi chhaqtayaña"
+  },
+
+  "edit_title": {
+    "title": "Aruskipawi sutimpa mayjt'ayaña",
+    "label": "Machaq sutipa:",
+    "placeholder": "Machaq aruskipawi sutipa qillqaña",
+    "success": "Sutimpaxa sum mayjt'ayatawa",
+    "error": "Sutimpaxa janiwa ch'usañakiti"
+  },
+
   "delete_chat": {
     "title": "Aruskipawi chhaqtayaña",
     "message": "¿Chiqapachati aka aruskipawi chhaqtayaña munaskta? Aka lurawixa janiwa kutiyañakiti.",

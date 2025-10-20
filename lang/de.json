@@ -133,6 +133,20 @@
     "no_changes": "Keine Änderungen vorgenommen."
   },
 
+  "context_menu": {
+    "edit_title": "Titel bearbeiten",
+    "export_chat": "Chat exportieren",
+    "delete_chat": "Chat löschen"
+  },
+
+  "edit_title": {
+    "title": "Chat-Titel bearbeiten",
+    "label": "Neuer Titel:",
+    "placeholder": "Geben Sie den neuen Chat-Titel ein",
+    "success": "Titel erfolgreich aktualisiert",
+    "error": "Der Titel darf nicht leer sein"
+  },
+
   "delete_chat": {
     "title": "Chat löschen",
     "message": "Sind Sie sicher, dass Sie diesen Chat löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",

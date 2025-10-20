@@ -120,9 +120,24 @@
     "imported": "rimanakuy(kuna) yaykuchisqa",
     "merged": "rimanakuy(kuna) huñusqa",
     "replaced": "rimanakuy(kuna) tikrasqa",
-    "skipped": "rimanakuy(kuna) saqisqa",
+    "skipped": "rimanakuykuna saqisqa",
     "no_changes": "Mana imapas tikrasqachu."
   },
+
+  "context_menu": {
+    "edit_title": "Sutita allichay",
+    "export_chat": "Rimanakuyta lluqsichiy",
+    "delete_chat": "Rimanakuyta qichuy"
+  },
+
+  "edit_title": {
+    "title": "Rimanakuy sutinta allichay",
+    "label": "Musuq suti:",
+    "placeholder": "Musuq rimanakuy sutinta qillqay",
+    "success": "Sutiqa allinta musuqchasqa",
+    "error": "Sutiqa mana ch'usaqchu kanan"
+  },
+
   "delete_chat": {
     "title": "Rimanakuyta qichuy",
     "message": "¿Chiqaqchu kay rimanakuyta qichuyta munawanki? Kay ruwayqa manam kutichikuytaqa atinchu.",

@@ -123,6 +123,21 @@
     "skipped": "chat(s) omitido(s)",
     "no_changes": "Não foram realizadas alterações."
   },
+
+  "context_menu": {
+    "edit_title": "Editar título",
+    "export_chat": "Exportar chat",
+    "delete_chat": "Eliminar chat"
+  },
+
+  "edit_title": {
+    "title": "Editar título do chat",
+    "label": "Novo título:",
+    "placeholder": "Digite o novo título do chat",
+    "success": "Título atualizado com sucesso",
+    "error": "O título não pode estar vazio"
+  },
+
   "delete_chat": {
     "title": "Eliminar chat",
     "message": "Tem certeza de que deseja eliminar este chat? Esta ação não pode ser desfeita.",

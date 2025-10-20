@@ -133,6 +133,20 @@
     "no_changes": "未进行任何更改。"
   },
 
+  "context_menu": {
+    "edit_title": "编辑标题",
+    "export_chat": "导出聊天",
+    "delete_chat": "删除聊天"
+  },
+
+  "edit_title": {
+    "title": "编辑聊天标题",
+    "label": "新标题:",
+    "placeholder": "输入新的聊天标题",
+    "success": "标题已成功更新",
+    "error": "标题不能为空"
+  },
+
   "delete_chat": {
     "title": "删除聊天",
     "message": "确定要删除此聊天吗？此操作无法撤消。",

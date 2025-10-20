@@ -123,6 +123,21 @@
     "skipped": "sohbet atlandı",
     "no_changes": "Hiçbir değişiklik yapılmadı."
   },
+
+  "context_menu": {
+    "edit_title": "Başlığı düzenle",
+    "export_chat": "Sohbeti dışa aktar",
+    "delete_chat": "Sohbeti sil"
+  },
+
+  "edit_title": {
+    "title": "Sohbet başlığını düzenle",
+    "label": "Yeni başlık:",
+    "placeholder": "Yeni sohbet başlığını girin",
+    "success": "Başlık başarıyla güncellendi",
+    "error": "Başlık boş olamaz"
+  },
+
   "delete_chat": {
     "title": "Sohbeti sil",
     "message": "Bu sohbeti silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
