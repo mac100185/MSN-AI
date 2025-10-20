@@ -41,6 +41,198 @@ class MSNAI {
     this.init();
   }
 
+  // =================== RENDERIZADO SEGURO DE MARKDOWN ===================
+  /**
+   * Configura marked para renderizado seguro
+   */
+  initMarkdownRenderer() {
+    if (typeof marked === "undefined") {
+      console.error("❌ marked no está cargado");
+      return;
+    }
+
+    // Configurar marked
+    marked.setOptions({
+      gfm: true,
+      breaks: true,
+      smartypants: false,
+      mangle: false,
+      headerIds: false,
+      highlight: (code, lang) => {
+        if (typeof hljs !== "undefined" && lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(code, { language: lang }).value;
+          } catch (e) {
+            console.warn("Error resaltando código:", e);
+          }
+        }
+        return code;
+      },
+    });
+
+    console.log("✅ Renderizador de Markdown inicializado");
+  }
+
+  /**
+   * Renderiza Markdown de forma segura usando marked + DOMPurify
+   * @param {string} markdown - Texto en Markdown
+   * @returns {string} HTML sanitizado
+   */
+  renderMarkdownSafe(markdown) {
+    if (typeof markdown !== "string") {
+      console.warn("renderMarkdownSafe recibió un valor no string:", markdown);
+      return "";
+    }
+
+    if (typeof marked === "undefined" || typeof DOMPurify === "undefined") {
+      console.error("❌ marked o DOMPurify no están disponibles");
+      return this.escapeHtml(markdown);
+    }
+
+    try {
+      // 1. Convertir Markdown a HTML
+      const rawHtml = marked.parse(markdown);
+
+      // 2. Sanitizar con DOMPurify
+      const cleanHtml = DOMPurify.sanitize(rawHtml, {
+        ALLOWED_TAGS: [
+          "p",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "ul",
+          "ol",
+          "li",
+          "blockquote",
+          "strong",
+          "em",
+          "del",
+          "code",
+          "pre",
+          "br",
+          "hr",
+          "div",
+          "span",
+          "a",
+          "table",
+          "thead",
+          "tbody",
+          "tr",
+          "th",
+          "td",
+          "button",
+        ],
+        ALLOWED_ATTR: ["class", "href", "target", "data-code", "title"],
+        FORBID_TAGS: [
+          "form",
+          "input",
+          "script",
+          "iframe",
+          "style",
+          "link",
+          "object",
+          "embed",
+        ],
+        FORBID_ATTR: [
+          "onclick",
+          "onerror",
+          "onload",
+          "onmouseover",
+          "onfocus",
+          "onblur",
+        ],
+      });
+
+      // 3. Agregar botones de copiar y descargar a bloques de código
+      return this.addCodeBlockButtons(cleanHtml);
+    } catch (error) {
+      console.error("❌ Error al renderizar Markdown:", error);
+      return `<p style="color: #c00;">⚠️ Error al procesar la respuesta.</p>`;
+    }
+  }
+
+  /**
+   * Agrega botones de copiar y descargar a los bloques de código
+   * @param {string} html - HTML con bloques de código
+   * @returns {string} HTML con botones agregados
+   */
+  addCodeBlockButtons(html) {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+
+    const codeBlocks = tempDiv.querySelectorAll("pre > code");
+    codeBlocks.forEach((codeElement, index) => {
+      const pre = codeElement.parentElement;
+      const code = codeElement.textContent;
+
+      // Crear contenedor para el bloque de código con toolbar
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block-wrapper";
+
+      // Crear toolbar con botones
+      const toolbar = document.createElement("div");
+      toolbar.className = "code-block-toolbar";
+
+      // Detectar el lenguaje
+      const langClass = Array.from(codeElement.classList).find((cls) =>
+        cls.startsWith("language-"),
+      );
+      const language = langClass
+        ? langClass.replace("language-", "").toUpperCase()
+        : "CODE";
+
+      // Label del lenguaje
+      const langLabel = document.createElement("span");
+      langLabel.className = "code-block-lang";
+      langLabel.textContent = language;
+
+      // Botón copiar
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "code-block-btn";
+      copyBtn.innerHTML = "📋 Copiar";
+      copyBtn.title = "Copiar código";
+      copyBtn.setAttribute("data-code", code);
+
+      // Botón descargar
+      const downloadBtn = document.createElement("button");
+      downloadBtn.className = "code-block-btn";
+      downloadBtn.innerHTML = "💾 Descargar";
+      downloadBtn.title = "Descargar código";
+      downloadBtn.setAttribute("data-code", code);
+      downloadBtn.setAttribute("data-lang", language.toLowerCase());
+
+      toolbar.appendChild(langLabel);
+      toolbar.appendChild(copyBtn);
+      toolbar.appendChild(downloadBtn);
+
+      // Insertar toolbar antes del pre
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(toolbar);
+      wrapper.appendChild(pre);
+    });
+
+    return tempDiv.innerHTML;
+  }
+
+  /**
+   * Escapa HTML para prevenir XSS (fallback si no hay librerías)
+   * @param {string} text - Texto a escapar
+   * @returns {string} Texto escapado
+   */
+  escapeHtml(text) {
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
+  }
+
   // =================== SISTEMA DE TRADUCCIÓN ===================
   async loadLanguages() {
     console.log(`🌍 Detectando archivos de idioma en lang/...`);
@@ -1775,17 +1967,80 @@ class MSNAI {
     });
 
     messagesArea.scrollTop = messagesArea.scrollHeight;
+
+    // Configurar event listeners para botones de código
+    this.setupCodeBlockButtons();
+  }
+
+  /**
+   * Configura los event listeners para los botones de copiar y descargar
+   */
+  setupCodeBlockButtons() {
+    // Botones de copiar
+    document.querySelectorAll(".code-block-btn").forEach((btn) => {
+      if (btn.innerHTML.includes("Copiar")) {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          const code = btn.getAttribute("data-code");
+          if (code) {
+            navigator.clipboard
+              .writeText(code)
+              .then(() => {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅ Copiado";
+                btn.style.backgroundColor = "#00aa00";
+                setTimeout(() => {
+                  btn.innerHTML = originalText;
+                  btn.style.backgroundColor = "";
+                }, 2000);
+              })
+              .catch((err) => {
+                console.error("Error al copiar:", err);
+                btn.innerHTML = "❌ Error";
+                setTimeout(() => {
+                  btn.innerHTML = "📋 Copiar";
+                }, 2000);
+              });
+          }
+        };
+      }
+
+      // Botones de descargar
+      if (btn.innerHTML.includes("Descargar")) {
+        btn.onclick = (e) => {
+          e.preventDefault();
+          const code = btn.getAttribute("data-code");
+          const lang = btn.getAttribute("data-lang") || "txt";
+          if (code) {
+            const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `code_${Date.now()}.${lang}`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "✅ Descargado";
+            btn.style.backgroundColor = "#0066cc";
+            setTimeout(() => {
+              btn.innerHTML = originalText;
+              btn.style.backgroundColor = "";
+            }, 2000);
+          }
+        };
+      }
+    });
   }
   //-------------------------------------
+  /**
+   * Formatea el contenido del mensaje usando Markdown seguro
+   * @param {string} content - Contenido del mensaje
+   * @returns {string} HTML sanitizado
+   */
   formatMessage(content) {
-    return content
-      .replace(/\n/g, "<br>")
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(
-        /`(.*?)`/g,
-        '<code style="background: #f0f0f0; padding: 2px 4px; border-radius: 2px;">$1</code>',
-      );
+    // Usar el renderizador seguro de Markdown
+    return this.renderMarkdownSafe(content);
   }
 
   showAIThinking(show) {
@@ -2889,6 +3144,9 @@ class MSNAI {
     console.log(
       `   ai-connection-status: ${statusText ? statusText.textContent : "NO ENCONTRADO"}`,
     );
+
+    // Inicializar renderizador de Markdown
+    this.initMarkdownRenderer();
 
     this.loadChats();
     this.initSounds();

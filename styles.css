@@ -590,10 +590,185 @@ a {
 
 .message-content {
     margin-left: 10px;
-    white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
+    line-height: 1.5;
+}
+
+/* Estilos para Markdown renderizado */
+.message-content p {
+    margin: 8px 0;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4,
+.message-content h5,
+.message-content h6 {
+    margin: 12px 0 8px 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.message-content h1 {
+    font-size: 1.5em;
+}
+.message-content h2 {
+    font-size: 1.3em;
+}
+.message-content h3 {
+    font-size: 1.1em;
+}
+
+.message-content ul,
+.message-content ol {
+    margin: 8px 0;
+    padding-left: 25px;
+}
+
+.message-content li {
+    margin: 4px 0;
+}
+
+.message-content blockquote {
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-left: 4px solid #0066cc;
+    background-color: #f5f8fa;
+    font-style: italic;
+}
+
+.message-content code {
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: "Consolas", "Monaco", "Courier New", monospace;
+    font-size: 0.9em;
+    color: #d73a49;
+}
+
+/* Contenedor de bloque de código con toolbar */
+.code-block-wrapper {
+    position: relative;
+    margin: 12px 0;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    background-color: #f6f8fa;
+}
+
+/* Toolbar del bloque de código */
+.code-block-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #e8eef3;
+    border-bottom: 1px solid #d0d7de;
+    border-radius: 6px 6px 0 0;
+}
+
+/* Label del lenguaje */
+.code-block-lang {
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #586069;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Botones de copiar y descargar */
+.code-block-btn {
+    background-color: #fff;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    padding: 4px 10px;
+    margin-left: 6px;
+    font-size: 0.75em;
+    font-family: "Tahoma", sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #24292e;
+}
+
+.code-block-btn:hover {
+    background-color: #f3f4f6;
+    border-color: #0066cc;
+}
+
+.code-block-btn:active {
+    background-color: #e8eef3;
+}
+
+.message-content pre {
+    background-color: transparent;
+    border: none;
+    border-radius: 0 0 6px 6px;
+    padding: 12px;
+    margin: 0;
+    overflow-x: auto;
+    font-family: "Consolas", "Monaco", "Courier New", monospace;
+    font-size: 0.85em;
+    line-height: 1.45;
+}
+
+.message-content pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+    border-radius: 0;
+}
+
+.message-content a {
+    color: #0066cc;
+    text-decoration: underline;
+}
+
+.message-content a:hover {
+    color: #0052a3;
+}
+
+.message-content hr {
+    border: none;
+    border-top: 1px solid #d0d7de;
+    margin: 16px 0;
+}
+
+.message-content table {
+    border-collapse: collapse;
+    margin: 12px 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+.message-content table thead {
+    background-color: #f6f8fa;
+}
+
+.message-content table th,
+.message-content table td {
+    border: 1px solid #d0d7de;
+    padding: 6px 13px;
+    text-align: left;
+}
+
+.message-content table th {
+    font-weight: bold;
+}
+
+.message-content strong {
+    font-weight: bold;
+}
+
+.message-content em {
+    font-style: italic;
+}
+
+.message-content del {
+    text-decoration: line-through;
 }
 
 /* Separador */
