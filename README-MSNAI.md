@@ -44,19 +44,23 @@ Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de 
 ### 💾 Gestión de datos
 - Almacenamiento local en el navegador (localStorage)
 - Historial completo de conversaciones
-- **Búsqueda avanzada**: En todos los chats o dentro de un chat específico
-- **Exportación flexible**: Todos los chats o solo los seleccionados
-- Importación de chats en JSON
+- **Búsqueda avanzada**: En todos los chats o dentro de un chat específico con resaltado
+- **Exportación flexible**: Todos los chats, seleccionados o individual
+- **Importación inteligente**: Resolución automática de conflictos (Unir/Reemplazar/Omitir)
+- Importación de chats en JSON con validación
 - **Volúmenes persistentes** en Docker Edition
 - **Ordenar historial** por fecha (ascendente/descendente)
+- **Multi-chat simultáneo**: Navega entre chats mientras la IA responde en otros
+- **Indicadores de no leídos**: Resalta chats con mensajes nuevos en verde
 
 ### 📝 Edición de texto avanzada
-- **Ajuste de tamaño de fuente** - Aumentar/disminuir para mejor legibilidad
-- **Emoticones** - Categorías: Naturales 😊 y Amor ❤️
-- **Formato de texto** - Negrita, cursiva, subrayado
-- **Subir archivos de texto** - Carga archivos .txt directamente al chat
+- **Ajuste de tamaño de fuente** - Aumentar/disminuir para mejor legibilidad (10px - 32px)
+- **Emoticones** - Categorías: Naturales 😊 y Amor ❤️ (30 emojis totales)
+- **Formato de texto** - Negrita, cursiva, subrayado con botones dedicados
+- **Subir archivos de texto** - Carga archivos .txt directamente al chat con preview
 - **Dictado por voz** 🎤 - Transcripción de voz a texto (Web Speech API)
-- **Zumbido/Nudge** 📳 - Envía "sacudidas" como en MSN original
+- **Zumbido/Nudge** 📳 - Envía "sacudidas" como en MSN original con respuesta de IA
+- **Detener respuesta** - Botón para abortar generación de IA en curso
 
 ### 🔊 Experiencia inmersiva
 - Sonidos auténticos de MSN (login, mensajes, notificaciones, nudge)
@@ -65,12 +69,22 @@ Disfruta de la experiencia clásica de MSN mientras conversas con asistentes de 
 - Interfaz completamente responsive
 
 ### 🛠️ Funcionalidades avanzadas
-- **Imprimir chat actual** - Genera versión imprimible de la conversación
+- **Imprimir chat actual** - Genera versión imprimible de la conversación con estilos
 - **Exportar chat individual** - Descarga solo la conversación abierta
 - **Limpiar chat** - Borra mensajes sin eliminar el chat completo
-- **Cerrar chat** - Cierra la vista sin eliminar historial
-- **Búsqueda con resaltado** - Encuentra texto en conversaciones
+- **Cerrar chat** - Cierra la vista sin eliminar historial (con confirmación)
+- **Eliminar chat** - Elimina permanentemente con modal de confirmación
+- **Búsqueda con resaltado** - Encuentra texto en conversaciones con resaltado visual
 - **Modal de información** - Acceso rápido a contacto y documentación
+- **Selección múltiple** - Checkboxes para exportación selectiva de chats
+
+### 🌍 Sistema multiidioma (NUEVO en v2.1.0)
+- **22 idiomas soportados** con traducciones completas
+- **Detección automática** del idioma del navegador al iniciar
+- **Selector manual** de idioma en configuración
+- **Idiomas disponibles**: Español, Inglés, Alemán, Francés, Árabe, Chino, Hindi, Bengalí, Portugués, Ruso, Japonés, Coreano, Indonesio, Turco, Urdu, Vietnamita, Tamil, Telugu, Maratí, Panyabí, Quechua, Aymara
+- **Persistencia** de preferencia de idioma entre sesiones
+- **Archivos JSON** estructurados en directorio `lang/`
 
 ### 🐳 Docker Edition (v2.1.0 - Instalación Simplificada)
 - **Instalación de cero prerequisitos** - Solo requiere Docker
@@ -652,24 +666,100 @@ python3 -m http.server 8000
 ## 🏗️ Arquitectura técnica
 
 ### 📱 Frontend (Aplicación web)
+
+**Arquitectura modularizada en 3 archivos:**
+- `msn-ai.html` (475 líneas) - Estructura HTML5 semántica
+- `msn-ai.js` (2,764 líneas) - Lógica JavaScript ES6+ modular
+- `styles.css` (1,099 líneas) - Estilos CSS3 completos
+- **Total: 4,338 líneas de código**
+
 ```javascript
-// Estructura principal
+// Estructura principal de la clase MSNAI
 class MSNAI {
   constructor() {
     this.chats = [];
     this.currentChatId = null;
-    this.ollamaUrl = 'http://localhost:11434';
-    this.models = [];
-    this.soundsEnabled = true;
+    this.isConnected = false;
+    this.availableModels = [];
+    this.sounds = {};
+    this.fontSize = 14;
+    this.chatSortOrder = "asc";
+    this.pendingFileAttachment = null;
+    this.abortControllers = {};
+    this.respondingChats = new Set();
+    this.accumulatedResponses = {};
+    this.unreadChats = new Set();
+    this.translations = {};
+    this.availableLanguages = [];
+    this.currentLanguage = "es";
+    
+    this.settings = {
+      soundsEnabled: true,
+      ollamaServer: defaultServer,
+      selectedModel: "",
+      apiTimeout: 30000,
+      notifyStatusChanges: true,
+      language: "es"
+    };
+    
+    this.currentStatus = "online";
   }
   
-  // Funciones principales
-  async connectToOllama() { /* ... */ }
-  async sendMessage(content) { /* ... */ }
-  saveToLocalStorage() { /* ... */ }
-  exportChats() { /* ... */ }
-  importChats(file) { /* ... */ }
+  // Funciones principales (45+ métodos implementados)
+  async loadLanguages() { /* Carga 22 idiomas disponibles */ }
+  async setLanguage(langCode) { /* Cambia idioma de interfaz */ }
+  async connectToOllama() { /* Conexión con Ollama */ }
+  async sendMessage() { /* Envío de mensajes */ }
+  async sendToAI(message, chatId, onToken) { /* Streaming de respuestas */ }
+  async notifyStatusChangeToAI(newStatus, oldStatus) { /* Notifica cambios de estado */ }
+  async sendNudge() { /* Envía zumbido/nudge */ }
+  saveToLocalStorage() { /* Persistencia local */ }
+  exportChats() { /* Exporta todos los chats */ }
+  exportSelectedChats() { /* Exporta chats seleccionados */ }
+  exportCurrentChat() { /* Exporta chat actual */ }
+  importChats(file) { /* Importa con resolución de conflictos */ }
+  searchInCurrentChat(query) { /* Búsqueda con resaltado */ }
+  sortChatHistory() { /* Ordena por fecha */ }
+  printCurrentChat() { /* Imprime conversación */ }
+  clearCurrentChat() { /* Limpia mensajes */ }
+  closeCurrentChat() { /* Cierra vista */ }
+  deleteChat(chatId) { /* Elimina chat */ }
+  stopAIResponse() { /* Detiene generación IA */ }
+  startVoiceInput() { /* Dictado por voz */ }
+  // ... y más de 30 métodos adicionales
 }
+```
+
+### 🌍 Sistema de traducción multiidioma
+```javascript
+// Estructura de archivos de idioma (lang/*.json)
+{
+  "app": {
+    "title": "MSN-AI",
+    "status": {
+      "online": "En línea",
+      "away": "Ausente",
+      "busy": "Ocupado",
+      "invisible": "Invisible"
+    }
+  },
+  "chat": {
+    "new_chat": "Nuevo chat",
+    "send": "Enviar",
+    "search_placeholder": "Buscar chats..."
+  },
+  "settings": {
+    "sounds": "Sonidos",
+    "language": "Idioma"
+  }
+  // ... más de 100 claves de traducción por idioma
+}
+
+// 22 archivos de idioma en lang/:
+// es.json, en.json, de.json, fr.json, ar.json, zh.json,
+// hi.json, bn.json, pt.json, ru.json, ja.json, ko.json,
+// id.json, tr.json, ur.json, vi.json, ta.json, te.json,
+// mr.json, pa.json, qu.json, ay.json
 ```
 
 ### 🐳 Docker Architecture
@@ -682,22 +772,87 @@ services:
 ```
 
 ### 💾 Almacenamiento de datos
+
+**Ubicación:**
 - **Docker**: Volúmenes persistentes (`msn-ai-chats`, `ollama-data`)
 - **Local**: localStorage del navegador
-- **Formato**: JSON estructurado con metadatos
-- **Backup**: Exportación manual o automática (Docker)
+
+**Estructura JSON:**
+```json
+{
+  "version": "1.0",
+  "exportDate": "2024-12-16T10:30:00.000Z",
+  "chats": [
+    {
+      "id": "chat-1734348000000",
+      "title": "Conversación con IA",
+      "date": "2024-12-16T10:00:00.000Z",
+      "model": "mistral:latest",
+      "messages": [
+        {
+          "type": "user",
+          "content": "Hola",
+          "timestamp": "2024-12-16T10:00:00.000Z"
+        },
+        {
+          "type": "ai",
+          "content": "¡Hola! ¿En qué puedo ayudarte?",
+          "timestamp": "2024-12-16T10:00:05.000Z"
+        }
+      ],
+      "selected": false
+    }
+  ],
+  "settings": {
+    "soundsEnabled": true,
+    "ollamaServer": "http://localhost:11434",
+    "selectedModel": "mistral:latest",
+    "apiTimeout": 30000,
+    "notifyStatusChanges": true,
+    "language": "es"
+  }
+}
+```
+
+**Características:**
+- Backup automático en Docker
+- Exportación manual en Local
+- Importación con resolución de conflictos
+- Validación de formato y versión
 
 ### 🔊 Sistema de audio
+
+**5 sonidos auténticos de MSN:**
+- `login.mp3` - Inicio de sesión
+- `logout.mp3` - Cierre de sesión
+- `message.mp3` - Mensaje recibido
+- `send.mp3` - Mensaje enviado
+- `nudge.mp3` - Zumbido/nudge
+
 ```javascript
 // Gestión de sonidos
-const playSound = (soundName) => {
-  if (!soundsEnabled) return;
-  const audio = new Audio(`assets/sounds/${soundName}.wav`);
-  audio.play().catch(console.warn);
+playSound(soundName) {
+  if (!this.settings.soundsEnabled) return;
+  const audio = this.sounds[soundName];
+  if (audio) {
+    audio.currentTime = 0;
+    audio.play().catch(err => console.warn(`Error reproduciendo ${soundName}:`, err));
+  }
+}
+
+// Inicialización de sonidos
+this.sounds = {
+  login: new Audio('assets/sounds/login.mp3'),
+  logout: new Audio('assets/sounds/logout.mp3'),
+  message: new Audio('assets/sounds/message.mp3'),
+  send: new Audio('assets/sounds/send.mp3'),
+  nudge: new Audio('assets/sounds/nudge.mp3')
 };
 ```
 
 ### 🌐 Comunicación con IA
+
+**Streaming de respuestas en tiempo real:**
 ```javascript
 // API Ollama
 const response = await fetch(`${ollamaUrl}/api/generate`, {
@@ -713,66 +868,122 @@ const response = await fetch(`${ollamaUrl}/api/generate`, {
 
 ## 🚀 Roadmap futuro
 
-### [1.2.0] - Mejoras multiplataforma
-- [ ] **Docker**: Soporte para más architecturas (ARM32, RISC-V)
-- [ ] **Local**: Instalador GUI para Windows (.msi)
-- [ ] **macOS**: App Bundle nativo (.app)
-- [ ] **Linux**: Packages .deb/.rpm para todas las distros
-- [ ] **Mobile**: PWA (Progressive Web App) para móviles
-
-### [1.3.0] - Funcionalidades avanzadas
-- [x] **Emoticons**: Integrados (Naturales y Amor) ✅
+### ✅ [2.1.0] - Implementado (Versión actual)
+- [x] **Emoticons**: Integrados (Naturales y Amor - 30 emojis) ✅
 - [x] **Dictado por voz**: Speech-to-text implementado ✅
 - [x] **Estados de presencia**: Online/Away/Busy/Invisible ✅
-- [x] **Búsqueda avanzada**: En chats y dentro de chats ✅
-- [x] **Editor de texto**: Formato y ajuste de tamaño ✅
+- [x] **Notificación de estado a IA**: La IA sabe tu estado actual ✅
+- [x] **Búsqueda avanzada**: En todos los chats y dentro de chats con resaltado ✅
+- [x] **Editor de texto**: Formato (negrita, cursiva, subrayado) y ajuste de tamaño ✅
+- [x] **Subir archivos de texto**: Carga archivos .txt al chat ✅
+- [x] **Zumbido/Nudge**: Envía "sacudidas" como MSN original ✅
+- [x] **Ordenar historial**: Por fecha ascendente/descendente ✅
+- [x] **Exportación flexible**: Todos, seleccionados o individual ✅
+- [x] **Importación inteligente**: Resolución automática de conflictos ✅
+- [x] **Imprimir chat**: Versión imprimible con estilos ✅
+- [x] **Limpiar/Cerrar chat**: Sin eliminar historial ✅
+- [x] **Multi-chat simultáneo**: Navega mientras la IA responde ✅
+- [x] **Indicadores de no leídos**: Resalta chats nuevos en verde ✅
+- [x] **Detener respuesta IA**: Abortar generación en curso ✅
+- [x] **🌍 Sistema multiidioma**: 22 idiomas con detección automática ✅
+- [x] **Selector de idioma**: Cambio manual en configuración ✅
+- [x] **Docker Edition**: Instalación simplificada v2.1.0 ✅
+- [x] **Scripts de gestión Docker**: 7 scripts dedicados ✅
+
+### [1.3.0] - Próximas mejoras
 - [ ] **Temas**: Modo oscuro, colores personalizables
 - [ ] **Emoticons animados**: Versión animada estilo MSN original
-- [ ] **IA múltiple**: Varios modelos simultáneos
 - [ ] **Plugins**: Sistema de extensiones
 - [ ] **Cifrado**: End-to-end para chats sensibles
+- [ ] **Categorías de chats**: Organización por carpetas
+- [ ] **Estadísticas**: Analytics local de uso
 
 ### [2.0.0] - Expansión mayor
+- [ ] **IA múltiple**: Varios modelos simultáneos (debates)
+- [ ] **Multimodal**: Soporte para imágenes y archivos
+- [ ] **RAG**: Retrieval-Augmented Generation con documentos
+- [ ] **Voice mejorado**: Text-to-speech para respuestas de IA
 - [ ] **Colaborativo**: Chat tiempo real entre usuarios
 - [ ] **MSN Revival**: Integración con servidores Escargot
 - [ ] **Cloud opcional**: Sincronización entre dispositivos
 - [ ] **API pública**: Para desarrolladores externos
-- [ ] **IA especializada**: Modelos fine-tuned para casos específicos
 
-### [2.1.0] - Funcionalidades avanzadas IA
-- [ ] **RAG**: Retrieval-Augmented Generation con documentos
+### [2.2.0] - Futuro
 - [ ] **Code execution**: Ejecución de código en sandbox
-- [ ] **Multimodal**: Soporte para imágenes y archivos
-- [ ] **Voice mejorado**: Text-to-speech para respuestas de IA
 - [ ] **Memoria extendida**: Base de datos vectorial
 - [ ] **Compartir chats**: Generar links para compartir conversaciones
 - [ ] **Backup automático**: Exportación programada de chats
+- [ ] **Mobile**: PWA (Progressive Web App) para móviles
+- [ ] **Instaladores nativos**: .msi (Windows), .app (macOS), .deb/.rpm (Linux)
 
-## 📊 Métricas y estadísticas
+## 📊 Métricas y estadísticas v2.1.0
+
+### 📏 Código implementado
+- **Total líneas frontend**: 4,338 líneas
+  - `msn-ai.html`: 475 líneas (estructura HTML5)
+  - `msn-ai.js`: 2,764 líneas (lógica JavaScript)
+  - `styles.css`: 1,099 líneas (estilos CSS3)
+- **Traducciones**: 22 archivos JSON (idiomas completos)
+- **Scripts**: 1,200+ líneas (Bash/PowerShell)
+- **Docker**: 900+ líneas (containerización)
+- **Documentación**: 1,400+ líneas
+
+### 🎯 Características implementadas
+- **Total**: 45+ funcionalidades completas
+- **Idiomas**: 22 idiomas con traducciones completas
+- **Emoticones**: 30 emojis (15 Naturales + 15 Amor)
+- **Estados**: 4 estados de presencia
+- **Sonidos**: 5 sonidos auténticos de MSN
+- **Scripts Docker**: 7 scripts de gestión
+- **Scripts Local**: 6 scripts de instalación/gestión
+- **Modales**: 6 modales de interfaz
+- **Métodos JS**: 45+ métodos en clase MSNAI
 
 ### 📈 Rendimiento típico
 - **Tiempo de carga**: < 2 segundos
-- **Latencia IA**: 1-5 segundos (según modelo)
-- **Uso de memoria**: 50-200MB (navegador)
+- **Latencia IA**: 1-5 segundos (según modelo y hardware)
+- **Uso de memoria navegador**: 50-200MB
 - **Espacio en disco**: 
   - **Docker**: 2-4GB (imágenes + modelos)
   - **Local**: 500MB-8GB (según modelos Ollama)
+- **localStorage**: Sin límite práctico (típico < 10MB para chats)
 
 ### 🎯 Compatibilidad
-- **Navegadores**: 98% usuarios (Chrome, Firefox, Safari, Edge)
-- **Sistemas**: Linux, Windows, macOS
-- **Arquitecturas**: x86_64, ARM64 (Apple Silicon)
-- **Docker**: Engine 20.10+, Compose 1.25+
-- **Hardware**: Desde Raspberry Pi hasta workstations
+- **Navegadores**: 95%+ usuarios soportados
+  - Chrome 90+ (recomendado)
+  - Edge 90+ (recomendado)
+  - Firefox 88+
+  - Safari 14+
+  - Opera 76+
+- **Sistemas Operativos**: 
+  - Linux (Ubuntu 20.04+, Debian 11+, Fedora 34+, Arch)
+  - macOS (10.15 Catalina+, 11 Big Sur+, 12 Monterey+, 13 Ventura+)
+  - Windows (10, 11 - PowerShell 5.1+)
+- **Arquitecturas**: 
+  - x86_64 (Intel/AMD 64-bit)
+  - ARM64 (Apple Silicon M1/M2/M3)
+- **Docker**: 
+  - Engine 20.10+
+  - Desktop 4.0+ (Windows/macOS)
+  - Compose v2 (plugin) o v1 (standalone)
+- **Hardware**: 
+  - Mínimo: Dual-core, 4GB RAM
+  - Recomendado: Quad-core, 8GB RAM
+  - Óptimo: Octa-core+, 16GB+ RAM
+  - GPU: Opcional - NVIDIA con Container Toolkit
 
 ### 📦 Tamaños de descarga
-- **Aplicación base**: 15MB (assets incluidos)
-- **Docker images**: 1.2GB (MSN-AI + Ollama)
-- **Modelos IA típicos**:
-  - `phi3:mini`: 2.3GB
-  - `mistral:7b`: 4.1GB
-  - `llama3:8b`: 4.7GB
-  - `llama3:70b`: 40GB
+- **Aplicación base**: ~15MB (assets incluidos)
+- **Traducciones**: ~500KB (22 archivos JSON)
+- **Docker images**: 
+  - MSN-AI: ~200MB
+  - Ollama: ~1GB
+- **Modelos IA populares**:
+  - `phi3:mini`: 2.3GB (recomendado para inicio)
+  - `mistral:7b`: 4.1GB (equilibrio perfecto)
+  - `llama3:8b`: 4.7GB (muy capaz)
+  - `llama3:70b`: 40GB (máximo rendimiento)
+  - `gemma:2b`: 1.4GB (ultra ligero)
 
 ## 🤝 Contribuir al proyecto
 

@@ -4,9 +4,9 @@
 
 Esta guía te ayudará a instalar y configurar MSN-AI en **Linux**, **Windows** o **macOS**.
 
-## 🔥 **NUEVO: Ahora con Docker Edition**
+## 🔥 **NUEVO en v2.1.0: Docker Edition + Sistema Multiidioma**
 
-MSN-AI v2.1.0 ofrece **instalación simplificada** con DOS opciones:
+MSN-AI v2.1.0 ofrece **instalación simplificada** con DOS opciones y **22 idiomas**:
 
 ### 🐳 **Docker Edition v2.1.0** (Recomendado - Instalación Simplificada)
 - **Un solo comando** para cualquier plataforma
@@ -14,12 +14,14 @@ MSN-AI v2.1.0 ofrece **instalación simplificada** con DOS opciones:
 - **Auto-detección** de IP y modelos
 - **Aislamiento completo** sin "ensuciar" tu sistema
 - **Acceso local y remoto** automático
+- **🌍 22 idiomas** con detección automática
 
 ### 💻 **Local Edition** (Clásica - Máximo rendimiento)
 - **Instalación nativa** en tu sistema
 - **Control total** sobre configuraciones
 - **Rendimiento óptimo** sin overhead de contenedores
 - **Personalización avanzada** disponible
+- **🌍 22 idiomas** con detección automática
 
 ---
 
@@ -749,6 +751,56 @@ docker run --rm -v msn-ai-chats:/data -v $(pwd):/backup alpine tar czf /backup/c
 
 # 4. Los chats se importan desde la interfaz web
 ```
+
+---
+
+## 🌍 Sistema Multiidioma
+
+MSN-AI v2.1.0 incluye soporte completo para **22 idiomas** con detección automática:
+
+### Idiomas soportados:
+- 🇪🇸 Español (es)
+- 🇬🇧 Inglés (en)
+- 🇩🇪 Alemán (de)
+- 🇫🇷 Francés (fr)
+- 🇸🇦 Árabe (ar)
+- 🇨🇳 Chino (zh)
+- 🇮🇳 Hindi (hi)
+- 🇧🇩 Bengalí (bn)
+- 🇵🇹 Portugués (pt)
+- 🇷🇺 Ruso (ru)
+- 🇯🇵 Japonés (ja)
+- 🇰🇷 Coreano (ko)
+- 🇮🇩 Indonesio (id)
+- 🇹🇷 Turco (tr)
+- 🇵🇰 Urdu (ur)
+- 🇻🇳 Vietnamita (vi)
+- 🇮🇳 Tamil (ta)
+- 🇮🇳 Telugu (te)
+- 🇮🇳 Maratí (mr)
+- 🇮🇳 Panyabí (pa)
+- 🇵🇪 Quechua (qu)
+- 🇧🇴 Aymara (ay)
+
+### Características:
+- ✅ **Detección automática** del idioma del navegador al iniciar
+- ✅ **Cambio manual** desde el modal de configuración ⚙️
+- ✅ **Traducción completa** de toda la interfaz
+- ✅ **Persistencia** de preferencia entre sesiones
+- ✅ **Archivos JSON** estructurados en `lang/`
+- ✅ **Disponible en ambas ediciones** (Docker y Local)
+
+### Cómo cambiar el idioma:
+1. Clic en el botón de **engranaje** ⚙️ (configuración)
+2. Buscar **"Idioma de interfaz"** o **"Language"**
+3. Seleccionar el idioma deseado del menú desplegable
+4. El cambio es **inmediato** y se guarda automáticamente
+
+### Contribuir con traducciones:
+Si encuentras errores en las traducciones o quieres añadir un nuevo idioma:
+1. Revisa los archivos en `lang/*.json`
+2. Crea un issue en GitHub o envía un pull request
+3. Ayuda a mejorar MSN-AI para toda la comunidad global 🌍
 
 ---
 

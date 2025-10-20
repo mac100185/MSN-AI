@@ -28,9 +28,13 @@ MSN-AI es una aplicación web revolucionaria que combina la interfaz nostálgica
 - 📄 **Subir archivos** - Carga archivos de texto a la conversación
 - 🔍 **Búsqueda avanzada** - Busca en todos los chats o dentro de uno específico
 - 📳 **Zumbidos** - Envía "nudges" como en MSN original
-- 📤 **Import/Export** - Migra tus conversaciones fácilmente (todos o seleccionados)
+- 💬 **Multi-chat simultáneo** - Navega entre chats mientras la IA responde en otros
+- 📩 **Indicadores de no leídos** - Resalta chats con mensajes nuevos en verde
+- 🔄 **Importación inteligente** - Resolución automática de conflictos al importar (Unir/Reemplazar/Omitir)
+- 📤 **Import/Export avanzado** - Migra conversaciones con detección de duplicados
 - 🖨️ **Imprimir chats** - Imprime tus conversaciones
 - 📢 **Notificaciones de estado** - La IA puede saber cuando cambias tu estado
+- 🌍 **Soporte multilingüe** - 22 idiomas con detección automática (Español, Inglés, Alemán, Francés, Árabe, Chino, Hindi, Bengalí, Portugués, Ruso, Japonés, Coreano, Indonesio, Turco, Urdu, Vietnamita, Tamil, Telugu, Maratí, Panyabí, Quechua, Aymara)
 - 🌐 **100% Local** - Sin dependencias de servicios externos
 - ⚡ **Instalación automática** - Un comando y listo
 
@@ -284,9 +288,33 @@ ollama pull mistral:7b  # Modelo recomendado
 
 ```
 MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
-├── msn-ai.html              # 🎯 Aplicación principal HTML
-├── msn-ai.js                # 💻 Lógica JavaScript (modularizado)
-├── styles.css               # 🎨 Estilos CSS (modularizado)
+├── msn-ai.html              # 🎯 Aplicación principal HTML (475 líneas)
+├── msn-ai.js                # 💻 Lógica JavaScript modular (2,764 líneas)
+├── styles.css               # 🎨 Estilos CSS completos (1,099 líneas)
+├── 🌍 TRADUCCIONES (22 idiomas):
+│   └── lang/                # 📁 Archivos de traducción JSON
+│       ├── es.json          # 🇪🇸 Español
+│       ├── en.json          # 🇬🇧 Inglés
+│       ├── de.json          # 🇩🇪 Alemán
+│       ├── fr.json          # 🇫🇷 Francés
+│       ├── ar.json          # 🇸🇦 Árabe
+│       ├── zh.json          # 🇨🇳 Chino
+│       ├── hi.json          # 🇮🇳 Hindi
+│       ├── bn.json          # 🇧🇩 Bengalí
+│       ├── pt.json          # 🇵🇹 Portugués
+│       ├── ru.json          # 🇷🇺 Ruso
+│       ├── ja.json          # 🇯🇵 Japonés
+│       ├── ko.json          # 🇰🇷 Coreano
+│       ├── id.json          # 🇮🇩 Indonesio
+│       ├── tr.json          # 🇹🇷 Turco
+│       ├── ur.json          # 🇵🇰 Urdu
+│       ├── vi.json          # 🇻🇳 Vietnamita
+│       ├── ta.json          # 🇮🇳 Tamil
+│       ├── te.json          # 🇮🇳 Telugu
+│       ├── mr.json          # 🇮🇳 Maratí
+│       ├── pa.json          # 🇮🇳 Panyabí
+│       ├── qu.json          # 🇵🇪 Quechua
+│       └── ay.json          # 🇧🇴 Aymara
 ├── 🐳 DOCKER EDITION v2.1.0:
 │   ├── start-msnai-docker.sh       # 🐧 Inicio Docker Linux (FIXED)
 │   ├── start-msnai-docker.ps1      # 🪟 Inicio Docker Windows
@@ -324,13 +352,19 @@ MSN-AI/                      # 📁 https://github.com/mac100185/MSN-AI
 │   ├── IMPLEMENTACION-COMPLETA.md  # 🎉 Resumen técnico completo
 │   └── LICENSE              # ⚖️ Licencia GPL-3.0
 ├── assets/                  # 🎨 Recursos multimedia
-│   ├── sounds/              # 🔊 Sonidos auténticos de MSN
+│   ├── sounds/              # 🔊 Sonidos auténticos de MSN (5 archivos)
+│   │   ├── login.mp3        # 🎵 Sonido de inicio de sesión
+│   │   ├── logout.mp3       # 🎵 Sonido de cierre de sesión
+│   │   ├── message.mp3      # 🎵 Sonido de mensaje recibido
+│   │   ├── send.mp3         # 🎵 Sonido de mensaje enviado
+│   │   └── nudge.mp3        # 🎵 Sonido de zumbido/nudge
 │   ├── background/          # 🖼️ Fondos e imágenes
 │   ├── chat-window/         # 🖼️ Iconos y elementos de chat
 │   ├── contacts-window/     # 🖼️ Iconos de lista de contactos
 │   ├── general/             # 🖼️ Elementos UI generales
+│   ├── screenshots/         # 📸 Capturas de pantalla
 │   ├── scrollbar/           # 🖼️ Elementos personalizados
-│   └── status/              # 🖼️ Iconos de estado
+│   └── status/              # 🖼️ Iconos de estado (online, away, busy, invisible)
 ```
 
 ### 🌐 **Clonar repositorio:**
@@ -362,49 +396,67 @@ Cambia tu estado de presencia (como en MSN clásico):
 4. La IA responde con sonido de recepción
 
 ### 📝 Herramientas de edición de texto
-- **Aumentar/Disminuir tamaño** - Ajusta el tamaño de fuente del chat
-- **Emoticones** - Naturales 😊 y Amor ❤️
+- **Aumentar/Disminuir tamaño** - Ajusta el tamaño de fuente del chat (10px - 32px)
+- **Emoticones** - Naturales 😊 y Amor ❤️ (30 emojis disponibles)
 - **Zumbido** 📳 - Envía un "nudge" como en MSN clásico
 - **Dictado por voz** 🎤 - Dicta tus mensajes (requiere permisos de micrófono)
 - **Formato de texto** - Negrita, cursiva, subrayado
 - **Subir archivo** 📄 - Carga archivos de texto al chat
 
+### 🌍 Selector de idioma
+MSN-AI soporta **22 idiomas** con traducciones completas de la interfaz:
+- **Detección automática** del idioma del navegador al iniciar
+- **Cambio manual** desde Configuración ⚙️ → Selector de idioma
+- **Idiomas disponibles**: Español, Inglés, Alemán, Francés, Árabe, Chino, Hindi, Bengalí, Portugués, Ruso, Japonés, Coreano, Indonesio, Turco, Urdu, Vietnamita, Tamil, Telugu, Maratí, Panyabí, Quechua, Aymara
+- **Persistencia**: Tu preferencia se guarda automáticamente
+
 ### Gestionar chats
-- **Buscar en todos los chats**: Usa la barra de búsqueda superior
-- **Buscar en chat actual**: Botón de lupa en la barra del chat
-- **Ordenar historial**: Organiza tus chats por fecha
-- **Exportar todos**: Botón de exportar → Descarga JSON
-- **Exportar seleccionados**: Selecciona chats y exporta solo esos
-- **Importar**: Botón de importar → Selecciona archivo JSON
-- **Limpiar chat**: Borra mensajes sin eliminar el chat
-- **Cerrar chat**: Cierra la vista actual
+- **Buscar en todos los chats**: Usa la barra de búsqueda superior para filtrar por título
+- **Buscar en chat actual**: Botón de lupa 🔍 en la barra del chat (resalta coincidencias)
+- **Ordenar historial**: Organiza tus chats por fecha (ascendente/descendente)
+- **Exportar todos**: Botón de exportar → Descarga JSON con todos los chats
+- **Exportar seleccionados**: Usa checkboxes para seleccionar y exportar solo algunos chats
+- **Exportar chat actual**: Menú del chat → Exportar chat individual
+- **Importar**: Botón de importar → Selecciona archivo JSON (resolución automática de conflictos)
+- **Limpiar chat**: Borra mensajes sin eliminar el chat completo
+- **Cerrar chat**: Cierra la vista sin eliminar historial
 - **Eliminar chat**: Elimina permanentemente (con confirmación)
-- **Configurar**: Botón de engranaje → Ajustes avanzados
+- **Imprimir chat**: Genera versión imprimible de la conversación
 
 ### 🖨️ Funciones adicionales
-- **Exportar chat actual** - Descarga solo la conversación abierta
-- **Imprimir chat** - Imprime la conversación actual
+- **Configurar** - Botón de engranaje ⚙️ → Ajustes avanzados
+- **Información** - Botón "i" → Datos de contacto y documentación
+- **Detener respuesta** - Aborta generación de IA en curso
+- **Multi-chat simultáneo** - La IA responde en varios chats mientras navegas entre ellos
+- **Indicadores de no leídos** - Chats con mensajes nuevos se resaltan en verde
 
 ## 🔊 Experiencia auditiva
 
+MSN-AI incluye **5 sonidos auténticos** de Windows Live Messenger:
+
 | Sonido | Cuándo se reproduce |
 |--------|-------------------|
-| 🎵 `login.wav` | Al iniciar la aplicación |
-| 📤 `message_out.wav` | Al enviar tu mensaje |
-| 📥 `message_in.wav` | Al recibir respuesta de IA |
-| 🔔 `nudge.wav` | Notificaciones y nuevos chats |
-| 📞 `calling.wav` | Funcionalidades futuras |
+| 🎵 `login.mp3` | Al iniciar la aplicación |
+| 📤 `send.mp3` | Al enviar tu mensaje |
+| 📥 `message.mp3` | Al recibir respuesta de IA |
+| 🔔 `nudge.mp3` | Al enviar zumbidos/nudges |
+| 📞 `logout.mp3` | Al cerrar la aplicación |
+
+**Configuración**: Activa o desactiva los sonidos desde el modal de configuración ⚙️
 
 ## ⚙️ Configuración
 
-Accede desde el botón de **engranaje** en la interfaz:
+Accede desde el botón de **engranaje** ⚙️ en la interfaz:
 
 - 🔊 **Sonidos**: Activar/desactivar efectos auténticos de MSN
 - 📢 **Notificar cambios de estado**: La IA sabrá cuando cambias tu estado (Online/Away/Busy/Invisible)
-- 🌐 **Servidor Ollama**: Configurar URL (autodetección o manual)
-- 🤖 **Modelo de IA**: Seleccionar modelo preferido (Mistral, Llama, Phi3, etc.)
-- 🔌 **Probar conexión**: Verifica la conexión con Ollama
-- 🧪 **Test de conexión**: Verificar conectividad
+- 🌍 **Idioma de interfaz**: Selector de idioma (22 idiomas disponibles con detección automática)
+- 🌐 **Servidor Ollama**: Configurar URL (autodetección automática o manual)
+- 🤖 **Modelo de IA**: Seleccionar modelo preferido (carga dinámica de modelos disponibles)
+- ⏱️ **Timeout de API**: Tiempo máximo de espera para respuestas (por defecto 30 segundos)
+- 🔌 **Probar conexión**: Verifica la conexión con Ollama y muestra modelos disponibles
+
+**Todas las configuraciones se guardan automáticamente** en localStorage del navegador y persisten entre sesiones.
 
 ## 🆘 Solución de problemas
 

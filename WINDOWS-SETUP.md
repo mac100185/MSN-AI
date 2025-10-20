@@ -1,10 +1,19 @@
 # Guía de Instalación y Uso de MSN-AI en Windows
 
-> **Versión:** 1.0.0  
+> **Versión:** 2.1.0  
 > **Autor:** Alan Mac-Arthur Garcia Diaz  
-> **Email:** alan.mac.arthur.garcia.diaz@gmail.com  
+> **Email:** mac100185@gmail.com  
 > **Licencia:** GPL-3.0  
 > **GitHub:** https://github.com/mac100185/MSN-AI
+
+**🆕 Novedades v2.1.0:**
+- 🌍 **22 idiomas soportados** con detección automática
+- 🎭 **Estados de presencia** (Online, Away, Busy, Invisible)
+- 📝 **Edición avanzada** (emoticones, dictado por voz, formato de texto)
+- 🔍 **Búsqueda mejorada** con resaltado en mensajes
+- 📤 **Importación inteligente** con resolución de conflictos
+- 💬 **Multi-chat simultáneo** (navega mientras la IA responde)
+- 🐳 **Docker Edition** simplificada con scripts dedicados
 
 ---
 
@@ -25,16 +34,25 @@
 ## 🖥️ Requisitos del Sistema
 
 ### Mínimos
-- **Sistema Operativo:** Windows 10 o superior
+- **Sistema Operativo:** Windows 10 o Windows 11
 - **PowerShell:** 5.1+ (incluido en Windows)
-- **RAM:** 4GB (8GB recomendado)
-- **Espacio en disco:** 2GB libres
-- **Navegador:** Chrome, Edge, Firefox o Brave
+- **RAM:** 4GB mínimo (8GB recomendado, 16GB óptimo)
+- **Espacio en disco:** 2GB libres (más espacio para modelos de IA)
+- **Navegador:** Chrome 90+, Edge 90+, Firefox 88+ o Brave
 
 ### Opcionales
-- **Python:** 3.6+ (para modo servidor local)
-- **Docker Desktop:** Para modo Docker
+- **Python:** 3.8+ (para modo servidor local - se instala automáticamente si falta)
+- **Docker Desktop:** 4.0+ (para Docker Edition)
 - **Ollama:** Para funcionalidad de IA (se instala automáticamente)
+- **GPU NVIDIA:** Opcional para mejor rendimiento con IA
+
+### Funcionalidades v2.1.0
+- ✅ Sistema multiidioma (22 idiomas)
+- ✅ Estados de presencia
+- ✅ Emoticones y dictado por voz
+- ✅ Búsqueda avanzada con resaltado
+- ✅ Exportación/importación flexible
+- ✅ Multi-chat simultáneo
 
 ---
 
