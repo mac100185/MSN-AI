@@ -127,6 +127,7 @@ class MSNAI {
 
   updateUI() {
     // Actualizar todos los textos de la interfaz
+    this.updateDataI18nElements();
     this.updateStaticTexts();
     this.updateButtons();
     this.updateModals();
@@ -138,6 +139,35 @@ class MSNAI {
         this.renderMessages(chat);
       }
     }
+  }
+
+  updateDataI18nElements() {
+    // Actualizar todos los elementos con data-i18n
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      const key = element.getAttribute("data-i18n");
+      const translation = this.t(key);
+
+      // Si el elemento tiene innerHTML con HTML tags, usar innerHTML
+      if (element.innerHTML.includes("<")) {
+        element.innerHTML = translation;
+      } else {
+        element.textContent = translation;
+      }
+    });
+
+    // Actualizar elementos con data-i18n-title (tooltips)
+    document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+      const key = element.getAttribute("data-i18n-title");
+      const translation = this.t(key);
+      element.setAttribute("title", translation);
+    });
+
+    // Actualizar elementos con data-i18n-template (requieren variables)
+    document.querySelectorAll("[data-i18n-template]").forEach((element) => {
+      const key = element.getAttribute("data-i18n-template");
+      // Estos elementos se actualizan dinámicamente cuando se necesiten
+      element.setAttribute("data-i18n-key", key);
+    });
   }
 
   updateStaticTexts() {
@@ -156,34 +186,9 @@ class MSNAI {
   }
 
   updateButtons() {
-    // Actualizar textos de botones
-    const buttonMap = {
-      "send-button": "buttons.send",
-      "test-connection": "buttons.test_connection",
-      "save-settings": "buttons.save",
-      "confirm-delete-btn": "buttons.delete",
-      "cancel-delete-btn": "buttons.cancel",
-      "conflict-apply-btn": "buttons.apply",
-      "close-summary-btn": "buttons.close",
-      "do-search-btn": "buttons.search",
-      "clear-search-highlight": "buttons.clear",
-      "import-chats-btn": "buttons.import",
-      "download-chats": "buttons.export",
-    };
-
-    Object.keys(buttonMap).forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) {
-        const text = this.t(buttonMap[id]);
-        // Mantener iconos si existen
-        const icon = el.innerHTML.match(/^[^\w\s]+\s*/);
-        if (icon) {
-          el.textContent = icon[0] + text;
-        } else {
-          el.textContent = text;
-        }
-      }
-    });
+    // Los botones ahora se actualizan con data-i18n
+    // Esta función se mantiene para compatibilidad pero ya no es necesaria
+    // ya que updateDataI18nElements() maneja todos los elementos con data-i18n
   }
 
   updateModals() {
@@ -215,41 +220,12 @@ class MSNAI {
   }
 
   updateSettingsModal() {
-    const modal = document.getElementById("settings-modal");
-    if (!modal) return;
-
-    // Actualizar labels
-    const labels = modal.querySelectorAll("label");
-    labels.forEach((label) => {
-      const checkbox = label.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        const span = label.querySelector("span");
-        if (span) {
-          if (checkbox.id === "sounds-enabled") {
-            span.textContent = this.t("settings.sounds_enabled");
-          } else if (checkbox.id === "notify-status-changes") {
-            span.textContent = this.t("settings.notify_status_changes");
-          }
-        }
-      }
-    });
-
-    // Actualizar labels de campos
-    const serverLabel = modal.querySelector(
-      'label[style*="font-weight: bold"]',
-    );
-    if (serverLabel && serverLabel.textContent.includes("Ollama")) {
-      serverLabel.childNodes[0].textContent =
-        this.t("settings.ollama_server") + ":";
-    }
+    // Los modales ahora se actualizan con data-i18n
+    // Esta función se mantiene para compatibilidad
   }
 
   updateDeleteModal() {
-    const modal = document.getElementById("delete-chat-modal");
-    if (!modal) return;
-
-    const p = modal.querySelector("p");
-    if (p) p.textContent = this.t("delete_chat.message");
+    // Los modales ahora se actualizan con data-i18n
   }
 
   updateSearchModal() {
@@ -261,17 +237,7 @@ class MSNAI {
   }
 
   updateExportImportModal() {
-    const exportModal = document.getElementById("export-modal");
-    if (exportModal) {
-      const p = exportModal.querySelector("p");
-      if (p) p.textContent = this.t("export_import.export_description");
-    }
-
-    const importModal = document.getElementById("import-modal");
-    if (importModal) {
-      const p = importModal.querySelector("p");
-      if (p) p.textContent = this.t("export_import.import_description");
-    }
+    // Los modales ahora se actualizan con data-i18n
   }
 
   updatePlaceholders() {
@@ -392,7 +358,7 @@ class MSNAI {
       // No mostrar error si fue un abort intencional
       if (error.name === "AbortError") {
         if (aiMessage.content) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
           aiMessage.content = `He notado tu cambio de estado a ${newStatus}.`;
         }
@@ -405,13 +371,10 @@ class MSNAI {
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
-        if (
-          aiMessage.content &&
-          !aiMessage.content.includes("[⏹️ Respuesta detenida")
-        ) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        if (aiMessage.content && !aiMessage.content.includes("[⏹️")) {
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else if (!aiMessage.content) {
-          aiMessage.content = "[⏹️ Respuesta detenida]";
+          aiMessage.content = `[⏹️ ${this.t("messages.nudge_stopped")}]`;
         }
         if (this.currentChatId === chat.id) {
           this.renderMessages(chat);
@@ -496,7 +459,7 @@ class MSNAI {
 
     const nudgeMsg = {
       type: "user",
-      content: "¿Estás allí?",
+      content: this.t("messages.nudge_sent"),
       timestamp: new Date().toISOString(),
     };
     chat.messages.push(nudgeMsg);
@@ -529,7 +492,7 @@ class MSNAI {
         }
       };
 
-      await this.sendToAI("¿Estás allí?", chat.id, onToken);
+      await this.sendToAI(this.t("messages.nudge_sent"), chat.id, onToken);
 
       this.playSound("message-in");
     } catch (error) {
@@ -538,9 +501,9 @@ class MSNAI {
       // No mostrar error si fue un abort intencional
       if (error.name === "AbortError") {
         if (aiMessage.content) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
-          aiMessage.content = "Sumbido enviado (respuesta detenida)";
+          aiMessage.content = this.t("messages.nudge_received");
         }
       } else {
         aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
@@ -551,13 +514,10 @@ class MSNAI {
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
-        if (
-          aiMessage.content &&
-          !aiMessage.content.includes("[⏹️ Respuesta detenida")
-        ) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        if (aiMessage.content && !aiMessage.content.includes("[⏹️")) {
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else if (!aiMessage.content) {
-          aiMessage.content = "[⏹️ Respuesta detenida]";
+          aiMessage.content = `[⏹️ ${this.t("messages.nudge_stopped")}]`;
         }
         if (this.currentChatId === chat.id) {
           this.renderMessages(chat);
@@ -859,9 +819,9 @@ class MSNAI {
       if (error.name === "AbortError") {
         // La respuesta parcial ya está en aiMessage.content
         if (aiMessage.content) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
-          aiMessage.content = "[⏹️ Respuesta detenida]";
+          aiMessage.content = `[⏹️ ${this.t("messages.nudge_stopped")}]`;
         }
       } else {
         aiMessage.content = `${this.t("errors.server_error", { status: error.message })}. ${this.t("errors.verify_ollama")}`;
@@ -872,13 +832,10 @@ class MSNAI {
     } finally {
       // Verificar si fue abortado y añadir marcador SIEMPRE
       if (this.wasAborted) {
-        if (
-          aiMessage.content &&
-          !aiMessage.content.includes("[⏹️ Respuesta detenida")
-        ) {
-          aiMessage.content += "\n\n[⏹️ Respuesta detenida por el usuario]";
+        if (aiMessage.content && !aiMessage.content.includes("[⏹️")) {
+          aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else if (!aiMessage.content) {
-          aiMessage.content = "[⏹️ Respuesta detenida antes de comenzar]";
+          aiMessage.content = `[⏹️ ${this.t("chat.response_stopped_before")}]`;
         }
         if (this.currentChatId === chat.id) {
           this.renderMessages(chat);
@@ -1339,7 +1296,7 @@ class MSNAI {
         showMoreBtn.style.fontSize = "10px";
         showMoreBtn.style.color = "#0066cc";
         showMoreBtn.style.fontStyle = "italic";
-        showMoreBtn.textContent = `▼ Ver ${chatsInModel.length - maxVisible} más...`;
+        showMoreBtn.textContent = `▼ ${this.t("chat.show_more", { count: chatsInModel.length - maxVisible })}`;
         showMoreBtn.dataset.expanded = "false";
 
         showMoreBtn.addEventListener("click", (e) => {
@@ -1357,8 +1314,8 @@ class MSNAI {
           // Actualizar texto del botón
           showMoreBtn.dataset.expanded = isExpanded ? "false" : "true";
           showMoreBtn.textContent = isExpanded
-            ? `▼ Ver ${chatsInModel.length - maxVisible} más...`
-            : `▲ Ver menos`;
+            ? `▼ ${this.t("chat.show_more", { count: chatsInModel.length - maxVisible })}`
+            : `▲ ${this.t("chat.show_less")}`;
         });
 
         chatsContainer.appendChild(showMoreBtn);
@@ -1647,10 +1604,12 @@ class MSNAI {
       if (current) {
         modelElement.textContent = `${current.name} (${(current.size / 1024 / 1024 / 1024).toFixed(1)}GB)`;
       } else {
-        modelElement.textContent = `${this.settings.selectedModel} (No disponible)`;
+        modelElement.textContent = this.t("connection.model_not_available", {
+          model: this.settings.selectedModel,
+        });
       }
     } else {
-      modelElement.textContent = "No hay modelos disponibles";
+      modelElement.textContent = this.t("connection.no_models_available");
     }
   }
   //----------------------------------
@@ -1817,7 +1776,10 @@ class MSNAI {
         modelEl.textContent = existingChat.model;
         existingCountEl.textContent = existingMsgCount;
         importedCountEl.textContent = importedMsgCount;
-        counterEl.textContent = `Conflicto ${currentIndex + 1} de ${conflicts.length}`;
+        counterEl.textContent = this.t("import_conflict.counter", {
+          current: currentIndex + 1,
+          total: conflicts.length,
+        });
 
         // Mostrar/ocultar advertencia
         if (wouldLoseInfo) {
@@ -1876,7 +1838,7 @@ class MSNAI {
               // Auto-omitir después de 2 segundos
               setTimeout(() => {
                 warningEl.style.display = "none";
-                warningText.innerHTML = `⚠️ <strong>ADVERTENCIA:</strong> El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.`;
+                warningText.innerHTML = this.t("import_conflict.warning");
                 warningEl.style.background = "#fff3cd";
               }, 2000);
 
@@ -2113,7 +2075,7 @@ class MSNAI {
       .getElementById("test-connection")
       .addEventListener("click", async () => {
         const btn = document.getElementById("test-connection");
-        btn.textContent = "Probando...";
+        btn.textContent = this.t("settings.testing_connection");
         btn.disabled = true;
 
         const connected = await this.checkConnection();
@@ -2129,7 +2091,7 @@ class MSNAI {
           alert(this.t("settings.connection_failed"));
         }
 
-        btn.textContent = "🔌 Probar Conexión";
+        btn.textContent = "🔌 " + this.t("buttons.test_connection");
         btn.disabled = false;
       });
 
@@ -2335,8 +2297,8 @@ class MSNAI {
       const option = document.createElement("option");
       option.value = "";
       option.textContent = this.isConnected
-        ? "No hay modelos instalados"
-        : "Sin conexión - Verifica configuración";
+        ? this.t("settings.no_models")
+        : this.t("settings.no_connection");
       option.disabled = true;
       select.appendChild(option);
       return;

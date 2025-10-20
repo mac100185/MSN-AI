@@ -35,19 +35,19 @@
                         <div id="status-menu" class="emoticon-picker" style="display:none; position:absolute; top:100%; left:0; z-index:1001; background:white; border:1px solid #ccc; padding:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
                             <div class="status-option" data-status="online" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
                                 <img src="assets/status/online.png" alt="Online" style="width:16px; height:16px;">
-                                <span>Online</span>
+                                <span data-i18n="status.online">Online</span>
                             </div>
                             <div class="status-option" data-status="away" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
                                 <img src="assets/status/away.png" alt="Away" style="width:16px; height:16px;">
-                                <span>Away</span>
+                                <span data-i18n="status.away">Away</span>
                             </div>
                             <div class="status-option" data-status="busy" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
                                 <img src="assets/status/busy.png" alt="Busy" style="width:16px; height:16px;">
-                                <span>Busy</span>
+                                <span data-i18n="status.busy">Busy</span>
                             </div>
                             <div class="status-option" data-status="invisible" style="display:flex; align-items:center; gap:4px; cursor:pointer; padding:4px;">
                                 <img src="assets/status/invisible.png" alt="Invisible" style="width:16px; height:16px;">
-                                <span>Invisible</span>
+                                <span data-i18n="status.invisible">Invisible</span>
                             </div>
                         </div>
                         <button class="aerobutton" id="model-selector">
@@ -60,23 +60,23 @@
 
             <div id="chats-nav">
                 <ul class="iconbar" id="left">
-                    <button class="aerobutton chataction" id="new-chat-btn" title="Nuevo Chat" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="import-btn" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="export-btn" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="new-chat-btn" data-i18n-title="tooltips.new_chat" title="Nuevo Chat" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="import-btn" data-i18n-title="tooltips.export_import" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="export-btn" data-i18n-title="tooltips.export_import" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
                 </ul>
                 <ul class="iconbar" id="right">
-                    <button class="aerobutton chataction smallarrowbtn" id="settings-btn" title="Configuración del modelo IA">
+                    <button class="aerobutton chataction smallarrowbtn" id="settings-btn" data-i18n-title="tooltips.settings" title="Configuración del modelo IA">
                         <img src="assets/contacts-window/1489.png" style="height: 16px;">
                         <img class="arrowdown" src="assets/general/small_arrow.svg">
                     </button>
-                    <button class="aerobutton chataction" id="order-history-btn" title="Ordenar Historial" style="background:url(assets/contacts-window/1132.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="order-history-btn" data-i18n-title="buttons.order_history" title="Ordenar Historial" style="background:url(assets/contacts-window/1132.png) no-repeat center;"></button>
                 </ul>
             </div>
 
             <div class="chat-search">
                 <input id="chat-search-input" type="text" placeholder="Buscar en chats...">
-                <button class="searchbar-btn aerobutton" id="export-selected-chats-btn" title="Exportar Chats Seleccionados" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
-                <button class="searchbar-btn aerobutton" id="clear-search-btn" title="Limpiar Búsqueda" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
+                <button class="searchbar-btn aerobutton" id="export-selected-chats-btn" data-i18n-title="buttons.export_selected" title="Exportar Chats Seleccionados" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
+                <button class="searchbar-btn aerobutton" id="clear-search-btn" data-i18n-title="buttons.clear" title="Limpiar Búsqueda" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
             </div>
 
             <ul class="chat-list" id="chat-list">
@@ -104,20 +104,20 @@
                 </div>
                 <div id="chat-navbars">
                     <ul class="chatnav" id="left">
-                        <button class="aerobutton chat-nav-action" id="decrease-font-size-btn" title="Disminuir tamaño del texto" style="background:url(assets/chat-window/1402.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="increase-font-size-btn" title="Aumentar tamaño del texto" style="background:url(assets/chat-window/1401.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="upload-text-file-btn" title="Subir archivo de texto" style="background:url(assets/chat-window/1403.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="export-current-chat-btn" title="Exportar chat actual" style="background:url(assets/chat-window/1404.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="print-current-chat-btn" title="Imprimir chat actual" style="background:url(assets/chat-window/1405.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="search-current-chat-btn" title="Buscar en el chat actual" style="background:url(assets/chat-window/1406.png) no-repeat center;"></button>
-                        <button class="aerobutton chat-nav-action" id="close-current-chat-btn" title="Cerrar chat" style="background:url(assets/chat-window/326.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="decrease-font-size-btn" data-i18n-title="tooltips.decrease_font" title="Disminuir tamaño del texto" style="background:url(assets/chat-window/1402.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="increase-font-size-btn" data-i18n-title="tooltips.increase_font" title="Aumentar tamaño del texto" style="background:url(assets/chat-window/1401.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="upload-text-file-btn" data-i18n-title="tooltips.upload_file" title="Subir archivo de texto" style="background:url(assets/chat-window/1403.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="export-current-chat-btn" data-i18n-title="tooltips.export_chat" title="Exportar chat actual" style="background:url(assets/chat-window/1404.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="print-current-chat-btn" data-i18n-title="tooltips.print_chat" title="Imprimir chat actual" style="background:url(assets/chat-window/1405.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="search-current-chat-btn" data-i18n-title="tooltips.search_chat" title="Buscar en el chat actual" style="background:url(assets/chat-window/1406.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="close-current-chat-btn" data-i18n-title="tooltips.close_chat" title="Cerrar chat" style="background:url(assets/chat-window/326.png) no-repeat center;"></button>
                     </ul>
                     <ul class="chatnav" id="right">
-                        <button class="aerobutton chat-nav-action smallarrowbtn" id="info-btn" title="Información">
+                        <button class="aerobutton chat-nav-action smallarrowbtn" id="info-btn" data-i18n-title="menu.info" title="Información">
                             <img src="assets/chat-window/1489.png" style="height: 16px;">
                             <img class="arrowdown" src="assets/general/small_arrow_black.svg">
                         </button>
-                        <button class="aerobutton chat-nav-action" id="clear-current-chat-btn" title="Limpiar chat" style="background:url(assets/chat-window/329.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="clear-current-chat-btn" data-i18n-title="buttons.clear_chat" title="Limpiar chat" style="background:url(assets/chat-window/329.png) no-repeat center;"></button>
                     </ul>
                 </div>
             </div>
@@ -127,7 +127,7 @@
                     <div id="messages-display">
                         <div id="ai-thinking">
                             <img src="assets/chat-window/1539.png" alt="">
-                            <p class="thinking-dots">La IA está pensando<span id="dots">...</span></p>
+                            <p class="thinking-dots"><span data-i18n="chat.ai_thinking">La IA está pensando</span><span id="dots">...</span></p>
                         </div>
                         <div id="messages-area">
                             <div class="message">
@@ -143,19 +143,19 @@
 
                     <div id="send-area">
                         <ul id="emoticos-selection">
-                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-natural-btn" title="Naturales">
+                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-natural-btn" data-i18n-title="tooltips.emoticon_natural" title="Naturales">
                                 <img src="assets/chat-window/412.png">
                                 <img class="arrowdown" src="assets/general/small_arrow_black.svg">
                             </button>
-                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-amor-btn" title="Amor">
+                            <button class="aerobutton textoption smallarrowbtn" id="emoticon-amor-btn" data-i18n-title="tooltips.emoticon_love" title="Amor">
                                 <img src="assets/chat-window/1487.png">
                                 <img class="arrowdown" src="assets/general/small_arrow_black.svg">
                             </button>
-                            <button class="aerobutton textoption noarrow" id="enviar-sumbido-btn" title="Sumbido" style="background: url(assets/chat-window/414.png) no-repeat center;"></button>
-                            <button class="aerobutton textoption noarrow" id="texto-por-voz-btn" title="Dictado" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="enviar-sumbido-btn" data-i18n-title="tooltips.nudge" title="Sumbido" style="background: url(assets/chat-window/414.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="texto-por-voz-btn" data-i18n-title="tooltips.voice_input" title="Dictado" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
                             <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
-                            <button class="aerobutton textoption noarrow" id="editor-texto-btn" title="Editor de Texto" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
-                            <button class="aerobutton textoption noarrow" id="detener-respuesta-ia-btn" title="Detener Respuesta IA" style="background: url(assets/chat-window/330.png) no-repeat center; display: none;"></button>
+                            <button class="aerobutton textoption noarrow" id="editor-texto-btn" data-i18n-title="tooltips.text_format" title="Editor de Texto" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="detener-respuesta-ia-btn" data-i18n-title="buttons.stop_response" title="Detener Respuesta IA" style="background: url(assets/chat-window/330.png) no-repeat center; display: none;"></button>
                         </ul>
 
                         <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." disabled></textarea>
@@ -168,7 +168,7 @@
                                 <img src="assets/chat-window/961.png">
                             </button>
                             <div></div>
-                                <button id="send-button" disabled>Enviar</button>
+                                <button id="send-button" disabled><span data-i18n="buttons.send">Enviar</span></button>
                             </div>
                         </div>
                     </div>
@@ -182,7 +182,7 @@
     <div id="settings-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Configuración del Modelo de IA</h3>
+                <h3 data-i18n="settings.title">Configuración del Modelo de IA</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div style="padding: 10px 0;">
@@ -190,7 +190,7 @@
                 <div style="margin-bottom: 15px;">
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="sounds-enabled" checked style="margin-right: 8px;">
-                        <span>Activar sonidos</span>
+                        <span data-i18n="settings.sounds_enabled">Activar sonidos</span>
                     </label>
                 </div>
 
@@ -198,9 +198,9 @@
                 <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
                     <label style="display: flex; align-items: center; cursor: pointer;">
                         <input type="checkbox" id="notify-status-changes" checked style="margin-right: 8px;">
-                        <span>Notificar cambios de estado a la IA</span>
+                        <span data-i18n="settings.notify_status_changes">Notificar cambios de estado a la IA</span>
                     </label>
-                    <p style="margin: 8px 0 0 24px; font-size: 7pt; color: #666; line-height: 1.4;">
+                    <p style="margin: 8px 0 0 24px; font-size: 7pt; color: #666; line-height: 1.4;" data-i18n="settings.notify_status_changes_description">
                         Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.
                     </p>
                 </div>
@@ -208,7 +208,7 @@
                 <!-- ========== SERVIDOR OLLAMA ========== -->
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        Servidor Ollama:
+                        <span data-i18n="settings.ollama_server">Servidor Ollama</span>:
                     </label>
                     <input
                         type="text"
@@ -216,14 +216,14 @@
                         placeholder="http://localhost:11434"
                         style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: Tahoma;">
                     <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        Dirección del servidor Ollama. Déjalo vacío para autodetección.
+                        <span data-i18n="settings.ollama_server_description">Dirección del servidor Ollama. Déjalo vacío para autodetección.</span>
                     </p>
                 </div>
 
                 <!-- ========== MODELO DE IA ========== -->
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        Modelo de IA:
+                        <span data-i18n="settings.select_model">Modelo de IA</span>:
                     </label>
                     <select
                         id="model-select"
@@ -231,14 +231,14 @@
                         <option value="">Cargando modelos...</option>
                     </select>
                     <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.
+                        <span data-i18n="settings.model_description">Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.</span>
                     </p>
                 </div>
 
                 <!-- ========== IDIOMA DE INTERFAZ ========== -->
                 <div style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        Idioma de la interfaz:
+                        <span data-i18n="settings.language">Idioma de la interfaz</span>:
                     </label>
                     <select
                         id="language-select"
@@ -246,17 +246,17 @@
                         <option value="">Cargando idiomas...</option>
                     </select>
                     <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        Idioma en el que se mostrarán los menús, botones y mensajes del sistema.
+                        <span data-i18n="settings.language_description">Idioma en el que se mostrarán los menús, botones y mensajes del sistema.</span>
                     </p>
                 </div>
 
                 <!-- ========== BOTONES ========== -->
                 <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                     <button class="aerobutton" id="test-connection" style="margin-right: 8px; padding: 6px 12px;">
-                        🔌 Probar Conexión
+                        <span data-i18n="buttons.test_connection">🔌 Probar Conexión</span>
                     </button>
                     <button class="aerobutton" id="save-settings" style="padding: 6px 12px; font-weight: bold;">
-                        💾 Guardar
+                        <span data-i18n="buttons.save">💾 Guardar</span>
                     </button>
                 </div>
             </div>
@@ -266,12 +266,12 @@
     <div id="export-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Exportar Chats</h3>
+                <h3 data-i18n="export_import.export_title">Exportar Chats</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div>
-                <p>Exporta todos tus chats en formato JSON para respaldar o migrar.</p>
-                <button class="aerobutton" id="download-chats">Descargar Chats</button>
+                <p data-i18n="export_import.export_description_full">Exporta todos tus chats en formato JSON para respaldar o migrar.</p>
+                <button class="aerobutton" id="download-chats"><span data-i18n="export_import.download_chats">Descargar Chats</span></button>
             </div>
         </div>
     </div>
@@ -279,14 +279,14 @@
     <div id="import-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Importar Chats</h3>
+                <h3 data-i18n="export_import.import_title">Importar Chats</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div>
-                <p>Selecciona un archivo JSON de chats exportado previamente.</p>
+                <p data-i18n="export_import.import_description">Selecciona un archivo JSON de chats exportado previamente.</p>
                 <input type="file" id="import-file" accept=".json">
                 <br><br>
-                <button class="aerobutton" id="import-chats-btn">Importar</button>
+                <button class="aerobutton" id="import-chats-btn"><span data-i18n="buttons.import">Importar</span></button>
             </div>
         </div>
     </div>
@@ -295,7 +295,7 @@
     <div id="import-summary-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Importación Completada</h3>
+                <h3 data-i18n="import_summary.title">Importación Completada</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div style="margin-top: 15px;">
@@ -303,7 +303,7 @@
                     <!-- El contenido se llenará dinámicamente -->
                 </div>
                 <div style="text-align: right; margin-top: 15px;">
-                    <button class="aerobutton" id="close-summary-btn">Cerrar</button>
+                    <button class="aerobutton" id="close-summary-btn"><span data-i18n="buttons.close">Cerrar</span></button>
                 </div>
             </div>
         </div>
@@ -333,28 +333,28 @@
     <div id="info-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>MSN-AI v1.0</h3>
+                <h3 data-i18n="info.title">MSN-AI v1.0</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div class="tab-content" id="contact">
-                               <h1>Contacto</h1>
+                               <h1 data-i18n="info.contact_title">Contacto</h1>
                                <p>
-                                   Gracias por tu interés en <strong>MSN-AI</strong>.
+                                   <span data-i18n="info.contact_thanks">Gracias por tu interés en <strong>MSN-AI</strong>.</span>
                                </p>
 
                                <div class="contact-info">
                                    <p>
-                                       <strong>Nombre:</strong> Alan Mac-Arthur García Díaz
+                                       <strong data-i18n="info.contact_name">Nombre:</strong> Alan Mac-Arthur García Díaz
                                    </p>
                                    <p>
-                                       <strong>Correo electrónico:</strong>
+                                       <strong data-i18n="info.contact_email">Correo electrónico:</strong>
                                        <a
                                            href="mailto:alan.mac.arthur.garcia.diaz@gmail.com"
                                            >alan.mac.arthur.garcia.diaz@gmail.com</a
                                        >
                                    </p>
                                    <p>
-                                       <strong>Proyecto:</strong>
+                                       <strong data-i18n="info.contact_project">Proyecto:</strong>
                                        <a
                                            href="https://github.com/mac100185/MSN-AI"
                                            target="_blank"
@@ -364,11 +364,11 @@
                                    </p>
                                </div>
 
-                               <p>
+                               <p data-i18n="info.contact_message_1">
                                    Este es un proyecto personal de código abierto. Por
                                    favor, ten paciencia si la respuesta no es inmediata.
                                </p>
-                               <p>
+                               <p data-i18n="info.contact_message_2">
                                    Antes de contactar, asegúrate de haber revisado la
                                    documentación y el código fuente en el repositorio de
                                    GitHub.
@@ -378,23 +378,23 @@
     </div>
     <!-- Picker de formato de texto -->
     <div id="text-format-picker" class="emoticon-picker" style="display:none;">
-      <span title="Negrita">N</span>
-      <span title="Cursiva">C</span>
-      <span title="Subrayado">S</span>
+      <span data-i18n-title="format.bold" title="Negrita">N</span>
+      <span data-i18n-title="format.italic" title="Cursiva">C</span>
+      <span data-i18n-title="format.underline" title="Subrayado">S</span>
     </div>
 
     <!-- Modal de búsqueda en chat -->
     <div id="search-chat-modal" class="modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Buscar en el chat</h3>
+          <h3 data-i18n="search_chat.title">Buscar en el Chat</h3>
           <span class="modal-close">&times;</span>
         </div>
         <div style="margin-top: 10px;">
           <input type="text" id="search-term-input" placeholder="Escribe palabra o frase..." style="width:100%; padding:4px; font-size:8pt; border: thin solid #c7c7c7;">
           <div style="margin-top: 10px; text-align: right;">
-            <button class="aerobutton" id="do-search-btn">Buscar</button>
-            <button class="aerobutton" id="clear-search-highlight">Limpiar</button>
+            <button class="aerobutton" id="do-search-btn"><span data-i18n="buttons.search">Buscar</span></button>
+            <button class="aerobutton" id="clear-search-highlight"><span data-i18n="search_chat.clear_button">Limpiar Resaltado</span></button>
           </div>
         </div>
       </div>
@@ -404,14 +404,14 @@
     <div id="delete-chat-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Eliminar chat</h3>
+                <h3 data-i18n="delete_chat.title">Eliminar chat</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div style="margin-top: 15px;">
-                <p>¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.</p>
+                <p data-i18n="delete_chat.message">¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.</p>
                 <div style="text-align: right; margin-top: 15px;">
-                    <button class="aerobutton" id="cancel-delete-btn">Cancelar</button>
-                    <button class="aerobutton" id="confirm-delete-btn" style="margin-left: 8px;">Eliminar</button>
+                    <button class="aerobutton" id="cancel-delete-btn"><span data-i18n="buttons.cancel">Cancelar</span></button>
+                    <button class="aerobutton" id="confirm-delete-btn" style="margin-left: 8px;"><span data-i18n="buttons.delete">Eliminar</span></button>
                 </div>
             </div>
         </div>
@@ -421,48 +421,48 @@
     <div id="import-conflict-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Chat Duplicado Detectado</h3>
+                <h3 data-i18n="import_conflict.title">Chat Duplicado Detectado</h3>
                 <span class="modal-close">&times;</span>
             </div>
             <div style="margin-top: 15px;">
                 <div id="conflict-info" style="background: #f0f0f0; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
-                    <p style="margin: 5px 0;"><strong>📋 Título:</strong> <span id="conflict-title"></span></p>
-                    <p style="margin: 5px 0;"><strong>🤖 Modelo:</strong> <span id="conflict-model"></span></p>
-                    <p style="margin: 5px 0;"><strong>Chat existente:</strong> <span id="conflict-existing-count"></span> mensaje(s)</p>
-                    <p style="margin: 5px 0;"><strong>Chat a importar:</strong> <span id="conflict-imported-count"></span> mensaje(s)</p>
+                    <p style="margin: 5px 0;"><strong>📋 <span data-i18n="import_conflict.chat_title">Título</span>:</strong> <span id="conflict-title"></span></p>
+                    <p style="margin: 5px 0;"><strong>🤖 <span data-i18n="import_conflict.model">Modelo</span>:</strong> <span id="conflict-model"></span></p>
+                    <p style="margin: 5px 0;"><strong data-i18n="import_conflict.existing_count">Chat existente</strong>: <span id="conflict-existing-count"></span> <span data-i18n="import_conflict.messages_suffix">mensaje(s)</span></p>
+                    <p style="margin: 5px 0;"><strong data-i18n="import_conflict.imported_count">Chat a importar</strong>: <span id="conflict-imported-count"></span> <span data-i18n="import_conflict.messages_suffix">mensaje(s)</span></p>
                 </div>
 
                 <div id="conflict-warning" style="background: #fff3cd; padding: 12px; border-radius: 4px; margin-bottom: 15px; display: none;">
-                    <p style="margin: 0; color: #856404;">⚠️ <strong>ADVERTENCIA:</strong> El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.</p>
+                    <p style="margin: 0; color: #856404;" data-i18n="import_conflict.warning">⚠️ <strong>ADVERTENCIA:</strong> El chat a importar tiene MENOS mensajes. Reemplazar causaría pérdida de información.</p>
                 </div>
 
                 <div style="margin-bottom: 15px;">
-                    <p style="font-weight: bold; margin-bottom: 10px;">¿Qué deseas hacer?</p>
+                    <p style="font-weight: bold; margin-bottom: 10px;" data-i18n="import_conflict.question">¿Qué deseas hacer?</p>
 
                     <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
                         <input type="radio" name="conflict-action" value="merge" checked style="margin-right: 8px;">
-                        <strong>Unir</strong> - Combinar ambos chats manteniendo todos los mensajes
+                        <strong data-i18n="import_conflict.option_merge">Unir</strong> - <span data-i18n="import_conflict.option_merge_desc">Combinar ambos chats manteniendo todos los mensajes</span>
                     </label>
 
                     <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;" id="replace-option">
                         <input type="radio" name="conflict-action" value="replace" style="margin-right: 8px;">
-                        <strong>Reemplazar</strong> - Sustituir el chat existente por el importado
+                        <strong data-i18n="import_conflict.option_replace">Reemplazar</strong> - <span data-i18n="import_conflict.option_replace_desc">Sustituir el chat existente por el importado</span>
                     </label>
 
                     <label style="display: block; padding: 8px; margin-bottom: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
                         <input type="radio" name="conflict-action" value="skip" style="margin-right: 8px;">
-                        <strong>Omitir</strong> - No importar este chat
+                        <strong data-i18n="import_conflict.option_skip">Omitir</strong> - <span data-i18n="import_conflict.option_skip_desc">No importar este chat</span>
                     </label>
 
                     <label style="display: block; padding: 8px; background: #fff; border: 2px solid #ccc; border-radius: 4px; cursor: pointer;">
                         <input type="radio" name="conflict-action" value="skip-all" style="margin-right: 8px;">
-                        <strong>Omitir todos</strong> - Omitir este y los restantes conflictos
+                        <strong data-i18n="import_conflict.option_skip_all">Omitir todos</strong> - <span data-i18n="import_conflict.option_skip_all_desc">Omitir este y los restantes conflictos</span>
                     </label>
                 </div>
 
                 <div style="text-align: right; margin-top: 15px;">
-                    <span id="conflict-counter" style="margin-right: 15px; color: #666;">Conflicto 1 de 1</span>
-                    <button class="aerobutton" id="conflict-apply-btn">Aplicar</button>
+                    <span id="conflict-counter" style="margin-right: 15px; color: #666;" data-i18n-template="import_conflict.counter">Conflicto 1 de 1</span>
+                    <button class="aerobutton" id="conflict-apply-btn"><span data-i18n="buttons.apply">Aplicar</span></button>
                 </div>
             </div>
         </div>

@@ -72,27 +72,34 @@
     "title": "AI Model Settings",
     "sounds_enabled": "Sounds enabled",
     "ollama_server": "Ollama Server",
-    "select_model": "Select Model",
+    "ollama_server_description": "Ollama server address. Leave empty for auto-detection.",
+    "select_model": "AI Model",
+    "model_description": "Model to be used for new chats. Existing chats keep their model.",
     "no_models": "No models installed",
     "no_connection": "No connection - Check settings",
     "api_timeout": "Timeout (ms)",
     "notify_status_changes": "Notify status changes to AI",
+    "notify_status_changes_description": "When you change your status (Online, Away, Busy, Invisible), the AI will be automatically notified in the active chat.",
     "language": "Interface Language",
+    "language_description": "Language in which menus, buttons and system messages will be displayed.",
     "connection_success": "Connection successful!\n\nAvailable models: {count}\n\nServer: {server}",
     "connection_failed": "Could not connect",
-    "settings_saved": "Settings saved"
+    "settings_saved": "Settings saved",
+    "testing_connection": "Testing..."
   },
 
   "export_import": {
     "export_title": "Export Chats",
-    "export_description": "Download your chats in JSON format for backup.",
+    "export_description": "Select a previously exported JSON chat file.",
+    "export_description_full": "Export all your chats in JSON format for backup or migration.",
     "export_all": "Export all chats",
     "export_selected": "Export selected chats",
     "export_selected_info": "Mark chats in the list using the avatar icon.",
     "import_title": "Import Chats",
     "import_description": "Select a previously exported JSON chat file.",
     "import_button": "Import",
-    "no_selected": "No chats selected for export."
+    "no_selected": "No chats selected for export.",
+    "download_chats": "Download Chats"
   },
 
   "import_conflict": {
@@ -151,7 +158,14 @@
     "feature_4": "Conversation export and import",
     "feature_5": "Multilanguage support",
     "feature_6": "Emoticons and text formatting",
-    "credits": "Developed with ❤️ for the community"
+    "credits": "Developed with ❤️ for the community",
+    "contact_title": "Contact",
+    "contact_thanks": "Thanks for your interest in <strong>MSN-AI</strong>.",
+    "contact_name": "Name",
+    "contact_email": "Email",
+    "contact_project": "Project",
+    "contact_message_1": "This is a personal open source project. Please be patient if the response is not immediate.",
+    "contact_message_2": "Before contacting, make sure you have reviewed the documentation and source code in the GitHub repository."
   },
 
   "chat": {
@@ -167,7 +181,9 @@
     "system": "system",
     "response_stopped": "Response stopped by user",
     "response_stopped_before": "Response stopped before starting",
-    "search_placeholder": "Search in chats..."
+    "search_placeholder": "Search in chats...",
+    "show_more": "Show {count} more...",
+    "show_less": "Show less"
   },
 
   "messages": {
@@ -178,6 +194,7 @@
     "status_invisible": "I prefer not to be seen at this time.",
     "nudge_sent": "Are you there?",
     "nudge_received": "Nudge sent (response stopped)",
+    "nudge_stopped": "Response stopped",
     "file_attached": "Attached file: {filename}",
     "no_message": "no additional message"
   },

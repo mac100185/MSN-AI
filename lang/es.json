@@ -72,27 +72,34 @@
     "title": "Configuración del Modelo de IA",
     "sounds_enabled": "Sonidos habilitados",
     "ollama_server": "Servidor Ollama",
-    "select_model": "Seleccionar Modelo",
+    "ollama_server_description": "Dirección del servidor Ollama. Déjalo vacío para autodetección.",
+    "select_model": "Modelo de IA",
+    "model_description": "Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.",
     "no_models": "No hay modelos instalados",
     "no_connection": "Sin conexión - Verifica configuración",
     "api_timeout": "Tiempo de espera (ms)",
     "notify_status_changes": "Notificar cambios de estado a la IA",
+    "notify_status_changes_description": "Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.",
     "language": "Idioma de la interfaz",
+    "language_description": "Idioma en el que se mostrarán los menús, botones y mensajes del sistema.",
     "connection_success": "¡Conexión exitosa!\n\nModelos disponibles: {count}\n\nServidor: {server}",
     "connection_failed": "No se pudo conectar",
-    "settings_saved": "Configuración guardada"
+    "settings_saved": "Configuración guardada",
+    "testing_connection": "Probando..."
   },
 
   "export_import": {
     "export_title": "Exportar Chats",
-    "export_description": "Descarga tus chats en formato JSON para hacer respaldo.",
+    "export_description": "Selecciona un archivo JSON de chats exportado previamente.",
+    "export_description_full": "Exporta todos tus chats en formato JSON para respaldar o migrar.",
     "export_all": "Exportar todos los chats",
     "export_selected": "Exportar chats seleccionados",
     "export_selected_info": "Marca los chats en la lista usando el ícono de avatar.",
     "import_title": "Importar Chats",
     "import_description": "Selecciona un archivo JSON de chats exportado previamente.",
     "import_button": "Importar",
-    "no_selected": "No hay chats seleccionados para exportar."
+    "no_selected": "No hay chats seleccionados para exportar.",
+    "download_chats": "Descargar Chats"
   },
 
   "import_conflict": {
@@ -151,7 +158,14 @@
     "feature_4": "Exportación e importación de conversaciones",
     "feature_5": "Soporte multilenguaje",
     "feature_6": "Emoticonos y formato de texto",
-    "credits": "Desarrollado con ❤️ para la comunidad"
+    "credits": "Desarrollado con ❤️ para la comunidad",
+    "contact_title": "Contacto",
+    "contact_thanks": "Gracias por tu interés en <strong>MSN-AI</strong>.",
+    "contact_name": "Nombre",
+    "contact_email": "Correo electrónico",
+    "contact_project": "Proyecto",
+    "contact_message_1": "Este es un proyecto personal de código abierto. Por favor, ten paciencia si la respuesta no es inmediata.",
+    "contact_message_2": "Antes de contactar, asegúrate de haber revisado la documentación y el código fuente en el repositorio de GitHub."
   },
 
   "chat": {
@@ -167,7 +181,9 @@
     "system": "sistema",
     "response_stopped": "Respuesta detenida por el usuario",
     "response_stopped_before": "Respuesta detenida antes de comenzar",
-    "search_placeholder": "Buscar en chats..."
+    "search_placeholder": "Buscar en chats...",
+    "show_more": "Ver {count} más...",
+    "show_less": "Ver menos"
   },
 
   "messages": {
@@ -178,6 +194,7 @@
     "status_invisible": "Prefiero no ser visto en este momento.",
     "nudge_sent": "¿Estás allí?",
     "nudge_received": "Zumbido enviado (respuesta detenida)",
+    "nudge_stopped": "Respuesta detenida",
     "file_attached": "Archivo adjunto: {filename}",
     "no_message": "sin mensaje adicional"
   },
