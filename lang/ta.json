@@ -43,7 +43,9 @@
     "print_chat": "அரட்டையை அச்சிடு",
     "search_chat": "அரட்டையில் தேடு",
     "close_chat": "அரட்டையை மூடு",
-    "stop_response": "AI பதிலை நிறுத்து"
+    "stop_response": "AI பதிலை நிறுத்து",
+    "update": "Update",
+    "copy": "📋 அரட்டைக்கு நகலெடு"
   },
   "tooltips": {
     "new_chat": "புதிய அரட்டையை உருவாக்கு",
@@ -60,7 +62,9 @@
     "export_chat": "தற்போதைய அரட்டையை உரை கோப்பாக ஏற்றுமதி செய்",
     "print_chat": "தற்போதைய அரட்டையை அச்சிடு",
     "search_chat": "தற்போதைய அரட்டையில் தேடு",
-    "close_chat": "தற்போதைய அரட்டையை மூடி புதியது உருவாக்கு"
+    "close_chat": "தற்போதைய அரட்டையை மூடி புதியது உருவாக்கு",
+    "generate_prompt": "Prompt Generator - Create structured prompts",
+    "manage_prompts": "Prompt Manager - Manage saved prompts"
   },
   "settings": {
     "title": "AI மாதிரி அமைப்புகள்",
@@ -123,13 +127,11 @@
     "skipped": "அரட்டைகள் தவிர்க்கப்பட்டன",
     "no_changes": "மாற்றங்கள் எதுவும் செய்யப்படவில்லை."
   },
-
   "context_menu": {
     "edit_title": "தலைப்பைத் திருத்து",
     "export_chat": "அரட்டையை ஏற்றுமதி செய்",
     "delete_chat": "அரட்டையை நீக்கு"
   },
-
   "edit_title": {
     "title": "அரட்டை தலைப்பைத் திருத்து",
     "label": "புதிய தலைப்பு:",
@@ -137,7 +139,6 @@
     "success": "தலைப்பு வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
     "error": "தலைப்பு காலியாக இருக்க முடியாது"
   },
-
   "delete_chat": {
     "title": "அரட்டையை நீக்கு",
     "message": "இந்த அரட்டையை நீக்க விரும்புகிறீர்களா? இந்தச் செயலைச் செயல்தவிர்க்க முடியாது.",
@@ -185,7 +186,8 @@
     "response_stopped_before": "தொடங்குவதற்கு முன் பதில் நிறுத்தப்பட்டது",
     "search_placeholder": "அரட்டைகளில் தேடு...",
     "show_more": "மேலும் {count} காட்டு...",
-    "show_less": "குறைவாகக் காட்டு"
+    "show_less": "குறைவாகக் காட்டு",
+    "message_placeholder": "உங்கள் செய்தியை இங்கே எழுதவும்..."
   },
   "messages": {
     "status_changed": "நான் என் நிலையை {status} க்கு மாற்றியுள்ளேன். {message}",
@@ -229,5 +231,84 @@
     "bold": "தடித்த",
     "italic": "சாய்வு",
     "underline": "அடிக்கோடு"
+  },
+  "prompt_generator": {
+    "title": "Prompt Generator",
+    "role": "LLM Role",
+    "role_placeholder": "Define the LLM role (e.g., 'You are an expert assistant in...')",
+    "context": "Context",
+    "context_placeholder": "Describe the context and specific situation",
+    "audience": "Audience",
+    "audience_placeholder": "Specify the target audience",
+    "tasks": "Tasks (one per line)",
+    "tasks_placeholder": "TASK 1: Description of the first task\nTASK 2: Description of the second task",
+    "instructions": "Instructions",
+    "instructions_placeholder": "Format, style, language and other technical parameters",
+    "empathy": "Empathy and Tone",
+    "empathy_placeholder": "Define the emotional tone and empathy level",
+    "clarification": "Clarification",
+    "clarification_placeholder": "Instructions on how to ask for user clarifications",
+    "refinement": "Refinement",
+    "refinement_placeholder": "Instructions to iterate and improve responses",
+    "boundaries": "Boundaries",
+    "boundaries_placeholder": "Restrictions and boundaries to consider",
+    "consequences": "Consequences",
+    "consequences_placeholder": "Consequences of not following instructions",
+    "example": "Examples",
+    "example_placeholder": "Examples of expected input and output",
+    "generate": "✨ Generate Prompt",
+    "result_title": "Generated Prompt (Markdown)",
+    "save": "⭐ Save Prompt",
+    "save_prompt_title": "Save Prompt",
+    "prompt_name": "Prompt Name",
+    "prompt_name_placeholder": "Enter a descriptive name",
+    "prompt_description": "Description (optional)",
+    "prompt_description_placeholder": "Brief description of purpose",
+    "prompt_category": "Category (optional)",
+    "prompt_category_placeholder": "e.g., Development, Marketing, Education",
+    "prompt_tags": "Tags (optional)",
+    "prompt_tags_placeholder": "Comma separated: tag1, tag2, tag3",
+    "saved_success": "Prompt saved successfully",
+    "copy_success": "Prompt copied to chat",
+    "name_required": "Prompt name is required",
+    "updated_success": "Prompt updated successfully"
+  },
+  "prompt_manager": {
+    "title": "My Saved Prompts",
+    "search_placeholder": "Search prompts...",
+    "all_categories": "All categories",
+    "refresh": "Refresh list",
+    "no_prompts_title": "📝 No saved prompts",
+    "no_prompts_message": "Generate a prompt and click '⭐ Save Prompt' to start your collection.",
+    "export_all": "📤 Export All",
+    "export_all_tooltip": "Export all prompts to a JSON file",
+    "import": "📥 Import",
+    "import_tooltip": "Import prompts from a JSON file",
+    "delete_all": "🗑️ Delete All",
+    "delete_all_tooltip": "Delete all saved prompts",
+    "delete_all_confirm": "Are you sure you want to delete all saved prompts? This action cannot be undone.",
+    "use_prompt": "📝 Use",
+    "view_prompt": "👁️ View",
+    "edit_prompt": "✏️ Edit",
+    "delete_prompt": "🗑️ Delete",
+    "export_prompt": "📤 Export",
+    "load_to_form": "📝 Load to Form",
+    "delete_confirm": "Are you sure you want to delete this prompt?",
+    "export_success": "Prompts exported successfully",
+    "import_success": "Prompts imported successfully",
+    "delete_success": "Prompt deleted successfully",
+    "no_export": "No prompts to export",
+    "prompts_count": "{count} prompts saved",
+    "prompts_found": "{count} prompts found",
+    "prompts_in_category": "{count} prompts in this category",
+    "no_results": "No prompts found",
+    "try_another_search": "Try another search",
+    "no_prompts_in_category": "No prompts in this category",
+    "loaded_to_form": "Prompt loaded to form",
+    "general_info": "General Information",
+    "date": "Date",
+    "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
+    "editing_prompt": "Editing Prompt",
+    "edit_cancelled": "Edit cancelled"
   }
 }

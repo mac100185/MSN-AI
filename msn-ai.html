@@ -76,7 +76,7 @@
             </div>
 
             <div class="chat-search">
-                <input id="chat-search-input" type="text" placeholder="Buscar en chats...">
+                <input id="chat-search-input" type="text" placeholder="Buscar en chats..." data-i18n-placeholder="chat.search_placeholder">
                 <button class="searchbar-btn aerobutton" id="export-selected-chats-btn" data-i18n-title="buttons.export_selected" title="Exportar Chats Seleccionados" style="background:url(assets/contacts-window/1480.png) no-repeat center;"></button>
                 <button class="searchbar-btn aerobutton" id="clear-search-btn" data-i18n-title="buttons.clear" title="Limpiar Búsqueda" style="background:url(assets/contacts-window/329.png) no-repeat center;"></button>
             </div>
@@ -157,10 +157,15 @@
                             <button class="aerobutton textoption noarrow" id="texto-por-voz-btn" data-i18n-title="tooltips.voice_input" title="Dictado" style="background: url(assets/chat-window/992.png) no-repeat center;"></button>
                             <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                             <button class="aerobutton textoption noarrow" id="editor-texto-btn" data-i18n-title="tooltips.text_format" title="Editor de Texto" style="background: url(assets/chat-window/411.png) no-repeat center;"></button>
+                            <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
+                            <button class="aerobutton textoption noarrow" id="generador-promt-btn" data-i18n-title="tooltips.generate_prompt" title="Generador de Prompt" style="background: url(assets/chat-window/1490.png) no-repeat center;"></button>
+                            <button class="aerobutton textoption noarrow" id="gestor-prompts-btn" data-i18n-title="tooltips.manage_prompts" title="Gestor de Prompts" style="background: url(assets/chat-window/1491.png) no-repeat center;"></button>
+                            <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
+
                             <button class="aerobutton textoption noarrow" id="detener-respuesta-ia-btn" data-i18n-title="buttons.stop_response" title="Detener Respuesta IA" style="background: url(assets/chat-window/330.png) no-repeat center; display: none;"></button>
                         </ul>
 
-                        <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." disabled></textarea>
+                        <textarea id="message-input" placeholder="Escribe tu mensaje aquí..." data-i18n-placeholder="chat.message_placeholder" disabled></textarea>
 
                         <div id="bottom-controls">
                             <button class="editortab selected">
@@ -506,6 +511,300 @@
         </div>
     </div>
 
+    <!-- Modal Generador de Prompt -->
+    <div id="prompt-generator-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 data-i18n="prompt_generator.title">Generador de Prompt</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <!-- Indicador de modo edición -->
+            <div id="edit-mode-indicator" style="display: none; background: #e3f2fd; border-left: 4px solid #2196f3; padding: 12px; margin: 15px 0; border-radius: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">✏️</span>
+                    <div>
+                        <strong data-i18n="prompt_manager.editing_prompt" style="color: #1976d2;">Editando Prompt</strong>
+                        <p id="editing-prompt-name" style="margin: 4px 0 0 0; font-size: 9pt; color: #555;"></p>
+                    </div>
+                </div>
+                <div style="margin-top: 10px; display: flex; gap: 8px;">
+                    <button type="button" class="aerobutton" id="confirm-save-edit" style="background: #2196f3; color: white; padding: 6px 12px; border-radius: 4px;">
+                        <span data-i18n="buttons.update">✏️ Actualizar</span>
+                    </button>
+                    <button type="button" class="aerobutton" id="cancel-edit" style="background: #999; color: white; padding: 6px 12px; border-radius: 4px;">
+                        <span data-i18n="buttons.cancel">Cancelar</span>
+                    </button>
+                </div>
+            </div>
+            <div style="margin-top: 15px;">
+                <form id="promptForm">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="role" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>👤</span> <span data-i18n="prompt_generator.role">Rol del LLM:</span>
+                        </label>
+                        <textarea id="role" name="role" rows="3" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Define el rol del LLM (e.g., 'Eres un asistente experto en...')" data-i18n-placeholder="prompt_generator.role_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('role').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="context" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>📝</span> <span data-i18n="prompt_generator.context">Contexto:</span>
+                        </label>
+                        <textarea id="context" name="context" rows="3" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Describe el contexto y la situación específica" data-i18n-placeholder="prompt_generator.context_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('context').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="audience" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>👥</span> <span data-i18n="prompt_generator.audience">Audiencia:</span>
+                        </label>
+                        <textarea id="audience" name="audience" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Especifica el público objetivo" data-i18n-placeholder="prompt_generator.audience_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('audience').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="tasks" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>📋</span> <span data-i18n="prompt_generator.tasks">Tareas (una por línea):</span>
+                        </label>
+                        <textarea id="tasks" name="tasks" rows="4" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="TASK 1: Descripción de la primera tarea&#10;TASK 2: Descripción de la segunda tarea" data-i18n-placeholder="prompt_generator.tasks_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('tasks').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="instructions" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>ℹ️</span> <span data-i18n="prompt_generator.instructions">Instrucciones:</span>
+                        </label>
+                        <textarea id="instructions" name="instructions" rows="5" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Formato, estilo, idioma y otros parámetros técnicos" data-i18n-placeholder="prompt_generator.instructions_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('instructions').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="empathy" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>💬</span> <span data-i18n="prompt_generator.empathy">Empatía y Tono:</span>
+                        </label>
+                        <textarea id="empathy" name="empathy" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Define el tono emocional y nivel de empatía" data-i18n-placeholder="prompt_generator.empathy_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('empathy').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="clarification" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>❓</span> <span data-i18n="prompt_generator.clarification">Clarificación:</span>
+                        </label>
+                        <textarea id="clarification" name="clarification" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Instrucciones sobre cómo pedir aclaraciones al usuario" data-i18n-placeholder="prompt_generator.clarification_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('clarification').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="refinement" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>🔄</span> <span data-i18n="prompt_generator.refinement">Refinamiento:</span>
+                        </label>
+                        <textarea id="refinement" name="refinement" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Instrucciones para iterar y mejorar las respuestas" data-i18n-placeholder="prompt_generator.refinement_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('refinement').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="boundaries" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>🚫</span> <span data-i18n="prompt_generator.boundaries">Límites:</span>
+                        </label>
+                        <textarea id="boundaries" name="boundaries" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Restricciones y límites a considerar" data-i18n-placeholder="prompt_generator.boundaries_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('boundaries').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="consequences" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>⚠️</span> <span data-i18n="prompt_generator.consequences">Consecuencias:</span>
+                        </label>
+                        <textarea id="consequences" name="consequences" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Consecuencias de no seguir las instrucciones" data-i18n-placeholder="prompt_generator.consequences_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('consequences').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="example" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                            <span>💡</span> <span data-i18n="prompt_generator.example">Ejemplos:</span>
+                        </label>
+                        <textarea id="example" name="example" rows="3" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Ejemplos de entrada y salida esperada" data-i18n-placeholder="prompt_generator.example_placeholder"></textarea>
+                        <button type="button" class="aerobutton" style="margin-top: 5px;" onclick="document.getElementById('example').value=''">
+                            <span data-i18n="buttons.clear">Limpiar</span>
+                        </button>
+                    </div>
+
+                    <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
+                        <button type="button" class="aerobutton" id="generate-prompt-btn">
+                            <span data-i18n="prompt_generator.generate">✨ Generar Prompt</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Resultado del Prompt -->
+    <div id="prompt-result-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 data-i18n="prompt_generator.result_title">Prompt Generado (Markdown)</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <pre style="background: #f6f8fa; padding: 12px; border: 1px solid #d0d7de; border-radius: 4px; max-height: 400px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word;"><code id="markdownEditor" class="markdown"></code></pre>
+                <div style="text-align: right; margin-top: 10px;">
+                    <button type="button" class="aerobutton" id="copyMarkdownButton">
+                        <span data-i18n="buttons.copy">📋 Copiar al Chat</span>
+                    </button>
+                    <button type="button" class="aerobutton" id="save-prompt-btn" style="margin-left: 8px;">
+                        <span data-i18n="prompt_generator.save">⭐ Guardar Prompt</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Guardar Prompt -->
+    <div id="save-prompt-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 data-i18n="prompt_generator.save_prompt_title">Guardar Prompt</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px; padding: 0 10px 10px;">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="prompt-name" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                        <span data-i18n="prompt_generator.prompt_name">Nombre del Prompt:</span>
+                    </label>
+                    <input type="text" id="prompt-name" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Ingresa un nombre descriptivo" data-i18n-placeholder="prompt_generator.prompt_name_placeholder">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="prompt-description" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                        <span data-i18n="prompt_generator.prompt_description">Descripción (opcional):</span>
+                    </label>
+                    <textarea id="prompt-description" rows="2" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Breve descripción del propósito" data-i18n-placeholder="prompt_generator.prompt_description_placeholder"></textarea>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="prompt-category" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                        <span data-i18n="prompt_generator.prompt_category">Categoría (opcional):</span>
+                    </label>
+                    <input type="text" id="prompt-category" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="e.g., Desarrollo, Marketing, Educación" data-i18n-placeholder="prompt_generator.prompt_category_placeholder">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="prompt-tags" style="display: block; font-weight: bold; margin-bottom: 5px;">
+                        <span data-i18n="prompt_generator.prompt_tags">Etiquetas (opcional):</span>
+                    </label>
+                    <input type="text" id="prompt-tags" style="width: 100%; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit; box-sizing: border-box;" placeholder="Separadas por comas: tag1, tag2, tag3" data-i18n-placeholder="prompt_generator.prompt_tags_placeholder">
+                </div>
+
+                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
+                    <button type="button" class="aerobutton" id="cancel-save-prompt">
+                        <span data-i18n="buttons.cancel">Cancelar</span>
+                    </button>
+                    <button type="button" class="aerobutton" id="confirm-save-prompt" style="margin-left: 8px;">
+                        <span data-i18n="buttons.save">💾 Guardar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestor de Prompts -->
+    <div id="prompt-manager-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 data-i18n="prompt_manager.title">Mis Prompts Guardados</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <!-- Búsqueda y filtros -->
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: center; flex-wrap: wrap;">
+                    <input type="text" id="prompt-search" placeholder="Buscar prompts..." data-i18n-placeholder="prompt_manager.search_placeholder" style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit;">
+                    <select id="category-filter" style="padding: 8px; border: 1px solid #007bff; border-radius: 4px; font-family: inherit;">
+                        <option value="" data-i18n="prompt_manager.all_categories">Todas las categorías</option>
+                    </select>
+                    <button class="aerobutton" id="refresh-prompts" title="Actualizar lista" data-i18n-title="prompt_manager.refresh">🔄</button>
+                </div>
+
+                <!-- Información de almacenamiento -->
+                <div style="margin-bottom: 15px; padding: 8px; background: #f0f8ff; border: 1px solid #007bff; border-radius: 4px; text-align: center;">
+                    <span id="prompts-count" style="font-weight: bold;">0 prompts guardados</span>
+                </div>
+
+                <!-- Lista de prompts -->
+                <div id="saved-prompts-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; min-height: 200px;">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+                        <h4 data-i18n="prompt_manager.no_prompts_title">📝 No tienes prompts guardados</h4>
+                        <p data-i18n="prompt_manager.no_prompts_message">Genera un prompt y haz clic en "⭐ Guardar Prompt" para comenzar tu colección.</p>
+                    </div>
+                </div>
+
+                <!-- Botones de gestión -->
+                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ccc;">
+                    <button class="aerobutton" id="export-all-prompts" title="Exportar todos los prompts" data-i18n-title="prompt_manager.export_all_tooltip">
+                        <span data-i18n="prompt_manager.export_all">📤 Exportar Todos</span>
+                    </button>
+                    <button class="aerobutton" id="import-prompts" title="Importar prompts" data-i18n-title="prompt_manager.import_tooltip" style="margin-left: 8px;">
+                        <span data-i18n="prompt_manager.import">📥 Importar</span>
+                    </button>
+                    <button class="aerobutton" id="delete-all-prompts" title="Eliminar todos los prompts" data-i18n-title="prompt_manager.delete_all_tooltip" style="margin-left: 8px; background-color: #ff4d4d;">
+                        <span data-i18n="prompt_manager.delete_all">🗑️ Eliminar Todos</span>
+                    </button>
+                </div>
+                <input type="file" id="import-prompts-file" accept=".json" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de detalles del Prompt -->
+    <div id="prompt-details-modal" class="modal">
+        <div class="modal-content" style="max-width: 700px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="details-prompt-name" style="margin: 0;">Detalles del Prompt</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div id="prompt-details-content" style="margin-top: 15px; padding: 0 10px;">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+            <div style="text-align: right; margin-top: 20px; padding: 10px 10px 10px; border-top: 1px solid #ccc;">
+                <button class="aerobutton" id="load-prompt-to-form">
+                    <span data-i18n="prompt_manager.load_to_form">📝 Cargar en Formulario</span>
+                </button>
+                <button class="aerobutton" id="edit-prompt-details" style="margin-left: 8px;">
+                    <span data-i18n="prompt_manager.edit_prompt">✏️ Editar</span>
+                </button>
+                <button class="aerobutton" id="delete-prompt-from-details" style="margin-left: 8px; background-color: #ff4d4d;">
+                    <span data-i18n="prompt_manager.delete_prompt">🗑️ Eliminar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay para modales -->
+    <div id="modal-overlay" class="modal-overlay" style="display: none;"></div>
+
+    <!-- Contenedor de notificaciones -->
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none;">
+        <!-- Las notificaciones se agregan aquí dinámicamente -->
+    </div>
 
     <!-- Librerías para renderizado seguro de Markdown -->
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>

@@ -43,7 +43,9 @@
     "print_chat": "Aruskipawi liqichaña",
     "search_chat": "Aruskipawiru thaqaña",
     "close_chat": "Aruskipawi ist'aña",
-    "stop_response": "AI jaysawi sayt'ayaña"
+    "stop_response": "AI jaysawi sayt'ayaña",
+    "update": "Update",
+    "copy": "📋 Aruskipawiru apayaña"
   },
   "tooltips": {
     "new_chat": "Machaq aruskipawi luraña",
@@ -60,7 +62,9 @@
     "export_chat": "Jichhuru aruskipawi qillqa qillqaru mistsuña",
     "print_chat": "Jichhuru aruskipawi liqichaña",
     "search_chat": "Jichhuru aruskipawiru thaqaña",
-    "close_chat": "Jichhuru aruskipawi ist'añasa machaqaru luraña"
+    "close_chat": "Jichhuru aruskipawi ist'añasa machaqaru luraña",
+    "generate_prompt": "Prompt Luraña - Suma lurañataki promptnaka luraña",
+    "manage_prompts": "Prompt Kamachi - Imata promptnaka apnaqaña"
   },
   "settings": {
     "title": "AI Modelo Wakicht'awinaka",
@@ -123,13 +127,11 @@
     "skipped": "aruskipawi(naka) sart'ata",
     "no_changes": "Janiwa kuna mayjt'awinakakiti lurañataki."
   },
-
   "context_menu": {
     "edit_title": "Sutimpa mayjt'ayaña",
     "export_chat": "Aruskipawi mistsuña",
     "delete_chat": "Aruskipawi chhaqtayaña"
   },
-
   "edit_title": {
     "title": "Aruskipawi sutimpa mayjt'ayaña",
     "label": "Machaq sutipa:",
@@ -137,7 +139,6 @@
     "success": "Sutimpaxa sum mayjt'ayatawa",
     "error": "Sutimpaxa janiwa ch'usañakiti"
   },
-
   "delete_chat": {
     "title": "Aruskipawi chhaqtayaña",
     "message": "¿Chiqapachati aka aruskipawi chhaqtayaña munaskta? Aka lurawixa janiwa kutiyañakiti.",
@@ -184,6 +185,7 @@
     "response_stopped": "Jaqi jaysawi sayt'ayiri",
     "response_stopped_before": "Jaysawi sayt'ata qalltañatakixa nayraqata",
     "search_placeholder": "Aruskipawina thaqaña...",
+    "message_placeholder": "Akana yatiyawi qillqañama...",
     "show_more": "Jukʼaki {count} uñacht'ayaña...",
     "show_less": "Juk'aki uñacht'ayaña"
   },
@@ -226,8 +228,87 @@
     "failed": "Ollama-mpi mayacht'añana pantjata"
   },
   "format": {
-    "bold": "Jach'a",
-    "italic": "Q'añu",
-    "underline": "Aykhana siq'i"
+    "bold": "Jach'a qillqata",
+    "italic": "Q'iñi qillqata",
+    "underline": "Aynacha qillqata"
+  },
+  "prompt_generator": {
+    "title": "Prompt Luraña",
+    "role": "LLM Lurawinapa",
+    "role_placeholder": "LLM lurawinapa uñacht'ayaña (amuyt'añataki: 'Jumatxa yatxatiri yanapiriwa...')",
+    "context": "Contexto",
+    "context_placeholder": "Contextota ukat taqi situacionata qhanañcht'aña",
+    "audience": "Ist'irinaka",
+    "audience_placeholder": "Khitinakaru yatiñapataki uñacht'ayaña",
+    "tasks": "Lurawinaka (sapa chiqana mayaki)",
+    "tasks_placeholder": "LURAÑA 1: Nayriri lurawinaxa kunjamsa\nLURAÑA 2: Payaniri lurawinaxa kunjamsa",
+    "instructions": "Yatichäwinaka",
+    "instructions_placeholder": "Formato, estilo, aru ukat yaqha parámetros técnicos",
+    "empathy": "Llakisiña ukat Tono",
+    "empathy_placeholder": "Chuymani tonota ukat llakisiña nivela uñacht'ayaña",
+    "clarification": "Qhanañchaña",
+    "clarification_placeholder": "Kunjamasa apnaqirinakaru qhanañcht'añataki yatichäwinaka",
+    "refinement": "Sum luraña",
+    "refinement_placeholder": "Kunjamasa juk'ampi sum lurañataki yatichäwinaka",
+    "boundaries": "Jisk'achäwinaka",
+    "boundaries_placeholder": "Jark'aqañanaka ukat jisk'achäwinaka amuyt'aña",
+    "consequences": "Kunas utjani ukhaxa",
+    "consequences_placeholder": "Yatichäwinaka jan phuqhañaxa kunas utjani",
+    "example": "Uñacht'awinaka",
+    "example_placeholder": "Mantañataki ukat mistañataki uñacht'awinaka",
+    "generate": "✨ Promptxa Luraña",
+    "result_title": "Lurata Prompt (Markdown)",
+    "save": "⭐ Promptxa Imaña",
+    "save_prompt_title": "Promptxa Imaña",
+    "prompt_name": "Prompt Sutipa",
+    "prompt_name_placeholder": "Mä suti qhanañcht'iri qillqaña",
+    "prompt_description": "Qhanañcht'awi (munasiñjama)",
+    "prompt_description_placeholder": "Jisk'a qhanañcht'awi kunaptsa",
+    "prompt_category": "Categoría (munasiñjama)",
+    "prompt_category_placeholder": "amuyt'añataki: Luraña, Marketing, Yatiña",
+    "prompt_tags": "Etiquetanaka (munasiñjama)",
+    "prompt_tags_placeholder": "Comampi jaljata: etiqueta1, etiqueta2, etiqueta3",
+    "saved_success": "Promptxa sum imata",
+    "updated_success": "Promptxa sum machaqata",
+    "copy_success": "Promptxa aruskipawiru apantat",
+    "name_required": "Prompt sutipasti wakisiwa"
+  },
+  "prompt_manager": {
+    "title": "Nayan Imata Promptnakaja",
+    "search_placeholder": "Promptnaka thaqhaña...",
+    "all_categories": "Taqi categoríanaka",
+    "refresh": "Lista machaqaña",
+    "no_prompts_title": "📝 Janiwa imata promptnaka utjkiti",
+    "no_prompts_message": "Mä promptxa luraña ukatxa '⭐ Promptxa Imaña' lip'kaña qalltañataki.",
+    "export_all": "📤 Taqpacha Apayaña",
+    "export_all_tooltip": "Taqi promptnaka JSON qillqaru apayaña",
+    "import": "📥 Mantayaña",
+    "import_tooltip": "Promptnaka JSON qillqata mantayaña",
+    "delete_all": "🗑️ Taqpacha Chhaqtayaña",
+    "delete_all_tooltip": "Taqi imata promptnaka chhaqtayaña",
+    "delete_all_confirm": "¿Chiqpachpunicha taqi imata promptnaka chhaqtayañaxa munasmati? Aka lurawixa janiwa kutt'ayañakiti.",
+    "use_prompt": "📝 Apnaqaña",
+    "view_prompt": "👁️ Uñjaña",
+    "edit_prompt": "✏️ Mayjt'ayaña",
+    "delete_prompt": "🗑️ Chhaqtayaña",
+    "export_prompt": "📤 Apayaña",
+    "load_to_form": "📝 Formularioru Apayaña",
+    "delete_confirm": "¿Chiqpachpunicha aka promptxa chhaqtayañaxa munasmati?",
+    "export_success": "Promptnakaxa sum apayata",
+    "import_success": "Promptnakaxa sum mantayata",
+    "delete_success": "Promptxa sum chhaqtayata",
+    "no_export": "Janiwa apayañataki promptnaka utjkiti",
+    "prompts_count": "{count} promptnaka imata",
+    "prompts_found": "{count} promptnaka jikxatata",
+    "prompts_in_category": "{count} promptnaka aka categoríana",
+    "no_results": "Janiwa promptnaka jikxatatäkiti",
+    "try_another_search": "Yaqha thaqhawi luraña",
+    "no_prompts_in_category": "Aka categoríana janiwa promptnaka utjkiti",
+    "loaded_to_form": "Promptxa formularioru apayata",
+    "edit_mode": "Mayjt'aña modo qhantata. Camponaka mayjt'ayaña ukat machaqata promptxa luraña.",
+    "editing_prompt": "Promptxa Mayjt'ayasa",
+    "edit_cancelled": "Mayjt'awixa sayt'ayata",
+    "general_info": "General Yatiyawi",
+    "date": "Uru"
   }
 }

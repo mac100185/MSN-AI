@@ -1,10 +1,8 @@
 {
   "language_name": "Deutsch",
   "language_code": "de",
-
   "app_title": "MSN-AI",
   "app_description": "MSN-AI KI-Assistent",
-
   "status": {
     "online": "Online",
     "away": "Abwesend",
@@ -14,7 +12,6 @@
     "connected": "Verbunden",
     "disconnected": "Getrennt"
   },
-
   "menu": {
     "new_chat": "Neuer Chat",
     "settings": "Einstellungen",
@@ -22,7 +19,6 @@
     "help": "Hilfe",
     "info": "Information"
   },
-
   "buttons": {
     "send": "Senden",
     "cancel": "Abbrechen",
@@ -35,6 +31,7 @@
     "test_connection": "Verbindung testen",
     "search": "Suchen",
     "clear": "Löschen",
+    "copy": "📋 Zum Chat kopieren",
     "order_history": "Verlauf sortieren",
     "export_selected": "Ausgewählte exportieren",
     "nudge": "Anstoßen senden",
@@ -47,9 +44,9 @@
     "print_chat": "Chat drucken",
     "search_chat": "Im Chat suchen",
     "close_chat": "Chat schließen",
-    "stop_response": "KI-Antwort stoppen"
+    "stop_response": "KI-Antwort stoppen",
+    "update": "Aktualisieren"
   },
-
   "tooltips": {
     "new_chat": "Neuen Chat erstellen",
     "settings": "KI-Modell Einstellungen",
@@ -57,9 +54,11 @@
     "nudge": "Anstoßen senden",
     "emoticon_natural": "Natürliche Emoticons",
     "emoticon_love": "Liebes-Emoticons",
-    "voice_input": "Sprachdiktat",
+    "voice_input": "Spracheingabe",
     "upload_file": "Textdatei anhängen",
     "text_format": "Textformat (Fett, Kursiv, Unterstrichen)",
+    "generate_prompt": "Prompt-Generator - Erstellen Sie strukturierte Prompts",
+    "manage_prompts": "Prompt-Manager - Verwalten Sie gespeicherte Prompts",
     "increase_font": "Schriftgröße erhöhen",
     "decrease_font": "Schriftgröße verringern",
     "export_chat": "Aktuellen Chat als Textdatei exportieren",
@@ -67,7 +66,6 @@
     "search_chat": "Im aktuellen Chat suchen",
     "close_chat": "Aktuellen Chat schließen und neuen erstellen"
   },
-
   "settings": {
     "title": "KI-Modell Einstellungen",
     "sounds_enabled": "Töne aktiviert",
@@ -87,7 +85,6 @@
     "settings_saved": "Einstellungen gespeichert",
     "testing_connection": "Wird getestet..."
   },
-
   "export_import": {
     "export_title": "Chats exportieren",
     "export_description": "Wählen Sie eine zuvor exportierte JSON-Chat-Datei aus.",
@@ -101,7 +98,6 @@
     "no_selected": "Keine Chats zum Exportieren ausgewählt.",
     "download_chats": "Chats herunterladen"
   },
-
   "import_conflict": {
     "title": "Doppelter Chat erkannt",
     "chat_title": "Titel",
@@ -123,7 +119,6 @@
     "counter": "Konflikt {current} von {total}",
     "auto_skipped": "Dieser Chat wird automatisch übersprungen."
   },
-
   "import_summary": {
     "title": "Import abgeschlossen",
     "imported": "Chat(s) importiert",
@@ -132,13 +127,11 @@
     "skipped": "Chat(s) übersprungen",
     "no_changes": "Keine Änderungen vorgenommen."
   },
-
   "context_menu": {
     "edit_title": "Titel bearbeiten",
     "export_chat": "Chat exportieren",
     "delete_chat": "Chat löschen"
   },
-
   "edit_title": {
     "title": "Chat-Titel bearbeiten",
     "label": "Neuer Titel:",
@@ -146,21 +139,97 @@
     "success": "Titel erfolgreich aktualisiert",
     "error": "Der Titel darf nicht leer sein"
   },
-
+  "prompt_generator": {
+    "title": "Prompt-Generator",
+    "role": "LLM-Rolle",
+    "role_placeholder": "Definieren Sie die LLM-Rolle (z.B. 'Sie sind ein Expertenassistent für...')",
+    "context": "Kontext",
+    "context_placeholder": "Beschreiben Sie den Kontext und die spezifische Situation",
+    "audience": "Zielgruppe",
+    "audience_placeholder": "Geben Sie die Zielgruppe an",
+    "tasks": "Aufgaben (eine pro Zeile)",
+    "tasks_placeholder": "AUFGABE 1: Beschreibung der ersten Aufgabe\nAUFGABE 2: Beschreibung der zweiten Aufgabe",
+    "instructions": "Anweisungen",
+    "instructions_placeholder": "Format, Stil, Sprache und andere technische Parameter",
+    "empathy": "Empathie und Ton",
+    "empathy_placeholder": "Definieren Sie den emotionalen Ton und das Empathieniveau",
+    "clarification": "Klärung",
+    "clarification_placeholder": "Anweisungen zum Einholen von Benutzerklärungen",
+    "refinement": "Verfeinerung",
+    "refinement_placeholder": "Anweisungen zum Iterieren und Verbessern von Antworten",
+    "boundaries": "Grenzen",
+    "boundaries_placeholder": "Zu berücksichtigende Einschränkungen und Grenzen",
+    "consequences": "Konsequenzen",
+    "consequences_placeholder": "Konsequenzen bei Nichtbeachtung der Anweisungen",
+    "example": "Beispiele",
+    "example_placeholder": "Beispiele für erwartete Ein- und Ausgabe",
+    "generate": "✨ Prompt generieren",
+    "result_title": "Generierter Prompt (Markdown)",
+    "save": "⭐ Prompt speichern",
+    "save_prompt_title": "Prompt speichern",
+    "prompt_name": "Prompt-Name",
+    "prompt_name_placeholder": "Geben Sie einen beschreibenden Namen ein",
+    "prompt_description": "Beschreibung (optional)",
+    "prompt_description_placeholder": "Kurze Beschreibung des Zwecks",
+    "prompt_category": "Kategorie (optional)",
+    "prompt_category_placeholder": "z.B. Entwicklung, Marketing, Bildung",
+    "prompt_tags": "Tags (optional)",
+    "prompt_tags_placeholder": "Durch Kommas getrennt: tag1, tag2, tag3",
+    "saved_success": "Prompt erfolgreich gespeichert",
+    "copy_success": "Prompt in den Chat kopiert",
+    "name_required": "Prompt-Name ist erforderlich",
+    "updated_success": "Prompt erfolgreich aktualisiert"
+  },
+  "prompt_manager": {
+    "title": "Meine gespeicherten Prompts",
+    "search_placeholder": "Prompts suchen...",
+    "all_categories": "Alle Kategorien",
+    "refresh": "Liste aktualisieren",
+    "no_prompts_title": "📝 Keine gespeicherten Prompts",
+    "no_prompts_message": "Generieren Sie einen Prompt und klicken Sie auf '⭐ Prompt speichern', um Ihre Sammlung zu starten.",
+    "export_all": "📤 Alle exportieren",
+    "export_all_tooltip": "Alle Prompts in eine JSON-Datei exportieren",
+    "import": "📥 Importieren",
+    "import_tooltip": "Prompts aus einer JSON-Datei importieren",
+    "delete_all": "🗑️ Alle löschen",
+    "delete_all_tooltip": "Alle gespeicherten Prompts löschen",
+    "delete_all_confirm": "Sind Sie sicher, dass Sie alle gespeicherten Prompts löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "use_prompt": "📝 Verwenden",
+    "view_prompt": "👁️ Ansehen",
+    "edit_prompt": "✏️ Bearbeiten",
+    "delete_prompt": "🗑️ Löschen",
+    "export_prompt": "📤 Exportieren",
+    "load_to_form": "📝 Ins Formular laden",
+    "delete_confirm": "Sind Sie sicher, dass Sie diesen Prompt löschen möchten?",
+    "export_success": "Prompts erfolgreich exportiert",
+    "import_success": "Prompts erfolgreich importiert",
+    "delete_success": "Prompt erfolgreich gelöscht",
+    "no_export": "Keine Prompts zum Exportieren",
+    "prompts_count": "{count} Prompts gespeichert",
+    "prompts_found": "{count} Prompts gefunden",
+    "prompts_in_category": "{count} Prompts in dieser Kategorie",
+    "no_results": "Keine Prompts gefunden",
+    "try_another_search": "Versuchen Sie eine andere Suche",
+    "no_prompts_in_category": "Keine Prompts in dieser Kategorie",
+    "loaded_to_form": "Prompt in das Formular geladen",
+    "edit_mode": "Bearbeitungsmodus aktiviert. Ändern Sie die Felder und generieren Sie den aktualisierten Prompt.",
+    "editing_prompt": "Prompt bearbeiten",
+    "edit_cancelled": "Bearbeitung abgebrochen",
+    "general_info": "Allgemeine Informationen",
+    "date": "Datum"
+  },
   "delete_chat": {
     "title": "Chat löschen",
     "message": "Sind Sie sicher, dass Sie diesen Chat löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
     "confirm": "Löschen",
     "cancel": "Abbrechen"
   },
-
   "search_chat": {
     "title": "Im Chat suchen",
     "placeholder": "Geben Sie Ihre Suche ein...",
     "search_button": "Suchen",
     "clear_button": "Hervorhebung löschen"
   },
-
   "info": {
     "title": "Über MSN-AI",
     "version": "Version",
@@ -181,7 +250,6 @@
     "contact_message_1": "Dies ist ein persönliches Open-Source-Projekt. Bitte haben Sie Geduld, wenn die Antwort nicht sofort erfolgt.",
     "contact_message_2": "Stellen Sie vor der Kontaktaufnahme sicher, dass Sie die Dokumentation und den Quellcode im GitHub-Repository überprüft haben."
   },
-
   "chat": {
     "select_chat": "Wählen Sie einen Chat",
     "welcome_message": "Wählen Sie einen Chat aus der Liste oder erstellen Sie einen neuen, um zu beginnen.",
@@ -196,10 +264,10 @@
     "response_stopped": "Antwort vom Benutzer gestoppt",
     "response_stopped_before": "Antwort vor dem Start gestoppt",
     "search_placeholder": "In Chats suchen...",
+    "message_placeholder": "Schreiben Sie hier Ihre Nachricht...",
     "show_more": "{count} mehr anzeigen...",
     "show_less": "Weniger anzeigen"
   },
-
   "messages": {
     "status_changed": "Ich habe meinen Status auf {status} geändert. {message}",
     "status_online": "Ich bin verfügbar zum Chatten.",
@@ -212,7 +280,6 @@
     "file_attached": "Angehängte Datei: {filename}",
     "no_message": "keine zusätzliche Nachricht"
   },
-
   "errors": {
     "no_connection": "Keine Verbindung zu Ollama",
     "chat_not_found": "Chat nicht gefunden",
@@ -228,7 +295,6 @@
     "voice_not_supported": "Ihr Browser unterstützt keine Spracherkennung.",
     "close_chat_confirm": "Diesen Chat schließen und einen neuen erstellen?"
   },
-
   "connection": {
     "status": "Verbindungsstatus:",
     "current_model": "Aktuelles Modell:",
@@ -240,7 +306,6 @@
     "success": "Verbindung erfolgreich.",
     "failed": "Fehler beim Verbinden mit Ollama"
   },
-
   "format": {
     "bold": "Fett",
     "italic": "Kursiv",

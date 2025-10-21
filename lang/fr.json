@@ -1,10 +1,8 @@
 {
   "language_name": "Français",
   "language_code": "fr",
-
   "app_title": "MSN-AI",
   "app_description": "MSN-AI Assistant IA",
-
   "status": {
     "online": "En ligne",
     "away": "Absent",
@@ -14,7 +12,6 @@
     "connected": "Connecté",
     "disconnected": "Déconnecté"
   },
-
   "menu": {
     "new_chat": "Nouveau Chat",
     "settings": "Paramètres",
@@ -22,7 +19,6 @@
     "help": "Aide",
     "info": "Information"
   },
-
   "buttons": {
     "send": "Envoyer",
     "cancel": "Annuler",
@@ -35,6 +31,7 @@
     "test_connection": "Tester la Connexion",
     "search": "Rechercher",
     "clear": "Effacer",
+    "copy": "📋 Copier vers le Chat",
     "order_history": "Trier l'Historique",
     "export_selected": "Exporter Sélectionnés",
     "nudge": "Envoyer un Buzz",
@@ -47,9 +44,9 @@
     "print_chat": "Imprimer le Chat",
     "search_chat": "Rechercher dans le Chat",
     "close_chat": "Fermer le Chat",
-    "stop_response": "Arrêter la Réponse IA"
+    "stop_response": "Arrêter la Réponse IA",
+    "update": "Mettre à jour"
   },
-
   "tooltips": {
     "new_chat": "Créer un nouveau chat",
     "settings": "Paramètres du modèle IA",
@@ -60,14 +57,15 @@
     "voice_input": "Dictée vocale",
     "upload_file": "Joindre un fichier texte",
     "text_format": "Format de texte (Gras, Italique, Souligné)",
-    "increase_font": "Augmenter la taille de police",
+    "generate_prompt": "Générateur de Prompt - Créer des prompts structurés",
+    "manage_prompts": "Gestionnaire de Prompts - Gérer les prompts sauvegardés",
+    "increase_font": "Augmenter la taille de la police",
     "decrease_font": "Diminuer la taille de police",
     "export_chat": "Exporter le chat actuel vers un fichier texte",
     "print_chat": "Imprimer le chat actuel",
     "search_chat": "Rechercher dans le chat actuel",
     "close_chat": "Fermer le chat actuel et en créer un nouveau"
   },
-
   "settings": {
     "title": "Paramètres du Modèle IA",
     "sounds_enabled": "Sons activés",
@@ -87,7 +85,6 @@
     "settings_saved": "Paramètres enregistrés",
     "testing_connection": "Test en cours..."
   },
-
   "export_import": {
     "export_title": "Exporter les Chats",
     "export_description": "Sélectionnez un fichier JSON de chat précédemment exporté.",
@@ -101,7 +98,6 @@
     "no_selected": "Aucun chat sélectionné pour l'export.",
     "download_chats": "Télécharger les Chats"
   },
-
   "import_conflict": {
     "title": "Chat Dupliqué Détecté",
     "chat_title": "Titre",
@@ -123,7 +119,6 @@
     "counter": "Conflit {current} sur {total}",
     "auto_skipped": "Ce chat sera automatiquement ignoré."
   },
-
   "import_summary": {
     "title": "Importation Terminée",
     "imported": "chat(s) importé(s)",
@@ -132,13 +127,11 @@
     "skipped": "chat(s) ignoré(s)",
     "no_changes": "Aucune modification effectuée."
   },
-
   "context_menu": {
     "edit_title": "Modifier le titre",
     "export_chat": "Exporter le chat",
     "delete_chat": "Supprimer le chat"
   },
-
   "edit_title": {
     "title": "Modifier le titre du chat",
     "label": "Nouveau titre:",
@@ -146,21 +139,97 @@
     "success": "Titre mis à jour avec succès",
     "error": "Le titre ne peut pas être vide"
   },
-
+  "prompt_generator": {
+    "title": "Générateur de Prompt",
+    "role": "Rôle du LLM",
+    "role_placeholder": "Définir le rôle du LLM (ex: 'Vous êtes un assistant expert en...')",
+    "context": "Contexte",
+    "context_placeholder": "Décrire le contexte et la situation spécifique",
+    "audience": "Audience",
+    "audience_placeholder": "Spécifier le public cible",
+    "tasks": "Tâches (une par ligne)",
+    "tasks_placeholder": "TÂCHE 1: Description de la première tâche\nTÂCHE 2: Description de la deuxième tâche",
+    "instructions": "Instructions",
+    "instructions_placeholder": "Format, style, langue et autres paramètres techniques",
+    "empathy": "Empathie et Ton",
+    "empathy_placeholder": "Définir le ton émotionnel et le niveau d'empathie",
+    "clarification": "Clarification",
+    "clarification_placeholder": "Instructions sur comment demander des clarifications à l'utilisateur",
+    "refinement": "Raffinement",
+    "refinement_placeholder": "Instructions pour itérer et améliorer les réponses",
+    "boundaries": "Limites",
+    "boundaries_placeholder": "Restrictions et limites à considérer",
+    "consequences": "Conséquences",
+    "consequences_placeholder": "Conséquences de ne pas suivre les instructions",
+    "example": "Exemples",
+    "example_placeholder": "Exemples d'entrée et sortie attendue",
+    "generate": "✨ Générer le Prompt",
+    "result_title": "Prompt Généré (Markdown)",
+    "save": "⭐ Sauvegarder le Prompt",
+    "save_prompt_title": "Sauvegarder le Prompt",
+    "prompt_name": "Nom du Prompt",
+    "prompt_name_placeholder": "Entrez un nom descriptif",
+    "prompt_description": "Description (optionnel)",
+    "prompt_description_placeholder": "Brève description de l'objectif",
+    "prompt_category": "Catégorie (optionnel)",
+    "prompt_category_placeholder": "ex: Développement, Marketing, Éducation",
+    "prompt_tags": "Étiquettes (optionnel)",
+    "prompt_tags_placeholder": "Séparées par des virgules: tag1, tag2, tag3",
+    "saved_success": "Prompt sauvegardé avec succès",
+    "copy_success": "Prompt copié vers le chat",
+    "name_required": "Le nom du prompt est requis",
+    "updated_success": "Prompt mis à jour avec succès"
+  },
+  "prompt_manager": {
+    "title": "Mes Prompts Sauvegardés",
+    "search_placeholder": "Rechercher des prompts...",
+    "all_categories": "Toutes les catégories",
+    "refresh": "Actualiser la liste",
+    "no_prompts_title": "📝 Aucun prompt sauvegardé",
+    "no_prompts_message": "Générez un prompt et cliquez sur '⭐ Sauvegarder le Prompt' pour commencer votre collection.",
+    "export_all": "📤 Tout Exporter",
+    "export_all_tooltip": "Exporter tous les prompts vers un fichier JSON",
+    "import": "📥 Importer",
+    "import_tooltip": "Importer des prompts depuis un fichier JSON",
+    "delete_all": "🗑️ Tout Supprimer",
+    "delete_all_tooltip": "Supprimer tous les prompts sauvegardés",
+    "delete_all_confirm": "Êtes-vous sûr de vouloir supprimer tous les prompts sauvegardés ? Cette action ne peut pas être annulée.",
+    "use_prompt": "📝 Utiliser",
+    "view_prompt": "👁️ Voir",
+    "edit_prompt": "✏️ Éditer",
+    "delete_prompt": "🗑️ Supprimer",
+    "export_prompt": "📤 Exporter",
+    "load_to_form": "📝 Charger dans le Formulaire",
+    "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce prompt ?",
+    "export_success": "Prompts exportés avec succès",
+    "import_success": "Prompts importés avec succès",
+    "delete_success": "Prompt supprimé avec succès",
+    "no_export": "Aucun prompt à exporter",
+    "prompts_count": "{count} prompts sauvegardés",
+    "prompts_found": "{count} prompts trouvés",
+    "prompts_in_category": "{count} prompts dans cette catégorie",
+    "no_results": "Aucun prompt trouvé",
+    "try_another_search": "Essayez une autre recherche",
+    "no_prompts_in_category": "Aucun prompt dans cette catégorie",
+    "loaded_to_form": "Prompt chargé dans le formulaire",
+    "general_info": "Informations Générales",
+    "date": "Date",
+    "edit_mode": "Mode édition activé. Modifiez les champs et générez le prompt mis à jour.",
+    "editing_prompt": "Editing Prompt",
+    "edit_cancelled": "Edit cancelled"
+  },
   "delete_chat": {
     "title": "Supprimer le chat",
     "message": "Êtes-vous sûr de vouloir supprimer ce chat ? Cette action ne peut pas être annulée.",
     "confirm": "Supprimer",
     "cancel": "Annuler"
   },
-
   "search_chat": {
     "title": "Rechercher dans le Chat",
     "placeholder": "Tapez votre recherche...",
     "search_button": "Rechercher",
     "clear_button": "Effacer la Surbrillance"
   },
-
   "info": {
     "title": "À propos de MSN-AI",
     "version": "Version",
@@ -181,7 +250,6 @@
     "contact_message_1": "Ceci est un projet personnel open source. Veuillez être patient si la réponse n'est pas immédiate.",
     "contact_message_2": "Avant de contacter, assurez-vous d'avoir consulté la documentation et le code source dans le dépôt GitHub."
   },
-
   "chat": {
     "select_chat": "Sélectionner un chat",
     "welcome_message": "Sélectionnez un chat dans la liste ou créez-en un nouveau pour commencer.",
@@ -197,9 +265,9 @@
     "response_stopped_before": "Réponse arrêtée avant de commencer",
     "search_placeholder": "Rechercher dans les chats...",
     "show_more": "Voir {count} de plus...",
-    "show_less": "Voir moins"
+    "show_less": "Voir moins",
+    "message_placeholder": "Écrivez votre message ici..."
   },
-
   "messages": {
     "status_changed": "J'ai changé mon statut en {status}. {message}",
     "status_online": "Je suis disponible pour discuter.",
@@ -212,7 +280,6 @@
     "file_attached": "Fichier joint : {filename}",
     "no_message": "pas de message supplémentaire"
   },
-
   "errors": {
     "no_connection": "Pas de connexion à Ollama",
     "chat_not_found": "Chat non trouvé",
@@ -228,7 +295,6 @@
     "voice_not_supported": "Votre navigateur ne prend pas en charge la reconnaissance vocale.",
     "close_chat_confirm": "Fermer ce chat et en créer un nouveau ?"
   },
-
   "connection": {
     "status": "État de la connexion :",
     "current_model": "Modèle actuel :",
@@ -240,7 +306,6 @@
     "success": "Connexion réussie.",
     "failed": "Erreur de connexion à Ollama"
   },
-
   "format": {
     "bold": "Gras",
     "italic": "Italique",

@@ -1,10 +1,8 @@
 {
   "language_name": "中文",
   "language_code": "zh",
-
   "app_title": "MSN-AI",
   "app_description": "MSN-AI 人工智能助手",
-
   "status": {
     "online": "在线",
     "away": "离开",
@@ -14,7 +12,6 @@
     "connected": "已连接",
     "disconnected": "已断开"
   },
-
   "menu": {
     "new_chat": "新建聊天",
     "settings": "设置",
@@ -22,7 +19,6 @@
     "help": "帮助",
     "info": "信息"
   },
-
   "buttons": {
     "send": "发送",
     "cancel": "取消",
@@ -47,9 +43,10 @@
     "print_chat": "打印聊天",
     "search_chat": "在聊天中搜索",
     "close_chat": "关闭聊天",
-    "stop_response": "停止AI响应"
+    "stop_response": "停止AI响应",
+    "update": "更新",
+    "copy": "📋 复制到聊天"
   },
-
   "tooltips": {
     "new_chat": "创建新聊天",
     "settings": "AI模型设置",
@@ -65,9 +62,10 @@
     "export_chat": "将当前聊天导出为文本文件",
     "print_chat": "打印当前聊天",
     "search_chat": "在当前聊天中搜索",
-    "close_chat": "关闭当前聊天并创建新聊天"
+    "close_chat": "关闭当前聊天并创建新聊天",
+    "generate_prompt": "提示词生成器 - 创建结构化提示词",
+    "manage_prompts": "提示词管理器 - 管理已保存的提示词"
   },
-
   "settings": {
     "title": "AI模型设置",
     "sounds_enabled": "启用声音",
@@ -87,7 +85,6 @@
     "settings_saved": "设置已保存",
     "testing_connection": "测试中..."
   },
-
   "export_import": {
     "export_title": "导出聊天",
     "export_description": "选择之前导出的JSON聊天文件。",
@@ -101,7 +98,6 @@
     "no_selected": "未选择要导出的聊天。",
     "download_chats": "下载聊天"
   },
-
   "import_conflict": {
     "title": "检测到重复聊天",
     "chat_title": "标题",
@@ -123,7 +119,6 @@
     "counter": "冲突 {current}/{total}",
     "auto_skipped": "此聊天将自动跳过。"
   },
-
   "import_summary": {
     "title": "导入完成",
     "imported": "个聊天已导入",
@@ -132,13 +127,11 @@
     "skipped": "个聊天已跳过",
     "no_changes": "未进行任何更改。"
   },
-
   "context_menu": {
     "edit_title": "编辑标题",
     "export_chat": "导出聊天",
     "delete_chat": "删除聊天"
   },
-
   "edit_title": {
     "title": "编辑聊天标题",
     "label": "新标题:",
@@ -146,21 +139,97 @@
     "success": "标题已成功更新",
     "error": "标题不能为空"
   },
-
   "delete_chat": {
     "title": "删除聊天",
     "message": "确定要删除此聊天吗？此操作无法撤消。",
     "confirm": "删除",
     "cancel": "取消"
   },
-
+  "prompt_generator": {
+    "title": "提示词生成器",
+    "role": "LLM角色",
+    "role_placeholder": "定义LLM的角色（例如：'你是一个专业的助手...'）",
+    "context": "上下文",
+    "context_placeholder": "描述上下文和具体情况",
+    "audience": "受众",
+    "audience_placeholder": "指定目标受众",
+    "tasks": "任务（每行一个）",
+    "tasks_placeholder": "任务1：第一个任务的描述\n任务2：第二个任务的描述",
+    "instructions": "说明",
+    "instructions_placeholder": "格式、风格、语言和其他技术参数",
+    "empathy": "同理心和语气",
+    "empathy_placeholder": "定义情感语气和同理心水平",
+    "clarification": "澄清",
+    "clarification_placeholder": "关于如何向用户请求澄清的说明",
+    "refinement": "优化",
+    "refinement_placeholder": "迭代和改进响应的说明",
+    "boundaries": "边界",
+    "boundaries_placeholder": "需要考虑的限制和边界",
+    "consequences": "后果",
+    "consequences_placeholder": "不遵循说明的后果",
+    "example": "示例",
+    "example_placeholder": "预期输入和输出的示例",
+    "generate": "✨ 生成提示词",
+    "result_title": "生成的提示词（Markdown）",
+    "save": "⭐ 保存提示词",
+    "save_prompt_title": "保存提示词",
+    "prompt_name": "提示词名称",
+    "prompt_name_placeholder": "输入描述性名称",
+    "prompt_description": "描述（可选）",
+    "prompt_description_placeholder": "简要描述目的",
+    "prompt_category": "类别（可选）",
+    "prompt_category_placeholder": "例如：开发、营销、教育",
+    "prompt_tags": "标签（可选）",
+    "prompt_tags_placeholder": "用逗号分隔：标签1，标签2，标签3",
+    "saved_success": "提示词保存成功",
+    "copy_success": "提示词已复制到聊天",
+    "name_required": "提示词名称为必填项",
+    "updated_success": "提示词更新成功"
+  },
+  "prompt_manager": {
+    "title": "我保存的提示词",
+    "search_placeholder": "搜索提示词...",
+    "all_categories": "所有类别",
+    "refresh": "刷新列表",
+    "no_prompts_title": "📝 没有保存的提示词",
+    "no_prompts_message": "生成一个提示词并点击'⭐ 保存提示词'来开始你的收藏。",
+    "export_all": "📤 导出全部",
+    "export_all_tooltip": "将所有提示词导出到JSON文件",
+    "import": "📥 导入",
+    "import_tooltip": "从JSON文件导入提示词",
+    "delete_all": "🗑️ 删除全部",
+    "delete_all_tooltip": "删除所有保存的提示词",
+    "delete_all_confirm": "你确定要删除所有保存的提示词吗？此操作无法撤消。",
+    "use_prompt": "📝 使用",
+    "view_prompt": "👁️ 查看",
+    "edit_prompt": "✏️ 编辑",
+    "delete_prompt": "🗑️ 删除",
+    "export_prompt": "📤 导出",
+    "load_to_form": "📝 加载到表单",
+    "delete_confirm": "你确定要删除这个提示词吗？",
+    "export_success": "提示词导出成功",
+    "import_success": "提示词导入成功",
+    "delete_success": "提示词删除成功",
+    "no_export": "没有可导出的提示词",
+    "prompts_count": "{count} 个已保存的提示词",
+    "prompts_found": "{count} 个提示词找到",
+    "prompts_in_category": "{count} 个提示词在此类别中",
+    "no_results": "未找到提示词",
+    "try_another_search": "尝试其他搜索",
+    "no_prompts_in_category": "此类别中没有提示词",
+    "loaded_to_form": "提示词已加载到表单",
+    "general_info": "常规信息",
+    "date": "日期",
+    "edit_mode": "编辑模式已激活。修改字段并生成更新的提示词。",
+    "editing_prompt": "Editing Prompt",
+    "edit_cancelled": "Edit cancelled"
+  },
   "search_chat": {
     "title": "在聊天中搜索",
     "placeholder": "输入搜索内容...",
     "search_button": "搜索",
     "clear_button": "清除高亮"
   },
-
   "info": {
     "title": "关于MSN-AI",
     "version": "版本",
@@ -181,7 +250,6 @@
     "contact_message_1": "这是一个个人开源项目。如果响应不及时，请耐心等待。",
     "contact_message_2": "在联系之前，请确保已查看GitHub存储库中的文档和源代码。"
   },
-
   "chat": {
     "select_chat": "选择聊天",
     "welcome_message": "从列表中选择聊天或创建新聊天开始。",
@@ -197,9 +265,9 @@
     "response_stopped_before": "响应在开始前停止",
     "search_placeholder": "在聊天中搜索...",
     "show_more": "查看更多 {count} 个...",
-    "show_less": "显示更少"
+    "show_less": "显示更少",
+    "message_placeholder": "在此输入您的消息..."
   },
-
   "messages": {
     "status_changed": "我已将状态更改为{status}。{message}",
     "status_online": "我现在可以聊天。",
@@ -212,7 +280,6 @@
     "file_attached": "附件：{filename}",
     "no_message": "无附加消息"
   },
-
   "errors": {
     "no_connection": "无法连接到Ollama",
     "chat_not_found": "未找到聊天",
@@ -228,7 +295,6 @@
     "voice_not_supported": "您的浏览器不支持语音识别。",
     "close_chat_confirm": "关闭此聊天并创建新聊天？"
   },
-
   "connection": {
     "status": "连接状态：",
     "current_model": "当前模型：",
@@ -240,7 +306,6 @@
     "success": "连接成功。",
     "failed": "连接Ollama时出错"
   },
-
   "format": {
     "bold": "粗体",
     "italic": "斜体",

@@ -43,7 +43,9 @@
     "print_chat": "Rimanakuyta qillqachiy",
     "search_chat": "Rimanakuypi maskay",
     "close_chat": "Rimanakuyta wichq'ay",
-    "stop_response": "AI kutichiyninata sayachiy"
+    "stop_response": "AI kutichiyninata sayachiy",
+    "update": "Update",
+    "copy": "📋 Rimayman kichariy"
   },
   "tooltips": {
     "new_chat": "Musuq rimanakuyta ruway",
@@ -60,7 +62,9 @@
     "export_chat": "Kunan rimanakuyta qillqa qillqaman lluqsichiy",
     "print_chat": "Kunan rimanakuyta qillqachiy",
     "search_chat": "Kunan rimanakuypi maskay",
-    "close_chat": "Kunan rimanakuyta wichq'ay, musuqta ruway"
+    "close_chat": "Kunan rimanakuyta wichq'ay, musuqta ruway",
+    "generate_prompt": "Prompt Ruwaq - Allin ruwasqa promptkunata ruway",
+    "manage_prompts": "Prompt Kamachiq - Waqaychasqa promptkunata kamachiy"
   },
   "settings": {
     "title": "AI Modelo Churay",
@@ -123,13 +127,11 @@
     "skipped": "rimanakuykuna saqisqa",
     "no_changes": "Mana imapas tikrasqachu."
   },
-
   "context_menu": {
     "edit_title": "Sutita allichay",
     "export_chat": "Rimanakuyta lluqsichiy",
     "delete_chat": "Rimanakuyta qichuy"
   },
-
   "edit_title": {
     "title": "Rimanakuy sutinta allichay",
     "label": "Musuq suti:",
@@ -137,7 +139,6 @@
     "success": "Sutiqa allinta musuqchasqa",
     "error": "Sutiqa mana ch'usaqchu kanan"
   },
-
   "delete_chat": {
     "title": "Rimanakuyta qichuy",
     "message": "¿Chiqaqchu kay rimanakuyta qichuyta munawanki? Kay ruwayqa manam kutichikuytaqa atinchu.",
@@ -184,6 +185,7 @@
     "response_stopped": "Runa kutichiyninata sayachirqa",
     "response_stopped_before": "Kutichiy qallariyninmanta ñawpaqta sayachisqa",
     "search_placeholder": "Rimanakuykunapi maskay...",
+    "message_placeholder": "Kaypi willakuyniykita qillqay...",
     "show_more": "Aswan {count} rikuchiy...",
     "show_less": "Aswan pisi rikuchiy"
   },
@@ -229,5 +231,84 @@
     "bold": "Yanqa",
     "italic": "Q'iñi",
     "underline": "Uray siq'i"
+  },
+  "prompt_generator": {
+    "title": "Prompt Ruwaq",
+    "role": "LLM Ruwaynin",
+    "role_placeholder": "LLMpa ruwaynintan kamachiy (ahinataq: 'Qanqa yachaq yanapakuqmi kanki...')",
+    "context": "Contexto",
+    "context_placeholder": "Contextota hinaspa takyasqa situacionta willay",
+    "audience": "Uyariqkuna",
+    "audience_placeholder": "Qhari uyariqkunata riqsichiy",
+    "tasks": "Ruwanakuna (sapa chiqapi huk)",
+    "tasks_placeholder": "RUWANA 1: Ñawpaq ruwanapa willakuynin\nRUWANA 2: Iskay kaq ruwanapa willakuynin",
+    "instructions": "Yachachikuykuna",
+    "instructions_placeholder": "Formato, estilo, simi hinaspa wak parámetros técnicos",
+    "empathy": "Ñuqanchikkuna Kuyay hinaspa Tono",
+    "empathy_placeholder": "Sientimiento tonota hinaspa ñuqanchikkuna kuyana nivelta kamachiy",
+    "clarification": "Sut'inchay",
+    "clarification_placeholder": "Imaynatas ruwaqmanta sut'inchayta mañakunanpaq yachachiykuna",
+    "refinement": "Allinchay",
+    "refinement_placeholder": "Kutirinapaq hinaspa kutichiykunata allinchananpaq yachachiykuna",
+    "boundaries": "Saywaykuna",
+    "boundaries_placeholder": "Harkaykunata hinaspa saywykunata qhaway",
+    "consequences": "Ima kanqa chayqa",
+    "consequences_placeholder": "Yachachiykunata mana kasukuspaqa imachus kanqa",
+    "example": "Rikuchiykuna",
+    "example_placeholder": "Yaykuymanta hinaspa lluqsiymanta suyasqa rikuchiykuna",
+    "generate": "✨ Promptta Ruway",
+    "result_title": "Ruwasqa Prompt (Markdown)",
+    "save": "⭐ Promptta Waqaychay",
+    "save_prompt_title": "Promptta Waqaychay",
+    "prompt_name": "Prompt Sutin",
+    "prompt_name_placeholder": "Sutinta willaq sutita qillqay",
+    "prompt_description": "Willay (munasqa)",
+    "prompt_description_placeholder": "Pisi willay imapachus",
+    "prompt_category": "Categoria (munasqa)",
+    "prompt_category_placeholder": "rikuypaq: Ruway, Marketing, Yachay",
+    "prompt_tags": "Etiquetakuna (munasqa)",
+    "prompt_tags_placeholder": "Comawan rakisqa: etiqueta1, etiqueta2, etiqueta3",
+    "saved_success": "Promptqa allinta waqaychasqa",
+    "updated_success": "Promptqa allinta musuqchasqa",
+    "copy_success": "Promptqa rimayman kicharisqa",
+    "name_required": "Promptpa sutinqa necesitakun"
+  },
+  "prompt_manager": {
+    "title": "Waqaychasqa Promptniykuna",
+    "search_placeholder": "Promptkunata maskay...",
+    "all_categories": "Tukuy categoriakuna",
+    "refresh": "Listata musuqchay",
+    "no_prompts_title": "📝 Mana waqaychasqa promptkuna kanchu",
+    "no_prompts_message": "Huk promptta ruway hinaspa '⭐ Promptta Waqaychay' ñit'iy qallariyniykipaq.",
+    "export_all": "📤 Tukuyta Apay",
+    "export_all_tooltip": "Tukuy promptkunata JSON qillqaman apay",
+    "import": "📥 Yaykuchiy",
+    "import_tooltip": "Promptkunata JSON qillqamanta yaykuchiy",
+    "delete_all": "🗑️ Tukuyta Qichuy",
+    "delete_all_tooltip": "Tukuy waqaychasqa promptkunata qichuy",
+    "delete_all_confirm": "¿Chiqaqtachu tukuy waqaychasqa promptkunata qichuyta munasqa? Kay ruwayqa manam kutichiymanchu.",
+    "use_prompt": "📝 Llamkachiy",
+    "view_prompt": "👁️ Qhaway",
+    "edit_prompt": "✏️ Allichay",
+    "delete_prompt": "🗑️ Qichuy",
+    "export_prompt": "📤 Apay",
+    "load_to_form": "📝 Formularioman Apachiy",
+    "delete_confirm": "¿Chiqaqtachu kay promptta qichuyta munasqa?",
+    "export_success": "Promptkunaqa allinta apasqa",
+    "import_success": "Promptkunaqa allinta yaykuchisqa",
+    "delete_success": "Promptqa allinta qichusqa",
+    "no_export": "Mana apay promptkuna kanchu",
+    "prompts_count": "{count} promptkuna waqaychasqa",
+    "prompts_found": "{count} promptkuna tarisqa",
+    "prompts_in_category": "{count} promptkuna kay categoriapi",
+    "no_results": "Mana promptkuna tarisqachu",
+    "try_another_search": "Huk maskayta ruway",
+    "no_prompts_in_category": "Kay categoriapi mana promptkuna kanchu",
+    "loaded_to_form": "Promptqa formularioman apachisqa",
+    "edit_mode": "Allichay modo kicharisqa. Campokunata allichay hinaspa musuqchasqa promptta ruway.",
+    "editing_prompt": "Promptta Allichaspa",
+    "edit_cancelled": "Allichayqa hark'asqa",
+    "general_info": "General Willakuy",
+    "date": "P'unchaw"
   }
 }

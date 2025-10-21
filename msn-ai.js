@@ -594,6 +594,13 @@ class MSNAI {
       element.setAttribute("title", translation);
     });
 
+    // Actualizar elementos con data-i18n-placeholder (placeholders de input/textarea)
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+      const key = element.getAttribute("data-i18n-placeholder");
+      const translation = this.t(key);
+      element.setAttribute("placeholder", translation);
+    });
+
     // Actualizar elementos con data-i18n-template (requieren variables)
     document.querySelectorAll("[data-i18n-template]").forEach((element) => {
       const key = element.getAttribute("data-i18n-template");
@@ -675,7 +682,7 @@ class MSNAI {
   updatePlaceholders() {
     const input = document.getElementById("message-input");
     if (input) {
-      input.placeholder = this.t("chat.search_placeholder");
+      input.placeholder = this.t("chat.message_placeholder");
     }
 
     const searchInput = document.getElementById("chat-search-input");
@@ -2849,6 +2856,184 @@ class MSNAI {
           document.getElementById("confirm-edit-title-btn").click();
         }
       });
+
+    // =================== EVENT LISTENERS PARA GENERADOR Y GESTOR DE PROMPTS ===================
+
+    // Abrir modal generador de prompts
+    document
+      .getElementById("generador-promt-btn")
+      .addEventListener("click", () => {
+        document.getElementById("prompt-generator-modal").style.display =
+          "block";
+      });
+
+    // Abrir modal gestor de prompts
+    document
+      .getElementById("gestor-prompts-btn")
+      .addEventListener("click", () => {
+        this.loadSavedPrompts();
+        document.getElementById("prompt-manager-modal").style.display = "block";
+      });
+
+    // Cerrar modales de prompts con la X
+    document
+      .querySelectorAll(
+        "#prompt-generator-modal .modal-close, #prompt-manager-modal .modal-close, #prompt-result-modal .modal-close, #save-prompt-modal .modal-close, #prompt-details-modal .modal-close",
+      )
+      .forEach((closeBtn) => {
+        closeBtn.addEventListener("click", (e) => {
+          e.target.closest(".modal").style.display = "none";
+        });
+      });
+
+    // Cerrar modales con overlay
+    document.getElementById("modal-overlay")?.addEventListener("click", () => {
+      this.hideAllModals();
+    });
+
+    // Generar prompt
+    document
+      .getElementById("generate-prompt-btn")
+      .addEventListener("click", () => {
+        this.generatePrompt();
+      });
+
+    // Copiar prompt al chat
+    document
+      .getElementById("copyMarkdownButton")
+      .addEventListener("click", () => {
+        const markdownContent =
+          document.getElementById("markdownEditor").textContent;
+        const messageInput = document.getElementById("message-input");
+        messageInput.value = markdownContent;
+        messageInput.focus();
+
+        // Mostrar notificación visible
+        const notification = document.createElement("div");
+        notification.className = "notification success show";
+        notification.innerHTML = `
+          <div class="notification-content">
+            <span class="notification-icon">✅</span>
+            <span class="notification-text">${this.t("prompt_generator.copy_success")}</span>
+            <button class="notification-close">×</button>
+          </div>
+        `;
+
+        const container = document.getElementById("notification-container");
+        if (container) {
+          container.appendChild(notification);
+
+          // Auto-eliminar después de 3 segundos
+          setTimeout(() => {
+            notification.classList.remove("show");
+            setTimeout(() => notification.remove(), 300);
+          }, 3000);
+
+          // Botón de cerrar
+          notification
+            .querySelector(".notification-close")
+            .addEventListener("click", () => {
+              notification.classList.remove("show");
+              setTimeout(() => notification.remove(), 300);
+            });
+        }
+      });
+
+    // Mostrar modal de guardar prompt
+    document.getElementById("save-prompt-btn").addEventListener("click", () => {
+      if (!this.isEditMode) {
+        this.showSavePromptModal();
+      }
+    });
+
+    // Botones de modo edición
+    document
+      .getElementById("confirm-save-edit")
+      ?.addEventListener("click", () => {
+        this.generatePrompt();
+        // Después de generar, mostrar modal de guardar en modo edición
+        setTimeout(() => {
+          this.showSavePromptModal();
+        }, 100);
+      });
+
+    document.getElementById("cancel-edit")?.addEventListener("click", () => {
+      this.cancelEditMode();
+    });
+
+    // Confirmar guardar prompt
+    document
+      .getElementById("confirm-save-prompt")
+      .addEventListener("click", () => {
+        this.saveCurrentPrompt();
+      });
+
+    // Cancelar guardar prompt
+    document
+      .getElementById("cancel-save-prompt")
+      .addEventListener("click", () => {
+        document.getElementById("save-prompt-modal").style.display = "none";
+      });
+
+    // Gestor de prompts - botones
+    document.getElementById("refresh-prompts").addEventListener("click", () => {
+      this.loadSavedPrompts();
+    });
+
+    document
+      .getElementById("export-all-prompts")
+      .addEventListener("click", () => {
+        this.exportAllPrompts();
+      });
+
+    document.getElementById("import-prompts").addEventListener("click", () => {
+      document.getElementById("import-prompts-file").click();
+    });
+
+    document
+      .getElementById("import-prompts-file")
+      .addEventListener("change", (e) => {
+        this.importPrompts(e.target.files[0]);
+      });
+
+    document
+      .getElementById("delete-all-prompts")
+      .addEventListener("click", () => {
+        if (confirm(this.t("prompt_manager.delete_all_confirm"))) {
+          this.deleteAllPrompts();
+        }
+      });
+
+    // Búsqueda de prompts
+    document.getElementById("prompt-search").addEventListener("input", (e) => {
+      this.searchPrompts(e.target.value);
+    });
+
+    // Filtro de categorías
+    document
+      .getElementById("category-filter")
+      ?.addEventListener("change", (e) => {
+        this.filterByCategory(e.target.value);
+      });
+
+    // Botones del modal de detalles
+    document
+      .getElementById("load-prompt-to-form")
+      ?.addEventListener("click", () => {
+        this.loadPromptToForm();
+      });
+
+    document
+      .getElementById("edit-prompt-details")
+      ?.addEventListener("click", () => {
+        this.editPromptFromDetails();
+      });
+
+    document
+      .getElementById("delete-prompt-from-details")
+      ?.addEventListener("click", () => {
+        this.deletePromptFromDetails();
+      });
   }
   //-----------------------------------------------
   async updateAvailableModels() {
@@ -3271,3 +3456,837 @@ window.addEventListener("beforeunload", (e) => {
       "¿Estás seguro de que quieres salir? Los chats se guardarán automáticamente.";
   }
 });
+
+// =================== EXTENSIÓN DE LA CLASE MSNAI PARA PROMPTS ===================
+
+// Agregar funciones al prototipo de MSNAI
+MSNAI.prototype.generatePrompt = function () {
+  const role = document
+    .getElementById("role")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const context = document
+    .getElementById("context")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const audience = document
+    .getElementById("audience")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const tasks = document
+    .getElementById("tasks")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const instructions = document
+    .getElementById("instructions")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const empathy = document
+    .getElementById("empathy")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const clarification = document
+    .getElementById("clarification")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const refinement = document
+    .getElementById("refinement")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const boundaries = document
+    .getElementById("boundaries")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const consequences = document
+    .getElementById("consequences")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+  const example = document
+    .getElementById("example")
+    .value.trim()
+    .split("\n")
+    .filter((l) => l);
+
+  const escapeHtml = (text) => {
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
+  };
+
+  let markdownOutput = `[PROMPT]`;
+  if (role.length)
+    markdownOutput += `\n  ROLE:\n    ${role.map((r) => `- ${escapeHtml(r)}`).join("\n    ")}`;
+  if (context.length)
+    markdownOutput += `\n  CONTEXT:\n    ${context.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+  if (audience.length)
+    markdownOutput += `\n  AUDIENCE:\n    ${audience.map((a) => `- ${escapeHtml(a)}`).join("\n    ")}`;
+  if (tasks.length)
+    markdownOutput += `\n  TASKS:\n    ${tasks.map((t, i) => `${i + 1}. ${escapeHtml(t)}`).join("\n    ")}`;
+  if (instructions.length)
+    markdownOutput += `\n  INSTRUCTIONS:\n    ${instructions.map((i) => `- ${escapeHtml(i)}`).join("\n    ")}`;
+  if (empathy.length)
+    markdownOutput += `\n  EMPATHY:\n    ${empathy.map((e) => `- ${escapeHtml(e)}`).join("\n    ")}`;
+  if (clarification.length)
+    markdownOutput += `\n  CLARIFICATION:\n    ${clarification.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+  if (refinement.length)
+    markdownOutput += `\n  REFINEMENT:\n    ${refinement.map((r) => `- ${escapeHtml(r)}`).join("\n    ")}`;
+  if (boundaries.length)
+    markdownOutput += `\n  BOUNDARIES:\n    ${boundaries.map((b) => `- ${escapeHtml(b)}`).join("\n    ")}`;
+  if (consequences.length)
+    markdownOutput += `\n  CONSEQUENCES:\n    ${consequences.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+  if (example.length)
+    markdownOutput += `\n  EXAMPLE:\n    ${example.map((e) => `- ${escapeHtml(e)}`).join("\n    ")}`;
+
+  document.getElementById("markdownEditor").textContent = markdownOutput;
+  document.getElementById("prompt-result-modal").style.display = "block";
+
+  this.currentGeneratedPrompt = {
+    role: role.join("\n"),
+    context: context.join("\n"),
+    audience: audience.join("\n"),
+    tasks: tasks.join("\n"),
+    instructions: instructions.join("\n"),
+    empathy: empathy.join("\n"),
+    clarification: clarification.join("\n"),
+    refinement: refinement.join("\n"),
+    boundaries: boundaries.join("\n"),
+    consequences: consequences.join("\n"),
+    example: example.join("\n"),
+    markdown: markdownOutput,
+    date: new Date().toISOString(),
+  };
+};
+
+MSNAI.prototype.showSavePromptModal = function () {
+  if (!this.currentGeneratedPrompt) return;
+
+  // Si estamos en modo edición, cargar los datos existentes
+  if (this.isEditMode && this.currentPromptId) {
+    const prompts = JSON.parse(
+      localStorage.getItem("msnai-saved-prompts") || "[]",
+    );
+    const prompt = prompts.find((p) => p.id === this.currentPromptId);
+
+    if (prompt) {
+      document.getElementById("prompt-name").value = prompt.name || "";
+      document.getElementById("prompt-description").value =
+        prompt.description || "";
+      document.getElementById("prompt-category").value = prompt.category || "";
+      document.getElementById("prompt-tags").value =
+        prompt.tags?.join(", ") || "";
+    }
+
+    // Cambiar texto del botón
+    const saveBtn = document.getElementById("confirm-save-prompt");
+    if (saveBtn) {
+      const textSpan = saveBtn.querySelector("span");
+      if (textSpan) {
+        textSpan.textContent =
+          "✏️ " + (this.t("buttons.update") || "Actualizar");
+      }
+    }
+  } else {
+    // Modo nuevo: limpiar campos
+    document.getElementById("prompt-name").value = "";
+    document.getElementById("prompt-description").value = "";
+    document.getElementById("prompt-category").value = "";
+    document.getElementById("prompt-tags").value = "";
+
+    // Restaurar texto del botón
+    const saveBtn = document.getElementById("confirm-save-prompt");
+    if (saveBtn) {
+      const textSpan = saveBtn.querySelector("span");
+      if (textSpan) {
+        textSpan.textContent = "💾 " + (this.t("buttons.save") || "Guardar");
+      }
+    }
+  }
+
+  document.getElementById("save-prompt-modal").style.display = "block";
+  document.getElementById("prompt-name").focus();
+};
+
+MSNAI.prototype.saveCurrentPrompt = function () {
+  if (!this.currentGeneratedPrompt) return;
+
+  const name = document.getElementById("prompt-name").value.trim();
+  if (!name) {
+    const notification = document.createElement("div");
+    notification.className = "notification error show";
+    notification.innerHTML = `
+      <div class="notification-content">
+        <span class="notification-icon">❌</span>
+        <span class="notification-text">${this.t("prompt_generator.name_required") || "El nombre del prompt es requerido"}</span>
+        <button class="notification-close">×</button>
+      </div>
+    `;
+
+    const container = document.getElementById("notification-container");
+    if (container) {
+      container.appendChild(notification);
+      setTimeout(() => {
+        notification.classList.remove("show");
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+      notification
+        .querySelector(".notification-close")
+        .addEventListener("click", () => {
+          notification.classList.remove("show");
+          setTimeout(() => notification.remove(), 300);
+        });
+    }
+    return;
+  }
+
+  let prompts = JSON.parse(localStorage.getItem("msnai-saved-prompts") || "[]");
+
+  if (this.isEditMode && this.currentPromptId) {
+    // Modo edición: actualizar prompt existente
+    const index = prompts.findIndex((p) => p.id === this.currentPromptId);
+    if (index !== -1) {
+      prompts[index] = {
+        ...prompts[index],
+        ...this.currentGeneratedPrompt,
+        name: name,
+        description: document.getElementById("prompt-description").value.trim(),
+        category: document.getElementById("prompt-category").value.trim(),
+        tags: document
+          .getElementById("prompt-tags")
+          .value.split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+        date: prompts[index].date, // Mantener fecha de creación
+        updatedAt: new Date().toISOString(),
+      };
+    }
+  } else {
+    // Modo nuevo: crear prompt
+    const promptToSave = {
+      id: "prompt-" + Date.now(),
+      ...this.currentGeneratedPrompt,
+      name: name,
+      description: document.getElementById("prompt-description").value.trim(),
+      category: document.getElementById("prompt-category").value.trim(),
+      tags: document
+        .getElementById("prompt-tags")
+        .value.split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0),
+      createdAt: new Date().toISOString(),
+    };
+    prompts.unshift(promptToSave);
+  }
+
+  localStorage.setItem("msnai-saved-prompts", JSON.stringify(prompts));
+
+  document.getElementById("save-prompt-modal").style.display = "none";
+
+  // Mostrar notificación visible
+  const successMsg = this.isEditMode
+    ? this.t("prompt_generator.updated_success") ||
+      "Prompt actualizado correctamente"
+    : this.t("prompt_generator.saved_success") ||
+      "Prompt guardado correctamente";
+
+  const notification = document.createElement("div");
+  notification.className = "notification success show";
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">✅</span>
+      <span class="notification-text">${successMsg}</span>
+      <button class="notification-close">×</button>
+    </div>
+  `;
+
+  const container = document.getElementById("notification-container");
+  if (container) {
+    container.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+    notification
+      .querySelector(".notification-close")
+      .addEventListener("click", () => {
+        notification.classList.remove("show");
+        setTimeout(() => notification.remove(), 300);
+      });
+  }
+
+  // Resetear modo edición
+  this.isEditMode = false;
+  this.currentPromptId = null;
+
+  // Ocultar indicador de modo edición
+  const editIndicator = document.getElementById("edit-mode-indicator");
+  if (editIndicator) {
+    editIndicator.style.display = "none";
+  }
+
+  // Recargar lista de prompts si está abierta
+  if (
+    document.getElementById("prompt-manager-modal").style.display === "block"
+  ) {
+    this.loadSavedPrompts();
+  }
+};
+
+MSNAI.prototype.loadSavedPrompts = function () {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const container = document.getElementById("saved-prompts-list");
+  const countEl = document.getElementById("prompts-count");
+
+  const countText =
+    this.t("prompt_manager.prompts_count") || "{count} prompts guardados";
+  countEl.textContent = countText.replace("{count}", prompts.length);
+
+  this.updateCategoryFilter(prompts);
+
+  if (prompts.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+        <h4>${this.t("prompt_manager.no_prompts_title")}</h4>
+        <p>${this.t("prompt_manager.no_prompts_message")}</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = prompts
+    .map((prompt) => this.createPromptCard(prompt))
+    .join("");
+};
+
+MSNAI.prototype.createPromptCard = function (prompt) {
+  const date = new Date(prompt.date).toLocaleDateString();
+  const categoryHtml = prompt.category
+    ? `<span class="prompt-card-category">${this.escapeHtml(prompt.category)}</span>`
+    : "";
+  const tagsHtml = prompt.tags?.length
+    ? prompt.tags
+        .slice(0, 3)
+        .map(
+          (tag) =>
+            `<span class="prompt-card-tag">${this.escapeHtml(tag)}</span>`,
+        )
+        .join("")
+    : "";
+  const descHtml = prompt.description
+    ? `<p class="prompt-card-description">${this.escapeHtml(prompt.description)}</p>`
+    : "";
+
+  return `
+    <div class="prompt-card" onclick="msnai.showPromptDetails('${prompt.id}')">
+      <h4>${this.escapeHtml(prompt.name)}</h4>
+      <p style="margin: 0 0 8px 0; font-size: 7pt; color: #666;">${date}</p>
+      ${descHtml}
+      <div class="prompt-card-meta">
+        ${categoryHtml}
+        ${tagsHtml}
+      </div>
+      <div class="prompt-card-actions" onclick="event.stopPropagation()">
+        <button class="aerobutton" onclick="msnai.usePrompt('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+          ${this.t("prompt_manager.use_prompt")}
+        </button>
+        <button class="aerobutton" onclick="msnai.showPromptDetails('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+          ${this.t("prompt_manager.view_prompt")}
+        </button>
+        <button class="aerobutton" onclick="msnai.deletePrompt('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+          ${this.t("prompt_manager.delete_prompt")}
+        </button>
+      </div>
+    </div>
+  `;
+};
+
+MSNAI.prototype.updateCategoryFilter = function (prompts) {
+  const categories = [
+    ...new Set(
+      prompts.map((p) => p.category).filter((c) => c && c.trim() !== ""),
+    ),
+  ].sort();
+  const filterSelect = document.getElementById("category-filter");
+
+  if (filterSelect) {
+    const currentValue = filterSelect.value;
+    filterSelect.innerHTML = `<option value="">${this.t("prompt_manager.all_categories")}</option>`;
+
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category;
+      option.textContent = category;
+      filterSelect.appendChild(option);
+    });
+
+    filterSelect.value = currentValue;
+  }
+};
+
+MSNAI.prototype.showPromptDetails = function (promptId) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => p.id === promptId);
+
+  if (!prompt) return;
+
+  this.currentPromptId = promptId;
+  document.getElementById("details-prompt-name").textContent = prompt.name;
+
+  const t = (key) => {
+    return this.translations?.[key.split(".")[0]]?.[key.split(".")[1]] || key;
+  };
+
+  let detailsHtml = `
+    <div class="detail-section">
+      <h4>📝 ${t("prompt_manager.general_info")}</h4>
+      <p><strong>${t("prompt_generator.prompt_name")}:</strong> ${this.escapeHtml(prompt.name)}</p>
+      ${prompt.description ? `<p><strong>${t("prompt_generator.prompt_description")}:</strong> ${this.escapeHtml(prompt.description)}</p>` : ""}
+      ${prompt.category ? `<p><strong>${t("prompt_generator.prompt_category")}:</strong> ${this.escapeHtml(prompt.category)}</p>` : ""}
+      ${prompt.tags?.length ? `<p><strong>${t("prompt_generator.prompt_tags")}:</strong> ${prompt.tags.map((tag) => this.escapeHtml(tag)).join(", ")}</p>` : ""}
+      <p><strong>${t("prompt_manager.date")}:</strong> ${new Date(prompt.date).toLocaleString()}</p>
+    </div>
+  `;
+
+  const sections = [
+    {
+      key: "role",
+      title: "👤 " + t("prompt_generator.role"),
+      value: prompt.role,
+    },
+    {
+      key: "context",
+      title: "📝 " + t("prompt_generator.context"),
+      value: prompt.context,
+    },
+    {
+      key: "audience",
+      title: "👥 " + t("prompt_generator.audience"),
+      value: prompt.audience,
+    },
+    {
+      key: "tasks",
+      title: "📋 " + t("prompt_generator.tasks"),
+      value: prompt.tasks,
+    },
+    {
+      key: "instructions",
+      title: "ℹ️ " + t("prompt_generator.instructions"),
+      value: prompt.instructions,
+    },
+    {
+      key: "empathy",
+      title: "💬 " + t("prompt_generator.empathy"),
+      value: prompt.empathy,
+    },
+    {
+      key: "clarification",
+      title: "❓ " + t("prompt_generator.clarification"),
+      value: prompt.clarification,
+    },
+    {
+      key: "refinement",
+      title: "🔄 " + t("prompt_generator.refinement"),
+      value: prompt.refinement,
+    },
+    {
+      key: "boundaries",
+      title: "🚫 " + t("prompt_generator.boundaries"),
+      value: prompt.boundaries,
+    },
+    {
+      key: "consequences",
+      title: "⚠️ " + t("prompt_generator.consequences"),
+      value: prompt.consequences,
+    },
+    {
+      key: "example",
+      title: "💡 " + t("prompt_generator.example"),
+      value: prompt.example,
+    },
+  ];
+
+  sections.forEach((section) => {
+    if (section.value && section.value.trim()) {
+      detailsHtml += `
+        <div class="detail-section">
+          <h4>${section.title}</h4>
+          <p>${this.escapeHtml(section.value).replace(/\n/g, "<br>")}</p>
+        </div>
+      `;
+    }
+  });
+
+  document.getElementById("prompt-details-content").innerHTML = detailsHtml;
+  document.getElementById("prompt-details-modal").style.display = "block";
+};
+
+MSNAI.prototype.loadPromptToForm = function () {
+  if (!this.currentPromptId) return;
+
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => p.id === this.currentPromptId);
+
+  if (prompt) {
+    const fields = [
+      "role",
+      "context",
+      "audience",
+      "tasks",
+      "instructions",
+      "empathy",
+      "clarification",
+      "refinement",
+      "boundaries",
+      "consequences",
+      "example",
+    ];
+    fields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.value = prompt[field] || "";
+      }
+    });
+
+    document.getElementById("prompt-details-modal").style.display = "none";
+    document.getElementById("prompt-manager-modal").style.display = "none";
+    document.getElementById("prompt-generator-modal").style.display = "block";
+    this.showNotification(
+      this.t("prompt_manager.loaded_to_form") ||
+        "Prompt cargado en el formulario",
+      "success",
+    );
+  }
+};
+
+MSNAI.prototype.editPromptFromDetails = function () {
+  if (!this.currentPromptId) return;
+
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => p.id === this.currentPromptId);
+
+  if (prompt) {
+    // Cargar datos al formulario
+    const fields = [
+      "role",
+      "context",
+      "audience",
+      "tasks",
+      "instructions",
+      "empathy",
+      "clarification",
+      "refinement",
+      "boundaries",
+      "consequences",
+      "example",
+    ];
+    fields.forEach((field) => {
+      const element = document.getElementById(field);
+      if (element) {
+        element.value = prompt[field] || "";
+      }
+    });
+
+    // Configurar currentGeneratedPrompt para poder guardar
+    this.currentGeneratedPrompt = {
+      role: prompt.role || "",
+      context: prompt.context || "",
+      audience: prompt.audience || "",
+      tasks: prompt.tasks || "",
+      instructions: prompt.instructions || "",
+      empathy: prompt.empathy || "",
+      clarification: prompt.clarification || "",
+      refinement: prompt.refinement || "",
+      boundaries: prompt.boundaries || "",
+      consequences: prompt.consequences || "",
+      example: prompt.example || "",
+      markdown: prompt.markdown || "",
+      date: prompt.date,
+    };
+
+    // Activar modo edición
+    this.isEditMode = true;
+
+    // Mostrar indicador de modo edición
+    const editIndicator = document.getElementById("edit-mode-indicator");
+    const editingName = document.getElementById("editing-prompt-name");
+    if (editIndicator && editingName) {
+      editingName.textContent = prompt.name;
+      editIndicator.style.display = "block";
+    }
+
+    // Cerrar modales y abrir generador
+    document.getElementById("prompt-details-modal").style.display = "none";
+    document.getElementById("prompt-manager-modal").style.display = "none";
+    document.getElementById("prompt-generator-modal").style.display = "block";
+
+    // Scroll al top del modal
+    const modalContent = document.querySelector(
+      "#prompt-generator-modal .modal-content",
+    );
+    if (modalContent) modalContent.scrollTop = 0;
+  }
+};
+
+MSNAI.prototype.cancelEditMode = function () {
+  this.isEditMode = false;
+  this.currentPromptId = null;
+
+  // Ocultar indicador de modo edición
+  const editIndicator = document.getElementById("edit-mode-indicator");
+  if (editIndicator) {
+    editIndicator.style.display = "none";
+  }
+
+  // Limpiar formulario
+  const fields = [
+    "role",
+    "context",
+    "audience",
+    "tasks",
+    "instructions",
+    "empathy",
+    "clarification",
+    "refinement",
+    "boundaries",
+    "consequences",
+    "example",
+  ];
+  fields.forEach((field) => {
+    const element = document.getElementById(field);
+    if (element) {
+      element.value = "";
+    }
+  });
+
+  // Notificación
+  const notification = document.createElement("div");
+  notification.className = "notification info show";
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">ℹ️</span>
+      <span class="notification-text">${this.t("prompt_manager.edit_cancelled") || "Edición cancelada"}</span>
+      <button class="notification-close">×</button>
+    </div>
+  `;
+
+  const container = document.getElementById("notification-container");
+  if (container) {
+    container.appendChild(notification);
+    setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => notification.remove(), 300);
+    }, 2000);
+    notification
+      .querySelector(".notification-close")
+      .addEventListener("click", () => {
+        notification.classList.remove("show");
+        setTimeout(() => notification.remove(), 300);
+      });
+  }
+};
+
+MSNAI.prototype.deletePromptFromDetails = function () {
+  if (!this.currentPromptId) return;
+
+  if (!confirm(this.t("prompt_manager.delete_confirm"))) return;
+
+  let prompts = JSON.parse(localStorage.getItem("msnai-saved-prompts") || "[]");
+  prompts = prompts.filter((p) => p.id !== this.currentPromptId);
+  localStorage.setItem("msnai-saved-prompts", JSON.stringify(prompts));
+
+  document.getElementById("prompt-details-modal").style.display = "none";
+  this.loadSavedPrompts();
+  this.showNotification(this.t("prompt_manager.delete_success"), "success");
+  this.currentPromptId = null;
+};
+
+MSNAI.prototype.usePrompt = function (promptId) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => p.id === promptId);
+
+  if (prompt) {
+    const messageInput = document.getElementById("message-input");
+    messageInput.value = prompt.markdown;
+    messageInput.focus();
+    document.getElementById("prompt-manager-modal").style.display = "none";
+    this.showNotification(this.t("prompt_generator.copy_success"), "success");
+  }
+};
+
+MSNAI.prototype.deletePrompt = function (promptId) {
+  if (!confirm(this.t("prompt_manager.delete_confirm"))) return;
+
+  let prompts = JSON.parse(localStorage.getItem("msnai-saved-prompts") || "[]");
+  prompts = prompts.filter((p) => p.id !== promptId);
+  localStorage.setItem("msnai-saved-prompts", JSON.stringify(prompts));
+  this.loadSavedPrompts();
+  this.showNotification(this.t("prompt_manager.delete_success"), "success");
+};
+
+MSNAI.prototype.exportSinglePrompt = function (promptId) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => p.id === promptId);
+
+  if (prompt) {
+    const blob = new Blob([JSON.stringify([prompt], null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `prompt-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showNotification(this.t("prompt_manager.export_success"), "success");
+  }
+};
+
+MSNAI.prototype.exportAllPrompts = function () {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+
+  if (prompts.length === 0) {
+    this.showNotification(this.t("prompt_manager.no_export"), "info");
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(prompts, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `all-prompts-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  this.showNotification(this.t("prompt_manager.export_success"), "success");
+};
+
+MSNAI.prototype.importPrompts = function (file) {
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const importedPrompts = JSON.parse(e.target.result);
+      let existingPrompts = JSON.parse(
+        localStorage.getItem("msnai-saved-prompts") || "[]",
+      );
+
+      existingPrompts = existingPrompts.concat(importedPrompts);
+      localStorage.setItem(
+        "msnai-saved-prompts",
+        JSON.stringify(existingPrompts),
+      );
+
+      this.loadSavedPrompts();
+      this.showNotification(this.t("prompt_manager.import_success"), "success");
+    } catch (error) {
+      console.error("Error al importar prompts:", error);
+      this.showNotification("Error al importar prompts", "error");
+    }
+  };
+  reader.readAsText(file);
+};
+
+MSNAI.prototype.deleteAllPrompts = function () {
+  localStorage.removeItem("msnai-saved-prompts");
+  this.loadSavedPrompts();
+  this.showNotification("Todos los prompts han sido eliminados", "success");
+};
+
+MSNAI.prototype.searchPrompts = function (query) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const filtered = query
+    ? prompts.filter(
+        (p) =>
+          p.name.toLowerCase().includes(query.toLowerCase()) ||
+          p.description?.toLowerCase().includes(query.toLowerCase()) ||
+          p.category?.toLowerCase().includes(query.toLowerCase()),
+      )
+    : prompts;
+
+  const container = document.getElementById("saved-prompts-list");
+  const countEl = document.getElementById("prompts-count");
+
+  const countText =
+    this.t("prompt_manager.prompts_found") || "{count} prompts encontrados";
+  countEl.textContent = countText.replace("{count}", filtered.length);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+        <h4>${this.t("prompt_manager.no_results")}</h4>
+        <p>${this.t("prompt_manager.try_another_search")}</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered
+    .map((prompt) => this.createPromptCard(prompt))
+    .join("");
+};
+
+MSNAI.prototype.filterByCategory = function (category) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const filtered = category
+    ? prompts.filter((p) => p.category === category)
+    : prompts;
+
+  const container = document.getElementById("saved-prompts-list");
+  const countEl = document.getElementById("prompts-count");
+
+  const countText =
+    this.t("prompt_manager.prompts_in_category") ||
+    "{count} prompts en esta categoría";
+  countEl.textContent = countText.replace("{count}", filtered.length);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">
+        <h4>${this.t("prompt_manager.no_prompts_in_category")}</h4>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = filtered
+    .map((prompt) => this.createPromptCard(prompt))
+    .join("");
+};
+
+MSNAI.prototype.hideAllModals = function () {
+  const modals = document.querySelectorAll(".modal");
+  modals.forEach((modal) => {
+    modal.style.display = "none";
+  });
+};
