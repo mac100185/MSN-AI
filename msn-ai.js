@@ -1430,6 +1430,9 @@ class MSNAI {
     this.abortControllers[chatId] = new AbortController();
     this.respondingChats.add(chatId);
 
+    // Actualizar UI para mostrar indicador visual en el título del chat
+    this.updateChatTitleRespondingState(chatId, true);
+
     // Inicializar acumulador de respuesta para este chat
     this.accumulatedResponses[chatId] = "";
 
@@ -1522,6 +1525,9 @@ class MSNAI {
       delete this.abortControllers[chatId];
       delete this.accumulatedResponses[chatId];
 
+      // Actualizar UI para remover indicador visual del título del chat
+      this.updateChatTitleRespondingState(chatId, false);
+
       // Marcar como no leído si no es el chat actual
       if (this.currentChatId !== chatId) {
         this.unreadChats.add(chatId);
@@ -1545,6 +1551,21 @@ class MSNAI {
       stopBtn.style.display = this.respondingChats.has(this.currentChatId)
         ? "inline-block"
         : "none";
+    }
+  }
+
+  updateChatTitleRespondingState(chatId, isResponding) {
+    // Buscar el elemento del chat en la lista
+    const chatElement = document.querySelector(`[data-chat-id="${chatId}"]`);
+    if (chatElement) {
+      const titleDiv = chatElement.querySelector(".chat-title");
+      if (titleDiv) {
+        if (isResponding) {
+          titleDiv.classList.add("ai-responding");
+        } else {
+          titleDiv.classList.remove("ai-responding");
+        }
+      }
     }
   }
 
@@ -1875,6 +1896,11 @@ class MSNAI {
     const titleDiv = document.createElement("div");
     titleDiv.className = "chat-title";
     titleDiv.textContent = chat.title;
+
+    // Agregar clase de parpadeo si la IA está respondiendo en este chat
+    if (this.respondingChats.has(chat.id)) {
+      titleDiv.classList.add("ai-responding");
+    }
 
     // Resaltar en verde si no está leído
     if (this.unreadChats.has(chat.id)) {

@@ -363,6 +363,21 @@ a {
     pointer-events: auto;
 }
 
+.chat-title.ai-responding {
+    color: #0066cc;
+    animation: titleBlink 1.5s ease-in-out infinite;
+}
+
+@keyframes titleBlink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
 .chat-title-edit {
     font-weight: bold;
     margin: 0;
