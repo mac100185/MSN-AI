@@ -101,7 +101,7 @@ function Test-Ollama {
             Write-Host ""
             Write-Host "============================================" -ForegroundColor Yellow
             Write-Host ""
-            
+
             $continue = Read-Host "Ya instalaste Ollama y abriste una nueva PowerShell? (s/n)"
             if ($continue -ne "s" -and $continue -ne "S") {
                 Write-Host ""
@@ -110,7 +110,7 @@ function Test-Ollama {
                 Read-Host "Presiona Enter para salir"
                 exit 0
             }
-            
+
             # Re-verificar si Ollama esta disponible ahora
             if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
                 Write-Host ""
@@ -184,9 +184,9 @@ function Test-Ollama {
                 Write-Host "NOTA: Esto puede tardar varios minutos dependiendo de tu conexion" -ForegroundColor Yellow
                 Write-Host "      El modelo pesa aproximadamente 4.1 GB" -ForegroundColor Yellow
                 Write-Host ""
-                
+
                 & ollama pull mistral:7b
-                
+
                 if ($LASTEXITCODE -eq 0) {
                     Write-Host ""
                     Write-Host "Modelo instalado correctamente" -ForegroundColor Green
@@ -220,34 +220,64 @@ function Test-Ollama {
     return $true
 }
 
-# Funcion para detectar navegador
+# Funcion para detectar navegador por defecto del sistema
 function Find-Browser {
-    Write-Host "Detectando navegador..." -ForegroundColor Cyan
+    Write-Host "Detectando navegador por defecto del sistema..." -ForegroundColor Cyan
 
+    # Intentar obtener el navegador por defecto desde el registro
+    try {
+        $defaultBrowser = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice" -ErrorAction SilentlyContinue
+        if ($defaultBrowser) {
+            Write-Host "Usando navegador por defecto del sistema" -ForegroundColor Green
+            $script:BrowserName = "Default"
+            $script:BrowserPath = ""
+            return $true
+        }
+    }
+    catch {
+        # Si falla, continuar con la detección manual
+    }
+
+    # Lista de navegadores comunes para verificar si existen
     $browsers = @(
+        @{Name="Edge"; Path="C:\Program Files\Microsoft\Edge\Application\msedge.exe"},
+        @{Name="Edge"; Path="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"},
         @{Name="Chrome"; Path="C:\Program Files\Google\Chrome\Application\chrome.exe"},
         @{Name="Chrome"; Path="C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"},
-        @{Name="Edge"; Path="C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"},
-        @{Name="Edge"; Path="C:\Program Files\Microsoft\Edge\Application\msedge.exe"},
         @{Name="Firefox"; Path="C:\Program Files\Mozilla Firefox\firefox.exe"},
         @{Name="Firefox"; Path="C:\Program Files (x86)\Mozilla Firefox\firefox.exe"},
         @{Name="Brave"; Path="C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"},
         @{Name="Opera"; Path="C:\Program Files\Opera\launcher.exe"}
     )
 
+    $foundBrowsers = @()
     foreach ($browser in $browsers) {
         if (Test-Path $browser.Path) {
-            $script:BrowserName = $browser.Name
-            $script:BrowserPath = $browser.Path
-            Write-Host "Navegador encontrado: $($browser.Name)" -ForegroundColor Green
-            return $true
+            $foundBrowsers += $browser
         }
     }
 
-    $script:BrowserName = "Default"
-    $script:BrowserPath = ""
-    Write-Host "Usando navegador por defecto del sistema" -ForegroundColor Yellow
-    return $true
+    # Si se encontró más de un navegador, usar el navegador por defecto del sistema
+    if ($foundBrowsers.Count -gt 1) {
+        Write-Host "Multiples navegadores detectados. Usando navegador por defecto del sistema" -ForegroundColor Yellow
+        $script:BrowserName = "Default"
+        $script:BrowserPath = ""
+        return $true
+    }
+    # Si solo hay uno, usarlo
+    elseif ($foundBrowsers.Count -eq 1) {
+        $script:BrowserName = $foundBrowsers[0].Name
+        $script:BrowserPath = $foundBrowsers[0].Path
+        Write-Host "Navegador encontrado: $($foundBrowsers[0].Name)" -ForegroundColor Green
+        return $true
+    }
+    # Si no se encontró ninguno, usar el por defecto
+    else {
+        $script:BrowserName = "Default"
+        $script:BrowserPath = ""
+        Write-Host "Usando navegador por defecto del sistema" -ForegroundColor Yellow
+        return $true
+    }
 }
 
 # Funcion para verificar si un puerto esta disponible
@@ -295,7 +325,7 @@ function Start-WebServer {
 
             # Iniciar servidor Python sin capturar salidas (para evitar bloqueos)
             $script:ServerProcess = Start-Process -FilePath $pythonCmd -ArgumentList "-m","http.server","$script:ServerPort" -PassThru -WindowStyle Hidden
-            
+
             # Esperar mas tiempo para que el servidor se inicie completamente
             Write-Host "Esperando a que el servidor se inicie..." -ForegroundColor Yellow
             Start-Sleep -Seconds 5
@@ -306,7 +336,7 @@ function Start-WebServer {
                 try {
                     $testUrl = "http://localhost:$script:ServerPort"
                     $response = Invoke-WebRequest -Uri $testUrl -UseBasicParsing -TimeoutSec 5 -ErrorAction Stop
-                    
+
                     if ($response.StatusCode -eq 200) {
                         $script:ServerUrl = $testUrl
                         Write-Host "Servidor HTTP verificado y funcionando correctamente" -ForegroundColor Green
@@ -565,7 +595,7 @@ switch ($method) {
         Write-Host "============================================"
         Write-Host ""
         Write-Host "MSN-AI: Archivo principal encontrado" -ForegroundColor Green
-        
+
         if ($ollamaOk) {
             Write-Host "Ollama: Instalado y funcionando" -ForegroundColor Green
         }
@@ -573,7 +603,7 @@ switch ($method) {
             Write-Host "Ollama: No disponible" -ForegroundColor Red
             Write-Host "  Instala desde: https://ollama.com/download" -ForegroundColor Yellow
         }
-        
+
         if (Get-Command python -ErrorAction SilentlyContinue) {
             $pythonVersion = python --version 2>&1
             Write-Host "Python: $pythonVersion" -ForegroundColor Green
@@ -582,7 +612,7 @@ switch ($method) {
             Write-Host "Python: No instalado" -ForegroundColor Yellow
             Write-Host "  Instala desde: https://www.python.org/downloads/" -ForegroundColor Yellow
         }
-        
+
         Write-Host "Navegador: $script:BrowserName detectado" -ForegroundColor Green
         Write-Host ""
         Write-Host "Para iniciar MSN-AI:" -ForegroundColor Cyan
@@ -597,7 +627,7 @@ switch ($method) {
             Write-Host "      No podras usar las funciones de chat con IA" -ForegroundColor Yellow
             Write-Host ""
         }
-        
+
         Read-Host "Presiona Enter para salir"
     }
 

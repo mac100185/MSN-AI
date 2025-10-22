@@ -9,6 +9,35 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 
 ---
 
+## [No Publicado]
+
+### ✨ Añadido
+
+#### 🖥️ Accesos Directos de Escritorio
+- **Script de acceso directo para Linux** (`create-desktop-shortcut.sh`)
+  - Crea archivo `.desktop` en el escritorio automáticamente
+  - Lanzador compatible con GNOME, KDE, XFCE y otros entornos
+  - Detección automática del directorio Desktop/Escritorio
+  - Configuración de iconos y permisos automática
+  - Integración con el sistema de aplicaciones de Linux
+  
+- **Script de acceso directo para macOS** (`create-desktop-shortcut-mac.sh`)
+  - Crea aplicación `.app` nativa en el escritorio
+  - Integración completa con el sistema macOS
+  - Conversión automática de icono PNG a ICNS
+  - Abre Terminal automáticamente al ejecutar
+  - Manejo de permisos y seguridad de macOS
+
+- **Características comunes de ambos scripts**
+  - Instalación de un solo comando
+  - Verificaciones de integridad del proyecto
+  - Modo interactivo con confirmaciones
+  - Prueba del acceso directo después de crearlo
+  - Instrucciones detalladas de uso
+  - Manejo de errores con soluciones alternativas
+
+---
+
 ## [2.1.0] - 2025-10-19
 
 ### 🎯 Instalación Simplificada (MAJOR)

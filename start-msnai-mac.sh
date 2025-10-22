@@ -93,24 +93,53 @@ check_ollama() {
 
 # Función para detectar navegador
 detect_browser() {
-    echo "🌐 Detectando navegador..."
+    echo "🌐 Detectando navegador por defecto del sistema..."
 
     # Detectar navegadores comunes en macOS
+    FOUND_BROWSERS=0
+
     if [ -d "/Applications/Google Chrome.app" ]; then
+        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+    fi
+
+    if [ -d "/Applications/Microsoft Edge.app" ]; then
+        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+    fi
+
+    if [ -d "/Applications/Firefox.app" ]; then
+        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+    fi
+
+    if [ -d "/Applications/Safari.app" ]; then
+        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+    fi
+
+    # Si hay múltiples navegadores, usar el navegador por defecto del sistema
+    if [ $FOUND_BROWSERS -gt 1 ]; then
+        echo "✅ Múltiples navegadores detectados. Usando navegador por defecto del sistema"
+        BROWSER="open"
+        BROWSER_NAME="Default"
+    elif [ -d "/Applications/Google Chrome.app" ]; then
         BROWSER="open -a 'Google Chrome'"
         BROWSER_NAME="Chrome"
+        echo "✅ Navegador detectado: Chrome"
+    elif [ -d "/Applications/Microsoft Edge.app" ]; then
+        BROWSER="open -a 'Microsoft Edge'"
+        BROWSER_NAME="Edge"
+        echo "✅ Navegador detectado: Edge"
     elif [ -d "/Applications/Firefox.app" ]; then
         BROWSER="open -a Firefox"
         BROWSER_NAME="Firefox"
+        echo "✅ Navegador detectado: Firefox"
     elif [ -d "/Applications/Safari.app" ]; then
         BROWSER="open -a Safari"
         BROWSER_NAME="Safari"
+        echo "✅ Navegador detectado: Safari"
     else
         BROWSER="open"
         BROWSER_NAME="Default"
+        echo "✅ Usando navegador por defecto del sistema"
     fi
-
-    echo "✅ Navegador seleccionado: $BROWSER_NAME"
 }
 
 # Función para iniciar servidor web local
@@ -182,22 +211,31 @@ open_app() {
 
     if [ -n "$url" ]; then
         # Abrir URL del servidor
-        case $BROWSER_NAME in
-            "Chrome")
-                open -a "Google Chrome" "$url/msn-ai.html"
-                ;;
-            "Firefox")
-                open -a Firefox "$url/msn-ai.html"
-                ;;
-            "Safari")
-                open -a Safari "$url/msn-ai.html"
-                ;;
-            *)
-                open "$url/msn-ai.html"
-                ;;
-        esac
+        if [ "$BROWSER_NAME" = "Default" ]; then
+            # Usar navegador por defecto del sistema
+            open "$url/msn-ai.html"
+        else
+            # Usar navegador específico detectado
+            case $BROWSER_NAME in
+                "Chrome")
+                    open -a "Google Chrome" "$url/msn-ai.html"
+                    ;;
+                "Edge")
+                    open -a "Microsoft Edge" "$url/msn-ai.html"
+                    ;;
+                "Firefox")
+                    open -a Firefox "$url/msn-ai.html"
+                    ;;
+                "Safari")
+                    open -a Safari "$url/msn-ai.html"
+                    ;;
+                *)
+                    open "$url/msn-ai.html"
+                    ;;
+            esac
+        fi
     else
-        # Abrir archivo directamente
+        # Abrir archivo directamente (siempre usa navegador por defecto)
         open "file://$(pwd)/msn-ai.html"
     fi
 

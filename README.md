@@ -87,6 +87,11 @@ cd MSN-AI
 
 # 4. Iniciar aplicación
 ./start-msnai.sh --auto
+
+# 5. (RECOMENDADO) Crear acceso directo en el escritorio
+./create-desktop-shortcut.sh
+# Esto crea un acceso directo "MSN-AI" en tu escritorio
+# Podrás iniciar MSN-AI con solo hacer doble clic
 ```
 
 #### 🪟 Windows
@@ -134,6 +139,11 @@ chmod +x *.sh
 
 # 4. Iniciar aplicación
 ./start-msnai-mac.sh --auto
+
+# 5. (RECOMENDADO) Crear acceso directo en el escritorio
+./create-desktop-shortcut-mac.sh
+# Esto crea una aplicación "MSN-AI.app" en tu escritorio
+# Podrás iniciar MSN-AI con solo hacer doble clic
 ```
 
 ### 3. ¡Disfruta!

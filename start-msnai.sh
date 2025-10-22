@@ -93,20 +93,52 @@ check_ollama() {
 
 # Función para detectar navegador
 detect_browser() {
-    echo "🌐 Detectando navegador..."
+    echo "🌐 Detectando navegador por defecto del sistema..."
 
     # Detectar SO
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-        # Linux
+        # Linux - Contar navegadores disponibles
+        FOUND_BROWSERS=0
+
         if command -v firefox &> /dev/null; then
-            BROWSER="firefox"
-        elif command -v google-chrome &> /dev/null; then
-            BROWSER="google-chrome"
-        elif command -v chromium-browser &> /dev/null; then
-            BROWSER="chromium-browser"
-        elif command -v google-chrome-stable &> /dev/null; then
-            BROWSER="google-chrome-stable"
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            FIRST_BROWSER="firefox"
+        fi
+
+        if command -v microsoft-edge &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="microsoft-edge"
+        fi
+
+        if command -v microsoft-edge-stable &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="microsoft-edge-stable"
+        fi
+
+        if command -v google-chrome &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="google-chrome"
+        fi
+
+        if command -v chromium-browser &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="chromium-browser"
+        fi
+
+        if command -v google-chrome-stable &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="google-chrome-stable"
+        fi
+
+        # Si hay múltiples navegadores, usar el navegador por defecto
+        if [ $FOUND_BROWSERS -gt 1 ]; then
+            echo "✅ Múltiples navegadores detectados. Usando navegador por defecto del sistema"
+            BROWSER="xdg-open"
+        elif [ $FOUND_BROWSERS -eq 1 ]; then
+            echo "✅ Navegador detectado: $FIRST_BROWSER"
+            BROWSER="$FIRST_BROWSER"
         else
+            echo "✅ Usando navegador por defecto del sistema"
             BROWSER="xdg-open"
         fi
     elif [[ "$OSTYPE" == "darwin"* ]]; then
@@ -119,8 +151,6 @@ detect_browser() {
         echo "⚠️  Sistema operativo no detectado"
         BROWSER="xdg-open"
     fi
-
-    echo "✅ Navegador seleccionado: $BROWSER"
 }
 
 # Función para iniciar servidor web local
@@ -187,48 +217,54 @@ open_app() {
 
     if [ -n "$url" ]; then
         # Abrir URL del servidor
-        case $BROWSER in
-            "firefox")
-                firefox "$url/msn-ai.html" &
-                ;;
-            "google-chrome"|"google-chrome-stable")
-                $BROWSER --new-window "$url/msn-ai.html" &
-                ;;
-            "chromium-browser")
-                chromium-browser --new-window "$url/msn-ai.html" &
-                ;;
-            "open")
-                open "$url/msn-ai.html"
-                ;;
-            "start")
-                start "$url/msn-ai.html"
-                ;;
-            *)
-                $BROWSER "$url/msn-ai.html" &
-                ;;
-        esac
+        if [ "$BROWSER" = "xdg-open" ] || [ "$BROWSER" = "open" ] || [ "$BROWSER" = "start" ]; then
+            # Usar navegador por defecto del sistema
+            $BROWSER "$url/msn-ai.html" &
+        else
+            # Usar navegador específico detectado
+            case $BROWSER in
+                "firefox")
+                    firefox "$url/msn-ai.html" &
+                    ;;
+                "microsoft-edge"|"microsoft-edge-stable")
+                    $BROWSER --new-window "$url/msn-ai.html" &
+                    ;;
+                "google-chrome"|"google-chrome-stable")
+                    $BROWSER --new-window "$url/msn-ai.html" &
+                    ;;
+                "chromium-browser")
+                    chromium-browser --new-window "$url/msn-ai.html" &
+                    ;;
+                *)
+                    $BROWSER "$url/msn-ai.html" &
+                    ;;
+            esac
+        fi
     else
         # Abrir archivo directamente
-        case $BROWSER in
-            "firefox")
-                firefox "file://$(pwd)/msn-ai.html" &
-                ;;
-            "google-chrome"|"google-chrome-stable")
-                $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
-                ;;
-            "chromium-browser")
-                chromium-browser --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
-                ;;
-            "open")
-                open "file://$(pwd)/msn-ai.html"
-                ;;
-            "start")
-                start "file://$(pwd)/msn-ai.html"
-                ;;
-            *)
-                $BROWSER "file://$(pwd)/msn-ai.html" &
-                ;;
-        esac
+        if [ "$BROWSER" = "xdg-open" ] || [ "$BROWSER" = "open" ] || [ "$BROWSER" = "start" ]; then
+            # Usar navegador por defecto del sistema
+            $BROWSER "file://$(pwd)/msn-ai.html" &
+        else
+            # Usar navegador específico detectado
+            case $BROWSER in
+                "firefox")
+                    firefox "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "microsoft-edge"|"microsoft-edge-stable")
+                    $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "google-chrome"|"google-chrome-stable")
+                    $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "chromium-browser")
+                    chromium-browser --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                *)
+                    $BROWSER "file://$(pwd)/msn-ai.html" &
+                    ;;
+            esac
+        fi
     fi
 
     echo "✅ MSN-AI abierto en el navegador"
