@@ -63,8 +63,8 @@
             <div id="chats-nav">
                 <ul class="iconbar" id="left">
                     <button class="aerobutton chataction" id="new-chat-btn" data-i18n-title="tooltips.new_chat" title="Nuevo Chat" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="import-btn" data-i18n-title="tooltips.export_import" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
-                    <button class="aerobutton chataction" id="export-btn" data-i18n-title="tooltips.export_import" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="import-btn" data-i18n-title="tooltips.chats_import" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="export-btn" data-i18n-title="tooltips.chats_export" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
                 </ul>
                 <ul class="iconbar" id="right">
                     <button class="aerobutton chataction smallarrowbtn" id="settings-btn" data-i18n-title="tooltips.settings" title="Configuración del modelo IA">
@@ -106,13 +106,19 @@
                 </div>
                 <div id="chat-navbars">
                     <ul class="chatnav" id="left">
+                        <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                         <button class="aerobutton chat-nav-action" id="decrease-font-size-btn" data-i18n-title="tooltips.decrease_font" title="Disminuir tamaño del texto" style="background:url(assets/chat-window/1402.png) no-repeat center;"></button>
                         <button class="aerobutton chat-nav-action" id="increase-font-size-btn" data-i18n-title="tooltips.increase_font" title="Aumentar tamaño del texto" style="background:url(assets/chat-window/1401.png) no-repeat center;"></button>
+                        <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                         <button class="aerobutton chat-nav-action" id="upload-text-file-btn" data-i18n-title="tooltips.upload_file" title="Subir archivo de texto" style="background:url(assets/chat-window/1403.png) no-repeat center;"></button>
+                        <button class="aerobutton chat-nav-action" id="upload-pdf-file-btn" data-i18n-title="tooltips.upload_pdf_file" title="Subir archivo PDF" style="background:url(assets/chat-window/1408.png) no-repeat center;"></button>
+                        <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                         <button class="aerobutton chat-nav-action" id="export-current-chat-btn" data-i18n-title="tooltips.export_chat" title="Exportar chat actual" style="background:url(assets/chat-window/1404.png) no-repeat center;"></button>
                         <button class="aerobutton chat-nav-action" id="print-current-chat-btn" data-i18n-title="tooltips.print_chat" title="Imprimir chat actual" style="background:url(assets/chat-window/1405.png) no-repeat center;"></button>
+                        <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                         <button class="aerobutton chat-nav-action" id="search-current-chat-btn" data-i18n-title="tooltips.search_chat" title="Buscar en el chat actual" style="background:url(assets/chat-window/1406.png) no-repeat center;"></button>
                         <button class="aerobutton chat-nav-action" id="close-current-chat-btn" data-i18n-title="tooltips.close_chat" title="Cerrar chat" style="background:url(assets/chat-window/326.png) no-repeat center;"></button>
+                        <button class="textoption" style="background: url(assets/chat-window/20204.png) no-repeat center; border: none;"></button>
                     </ul>
                     <ul class="chatnav" id="right">
                         <button class="aerobutton chat-nav-action smallarrowbtn" id="info-btn" data-i18n-title="menu.info" title="Información">
@@ -810,6 +816,10 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.5/dist/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.10.0/build/highlight.min.js"></script>
+
+    <!-- Librerías para procesamiento de PDFs -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.0.4/dist/tesseract.min.js"></script>
 
     <script src="msn-ai.js"></script>
 

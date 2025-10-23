@@ -61,6 +61,7 @@
     "emoticon_love": "Love emoticons",
     "voice_input": "Voice Dictation",
     "upload_file": "Attach Text File",
+    "upload_pdf_file": "Attach PDF File",
     "text_format": "Text Format (Bold, Italic, Underline)",
     "generate_prompt": "Prompt Generator - Create structured prompts",
     "manage_prompts": "Prompt Manager - Manage saved prompts",
@@ -311,8 +312,17 @@
     "select_valid_json": "Please select a valid JSON file",
     "only_txt_files": "Only .txt files are allowed",
     "select_text_to_format": "Select text to format",
-    "voice_not_supported": "Your browser doesn't support voice recognition.",
-    "close_chat_confirm": "Close this chat and create a new one?"
+    "voice_not_supported": "Your browser does not support voice recognition.",
+    "close_chat_confirm": "Close this chat and create a new one?",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
 
   "connection": {
@@ -331,5 +341,19 @@
     "bold": "Bold",
     "italic": "Italic",
     "underline": "Underline"
+  },
+
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

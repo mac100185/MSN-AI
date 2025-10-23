@@ -56,6 +56,7 @@
     "emoticon_love": "Liebes-Emoticons",
     "voice_input": "Spracheingabe",
     "upload_file": "Textdatei anhängen",
+    "upload_pdf_file": "PDF-Datei anhängen",
     "text_format": "Textformat (Fett, Kursiv, Unterstrichen)",
     "generate_prompt": "Prompt-Generator - Erstellen Sie strukturierte Prompts",
     "manage_prompts": "Prompt-Manager - Verwalten Sie gespeicherte Prompts",
@@ -293,7 +294,16 @@
     "only_txt_files": "Nur .txt-Dateien sind erlaubt",
     "select_text_to_format": "Wählen Sie Text zum Formatieren aus",
     "voice_not_supported": "Ihr Browser unterstützt keine Spracherkennung.",
-    "close_chat_confirm": "Diesen Chat schließen und einen neuen erstellen?"
+    "close_chat_confirm": "Diesen Chat schließen und einen neuen erstellen?",
+    "only_pdf_files": "Nur PDF-Dateien (.pdf) sind erlaubt",
+    "pdf_too_large": "Die PDF-Datei ist zu groß. Maximum erlaubt: 25 MB",
+    "pdf_processing": "PDF wird verarbeitet...",
+    "pdf_extracting_text": "Text wird aus PDF extrahiert...",
+    "pdf_ocr_processing": "OCR wird auf PDF angewendet (dies kann dauern)...",
+    "pdf_loaded": "PDF geladen: {filename}",
+    "pdf_error": "Fehler beim Verarbeiten der PDF: {error}",
+    "pdf_no_text": "Text konnte nicht aus PDF extrahiert werden. Versuchen Sie eine andere Datei.",
+    "pdf_attached": "PDF angehängt: {filename} ({pages} Seiten)"
   },
   "connection": {
     "status": "Verbindungsstatus:",
@@ -310,5 +320,19 @@
     "bold": "Fett",
     "italic": "Kursiv",
     "underline": "Unterstrichen"
+  },
+
+  "pdf": {
+    "processing": "PDF wird verarbeitet...",
+    "extracting": "Text wird extrahiert...",
+    "ocr_processing": "OCR wird angewendet (Seite {current} von {total})...",
+    "loaded": "PDF erfolgreich geladen",
+    "error": "Fehler beim Verarbeiten der PDF",
+    "no_text": "Text konnte nicht aus PDF extrahiert werden",
+    "too_large": "Datei zu groß (max. 25 MB)",
+    "invalid_file": "Ungültige PDF-Datei",
+    "pages": "Seiten",
+    "attached": "PDF angehängt",
+    "context_active": "PDF-Kontext aktiv ({pages} Seiten)"
   }
 }

@@ -11,6 +11,8 @@ class MSNAI {
     this.fontSize = 14;
     this.chatSortOrder = "asc"; // valor inicial: ascendente
     this.pendingFileAttachment = null;
+    this.pendingPdfContext = null; // Contexto PDF temporal (no se guarda en historial)
+    this.userScrolledUp = false; // Flag para detectar si el usuario hizo scroll manual
     this.abortControllers = {}; // Mapa de controladores por chatId
     this.respondingChats = new Set(); // Set de chatIds que están recibiendo respuesta
     this.wasAborted = false; // Flag para saber si se abortó la última respuesta
@@ -1048,6 +1050,214 @@ class MSNAI {
     input.click();
   }
 
+  // =================== CARGA Y PROCESAMIENTO DE ARCHIVOS PDF ===================
+
+  /**
+   * Abre diálogo para cargar archivo PDF y lo procesa
+   */
+  uploadPdfFile() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,application/pdf";
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Validar tipo de archivo
+      if (
+        !file.name.toLowerCase().endsWith(".pdf") &&
+        file.type !== "application/pdf"
+      ) {
+        this.showNotification(this.t("errors.only_pdf_files"), "error");
+        return;
+      }
+
+      // Validar tamaño (máximo 25 MB)
+      const maxSize = 25 * 1024 * 1024; // 25 MB en bytes
+      if (file.size > maxSize) {
+        this.showNotification(this.t("errors.pdf_too_large"), "error");
+        return;
+      }
+
+      // Mostrar indicador de procesamiento
+      this.showNotification(this.t("errors.pdf_processing"), "info");
+
+      try {
+        const pdfData = await this.processPdfFile(file);
+
+        if (!pdfData.text || pdfData.text.trim().length === 0) {
+          this.showNotification(this.t("errors.pdf_no_text"), "error");
+          return;
+        }
+
+        // Guardar contexto PDF temporalmente (no en historial)
+        this.pendingPdfContext = {
+          name: file.name,
+          text: pdfData.text,
+          pages: pdfData.numPages,
+          chunks: this.chunkPdfText(pdfData.text, 6000), // Fragmentar en chunks de ~6000 tokens
+        };
+
+        // Actualizar input con indicador visual
+        const inputEl = document.getElementById("message-input");
+        const currentMsg = inputEl.value.trim();
+        inputEl.value = `${currentMsg ? currentMsg + " " : ""}[PDF: ${file.name} - ${pdfData.numPages} ${this.t("pdf.pages")}]`;
+        inputEl.focus();
+
+        this.showNotification(
+          this.t("errors.pdf_loaded", { filename: file.name }),
+          "success",
+        );
+      } catch (error) {
+        console.error("Error procesando PDF:", error);
+        this.showNotification(
+          this.t("errors.pdf_error", { error: error.message }),
+          "error",
+        );
+      }
+    };
+    input.click();
+  }
+
+  /**
+   * Procesa un archivo PDF y extrae el texto
+   * @param {File} file - Archivo PDF
+   * @returns {Promise<{text: string, numPages: number}>}
+   */
+  async processPdfFile(file) {
+    // Configurar PDF.js worker
+    if (typeof pdfjsLib !== "undefined") {
+      pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    let extractedText = "";
+    let numPages = 0;
+
+    try {
+      // Intentar extraer texto con PDF.js (para PDFs con texto real)
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      numPages = pdf.numPages;
+
+      this.showNotification(this.t("errors.pdf_extracting_text"), "info");
+
+      for (let i = 1; i <= numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item) => item.str).join(" ");
+        extractedText += pageText + "\n\n";
+      }
+
+      // Si no se extrajo suficiente texto, intentar OCR
+      if (extractedText.trim().length < 100) {
+        console.log("Poco texto extraído, aplicando OCR...");
+        extractedText = await this.applyOcrToPdf(arrayBuffer, numPages);
+      }
+    } catch (error) {
+      console.error("Error con PDF.js, intentando OCR:", error);
+      // Si falla PDF.js, intentar OCR directamente
+      try {
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        numPages = pdf.numPages;
+        extractedText = await this.applyOcrToPdf(arrayBuffer, numPages);
+      } catch (ocrError) {
+        throw new Error(this.t("pdf.invalid_file"));
+      }
+    }
+
+    return {
+      text: extractedText.trim(),
+      numPages: numPages,
+    };
+  }
+
+  /**
+   * Aplica OCR a un PDF escaneado
+   * @param {ArrayBuffer} arrayBuffer - Datos del PDF
+   * @param {number} numPages - Número de páginas
+   * @returns {Promise<string>}
+   */
+  async applyOcrToPdf(arrayBuffer, numPages) {
+    if (typeof Tesseract === "undefined") {
+      throw new Error("Tesseract.js no está disponible");
+    }
+
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let ocrText = "";
+
+    for (let i = 1; i <= numPages; i++) {
+      this.showNotification(
+        this.t("errors.pdf_ocr_processing") + ` (${i}/${numPages})`,
+        "info",
+      );
+
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 2.0 });
+
+      // Crear canvas para renderizar la página
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({
+        canvasContext: context,
+        viewport: viewport,
+      }).promise;
+
+      // Aplicar OCR a la imagen del canvas
+      const {
+        data: { text },
+      } = await Tesseract.recognize(
+        canvas.toDataURL(),
+        "spa+eng", // Español e inglés
+        {
+          logger: (info) => {
+            if (info.status === "recognizing text") {
+              console.log(
+                `OCR página ${i}: ${Math.round(info.progress * 100)}%`,
+              );
+            }
+          },
+        },
+      );
+
+      ocrText += text + "\n\n";
+    }
+
+    return ocrText;
+  }
+
+  /**
+   * Fragmenta el texto del PDF en chunks apropiados
+   * @param {string} text - Texto completo del PDF
+   * @param {number} maxTokens - Máximo de tokens por chunk (aproximado)
+   * @returns {Array<string>}
+   */
+  chunkPdfText(text, maxTokens = 6000) {
+    // Estimación: 1 token ≈ 4 caracteres
+    const maxChars = maxTokens * 4;
+    const paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
+    const chunks = [];
+    let currentChunk = "";
+
+    for (const paragraph of paragraphs) {
+      if ((currentChunk + paragraph).length > maxChars && currentChunk) {
+        chunks.push(currentChunk.trim());
+        currentChunk = paragraph;
+      } else {
+        currentChunk += (currentChunk ? "\n\n" : "") + paragraph;
+      }
+    }
+
+    if (currentChunk) {
+      chunks.push(currentChunk.trim());
+    }
+
+    return chunks.length > 0 ? chunks : [text];
+  }
+
   setupTextFormatPicker() {
     const picker = document.getElementById("text-format-picker");
     const btn = document.getElementById("editor-texto-btn");
@@ -1208,6 +1418,9 @@ class MSNAI {
 
     let displayedMessage = message;
     let fileContent = "";
+    let pdfContext = null;
+
+    // Manejar archivo de texto adjunto
     if (this.pendingFileAttachment) {
       const match = message.match(/^(.*?)\s*\[Archivo adjunto: [^\]]+\]$/);
       if (match) {
@@ -1216,9 +1429,19 @@ class MSNAI {
       fileContent = this.pendingFileAttachment.content;
     }
 
+    // Manejar contexto PDF (no se guarda en historial)
+    if (this.pendingPdfContext) {
+      const pdfMatch = message.match(/^(.*?)\s*\[PDF: [^\]]+\]$/);
+      if (pdfMatch) {
+        displayedMessage = pdfMatch[1] || "";
+      }
+      pdfContext = this.pendingPdfContext;
+    }
+
     input.value = "";
     const originalAttachment = this.pendingFileAttachment;
     this.pendingFileAttachment = null;
+    this.pendingPdfContext = null;
 
     const userMessage = {
       type: "user",
@@ -1245,8 +1468,18 @@ class MSNAI {
 
     try {
       let actualMessageToSend = displayedMessage;
+
+      // Construir mensaje con archivo de texto si existe
       if (fileContent) {
         actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${fileContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
+      }
+
+      // Construir contexto con PDF si existe (se pasa por separado)
+      let pdfContextText = null;
+      if (pdfContext) {
+        // Tomar solo los primeros chunks relevantes (máximo 3 para no saturar)
+        const relevantChunks = pdfContext.chunks.slice(0, 3);
+        pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
       }
 
       const onToken = (token) => {
@@ -1264,6 +1497,7 @@ class MSNAI {
         actualMessageToSend,
         chat.id,
         onToken,
+        pdfContextText,
       );
 
       this.playSound("message-in");
@@ -1421,7 +1655,7 @@ class MSNAI {
     return false;
   }
 
-  async sendToAI(message, chatId, onToken) {
+  async sendToAI(message, chatId, onToken, pdfContext = null) {
     if (!this.isConnected) throw new Error(this.t("errors.no_connection"));
     const chat = this.chats.find((c) => c.id === chatId);
     if (!chat) throw new Error(this.t("errors.chat_not_found"));
@@ -1439,6 +1673,7 @@ class MSNAI {
     // Mostrar botón de detener solo si estamos en este chat
     this.updateStopButtonVisibility();
 
+    // Construir contexto del historial (solo últimos 10 mensajes de interacción)
     const context = chat.messages
       .slice(-10)
       .map(
@@ -1446,7 +1681,15 @@ class MSNAI {
           `${msg.type === "user" ? "Usuario" : "Asistente"}: ${msg.content}`,
       )
       .join("\n");
-    const prompt = context ? `${context}\nUsuario: ${message}` : message;
+
+    // Construir prompt: Contexto PDF (si existe) + Historial + Mensaje actual
+    let prompt = "";
+    if (pdfContext) {
+      // El contexto PDF se incluye primero, pero NO cuenta como parte del historial
+      prompt = `${pdfContext}\n\n---\n\nHistorial de conversación:\n${context}\n\nUsuario: ${message}`;
+    } else {
+      prompt = context ? `${context}\nUsuario: ${message}` : message;
+    }
 
     let fullResponse = ""; // Mover fuera del try para que sea accesible en catch
 
@@ -1969,6 +2212,12 @@ class MSNAI {
   // =================== ACTUALIZACIÓN EN RENDERMESSAGES ===================
   renderMessages(chat) {
     const messagesArea = document.getElementById("messages-area");
+
+    // Guardar posición del scroll antes de actualizar
+    const wasAtBottom =
+      messagesArea.scrollHeight - messagesArea.scrollTop <=
+      messagesArea.clientHeight + 50;
+
     messagesArea.innerHTML = "";
 
     chat.messages.forEach((message) => {
@@ -1999,10 +2248,44 @@ class MSNAI {
       messagesArea.appendChild(messageElement);
     });
 
-    messagesArea.scrollTop = messagesArea.scrollHeight;
+    // Scroll inteligente: solo auto-scroll si el usuario estaba al final o no ha scrolleado manualmente
+    if (!this.userScrolledUp || wasAtBottom) {
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
 
     // Configurar event listeners para botones de código
     this.setupCodeBlockButtons();
+  }
+
+  /**
+   * Muestra un botón flotante para volver al final del chat cuando hay nuevos mensajes
+   */
+  showScrollToBottomButton() {
+    // Solo mostrar si el usuario ha scrolleado hacia arriba
+    if (!this.userScrolledUp) return;
+
+    let btn = document.getElementById("scroll-to-bottom-btn");
+    if (!btn) {
+      btn = document.createElement("button");
+      btn.id = "scroll-to-bottom-btn";
+      btn.className = "scroll-to-bottom-btn";
+      btn.innerHTML = "↓ Nuevos mensajes";
+      btn.title = "Ir al final del chat";
+
+      btn.onclick = () => {
+        const messagesArea = document.getElementById("messages-area");
+        if (messagesArea) {
+          messagesArea.scrollTop = messagesArea.scrollHeight;
+          this.userScrolledUp = false;
+          btn.remove();
+        }
+      };
+
+      const chatWindow = document.getElementById("messages-area");
+      if (chatWindow && chatWindow.parentElement) {
+        chatWindow.parentElement.appendChild(btn);
+      }
+    }
   }
 
   /**
@@ -2535,14 +2818,58 @@ class MSNAI {
     document
       .getElementById("send-button")
       .addEventListener("click", () => this.sendMessage());
+    // Manejo mejorado del teclado en el input de mensajes
+    // Soporte para Shift+Enter (nueva línea) y Enter (enviar)
     document
       .getElementById("message-input")
-      .addEventListener("keypress", (e) => {
+      .addEventListener("keydown", (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
           e.preventDefault();
           this.sendMessage();
         }
+        // Shift+Enter permite nueva línea (comportamiento por defecto)
       });
+
+    // Navegación entre chats con Ctrl+K o Cmd+K
+    document.addEventListener("keydown", (e) => {
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
+
+      if (ctrlOrCmd && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const searchInput = document.getElementById("chat-search-input");
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      }
+    });
+
+    // Detectar scroll manual del usuario en el área de mensajes
+    const messagesArea = document.getElementById("messages-area");
+    if (messagesArea) {
+      messagesArea.addEventListener("scroll", () => {
+        const isAtBottom =
+          messagesArea.scrollHeight - messagesArea.scrollTop <=
+          messagesArea.clientHeight + 50;
+        this.userScrolledUp = !isAtBottom;
+
+        // Ocultar el botón "nuevos mensajes" si el usuario vuelve al final
+        if (isAtBottom) {
+          const btn = document.getElementById("scroll-to-bottom-btn");
+          if (btn) btn.remove();
+        } else {
+          // Mostrar botón si hay mensajes nuevos y el usuario está arriba
+          if (
+            this.respondingChats.size > 0 ||
+            this.accumulatedResponses[this.currentChatId]
+          ) {
+            this.showScrollToBottomButton();
+          }
+        }
+      });
+    }
+
     document
       .getElementById("new-chat-btn")
       .addEventListener("click", () => this.createNewChat());
@@ -2718,6 +3045,9 @@ class MSNAI {
     document
       .getElementById("upload-text-file-btn")
       .addEventListener("click", () => this.uploadTextFile());
+    document
+      .getElementById("upload-pdf-file-btn")
+      .addEventListener("click", () => this.uploadPdfFile());
     document
       .getElementById("export-current-chat-btn")
       .addEventListener("click", () => this.exportCurrentChat());
@@ -4315,4 +4645,53 @@ MSNAI.prototype.hideAllModals = function () {
   modals.forEach((modal) => {
     modal.style.display = "none";
   });
+};
+
+/**
+ * Muestra una notificación temporal en pantalla
+ * @param {string} message - Mensaje a mostrar
+ * @param {string} type - Tipo de notificación: 'success', 'error', 'info', 'warning'
+ * @param {number} duration - Duración en milisegundos (por defecto 3000)
+ */
+MSNAI.prototype.showNotification = function (
+  message,
+  type = "info",
+  duration = 3000,
+) {
+  const iconMap = {
+    success: "✅",
+    error: "❌",
+    info: "ℹ️",
+    warning: "⚠️",
+  };
+
+  const notification = document.createElement("div");
+  notification.className = `notification ${type} show`;
+  notification.innerHTML = `
+    <div class="notification-content">
+      <span class="notification-icon">${iconMap[type] || iconMap.info}</span>
+      <span class="notification-text">${message}</span>
+      <button class="notification-close">×</button>
+    </div>
+  `;
+
+  const container = document.getElementById("notification-container");
+  if (container) {
+    container.appendChild(notification);
+
+    // Auto-eliminar después de la duración especificada
+    const autoRemoveTimeout = setTimeout(() => {
+      notification.classList.remove("show");
+      setTimeout(() => notification.remove(), 300);
+    }, duration);
+
+    // Botón de cerrar
+    notification
+      .querySelector(".notification-close")
+      .addEventListener("click", () => {
+        clearTimeout(autoRemoveTimeout);
+        notification.classList.remove("show");
+        setTimeout(() => notification.remove(), 300);
+      });
+  }
 };

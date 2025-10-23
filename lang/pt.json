@@ -56,6 +56,7 @@
     "emoticon_love": "Emoticons de amor",
     "voice_input": "Ditado por voz",
     "upload_file": "Anexar arquivo de texto",
+    "upload_pdf_file": "Anexar arquivo PDF",
     "text_format": "Formato de texto (Negrito, Itálico, Sublinhado)",
     "generate_prompt": "Gerador de Prompt - Criar prompts estruturados",
     "manage_prompts": "Gestor de Prompts - Gerenciar prompts salvos",
@@ -292,8 +293,17 @@
     "select_valid_json": "Por favor selecione um arquivo JSON válido",
     "only_txt_files": "Apenas são permitidos arquivos .txt",
     "select_text_to_format": "Selecione texto para formatar",
-    "voice_not_supported": "O seu navegador não suporta reconhecimento de voz.",
-    "close_chat_confirm": "Fechar este chat e criar um novo?"
+    "voice_not_supported": "Seu navegador não suporta reconhecimento de voz.",
+    "close_chat_confirm": "Fechar este chat e criar um novo?",
+    "only_pdf_files": "Apenas arquivos PDF (.pdf) são permitidos",
+    "pdf_too_large": "O arquivo PDF é muito grande. Máximo permitido: 25 MB",
+    "pdf_processing": "Processando PDF...",
+    "pdf_extracting_text": "Extraindo texto do PDF...",
+    "pdf_ocr_processing": "Aplicando OCR ao PDF (isso pode demorar)...",
+    "pdf_loaded": "PDF carregado: {filename}",
+    "pdf_error": "Erro ao processar PDF: {error}",
+    "pdf_no_text": "Não foi possível extrair texto do PDF. Tente com um arquivo diferente.",
+    "pdf_attached": "PDF anexado: {filename} ({pages} páginas)"
   },
   "connection": {
     "status": "Estado da conexão:",
@@ -310,5 +320,19 @@
     "bold": "Negrito",
     "italic": "Itálico",
     "underline": "Sublinhado"
+  },
+
+  "pdf": {
+    "processing": "Processando PDF...",
+    "extracting": "Extraindo texto...",
+    "ocr_processing": "Aplicando OCR (página {current} de {total})...",
+    "loaded": "PDF carregado com sucesso",
+    "error": "Erro ao processar PDF",
+    "no_text": "Não foi possível extrair texto do PDF",
+    "too_large": "Arquivo muito grande (máx. 25 MB)",
+    "invalid_file": "Arquivo PDF inválido",
+    "pages": "páginas",
+    "attached": "PDF anexado",
+    "context_active": "Contexto PDF ativo ({pages} páginas)"
   }
 }

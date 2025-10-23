@@ -55,12 +55,14 @@
   "tooltips": {
     "new_chat": "Crear un nuevo chat",
     "settings": "Configuración del modelo de IA",
-    "export_import": "Exportar o importar chats",
+    "chats_import": "Importar chats",
+    "chats_export": "Exportar chats",
     "nudge": "Enviar un zumbido",
     "emoticon_natural": "Emoticonos naturales",
     "emoticon_love": "Emoticonos de amor",
     "voice_input": "Dictado por voz",
     "upload_file": "Adjuntar archivo de texto",
+    "upload_pdf_file": "Adjuntar archivo PDF",
     "text_format": "Formato de texto (Negrita, Cursiva, Subrayado)",
     "generate_prompt": "Generador de Prompt - Crear prompts estructurados",
     "manage_prompts": "Gestor de Prompts - Administrar prompts guardados",
@@ -312,7 +314,16 @@
     "only_txt_files": "Solo se permiten archivos .txt",
     "select_text_to_format": "Selecciona texto para formatear",
     "voice_not_supported": "Tu navegador no soporta reconocimiento de voz.",
-    "close_chat_confirm": "¿Cerrar este chat y crear uno nuevo?"
+    "close_chat_confirm": "¿Cerrar este chat y crear uno nuevo?",
+    "only_pdf_files": "Solo se permiten archivos PDF (.pdf)",
+    "pdf_too_large": "El archivo PDF es demasiado grande. Máximo permitido: 25 MB",
+    "pdf_processing": "Procesando PDF...",
+    "pdf_extracting_text": "Extrayendo texto del PDF...",
+    "pdf_ocr_processing": "Aplicando OCR al PDF (esto puede tardar)...",
+    "pdf_loaded": "PDF cargado: {filename}",
+    "pdf_error": "Error al procesar el PDF: {error}",
+    "pdf_no_text": "No se pudo extraer texto del PDF. Intenta con un archivo diferente.",
+    "pdf_attached": "PDF adjunto: {filename} ({pages} páginas)"
   },
 
   "connection": {
@@ -331,5 +342,19 @@
     "bold": "Negrita",
     "italic": "Cursiva",
     "underline": "Subrayado"
+  },
+
+  "pdf": {
+    "processing": "Procesando PDF...",
+    "extracting": "Extrayendo texto...",
+    "ocr_processing": "Aplicando OCR (página {current} de {total})...",
+    "loaded": "PDF cargado correctamente",
+    "error": "Error al procesar PDF",
+    "no_text": "No se pudo extraer texto del PDF",
+    "too_large": "Archivo muy grande (máx. 25 MB)",
+    "invalid_file": "Archivo PDF inválido",
+    "pages": "páginas",
+    "attached": "PDF adjunto",
+    "context_active": "Contexto PDF activo ({pages} páginas)"
   }
 }

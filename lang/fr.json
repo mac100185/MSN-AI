@@ -56,6 +56,7 @@
     "emoticon_love": "Émoticônes d'amour",
     "voice_input": "Dictée vocale",
     "upload_file": "Joindre un fichier texte",
+    "upload_pdf_file": "Joindre un fichier PDF",
     "text_format": "Format de texte (Gras, Italique, Souligné)",
     "generate_prompt": "Générateur de Prompt - Créer des prompts structurés",
     "manage_prompts": "Gestionnaire de Prompts - Gérer les prompts sauvegardés",
@@ -293,7 +294,16 @@
     "only_txt_files": "Seuls les fichiers .txt sont autorisés",
     "select_text_to_format": "Sélectionnez le texte à formater",
     "voice_not_supported": "Votre navigateur ne prend pas en charge la reconnaissance vocale.",
-    "close_chat_confirm": "Fermer ce chat et en créer un nouveau ?"
+    "close_chat_confirm": "Fermer ce chat et en créer un nouveau ?",
+    "only_pdf_files": "Seuls les fichiers PDF (.pdf) sont autorisés",
+    "pdf_too_large": "Le fichier PDF est trop volumineux. Maximum autorisé : 25 Mo",
+    "pdf_processing": "Traitement du PDF...",
+    "pdf_extracting_text": "Extraction du texte du PDF...",
+    "pdf_ocr_processing": "Application de l'OCR au PDF (cela peut prendre du temps)...",
+    "pdf_loaded": "PDF chargé : {filename}",
+    "pdf_error": "Erreur lors du traitement du PDF : {error}",
+    "pdf_no_text": "Impossible d'extraire le texte du PDF. Essayez avec un autre fichier.",
+    "pdf_attached": "PDF joint : {filename} ({pages} pages)"
   },
   "connection": {
     "status": "État de la connexion :",
@@ -310,5 +320,19 @@
     "bold": "Gras",
     "italic": "Italique",
     "underline": "Souligné"
+  },
+
+  "pdf": {
+    "processing": "Traitement du PDF...",
+    "extracting": "Extraction du texte...",
+    "ocr_processing": "Application de l'OCR (page {current} sur {total})...",
+    "loaded": "PDF chargé avec succès",
+    "error": "Erreur lors du traitement du PDF",
+    "no_text": "Impossible d'extraire le texte du PDF",
+    "too_large": "Fichier trop volumineux (max. 25 Mo)",
+    "invalid_file": "Fichier PDF invalide",
+    "pages": "pages",
+    "attached": "PDF joint",
+    "context_active": "Contexte PDF actif ({pages} pages)"
   }
 }
