@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "புதிய அரட்டையை உருவாக்கு",
     "settings": "AI மாதிரி அமைப்புகள்",
-    "export_import": "அரட்டைகளை ஏற்றுமதி அல்லது இறக்குமதி செய்",
     "nudge": "நட்ஜ் அனுப்பு",
     "emoticon_natural": "இயல்பான எமோடிகான்கள்",
     "emoticon_love": "காதல் எமோடிகான்கள்",
@@ -63,8 +62,11 @@
     "print_chat": "தற்போதைய அரட்டையை அச்சிடு",
     "search_chat": "தற்போதைய அரட்டையில் தேடு",
     "close_chat": "தற்போதைய அரட்டையை மூடி புதியது உருவாக்கு",
-    "generate_prompt": "Prompt Generator - Create structured prompts",
-    "manage_prompts": "Prompt Manager - Manage saved prompts"
+    "generate_prompt": "ப்ராம்ப்ட் ஜெனரேட்டர் - கட்டமைக்கப்பட்ட ப்ராம்ப்ட்களை உருவாக்கு",
+    "manage_prompts": "ப்ராம்ப்ட் மேனேஜர் - சேமிக்கப்பட்ட ப்ராம்ப்ட்களை நிர்வகி",
+    "upload_pdf_file": "PDF கோப்பு இணை",
+    "chats_import": "அரட்டைகளை இறக்குமதி செய்",
+    "chats_export": "அரட்டைகளை ஏற்றுமதி செய்"
   },
   "settings": {
     "title": "AI மாதிரி அமைப்புகள்",
@@ -214,7 +216,16 @@
     "only_txt_files": ".txt கோப்புகள் மட்டுமே அனுமதிக்கப்படுகின்றன",
     "select_text_to_format": "வடிவமைக்க உரையைத் தேர்ந்தெடுக்கவும்",
     "voice_not_supported": "உங்கள் உலாவி குரல் அடையாளத்தை ஆதரிக்கவில்லை.",
-    "close_chat_confirm": "இந்த அரட்டையை மூடி புதியதை உருவாக்கவா?"
+    "close_chat_confirm": "இந்த அரட்டையை மூடி புதியதை உருவாக்கவா?",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
   "connection": {
     "status": "இணைப்பு நிலை:",
@@ -310,5 +321,18 @@
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
     "edit_cancelled": "Edit cancelled"
+  },
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

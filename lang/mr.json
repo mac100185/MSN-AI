@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "नवीन चॅट तयार करा",
     "settings": "एआय मॉडेल सेटिंग्ज",
-    "export_import": "चॅट निर्यात किंवा आयात करा",
     "nudge": "नज पाठवा",
     "emoticon_natural": "नैसर्गिक इमोटिकॉन्स",
     "emoticon_love": "प्रेम इमोटिकॉन्स",
@@ -63,8 +62,11 @@
     "print_chat": "सध्याची चॅट प्रिंट करा",
     "search_chat": "सध्याच्या चॅटमध्ये शोधा",
     "close_chat": "सध्याची चॅट बंद करा आणि नवीन तयार करा",
-    "generate_prompt": "Prompt Generator - Create structured prompts",
-    "manage_prompts": "Prompt Manager - Manage saved prompts"
+    "generate_prompt": "प्रॉम्प्ट जनरेटर - संरचित प्रॉम्प्ट तयार करा",
+    "manage_prompts": "प्रॉम्प्ट मॅनेजर - जतन केलेले प्रॉम्प्ट व्यवस्थापित करा",
+    "upload_pdf_file": "पीडीएफ फाइल जोडा",
+    "chats_import": "चॅट आयात करा",
+    "chats_export": "चॅट निर्यात करा"
   },
   "settings": {
     "title": "एआय मॉडेल सेटिंग्ज",
@@ -214,7 +216,16 @@
     "only_txt_files": "फक्त .txt फाइल्सना परवानगी आहे",
     "select_text_to_format": "स्वरूपित करण्यासाठी मजकूर निवडा",
     "voice_not_supported": "तुमचा ब्राउझर आवाज ओळख समर्थित करत नाही.",
-    "close_chat_confirm": "ही चॅट बंद करून नवीन तयार करायची?"
+    "close_chat_confirm": "ही चॅट बंद करून नवीन तयार करायची?",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
   "connection": {
     "status": "कनेक्शन स्थिती:",
@@ -310,5 +321,18 @@
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
     "edit_cancelled": "Edit cancelled"
+  },
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

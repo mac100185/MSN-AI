@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "创建新聊天",
     "settings": "AI模型设置",
-    "export_import": "导出或导入聊天",
     "nudge": "发送提醒",
     "emoticon_natural": "自然表情",
     "emoticon_love": "爱心表情",
@@ -64,7 +63,10 @@
     "search_chat": "在当前聊天中搜索",
     "close_chat": "关闭当前聊天并创建新聊天",
     "generate_prompt": "提示词生成器 - 创建结构化提示词",
-    "manage_prompts": "提示词管理器 - 管理已保存的提示词"
+    "manage_prompts": "提示词管理器 - 管理已保存的提示词",
+    "upload_pdf_file": "附加PDF文件",
+    "chats_import": "导入聊天",
+    "chats_export": "导出聊天"
   },
   "settings": {
     "title": "AI模型设置",
@@ -221,8 +223,8 @@
     "general_info": "常规信息",
     "date": "日期",
     "edit_mode": "编辑模式已激活。修改字段并生成更新的提示词。",
-    "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "editing_prompt": "编辑提示词",
+    "edit_cancelled": "编辑已取消"
   },
   "search_chat": {
     "title": "在聊天中搜索",
@@ -293,7 +295,16 @@
     "only_txt_files": "只允许.txt文件",
     "select_text_to_format": "选择要格式化的文本",
     "voice_not_supported": "您的浏览器不支持语音识别。",
-    "close_chat_confirm": "关闭此聊天并创建新聊天？"
+    "close_chat_confirm": "关闭此聊天并创建新聊天？",
+    "only_pdf_files": "只允许PDF文件（.pdf）",
+    "pdf_too_large": "PDF文件太大。最大允许：25 MB",
+    "pdf_processing": "正在处理PDF...",
+    "pdf_extracting_text": "正在从PDF提取文本...",
+    "pdf_ocr_processing": "正在对PDF应用OCR（这可能需要一段时间）...",
+    "pdf_loaded": "PDF已加载：{filename}",
+    "pdf_error": "处理PDF时出错：{error}",
+    "pdf_no_text": "无法从PDF提取文本。请尝试其他文件。",
+    "pdf_attached": "PDF已附加：{filename}（{pages}页）"
   },
   "connection": {
     "status": "连接状态：",
@@ -310,5 +321,18 @@
     "bold": "粗体",
     "italic": "斜体",
     "underline": "下划线"
+  },
+  "pdf": {
+    "processing": "正在处理PDF...",
+    "extracting": "正在提取文本...",
+    "ocr_processing": "正在应用OCR（第{current}页，共{total}页）...",
+    "loaded": "PDF加载成功",
+    "error": "处理PDF时出错",
+    "no_text": "无法从PDF中提取文本",
+    "too_large": "文件太大（最大25 MB）",
+    "invalid_file": "PDF文件无效",
+    "pages": "页",
+    "attached": "PDF已附加",
+    "context_active": "PDF上下文已激活（{pages}页）"
   }
 }

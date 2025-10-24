@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "Criar um novo chat",
     "settings": "Configurações do modelo de IA",
-    "export_import": "Exportar ou importar chats",
     "nudge": "Enviar uma vibração",
     "emoticon_natural": "Emoticons naturais",
     "emoticon_love": "Emoticons de amor",
@@ -65,7 +64,9 @@
     "export_chat": "Exportar chat atual para arquivo de texto",
     "print_chat": "Imprimir chat atual",
     "search_chat": "Buscar no chat atual",
-    "close_chat": "Fechar chat atual e criar um novo"
+    "close_chat": "Fechar chat atual e criar um novo",
+    "chats_export": "Exportar chats",
+    "chats_import": "Importar chats"
   },
   "settings": {
     "title": "Configurações do Modelo de IA",
@@ -216,8 +217,8 @@
     "general_info": "Informações Gerais",
     "date": "Data",
     "edit_mode": "Modo de edição ativado. Modifique os campos e gere o prompt atualizado.",
-    "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "editing_prompt": "Editando Prompt",
+    "edit_cancelled": "Edição cancelada"
   },
   "delete_chat": {
     "title": "Eliminar chat",
@@ -321,7 +322,6 @@
     "italic": "Itálico",
     "underline": "Sublinhado"
   },
-
   "pdf": {
     "processing": "Processando PDF...",
     "extracting": "Extraindo texto...",

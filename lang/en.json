@@ -1,10 +1,8 @@
 {
   "language_name": "English",
   "language_code": "en",
-
   "app_title": "MSN-AI",
   "app_description": "MSN-AI AI Assistant",
-
   "status": {
     "online": "Online",
     "away": "Away",
@@ -14,7 +12,6 @@
     "connected": "Connected",
     "disconnected": "Disconnected"
   },
-
   "menu": {
     "new_chat": "New Chat",
     "settings": "Settings",
@@ -22,7 +19,6 @@
     "help": "Help",
     "info": "Information"
   },
-
   "buttons": {
     "send": "Send",
     "cancel": "Cancel",
@@ -51,11 +47,9 @@
     "close_chat": "Close Chat",
     "stop_response": "Stop AI Response"
   },
-
   "tooltips": {
     "new_chat": "Create a new chat",
     "settings": "AI model settings",
-    "export_import": "Export or import chats",
     "nudge": "Send a nudge",
     "emoticon_natural": "Natural emoticons",
     "emoticon_love": "Love emoticons",
@@ -70,9 +64,10 @@
     "export_chat": "Export current chat to text file",
     "print_chat": "Print current chat",
     "search_chat": "Search in current chat",
-    "close_chat": "Close current chat and create a new one"
+    "close_chat": "Close current chat and create a new one",
+    "chats_export": "Export chats",
+    "chats_import": "Import chats"
   },
-
   "settings": {
     "title": "AI Model Settings",
     "sounds_enabled": "Sounds enabled",
@@ -92,7 +87,6 @@
     "settings_saved": "Settings saved",
     "testing_connection": "Testing..."
   },
-
   "export_import": {
     "export_title": "Export Chats",
     "export_description": "Select a previously exported JSON chat file.",
@@ -106,7 +100,6 @@
     "no_selected": "No chats selected for export.",
     "download_chats": "Download Chats"
   },
-
   "import_conflict": {
     "title": "Duplicate Chat Detected",
     "chat_title": "Title",
@@ -128,7 +121,6 @@
     "counter": "Conflict {current} of {total}",
     "auto_skipped": "This chat will be skipped automatically."
   },
-
   "import_summary": {
     "title": "Import Completed",
     "imported": "chat(s) imported",
@@ -137,13 +129,11 @@
     "skipped": "chat(s) skipped",
     "no_changes": "No changes were made."
   },
-
   "context_menu": {
     "edit_title": "Edit title",
     "export_chat": "Export chat",
     "delete_chat": "Delete chat"
   },
-
   "edit_title": {
     "title": "Edit chat title",
     "label": "New title:",
@@ -151,7 +141,6 @@
     "success": "Title updated successfully",
     "error": "Title cannot be empty"
   },
-
   "prompt_generator": {
     "title": "Prompt Generator",
     "role": "LLM Role",
@@ -193,7 +182,6 @@
     "copy_success": "Prompt copied to chat",
     "name_required": "Prompt name is required"
   },
-
   "prompt_manager": {
     "title": "My Saved Prompts",
     "search_placeholder": "Search prompts...",
@@ -232,21 +220,18 @@
     "general_info": "General Information",
     "date": "Date"
   },
-
   "delete_chat": {
     "title": "Delete chat",
     "message": "Are you sure you want to delete this chat? This action cannot be undone.",
     "confirm": "Delete",
     "cancel": "Cancel"
   },
-
   "search_chat": {
     "title": "Search in Chat",
     "placeholder": "Type your search...",
     "search_button": "Search",
     "clear_button": "Clear Highlight"
   },
-
   "info": {
     "title": "About MSN-AI",
     "version": "Version",
@@ -267,7 +252,6 @@
     "contact_message_1": "This is a personal open source project. Please be patient if the response is not immediate.",
     "contact_message_2": "Before contacting, make sure you have reviewed the documentation and source code in the GitHub repository."
   },
-
   "chat": {
     "select_chat": "Select a chat",
     "welcome_message": "Select a chat from the list or create a new one to begin.",
@@ -286,7 +270,6 @@
     "show_more": "Show {count} more...",
     "show_less": "Show less"
   },
-
   "messages": {
     "status_changed": "I have changed my status to {status}. {message}",
     "status_online": "I'm available to chat.",
@@ -299,7 +282,6 @@
     "file_attached": "Attached file: {filename}",
     "no_message": "no additional message"
   },
-
   "errors": {
     "no_connection": "No connection to Ollama",
     "chat_not_found": "Chat not found",
@@ -324,7 +306,6 @@
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
     "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
-
   "connection": {
     "status": "Connection status:",
     "current_model": "Current model:",
@@ -336,13 +317,11 @@
     "success": "Connection successful.",
     "failed": "Error connecting to Ollama"
   },
-
   "format": {
     "bold": "Bold",
     "italic": "Italic",
     "underline": "Underline"
   },
-
   "pdf": {
     "processing": "Processing PDF...",
     "extracting": "Extracting text...",

@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "إنشاء محادثة جديدة",
     "settings": "إعدادات نموذج الذكاء الاصطناعي",
-    "export_import": "تصدير أو استيراد المحادثات",
     "nudge": "إرسال تنبيه",
     "emoticon_natural": "رموز تعبيرية طبيعية",
     "emoticon_love": "رموز تعبيرية للحب",
@@ -64,7 +63,10 @@
     "search_chat": "البحث في المحادثة الحالية",
     "close_chat": "إغلاق المحادثة الحالية وإنشاء واحدة جديدة",
     "generate_prompt": "منشئ المطالبات - إنشاء مطالبات منظمة",
-    "manage_prompts": "مدير المطالبات - إدارة المطالبات المحفوظة"
+    "manage_prompts": "مدير المطالبات - إدارة المطالبات المحفوظة",
+    "upload_pdf_file": "إرفاق ملف PDF",
+    "chats_import": "استيراد المحادثات",
+    "chats_export": "تصدير المحادثات"
   },
   "settings": {
     "title": "إعدادات نموذج الذكاء الاصطناعي",
@@ -214,7 +216,16 @@
     "only_txt_files": "يُسمح فقط بملفات .txt",
     "select_text_to_format": "حدد النص لتنسيقه",
     "voice_not_supported": "متصفحك لا يدعم التعرف على الصوت.",
-    "close_chat_confirm": "إغلاق هذه المحادثة وإنشاء واحدة جديدة؟"
+    "close_chat_confirm": "إغلاق هذه المحادثة وإنشاء واحدة جديدة؟",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
   "connection": {
     "status": "حالة الاتصال:",
@@ -310,5 +321,18 @@
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
     "edit_cancelled": "Edit cancelled"
+  },
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

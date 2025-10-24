@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "Neuen Chat erstellen",
     "settings": "KI-Modell Einstellungen",
-    "export_import": "Chats exportieren oder importieren",
     "nudge": "Anstoßen senden",
     "emoticon_natural": "Natürliche Emoticons",
     "emoticon_love": "Liebes-Emoticons",
@@ -65,7 +64,9 @@
     "export_chat": "Aktuellen Chat als Textdatei exportieren",
     "print_chat": "Aktuellen Chat drucken",
     "search_chat": "Im aktuellen Chat suchen",
-    "close_chat": "Aktuellen Chat schließen und neuen erstellen"
+    "close_chat": "Aktuellen Chat schließen und neuen erstellen",
+    "chats_export": "Chats exportieren",
+    "chats_import": "Chats importieren"
   },
   "settings": {
     "title": "KI-Modell Einstellungen",
@@ -321,7 +322,6 @@
     "italic": "Kursiv",
     "underline": "Unterstrichen"
   },
-
   "pdf": {
     "processing": "PDF wird verarbeitet...",
     "extracting": "Text wird extrahiert...",

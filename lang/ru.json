@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "Создать новый чат",
     "settings": "Настройки модели ИИ",
-    "export_import": "Экспорт или импорт чатов",
     "nudge": "Отправить подталкивание",
     "emoticon_natural": "Естественные эмодзи",
     "emoticon_love": "Эмодзи любви",
@@ -64,7 +63,10 @@
     "search_chat": "Поиск в текущем чате",
     "close_chat": "Закрыть текущий чат и создать новый",
     "generate_prompt": "Генератор промптов - Создание структурированных промптов",
-    "manage_prompts": "Менеджер промптов - Управление сохраненными промптами"
+    "manage_prompts": "Менеджер промптов - Управление сохраненными промптами",
+    "upload_pdf_file": "Прикрепить PDF файл",
+    "chats_import": "Импортировать чаты",
+    "chats_export": "Экспортировать чаты"
   },
   "settings": {
     "title": "Настройки модели ИИ",
@@ -293,7 +295,16 @@
     "only_txt_files": "Разрешены только файлы .txt",
     "select_text_to_format": "Выберите текст для форматирования",
     "voice_not_supported": "Ваш браузер не поддерживает распознавание речи.",
-    "close_chat_confirm": "Закрыть этот чат и создать новый?"
+    "close_chat_confirm": "Закрыть этот чат и создать новый?",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
   "connection": {
     "status": "Статус соединения:",
@@ -310,5 +321,18 @@
     "bold": "Жирный",
     "italic": "Курсив",
     "underline": "Подчёркнутый"
+  },
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

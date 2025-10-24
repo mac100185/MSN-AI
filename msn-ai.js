@@ -500,19 +500,35 @@ class MSNAI {
   }
 
   async setLanguage(langCode) {
-    const langData = this.availableLanguages.find((l) => l.code === langCode);
+    let langData = this.availableLanguages.find((l) => l.code === langCode);
+
+    // Si el idioma solicitado no está disponible, intentar con español
+    if (!langData) {
+      console.warn(`⚠️ Idioma no disponible: ${langCode}, usando español`);
+      langData = this.availableLanguages.find((l) => l.code === "es");
+
+      // Si tampoco está español, usar el primer idioma disponible
+      if (!langData && this.availableLanguages.length > 0) {
+        console.warn(
+          `⚠️ Español no disponible, usando primer idioma disponible`,
+        );
+        langData = this.availableLanguages[0];
+      }
+    }
+
+    // Aplicar el idioma si se encontró alguno
     if (langData) {
-      this.currentLanguage = langCode;
+      this.currentLanguage = langData.code;
       this.translations = langData.data;
-      this.settings.language = langCode;
-      localStorage.setItem("msnai-language", langCode);
-      console.log(`🌍 Idioma establecido: ${langData.name}`);
+      this.settings.language = langData.code;
+      localStorage.setItem("msnai-language", langData.code);
+      console.log(`🌍 Idioma establecido: ${langData.name} (${langData.code})`);
 
       // Actualizar toda la interfaz
       this.updateUI();
     } else {
-      console.warn(`⚠️ Idioma no disponible: ${langCode}, usando español`);
-      this.currentLanguage = "es";
+      console.error(`❌ Error crítico: No hay idiomas disponibles para cargar`);
+      this.translations = {}; // Asegurar que translations esté definido aunque sea vacío
     }
   }
 
@@ -521,11 +537,23 @@ class MSNAI {
     const keys = key.split(".");
     let value = this.translations;
 
+    // Verificar que translations esté inicializado
+    if (!this.translations || typeof this.translations !== "object") {
+      console.error(
+        `❌ Error: translations no está inicializado correctamente para la clave: ${key}`,
+      );
+      return key;
+    }
+
     for (const k of keys) {
       if (value && typeof value === "object") {
         value = value[k];
       } else {
-        return key; // Retornar la clave si no se encuentra traducción
+        // La traducción no fue encontrada
+        console.warn(
+          `⚠️ Traducción no encontrada: "${key}" en idioma "${this.currentLanguage}"`,
+        );
+        return key;
       }
     }
 

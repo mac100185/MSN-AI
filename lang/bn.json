@@ -50,7 +50,6 @@
   "tooltips": {
     "new_chat": "একটি নতুন চ্যাট তৈরি করুন",
     "settings": "এআই মডেল সেটিংস",
-    "export_import": "চ্যাট রপ্তানি বা আমদানি করুন",
     "nudge": "একটি ঝাঁকুনি পাঠান",
     "emoticon_natural": "প্রাকৃতিক ইমোটিকন",
     "emoticon_love": "প্রেমের ইমোটিকন",
@@ -63,8 +62,11 @@
     "print_chat": "বর্তমান চ্যাট প্রিন্ট করুন",
     "search_chat": "বর্তমান চ্যাটে অনুসন্ধান করুন",
     "close_chat": "বর্তমান চ্যাট বন্ধ করুন এবং নতুন তৈরি করুন",
-    "generate_prompt": "Prompt Generator - Create structured prompts",
-    "manage_prompts": "Prompt Manager - Manage saved prompts"
+    "generate_prompt": "প্রম্পট জেনারেটর - কাঠামোগত প্রম্পট তৈরি করুন",
+    "manage_prompts": "প্রম্পট ম্যানেজার - সংরক্ষিত প্রম্পট পরিচালনা করুন",
+    "upload_pdf_file": "পিডিএফ ফাইল সংযুক্ত করুন",
+    "chats_import": "চ্যাট আমদানি করুন",
+    "chats_export": "চ্যাট রপ্তানি করুন"
   },
   "settings": {
     "title": "এআই মডেল সেটিংস",
@@ -214,7 +216,16 @@
     "only_txt_files": "শুধুমাত্র .txt ফাইল অনুমোদিত",
     "select_text_to_format": "ফরম্যাট করার জন্য টেক্সট নির্বাচন করুন",
     "voice_not_supported": "আপনার ব্রাউজার ভয়েস রিকগনিশন সমর্থন করে না।",
-    "close_chat_confirm": "এই চ্যাট বন্ধ করে একটি নতুন তৈরি করবেন?"
+    "close_chat_confirm": "এই চ্যাট বন্ধ করে একটি নতুন তৈরি করবেন?",
+    "only_pdf_files": "Only PDF files (.pdf) are allowed",
+    "pdf_too_large": "PDF file is too large. Maximum allowed: 25 MB",
+    "pdf_processing": "Processing PDF...",
+    "pdf_extracting_text": "Extracting text from PDF...",
+    "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
+    "pdf_loaded": "PDF loaded: {filename}",
+    "pdf_error": "Error processing PDF: {error}",
+    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
   },
   "connection": {
     "status": "সংযোগ অবস্থা:",
@@ -310,5 +321,18 @@
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
     "edit_cancelled": "Edit cancelled"
+  },
+  "pdf": {
+    "processing": "Processing PDF...",
+    "extracting": "Extracting text...",
+    "ocr_processing": "Applying OCR (page {current} of {total})...",
+    "loaded": "PDF loaded successfully",
+    "error": "Error processing PDF",
+    "no_text": "Could not extract text from PDF",
+    "too_large": "File too large (max. 25 MB)",
+    "invalid_file": "Invalid PDF file",
+    "pages": "pages",
+    "attached": "PDF attached",
+    "context_active": "PDF context active ({pages} pages)"
   }
 }

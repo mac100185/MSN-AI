@@ -44,18 +44,18 @@
     "search_chat": "Aruskipawiru thaqaña",
     "close_chat": "Aruskipawi ist'aña",
     "stop_response": "AI jaysawi sayt'ayaña",
-    "update": "Update",
+    "update": "Musuqchaña",
     "copy": "📋 Aruskipawiru apayaña"
   },
   "tooltips": {
     "new_chat": "Machaq aruskipawi luraña",
     "settings": "AI modelo wakicht'awinaka",
-    "export_import": "Aruskipawinaka mistsuña jan ukaxa mantaña",
     "nudge": "Tʼijraña",
     "emoticon_natural": "Pachanaka uñacht'awinaka",
     "emoticon_love": "Munasiña uñacht'awinaka",
     "voice_input": "Aru qillqata",
     "upload_file": "Qillqa qillqa yapxataña",
+    "upload_pdf_file": "PDF qillqa yapxataña",
     "text_format": "Qillqa uñtawi (Jach'a, Q'añu, Aykhana siq'i)",
     "increase_font": "Qillqa jach'a kaynipa yapxataña",
     "decrease_font": "Qillqa jach'a kaynipa jisk'aptayaña",
@@ -64,7 +64,9 @@
     "search_chat": "Jichhuru aruskipawiru thaqaña",
     "close_chat": "Jichhuru aruskipawi ist'añasa machaqaru luraña",
     "generate_prompt": "Prompt Luraña - Suma lurañataki promptnaka luraña",
-    "manage_prompts": "Prompt Kamachi - Imata promptnaka apnaqaña"
+    "manage_prompts": "Prompt Kamachi - Imata promptnaka apnaqaña",
+    "chats_export": "Aruskipawinaka mistsuña",
+    "chats_import": "Aruskipawinaka mantaña"
   },
   "settings": {
     "title": "AI Modelo Wakicht'awinaka",
@@ -214,7 +216,16 @@
     "only_txt_files": "Sapaki .txt qillqanakaxa wakisiwa",
     "select_text_to_format": "Qillqa chhijllaña uñtayañataki",
     "voice_not_supported": "Navegadornakax janiwa aru yatiñanakataki yanapt'kiti.",
-    "close_chat_confirm": "¿Aka aruskipawi ist'añasa machaqaru luraña?"
+    "close_chat_confirm": "¿Aka aruskipawi ist'añasa machaqaru luraña?",
+    "only_pdf_files": "Sapaki PDF qillqanaka (.pdf) wakisiwa",
+    "pdf_too_large": "PDF qillqaxa jach'awa. Jach'a kamachiña: 25 MB",
+    "pdf_processing": "PDF lurasiña...",
+    "pdf_extracting_text": "PDF-manta qillqata mistsuña...",
+    "pdf_ocr_processing": "PDF-ru OCR churasa (aka jaya pachaniwa)...",
+    "pdf_loaded": "PDF apantat: {filename}",
+    "pdf_error": "PDF luraña pantjata: {error}",
+    "pdf_no_text": "Janiwa PDF-manta qillqata mistuñakiti. Yaqha qillqampi yant'aña.",
+    "pdf_attached": "PDF yapxatat: {filename} ({pages} laphinaka)"
   },
   "connection": {
     "status": "Mayacht'awi estado:",
@@ -310,5 +321,18 @@
     "edit_cancelled": "Mayjt'awixa sayt'ayata",
     "general_info": "General Yatiyawi",
     "date": "Uru"
+  },
+  "pdf": {
+    "processing": "PDF lurasiña...",
+    "extracting": "Qillqata mistsuña...",
+    "ocr_processing": "OCR churasa (laphi {current} {total}-manta)...",
+    "loaded": "PDF sum apantat",
+    "error": "PDF luraña pantjata",
+    "no_text": "Janiwa PDF-manta qillqata mistuñakiti",
+    "too_large": "Qillqa jach'awa (jach'a: 25 MB)",
+    "invalid_file": "Jan wali PDF qillqa",
+    "pages": "laphinaka",
+    "attached": "PDF yapxatat",
+    "context_active": "PDF contexto ch'ama ({pages} laphinaka)"
   }
 }

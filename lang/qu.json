@@ -44,18 +44,18 @@
     "search_chat": "Rimanakuypi maskay",
     "close_chat": "Rimanakuyta wichq'ay",
     "stop_response": "AI kutichiyninata sayachiy",
-    "update": "Update",
+    "update": "Musuqchay",
     "copy": "📋 Rimayman kichariy"
   },
   "tooltips": {
     "new_chat": "Musuq rimanakuyta ruway",
     "settings": "AI modelo churay",
-    "export_import": "Rimanakuykunata lluqsichiy utaq yaykuchiy",
     "nudge": "Kallpachayta kachay",
     "emoticon_natural": "Natural uyaychakunata",
     "emoticon_love": "Munay uyaychakunata",
     "voice_input": "Kunka qillqay",
     "upload_file": "Qillqa qillqata yapay",
+    "upload_pdf_file": "PDF qillqata yapay",
     "text_format": "Qillqa rikch'ay (Yanqa, Q'iñi, Uray siq'i)",
     "increase_font": "Qillqa hatun kayninta yapay",
     "decrease_font": "Qillqa hatun kayninta pisiyachiy",
@@ -64,7 +64,9 @@
     "search_chat": "Kunan rimanakuypi maskay",
     "close_chat": "Kunan rimanakuyta wichq'ay, musuqta ruway",
     "generate_prompt": "Prompt Ruwaq - Allin ruwasqa promptkunata ruway",
-    "manage_prompts": "Prompt Kamachiq - Waqaychasqa promptkunata kamachiy"
+    "manage_prompts": "Prompt Kamachiq - Waqaychasqa promptkunata kamachiy",
+    "chats_export": "Rimanakuykunata lluqsichiy",
+    "chats_import": "Rimanakuykunata yaykuchiy"
   },
   "settings": {
     "title": "AI Modelo Churay",
@@ -214,7 +216,16 @@
     "only_txt_files": "Sapalla .txt qillqakunalla kamachikunmi",
     "select_text_to_format": "Qillqata akllay rikch'anaypaq",
     "voice_not_supported": "Navegadorniki mana kunka riqsiyta yanapanchu.",
-    "close_chat_confirm": "¿Kay rimanakuyta wichq'aspa musuqta ruway?"
+    "close_chat_confirm": "¿Kay rimanakuyta wichq'aspa musuqta ruway?",
+    "only_pdf_files": "PDF qillqakunalla (.pdf) kamachikunmi",
+    "pdf_too_large": "PDF qillqaqa ancha hatunmi. Ñawpaqman: 25 MB",
+    "pdf_processing": "PDF ruwaspa...",
+    "pdf_extracting_text": "PDF-manta qillqata lluqsichispa...",
+    "pdf_ocr_processing": "PDF-man OCR churaspa (kayqa unay tiempota hap'inman)...",
+    "pdf_loaded": "PDF kargasqa: {filename}",
+    "pdf_error": "PDF ruwaypi pantay: {error}",
+    "pdf_no_text": "Mana PDF-manta qillqata lluqsichiyta atirqachu. Huk qillqawan yachakuy.",
+    "pdf_attached": "PDF yapasqa: {filename} ({pages} p'anqakuna)"
   },
   "connection": {
     "status": "Tinkiy kay:",
@@ -231,6 +242,19 @@
     "bold": "Yanqa",
     "italic": "Q'iñi",
     "underline": "Uray siq'i"
+  },
+  "pdf": {
+    "processing": "PDF ruwaspa...",
+    "extracting": "Qillqata lluqsichispa...",
+    "ocr_processing": "OCR churaspa (p'anqa {current} {total}-manta)...",
+    "loaded": "PDF allinta kargasqa",
+    "error": "PDF ruwaypi pantay",
+    "no_text": "Mana PDF-manta qillqata lluqsichiyta atirqachu",
+    "too_large": "Qillqaqa ancha hatunmi (ñawpaq: 25 MB)",
+    "invalid_file": "Mana allin PDF qillqa",
+    "pages": "p'anqakuna",
+    "attached": "PDF yapasqa",
+    "context_active": "PDF contexto kikin kaq ({pages} p'anqakuna)"
   },
   "prompt_generator": {
     "title": "Prompt Ruwaq",
