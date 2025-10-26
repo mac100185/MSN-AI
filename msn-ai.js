@@ -1882,11 +1882,31 @@ class MSNAI {
         );
       }
 
+      // Obtener todos los archivos binarios y filtrar los de chats seleccionados
+      const allFileAttachments = await this.getAllFileAttachments();
+      const selectedFileAttachments = allFileAttachments.filter((file) =>
+        selectedChatIds.has(file.chatId),
+      );
+
+      console.log(
+        `📤 Exportando ${selectedFileAttachments.length} archivos binarios`,
+      );
+
+      // Convertir ArrayBuffers a Base64 para incluirlos en JSON
+      const fileAttachmentsBase64 = selectedFileAttachments.map((file) => ({
+        key: file.key,
+        data: this.arrayBufferToBase64(file.data),
+        type: file.type,
+        name: file.name,
+        chatId: file.chatId,
+      }));
+
       const data = {
-        version: "2.0",
+        version: "2.1",
         exportDate: new Date().toISOString(),
         chats: selectedChats,
         attachments: selectedAttachments,
+        fileAttachments: fileAttachmentsBase64,
       };
 
       console.log(
@@ -3299,12 +3319,26 @@ class MSNAI {
         console.log("ℹ️ No hay archivos adjuntos para exportar");
       }
 
+      // Exportar archivos binarios
+      const fileAttachments = await this.getAllFileAttachments();
+      console.log(`📤 Exportando ${fileAttachments.length} archivos binarios`);
+
+      // Convertir ArrayBuffers a Base64 para incluirlos en JSON
+      const fileAttachmentsBase64 = fileAttachments.map((file) => ({
+        key: file.key,
+        data: this.arrayBufferToBase64(file.data),
+        type: file.type,
+        name: file.name,
+        chatId: file.chatId,
+      }));
+
       const data = {
-        version: "2.0",
+        version: "2.1",
         exportDate: new Date().toISOString(),
         chats: this.chats,
         settings: this.settings,
         attachments: attachments,
+        fileAttachments: fileAttachmentsBase64,
       };
 
       console.log(
@@ -3356,6 +3390,57 @@ class MSNAI {
     });
   }
 
+  /**
+   * Obtiene todos los archivos binarios de IndexedDB
+   */
+  async getAllFileAttachments() {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        resolve([]);
+        return;
+      }
+
+      const transaction = this.db.transaction(["fileAttachments"], "readonly");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const request = objectStore.getAll();
+
+      request.onsuccess = () => {
+        resolve(request.result || []);
+      };
+
+      request.onerror = () => {
+        console.error("Error obteniendo fileAttachments:", request.error);
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Convierte ArrayBuffer a Base64
+   */
+  arrayBufferToBase64(buffer) {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
+   * Convierte Base64 a ArrayBuffer
+   */
+  base64ToArrayBuffer(base64) {
+    const binaryString = atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
   importChats(file) {
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -3385,6 +3470,19 @@ class MSNAI {
               "⚠️ No se encontraron archivos adjuntos en la importación",
             );
           }
+
+          // Importar archivos binarios si existen
+          if (data.fileAttachments && Array.isArray(data.fileAttachments)) {
+            console.log(
+              `📥 Importando ${data.fileAttachments.length} archivos binarios`,
+            );
+            await this.importFileAttachments(data.fileAttachments);
+          } else {
+            console.log(
+              "⚠️ No se encontraron archivos binarios en la importación",
+            );
+          }
+
           this.processImportedChats(data.chats);
         } else {
           alert(this.t("errors.invalid_json"));
@@ -3463,11 +3561,123 @@ class MSNAI {
   }
 
   /**
+   * Importa los archivos binarios a IndexedDB
+   */
+  async importFileAttachments(fileAttachments) {
+    if (!this.db) {
+      console.error(
+        "❌ IndexedDB no está inicializada para importar fileAttachments",
+      );
+      return;
+    }
+
+    if (!fileAttachments || fileAttachments.length === 0) {
+      console.log("ℹ️ No hay archivos binarios para importar");
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(["fileAttachments"], "readwrite");
+      const objectStore = transaction.objectStore("fileAttachments");
+
+      let completed = 0;
+      let errors = 0;
+
+      fileAttachments.forEach((file) => {
+        try {
+          // Convertir Base64 de vuelta a ArrayBuffer
+          const arrayBuffer = this.base64ToArrayBuffer(file.data);
+
+          const fileData = {
+            key: file.key,
+            data: arrayBuffer,
+            type: file.type,
+            name: file.name,
+            chatId: file.chatId,
+          };
+
+          const request = objectStore.put(fileData);
+
+          request.onsuccess = () => {
+            completed++;
+            console.log(
+              `✅ Archivo binario importado (${completed}/${fileAttachments.length}): ${file.name}`,
+            );
+            if (completed + errors === fileAttachments.length) {
+              console.log(
+                `✅ Importación de archivos binarios completada: ${completed} archivos`,
+              );
+              if (errors > 0) {
+                console.warn(`⚠️ ${errors} archivos binarios fallaron`);
+              }
+              resolve();
+            }
+          };
+
+          request.onerror = () => {
+            console.error(
+              `❌ Error importando archivo binario: ${file.key} - ${file.name}`,
+              request.error,
+            );
+            errors++;
+            if (completed + errors === fileAttachments.length) {
+              if (completed > 0) {
+                console.log(
+                  `⚠️ Importación parcial: ${completed} importados, ${errors} fallidos`,
+                );
+              } else {
+                console.error(
+                  `❌ Importación fallida: todos los ${errors} archivos fallaron`,
+                );
+              }
+              resolve();
+            }
+          };
+        } catch (error) {
+          console.error(
+            `❌ Error procesando archivo binario: ${file.name}`,
+            error,
+          );
+          errors++;
+          if (completed + errors === fileAttachments.length) {
+            if (completed > 0) {
+              console.log(
+                `⚠️ Importación parcial: ${completed} importados, ${errors} fallidos`,
+              );
+            } else {
+              console.error(
+                `❌ Importación fallida: todos los ${errors} archivos fallaron`,
+              );
+            }
+            resolve();
+          }
+        }
+      });
+    });
+  }
+
+  /**
    * Actualiza el chatId de todos los attachments de un chat específico
    * @param {string} oldChatId - ID antiguo del chat
    * @param {string} newChatId - ID nuevo del chat
    */
   async updateAttachmentsChatId(oldChatId, newChatId) {
+    if (!this.db) {
+      console.error("❌ IndexedDB no está inicializada");
+      return;
+    }
+
+    // Actualizar tanto attachments como fileAttachments
+    await this.updateTextAttachmentsChatId(oldChatId, newChatId);
+    await this.updateFileAttachmentsChatId(oldChatId, newChatId);
+  }
+
+  /**
+   * Actualiza el chatId de los attachments de texto
+   * @param {string} oldChatId - ID antiguo del chat
+   * @param {string} newChatId - ID nuevo del chat
+   */
+  async updateTextAttachmentsChatId(oldChatId, newChatId) {
     if (!this.db) {
       console.error("❌ IndexedDB no está inicializada");
       return;
@@ -3548,6 +3758,97 @@ class MSNAI {
 
       request.onerror = () => {
         console.error("❌ Error obteniendo attachments:", request.error);
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Actualiza el chatId de los archivos binarios
+   * @param {string} oldChatId - ID antiguo del chat
+   * @param {string} newChatId - ID nuevo del chat
+   */
+  async updateFileAttachmentsChatId(oldChatId, newChatId) {
+    if (!this.db) {
+      console.error("❌ IndexedDB no está inicializada");
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(["fileAttachments"], "readwrite");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const index = objectStore.index("chatId");
+      const request = index.getAll(oldChatId);
+
+      request.onsuccess = () => {
+        const fileAttachments = request.result;
+
+        if (!fileAttachments || fileAttachments.length === 0) {
+          console.log(
+            `ℹ️ No se encontraron fileAttachments para el chat ${oldChatId}`,
+          );
+          resolve();
+          return;
+        }
+
+        let updated = 0;
+        let errors = 0;
+
+        fileAttachments.forEach((file) => {
+          // Crear nueva clave con el nuevo chatId
+          const oldKey = file.key;
+          const newKey = oldKey.replace(oldChatId, newChatId);
+
+          const updatedFile = {
+            ...file,
+            key: newKey,
+            chatId: newChatId,
+          };
+
+          // Eliminar la entrada antigua
+          const deleteRequest = objectStore.delete(oldKey);
+
+          deleteRequest.onsuccess = () => {
+            // Agregar la nueva entrada
+            const putRequest = objectStore.put(updatedFile);
+
+            putRequest.onsuccess = () => {
+              updated++;
+              if (updated + errors === fileAttachments.length) {
+                console.log(
+                  `✅ ${updated} archivos binarios actualizados de ${oldChatId} a ${newChatId}`,
+                );
+                resolve();
+              }
+            };
+
+            putRequest.onerror = () => {
+              console.error(
+                `❌ Error actualizando archivo binario ${newKey}:`,
+                putRequest.error,
+              );
+              errors++;
+              if (updated + errors === fileAttachments.length) {
+                resolve();
+              }
+            };
+          };
+
+          deleteRequest.onerror = () => {
+            console.error(
+              `❌ Error eliminando archivo binario ${oldKey}:`,
+              deleteRequest.error,
+            );
+            errors++;
+            if (updated + errors === fileAttachments.length) {
+              resolve();
+            }
+          };
+        });
+      };
+
+      request.onerror = () => {
+        console.error("❌ Error obteniendo fileAttachments:", request.error);
         reject(request.error);
       };
     });
