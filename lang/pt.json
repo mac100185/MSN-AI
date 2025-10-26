@@ -63,10 +63,13 @@
     "decrease_font": "Diminuir tamanho da fonte",
     "export_chat": "Exportar chat atual para arquivo de texto",
     "print_chat": "Imprimir chat atual",
-    "search_chat": "Buscar no chat atual",
+    "search_chat": "Pesquisar no chat atual",
     "close_chat": "Fechar chat atual e criar um novo",
     "chats_export": "Exportar chats",
-    "chats_import": "Importar chats"
+    "chats_import": "Importar chats",
+    "delete_attachment": "Excluir arquivo",
+    "download_pdf": "Baixar PDF",
+    "download_txt": "Baixar arquivo TXT"
   },
   "settings": {
     "title": "Configurações do Modelo de IA",
@@ -268,7 +271,10 @@
     "search_placeholder": "Buscar em chats...",
     "show_more": "Ver mais {count}...",
     "show_less": "Ver menos",
-    "message_placeholder": "Digite sua mensagem aqui..."
+    "message_placeholder": "Digite sua mensagem aqui...",
+    "attachments_title": "Arquivos anexados",
+    "attachments_context_header": "ARQUIVOS ANEXADOS AO CHAT",
+    "attachments_context_footer": "FIM DOS ARQUIVOS ANEXADOS"
   },
   "messages": {
     "status_changed": "Mudei o meu estado para {status}. {message}",
@@ -304,7 +310,16 @@
     "pdf_loaded": "PDF carregado: {filename}",
     "pdf_error": "Erro ao processar PDF: {error}",
     "pdf_no_text": "Não foi possível extrair texto do PDF. Tente com um arquivo diferente.",
-    "pdf_attached": "PDF anexado: {filename} ({pages} páginas)"
+    "pdf_attached": "PDF anexado: {filename} ({pages} páginas)",
+    "select_chat_first": "Por favor, selecione um chat primeiro",
+    "attachment_save_failed": "Erro ao salvar o anexo",
+    "delete_attachment_failed": "Erro ao excluir o anexo",
+    "export_failed": "Erro ao exportar os chats",
+    "import_failed": "Erro ao importar os chats",
+    "download_file_failed": "Erro ao baixar o arquivo"
+  },
+  "confirm": {
+    "delete_attachment": "Excluir este anexo?"
   },
   "connection": {
     "status": "Estado da conexão:",

@@ -66,7 +66,10 @@
     "manage_prompts": "Prompt Yöneticisi - Kayıtlı promptları yönet",
     "upload_pdf_file": "PDF dosyası ekle",
     "chats_export": "Sohbetleri dışa aktar",
-    "chats_import": "Sohbetleri içe aktar"
+    "chats_import": "Sohbetleri içe aktar",
+    "delete_attachment": "Dosyayı sil",
+    "download_pdf": "PDF indir",
+    "download_txt": "TXT dosyasını indir"
   },
   "settings": {
     "title": "Yapay Zeka Modeli Ayarları",
@@ -189,7 +192,10 @@
     "search_placeholder": "Sohbetlerde ara...",
     "show_more": "{count} daha göster...",
     "show_less": "Daha az göster",
-    "message_placeholder": "Mesajınızı buraya yazın..."
+    "message_placeholder": "Mesajınızı buraya yazın...",
+    "attachments_title": "Ekli dosyalar",
+    "attachments_context_header": "SOHBETE EKLİ DOSYALAR",
+    "attachments_context_footer": "EKLİ DOSYALARIN SONU"
   },
   "messages": {
     "status_changed": "Durumumu {status} olarak değiştirdim. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF yüklendi: {filename}",
     "pdf_error": "PDF işlenirken hata: {error}",
     "pdf_no_text": "PDF'den metin çıkarılamadı. Farklı bir dosya deneyin.",
-    "pdf_attached": "PDF eklendi: {filename} ({pages} sayfa)"
+    "pdf_attached": "PDF eklendi: {filename} ({pages} sayfa)",
+    "select_chat_first": "Lütfen önce bir sohbet seçin",
+    "attachment_save_failed": "Ek kaydedilirken hata",
+    "delete_attachment_failed": "Ek silinirken hata",
+    "export_failed": "Sohbetler dışa aktarılırken hata",
+    "import_failed": "Sohbetler içe aktarılırken hata",
+    "download_file_failed": "Dosya indirilirken hata"
+  },
+  "confirm": {
+    "delete_attachment": "Bu eki silmek istiyor musunuz?"
   },
   "connection": {
     "status": "Bağlantı durumu:",

@@ -66,7 +66,10 @@
     "manage_prompts": "مدير المطالبات - إدارة المطالبات المحفوظة",
     "upload_pdf_file": "إرفاق ملف PDF",
     "chats_import": "استيراد المحادثات",
-    "chats_export": "تصدير المحادثات"
+    "chats_export": "تصدير المحادثات",
+    "delete_attachment": "حذف الملف",
+    "download_pdf": "تنزيل PDF",
+    "download_txt": "تنزيل ملف TXT"
   },
   "settings": {
     "title": "إعدادات نموذج الذكاء الاصطناعي",
@@ -189,7 +192,10 @@
     "search_placeholder": "البحث في المحادثات...",
     "show_more": "إظهار {count} المزيد...",
     "show_less": "إظهار أقل",
-    "message_placeholder": "اكتب رسالتك هنا..."
+    "message_placeholder": "اكتب رسالتك هنا...",
+    "attachments_title": "الملفات المرفقة",
+    "attachments_context_header": "الملفات المرفقة بالمحادثة",
+    "attachments_context_footer": "نهاية الملفات المرفقة"
   },
   "messages": {
     "status_changed": "لقد قمت بتغيير حالتي إلى {status}. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "يرجى تحديد محادثة أولاً",
+    "attachment_save_failed": "خطأ في حفظ المرفق",
+    "delete_attachment_failed": "خطأ في حذف المرفق",
+    "export_failed": "خطأ في تصدير المحادثات",
+    "import_failed": "خطأ في استيراد المحادثات",
+    "download_file_failed": "خطأ في تنزيل الملف"
+  },
+  "confirm": {
+    "delete_attachment": "حذف هذا المرفق؟"
   },
   "connection": {
     "status": "حالة الاتصال:",

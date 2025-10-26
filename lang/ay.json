@@ -66,7 +66,10 @@
     "generate_prompt": "Prompt Luraña - Suma lurañataki promptnaka luraña",
     "manage_prompts": "Prompt Kamachi - Imata promptnaka apnaqaña",
     "chats_export": "Aruskipawinaka mistsuña",
-    "chats_import": "Aruskipawinaka mantaña"
+    "chats_import": "Aruskipawinaka mantaña",
+    "delete_attachment": "Qillqata chhaqtayaña",
+    "download_pdf": "PDF apaqaña",
+    "download_txt": "TXT qillqata apaqaña"
   },
   "settings": {
     "title": "AI Modelo Wakicht'awinaka",
@@ -189,7 +192,10 @@
     "search_placeholder": "Aruskipawina thaqaña...",
     "message_placeholder": "Akana yatiyawi qillqañama...",
     "show_more": "Jukʼaki {count} uñacht'ayaña...",
-    "show_less": "Juk'aki uñacht'ayaña"
+    "show_less": "Juk'aki uñacht'ayaña",
+    "attachments_title": "Wakichata qillqatanaka",
+    "attachments_context_header": "ARUSKIPAWIRU WAKICHATA QILLQATANAKA",
+    "attachments_context_footer": "WAKICHATA QILLQATANAKAN TUKUYAWI"
   },
   "messages": {
     "status_changed": "Estado {status}-ru mayjt'aytha. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF apantat: {filename}",
     "pdf_error": "PDF luraña pantjata: {error}",
     "pdf_no_text": "Janiwa PDF-manta qillqata mistuñakiti. Yaqha qillqampi yant'aña.",
-    "pdf_attached": "PDF yapxatat: {filename} ({pages} laphinaka)"
+    "pdf_attached": "PDF yapxatat: {filename} ({pages} laphinaka)",
+    "select_chat_first": "Nayraqata aruskipawi ajlliñama",
+    "attachment_save_failed": "Wakichata qillqata imaña pantjasiwa",
+    "delete_attachment_failed": "Wakichata qillqata chhaqtayaña pantjasiwa",
+    "export_failed": "Aruskipawinaka mistsuña pantjasiwa",
+    "import_failed": "Aruskipawinaka mantaña pantjasiwa",
+    "download_file_failed": "Qillqata apaqaña pantjasiwa"
+  },
+  "confirm": {
+    "delete_attachment": "¿Aka wakichata qillqata chhaqtayañ munta?"
   },
   "connection": {
     "status": "Mayacht'awi estado:",

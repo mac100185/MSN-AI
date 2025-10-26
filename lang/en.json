@@ -66,7 +66,10 @@
     "search_chat": "Search in current chat",
     "close_chat": "Close current chat and create a new one",
     "chats_export": "Export chats",
-    "chats_import": "Import chats"
+    "chats_import": "Import chats",
+    "delete_attachment": "Delete file",
+    "download_pdf": "Download PDF",
+    "download_txt": "Download TXT file"
   },
   "settings": {
     "title": "AI Model Settings",
@@ -268,7 +271,10 @@
     "search_placeholder": "Search chats...",
     "message_placeholder": "Type your message here...",
     "show_more": "Show {count} more...",
-    "show_less": "Show less"
+    "show_less": "Show less",
+    "attachments_title": "Attached files",
+    "attachments_context_header": "ATTACHED FILES TO CHAT",
+    "attachments_context_footer": "END OF ATTACHED FILES"
   },
   "messages": {
     "status_changed": "I have changed my status to {status}. {message}",
@@ -303,8 +309,18 @@
     "pdf_ocr_processing": "Applying OCR to PDF (this may take a while)...",
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
-    "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_no_text": "Could not extract text from PDF. Try with a different file.",
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "Please select a chat first",
+    "attachment_save_failed": "Error saving attachment",
+    "delete_attachment_failed": "Error deleting attachment",
+    "export_failed": "Error exporting chats",
+    "import_failed": "Error importing chats",
+    "download_file_failed": "Error downloading file"
+  },
+
+  "confirm": {
+    "delete_attachment": "Delete this attachment?"
   },
   "connection": {
     "status": "Connection status:",

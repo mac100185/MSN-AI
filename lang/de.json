@@ -66,7 +66,10 @@
     "search_chat": "Im aktuellen Chat suchen",
     "close_chat": "Aktuellen Chat schließen und neuen erstellen",
     "chats_export": "Chats exportieren",
-    "chats_import": "Chats importieren"
+    "chats_import": "Chats importieren",
+    "delete_attachment": "Datei löschen",
+    "download_pdf": "PDF herunterladen",
+    "download_txt": "TXT-Datei herunterladen"
   },
   "settings": {
     "title": "KI-Modell Einstellungen",
@@ -268,7 +271,10 @@
     "search_placeholder": "In Chats suchen...",
     "message_placeholder": "Schreiben Sie hier Ihre Nachricht...",
     "show_more": "{count} mehr anzeigen...",
-    "show_less": "Weniger anzeigen"
+    "show_less": "Weniger anzeigen",
+    "attachments_title": "Angehängte Dateien",
+    "attachments_context_header": "ANGEHÄNGTE DATEIEN ZUM CHAT",
+    "attachments_context_footer": "ENDE DER ANGEHÄNGTEN DATEIEN"
   },
   "messages": {
     "status_changed": "Ich habe meinen Status auf {status} geändert. {message}",
@@ -304,7 +310,16 @@
     "pdf_loaded": "PDF geladen: {filename}",
     "pdf_error": "Fehler beim Verarbeiten der PDF: {error}",
     "pdf_no_text": "Text konnte nicht aus PDF extrahiert werden. Versuchen Sie eine andere Datei.",
-    "pdf_attached": "PDF angehängt: {filename} ({pages} Seiten)"
+    "pdf_attached": "PDF angehängt: {filename} ({pages} Seiten)",
+    "select_chat_first": "Bitte wählen Sie zuerst einen Chat aus",
+    "attachment_save_failed": "Fehler beim Speichern des Anhangs",
+    "delete_attachment_failed": "Fehler beim Löschen des Anhangs",
+    "export_failed": "Fehler beim Exportieren der Chats",
+    "import_failed": "Fehler beim Importieren der Chats",
+    "download_file_failed": "Fehler beim Herunterladen der Datei"
+  },
+  "confirm": {
+    "delete_attachment": "Diesen Anhang löschen?"
   },
   "connection": {
     "status": "Verbindungsstatus:",

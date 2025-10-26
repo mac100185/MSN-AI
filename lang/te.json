@@ -64,9 +64,12 @@
     "close_chat": "ప్రస్తుత చాట్ మూసివేసి కొత్తది సృష్టించండి",
     "generate_prompt": "ప్రాంప్ట్ జనరేటర్ - నిర్మాణాత్మక ప్రాంప్ట్‌లను సృష్టించండి",
     "manage_prompts": "ప్రాంప్ట్ మేనేజర్ - సేవ్ చేసిన ప్రాంప్ట్‌లను నిర్వహించండి",
-    "upload_pdf_file": "PDF ఫైల్ జతచేయండి",
+    "upload_pdf_file": "PDF ఫైల్‌ను జత చేయండి",
     "chats_import": "చాట్‌లను దిగుమతి చేయండి",
-    "chats_export": "చాట్‌లను ఎగుమతి చేయండి"
+    "chats_export": "చాట్‌లను ఎగుమతి చేయండి",
+    "delete_attachment": "ఫైల్ తొలగించండి",
+    "download_pdf": "PDF డౌన్‌లోడ్ చేయండి",
+    "download_txt": "TXT ఫైల్ డౌన్‌లోడ్ చేయండి"
   },
   "settings": {
     "title": "AI మోడల్ సెట్టింగ్‌లు",
@@ -189,7 +192,10 @@
     "search_placeholder": "చాట్‌లలో వెతకండి...",
     "show_more": "మరిన్ని {count} చూపించు...",
     "show_less": "తక్కువ చూపించు",
-    "message_placeholder": "మీ సందేశాన్ని ఇక్కడ రాయండి..."
+    "message_placeholder": "మీ సందేశాన్ని ఇక్కడ రాయండి...",
+    "attachments_title": "జోడించిన ఫైల్‌లు",
+    "attachments_context_header": "చాట్‌కు జోడించిన ఫైల్‌లు",
+    "attachments_context_footer": "జోడించిన ఫైల్‌ల ముగింపు"
   },
   "messages": {
     "status_changed": "నేను నా స్థితిని {status} కు మార్చాను. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "దయచేసి ముందుగా చాట్‌ను ఎంచుకోండి",
+    "attachment_save_failed": "అటాచ్‌మెంట్‌ను సేవ్ చేయడంలో లోపం",
+    "delete_attachment_failed": "అటాచ్‌మెంట్‌ను తొలగించడంలో లోపం",
+    "export_failed": "చాట్‌లను ఎగుమతి చేయడంలో లోపం",
+    "import_failed": "చాట్‌లను దిగుమతి చేయడంలో లోపం",
+    "download_file_failed": "ఫైల్ డౌన్‌లోడ్ చేయడంలో లోపం"
+  },
+  "confirm": {
+    "delete_attachment": "ఈ అటాచ్‌మెంట్‌ను తొలగించాలా?"
   },
   "connection": {
     "status": "కనెక్షన్ స్థితి:",

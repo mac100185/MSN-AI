@@ -65,8 +65,11 @@
     "close_chat": "현재 대화를 닫고 새 대화 만들기",
     "generate_prompt": "프롬프트 생성기 - 구조화된 프롬프트 만들기",
     "manage_prompts": "프롬프트 관리자 - 저장된 프롬프트 관리",
-    "chats_export": "대화 내보내기",
-    "chats_import": "대화 가져오기"
+    "chats_export": "채팅 내보내기",
+    "chats_import": "채팅 가져오기",
+    "delete_attachment": "파일 삭제",
+    "download_pdf": "PDF 다운로드",
+    "download_txt": "TXT 파일 다운로드"
   },
   "settings": {
     "title": "AI 모델 설정",
@@ -189,7 +192,10 @@
     "search_placeholder": "대화 검색...",
     "show_more": "{count}개 더 보기...",
     "show_less": "적게 보기",
-    "message_placeholder": "여기에 메시지 입력..."
+    "message_placeholder": "여기에 메시지 입력...",
+    "attachments_title": "첨부 파일",
+    "attachments_context_header": "채팅에 첨부된 파일",
+    "attachments_context_footer": "첨부 파일 끝"
   },
   "messages": {
     "status_changed": "상태를 {status}(으)로 변경했습니다. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF 로드됨: {filename}",
     "pdf_error": "PDF 처리 오류: {error}",
     "pdf_no_text": "PDF에서 텍스트를 추출할 수 없습니다. 다른 파일을 시도하세요.",
-    "pdf_attached": "PDF 첨부됨: {filename} ({pages}페이지)"
+    "pdf_attached": "PDF 첨부됨: {filename} ({pages}페이지)",
+    "select_chat_first": "먼저 채팅을 선택하세요",
+    "attachment_save_failed": "첨부 파일 저장 오류",
+    "delete_attachment_failed": "첨부 파일 삭제 오류",
+    "export_failed": "채팅 내보내기 오류",
+    "import_failed": "채팅 가져오기 오류",
+    "download_file_failed": "파일 다운로드 오류"
+  },
+  "confirm": {
+    "delete_attachment": "이 첨부 파일을 삭제하시겠습니까?"
   },
   "connection": {
     "status": "연결 상태:",

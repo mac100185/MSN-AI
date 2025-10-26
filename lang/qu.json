@@ -63,10 +63,13 @@
     "print_chat": "Kunan rimanakuyta qillqachiy",
     "search_chat": "Kunan rimanakuypi maskay",
     "close_chat": "Kunan rimanakuyta wichq'ay, musuqta ruway",
-    "generate_prompt": "Prompt Ruwaq - Allin ruwasqa promptkunata ruway",
+    "generate_prompt": "Prompt Ruray - Allin rurasqa promptkunata ruray",
     "manage_prompts": "Prompt Kamachiq - Waqaychasqa promptkunata kamachiy",
     "chats_export": "Rimanakuykunata lluqsichiy",
-    "chats_import": "Rimanakuykunata yaykuchiy"
+    "chats_import": "Rimanakuykunata yaykuchiy",
+    "delete_attachment": "Willañiqita qichuy",
+    "download_pdf": "PDF uraykuchiy",
+    "download_txt": "TXT willañiqita uraykuchiy"
   },
   "settings": {
     "title": "AI Modelo Churay",
@@ -189,7 +192,10 @@
     "search_placeholder": "Rimanakuykunapi maskay...",
     "message_placeholder": "Kaypi willakuyniykita qillqay...",
     "show_more": "Aswan {count} rikuchiy...",
-    "show_less": "Aswan pisi rikuchiy"
+    "show_less": "Aswan pisi rikuchiy",
+    "attachments_title": "Tinkisqa willañiqikuna",
+    "attachments_context_header": "RIMANAKUYMAN TINKISQA WILLAÑIQIKUNA",
+    "attachments_context_footer": "TINKISQA WILLAÑIQIKUNAPA TUKUKUYNIN"
   },
   "messages": {
     "status_changed": "Estadoyta {status}-man tikrarqani. {message}",
@@ -223,9 +229,18 @@
     "pdf_extracting_text": "PDF-manta qillqata lluqsichispa...",
     "pdf_ocr_processing": "PDF-man OCR churaspa (kayqa unay tiempota hap'inman)...",
     "pdf_loaded": "PDF kargasqa: {filename}",
-    "pdf_error": "PDF ruwaypi pantay: {error}",
-    "pdf_no_text": "Mana PDF-manta qillqata lluqsichiyta atirqachu. Huk qillqawan yachakuy.",
-    "pdf_attached": "PDF yapasqa: {filename} ({pages} p'anqakuna)"
+    "pdf_error": "PDF ruraypi pantasqa: {error}",
+    "pdf_no_text": "PDF-manta qillqata mana atikunqachu hurquyta. Huk archivuwan ruway.",
+    "pdf_attached": "PDF tinkisqa: {filename} ({pages} p'anqakuna)",
+    "select_chat_first": "Ñawpaqta rimanakuyta akllay",
+    "attachment_save_failed": "Tinkisqa willañiqita waqaychaypi pantasqa",
+    "delete_attachment_failed": "Tinkisqa willañiqita qichuypi pantasqa",
+    "export_failed": "Rimanakuykunata lluqsichiypi pantasqa",
+    "import_failed": "Rimanakuykunata yaykuchiypi pantasqa",
+    "download_file_failed": "Willañiqita uraykuchiypi pantasqa"
+  },
+  "confirm": {
+    "delete_attachment": "¿Kay tinkisqa willañiqita qichunki?"
   },
   "connection": {
     "status": "Tinkiy kay:",

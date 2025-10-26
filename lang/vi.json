@@ -65,8 +65,11 @@
     "generate_prompt": "Trình tạo Prompt - Tạo prompt có cấu trúc",
     "manage_prompts": "Quản lý Prompt - Quản lý prompt đã lưu",
     "upload_pdf_file": "Đính kèm tệp PDF",
+    "chats_import": "Nhập trò chuyện",
     "chats_export": "Xuất trò chuyện",
-    "chats_import": "Nhập trò chuyện"
+    "delete_attachment": "Xóa tệp",
+    "download_pdf": "Tải xuống PDF",
+    "download_txt": "Tải xuống tệp TXT"
   },
   "settings": {
     "title": "Cài đặt mô hình AI",
@@ -189,7 +192,10 @@
     "search_placeholder": "Tìm trong trò chuyện...",
     "show_more": "Hiển thị thêm {count}...",
     "show_less": "Hiển thị ít hơn",
-    "message_placeholder": "Nhập tin nhắn của bạn tại đây..."
+    "message_placeholder": "Nhập tin nhắn của bạn tại đây...",
+    "attachments_title": "Tệp đính kèm",
+    "attachments_context_header": "TỆP ĐÍNH KÈM VÀO CUỘC TRÒ CHUYỆN",
+    "attachments_context_footer": "KẾT THÚC TỆP ĐÍNH KÈM"
   },
   "messages": {
     "status_changed": "Tôi đã thay đổi trạng thái thành {status}. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF đã tải: {filename}",
     "pdf_error": "Lỗi xử lý PDF: {error}",
     "pdf_no_text": "Không thể trích xuất văn bản từ PDF. Thử với tệp khác.",
-    "pdf_attached": "PDF đã đính kèm: {filename} ({pages} trang)"
+    "pdf_attached": "PDF đã đính kèm: {filename} ({pages} trang)",
+    "select_chat_first": "Vui lòng chọn một cuộc trò chuyện trước",
+    "attachment_save_failed": "Lỗi lưu tệp đính kèm",
+    "delete_attachment_failed": "Lỗi xóa tệp đính kèm",
+    "export_failed": "Lỗi xuất trò chuyện",
+    "import_failed": "Lỗi nhập trò chuyện",
+    "download_file_failed": "Lỗi tải xuống tệp"
+  },
+  "confirm": {
+    "delete_attachment": "Xóa tệp đính kèm này?"
   },
   "connection": {
     "status": "Trạng thái kết nối:",

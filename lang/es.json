@@ -71,7 +71,10 @@
     "export_chat": "Exportar chat actual a archivo de texto",
     "print_chat": "Imprimir chat actual",
     "search_chat": "Buscar en el chat actual",
-    "close_chat": "Cerrar chat actual y crear uno nuevo"
+    "close_chat": "Cerrar chat actual y crear uno nuevo",
+    "delete_attachment": "Eliminar archivo",
+    "download_pdf": "Descargar PDF",
+    "download_txt": "Descargar archivo TXT"
   },
 
   "settings": {
@@ -285,7 +288,10 @@
     "search_placeholder": "Buscar en chats...",
     "message_placeholder": "Escribe tu mensaje aquí...",
     "show_more": "Ver {count} más...",
-    "show_less": "Ver menos"
+    "show_less": "Ver menos",
+    "attachments_title": "Archivos adjuntos",
+    "attachments_context_header": "ARCHIVOS ADJUNTOS AL CHAT",
+    "attachments_context_footer": "FIN DE ARCHIVOS ADJUNTOS"
   },
 
   "messages": {
@@ -323,7 +329,17 @@
     "pdf_loaded": "PDF cargado: {filename}",
     "pdf_error": "Error al procesar el PDF: {error}",
     "pdf_no_text": "No se pudo extraer texto del PDF. Intenta con un archivo diferente.",
-    "pdf_attached": "PDF adjunto: {filename} ({pages} páginas)"
+    "pdf_attached": "PDF adjunto: {filename} ({pages} páginas)",
+    "select_chat_first": "Por favor selecciona un chat primero",
+    "attachment_save_failed": "Error al guardar el archivo adjunto",
+    "delete_attachment_failed": "Error al eliminar el archivo adjunto",
+    "export_failed": "Error al exportar los chats",
+    "import_failed": "Error al importar los chats",
+    "download_file_failed": "Error al descargar el archivo"
+  },
+
+  "confirm": {
+    "delete_attachment": "¿Eliminar este archivo adjunto?"
   },
 
   "connection": {

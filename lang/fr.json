@@ -66,7 +66,10 @@
     "search_chat": "Rechercher dans le chat actuel",
     "close_chat": "Fermer le chat actuel et en créer un nouveau",
     "chats_export": "Exporter les chats",
-    "chats_import": "Importer les chats"
+    "chats_import": "Importer les chats",
+    "delete_attachment": "Supprimer le fichier",
+    "download_pdf": "Télécharger le PDF",
+    "download_txt": "Télécharger le fichier TXT"
   },
   "settings": {
     "title": "Paramètres du Modèle IA",
@@ -268,7 +271,10 @@
     "search_placeholder": "Rechercher dans les chats...",
     "show_more": "Voir {count} de plus...",
     "show_less": "Voir moins",
-    "message_placeholder": "Écrivez votre message ici..."
+    "message_placeholder": "Écrivez votre message ici...",
+    "attachments_title": "Fichiers joints",
+    "attachments_context_header": "FICHIERS JOINTS AU CHAT",
+    "attachments_context_footer": "FIN DES FICHIERS JOINTS"
   },
   "messages": {
     "status_changed": "J'ai changé mon statut en {status}. {message}",
@@ -304,7 +310,16 @@
     "pdf_loaded": "PDF chargé : {filename}",
     "pdf_error": "Erreur lors du traitement du PDF : {error}",
     "pdf_no_text": "Impossible d'extraire le texte du PDF. Essayez avec un autre fichier.",
-    "pdf_attached": "PDF joint : {filename} ({pages} pages)"
+    "pdf_attached": "PDF joint : {filename} ({pages} pages)",
+    "select_chat_first": "Veuillez d'abord sélectionner un chat",
+    "attachment_save_failed": "Erreur lors de la sauvegarde de la pièce jointe",
+    "delete_attachment_failed": "Erreur lors de la suppression de la pièce jointe",
+    "export_failed": "Erreur lors de l'exportation des chats",
+    "import_failed": "Erreur lors de l'importation des chats",
+    "download_file_failed": "Erreur lors du téléchargement du fichier"
+  },
+  "confirm": {
+    "delete_attachment": "Supprimer cette pièce jointe ?"
   },
   "connection": {
     "status": "État de la connexion :",

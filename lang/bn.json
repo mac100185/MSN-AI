@@ -66,7 +66,10 @@
     "manage_prompts": "প্রম্পট ম্যানেজার - সংরক্ষিত প্রম্পট পরিচালনা করুন",
     "upload_pdf_file": "পিডিএফ ফাইল সংযুক্ত করুন",
     "chats_import": "চ্যাট আমদানি করুন",
-    "chats_export": "চ্যাট রপ্তানি করুন"
+    "chats_export": "চ্যাট রপ্তানি করুন",
+    "delete_attachment": "ফাইল মুছুন",
+    "download_pdf": "PDF ডাউনলোড করুন",
+    "download_txt": "TXT ফাইল ডাউনলোড করুন"
   },
   "settings": {
     "title": "এআই মডেল সেটিংস",
@@ -189,7 +192,10 @@
     "search_placeholder": "চ্যাটে অনুসন্ধান করুন...",
     "show_more": "আরও {count} দেখুন...",
     "show_less": "কম দেখুন",
-    "message_placeholder": "এখানে আপনার বার্তা লিখুন..."
+    "message_placeholder": "এখানে আপনার বার্তা লিখুন...",
+    "attachments_title": "সংযুক্ত ফাইল",
+    "attachments_context_header": "চ্যাটে সংযুক্ত ফাইল",
+    "attachments_context_footer": "সংযুক্ত ফাইলের শেষ"
   },
   "messages": {
     "status_changed": "আমি আমার স্ট্যাটাস {status} এ পরিবর্তন করেছি। {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "দয়া করে প্রথমে একটি চ্যাট নির্বাচন করুন",
+    "attachment_save_failed": "সংযুক্তি সংরক্ষণে ত্রুটি",
+    "delete_attachment_failed": "সংযুক্তি মুছতে ত্রুটি",
+    "export_failed": "চ্যাট রপ্তানিতে ত্রুটি",
+    "import_failed": "চ্যাট আমদানিতে ত্রুটি",
+    "download_file_failed": "ফাইল ডাউনলোড করতে ত্রুটি"
+  },
+  "confirm": {
+    "delete_attachment": "এই সংযুক্তিটি মুছবেন?"
   },
   "connection": {
     "status": "সংযোগ অবস্থা:",

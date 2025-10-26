@@ -65,8 +65,12 @@
     "generate_prompt": "ப்ராம்ப்ட் ஜெனரேட்டர் - கட்டமைக்கப்பட்ட ப்ராம்ப்ட்களை உருவாக்கு",
     "manage_prompts": "ப்ராம்ப்ட் மேனேஜர் - சேமிக்கப்பட்ட ப்ராம்ப்ட்களை நிர்வகி",
     "upload_pdf_file": "PDF கோப்பு இணை",
-    "chats_import": "அரட்டைகளை இறக்குமதி செய்",
-    "chats_export": "அரட்டைகளை ஏற்றுமதி செய்"
+    "upload_pdf_file": "PDF கோப்பை இணைக்கவும்",
+    "chats_import": "அரட்டைகளை இறக்குமதி செய்யவும்",
+    "chats_export": "அரட்டைகளை ஏற்றுமதி செய்யவும்",
+    "delete_attachment": "கோப்பை நீக்கவும்",
+    "download_pdf": "PDF பதிவிறக்கவும்",
+    "download_txt": "TXT கோப்பை பதிவிறக்கவும்"
   },
   "settings": {
     "title": "AI மாதிரி அமைப்புகள்",
@@ -189,7 +193,10 @@
     "search_placeholder": "அரட்டைகளில் தேடு...",
     "show_more": "மேலும் {count} காட்டு...",
     "show_less": "குறைவாகக் காட்டு",
-    "message_placeholder": "உங்கள் செய்தியை இங்கே எழுதவும்..."
+    "message_placeholder": "உங்கள் செய்தியை இங்கே எழுதவும்...",
+    "attachments_title": "இணைக்கப்பட்ட கோப்புகள்",
+    "attachments_context_header": "அரட்டையில் இணைக்கப்பட்ட கோப்புகள்",
+    "attachments_context_footer": "இணைக்கப்பட்ட கோப்புகளின் முடிவு"
   },
   "messages": {
     "status_changed": "நான் என் நிலையை {status} க்கு மாற்றியுள்ளேன். {message}",
@@ -225,7 +232,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "முதலில் ஒரு அரட்டையைத் தேர்ந்தெடுக்கவும்",
+    "attachment_save_failed": "இணைப்பை சேமிப்பதில் பிழை",
+    "delete_attachment_failed": "இணைப்பை நீக்குவதில் பிழை",
+    "export_failed": "அரட்டைகளை ஏற்றுமதி செய்வதில் பிழை",
+    "import_failed": "அரட்டைகளை இறக்குமதி செய்வதில் பிழை",
+    "download_file_failed": "கோப்பை பதிவிறக்குவதில் பிழை"
+  },
+  "confirm": {
+    "delete_attachment": "இந்த இணைப்பை நீக்கவா?"
   },
   "connection": {
     "status": "இணைப்பு நிலை:",

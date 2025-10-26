@@ -66,7 +66,10 @@
     "manage_prompts": "ਪ੍ਰੌਂਪਟ ਮੈਨੇਜਰ - ਸੁਰੱਖਿਅਤ ਪ੍ਰੌਂਪਟਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
     "upload_pdf_file": "ਪੀਡੀਐਫ ਫਾਈਲ ਨੱਥੀ ਕਰੋ",
     "chats_import": "ਚੈਟਾਂ ਆਯਾਤ ਕਰੋ",
-    "chats_export": "ਚੈਟਾਂ ਨਿਰਯਾਤ ਕਰੋ"
+    "chats_export": "ਚੈਟਾਂ ਨਿਰਯਾਤ ਕਰੋ",
+    "delete_attachment": "ਫਾਈਲ ਮਿਟਾਓ",
+    "download_pdf": "PDF ਡਾਊਨਲੋਡ ਕਰੋ",
+    "download_txt": "TXT ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ"
   },
   "settings": {
     "title": "ਏਆਈ ਮਾਡਲ ਸੈਟਿੰਗਾਂ",
@@ -189,7 +192,10 @@
     "search_placeholder": "ਚੈਟਾਂ ਵਿੱਚ ਖੋਜੋ...",
     "show_more": "ਹੋਰ {count} ਦੇਖੋ...",
     "show_less": "ਘੱਟ ਦੇਖੋ",
-    "message_placeholder": "ਆਪਣਾ ਸੁਨੇਹਾ ਇੱਥੇ ਲਿਖੋ..."
+    "message_placeholder": "ਆਪਣਾ ਸੁਨੇਹਾ ਇੱਥੇ ਲਿਖੋ...",
+    "attachments_title": "ਨੱਥੀ ਫਾਈਲਾਂ",
+    "attachments_context_header": "ਚੈਟ ਨਾਲ ਨੱਥੀ ਫਾਈਲਾਂ",
+    "attachments_context_footer": "ਨੱਥੀ ਫਾਈਲਾਂ ਦਾ ਅੰਤ"
   },
   "messages": {
     "status_changed": "ਮੈਂ ਆਪਣੀ ਸਥਿਤੀ {status} ਵਿੱਚ ਬਦਲੀ ਹੈ। {message}",
@@ -225,7 +231,17 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਇੱਕ ਚੈਟ ਚੁਣੋ",
+    "attachment_save_failed": "ਅਟੈਚਮੈਂਟ ਸੁਰੱਖਿਅਤ ਕਰਨ ਵਿੱਚ ਤਰੁੱਟੀ",
+    "attachment_save_failed": "ਅਟੈਚਮੈਂਟ ਸੰਭਾਲਣ ਵਿੱਚ ਗਲਤੀ",
+    "delete_attachment_failed": "ਅਟੈਚਮੈਂਟ ਮਿਟਾਉਣ ਵਿੱਚ ਗਲਤੀ",
+    "export_failed": "ਚੈਟਾਂ ਨਿਰਯਾਤ ਕਰਨ ਵਿੱਚ ਗਲਤੀ",
+    "import_failed": "ਚੈਟਾਂ ਆਯਾਤ ਕਰਨ ਵਿੱਚ ਗਲਤੀ",
+    "download_file_failed": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ"
+  },
+  "confirm": {
+    "delete_attachment": "ਇਹ ਅਟੈਚਮੈਂਟ ਮਿਟਾਓ?"
   },
   "connection": {
     "status": "ਕਨੈਕਸ਼ਨ ਸਥਿਤੀ:",

@@ -21,6 +21,7 @@ class MSNAI {
     this.translations = {}; // Diccionario de traducciones
     this.availableLanguages = []; // Idiomas disponibles
     this.currentLanguage = "es"; // Idioma por defecto
+    this.db = null; // IndexedDB para almacenar archivos adjuntos
     const currentHost = window.location.hostname;
     const isRemoteAccess =
       currentHost !== "localhost" && currentHost !== "127.0.0.1";
@@ -564,7 +565,8 @@ class MSNAI {
       });
     }
 
-    return value || key;
+    // Si value es undefined, devolver undefined para que el operador || funcione
+    return value !== undefined ? value : undefined;
   }
 
   updateLanguageSelect() {
@@ -1050,30 +1052,420 @@ class MSNAI {
       this.fontSize + "px";
   }
 
+  // =================== GESTIÓN DE ARCHIVOS ADJUNTOS CON INDEXEDDB ===================
+
+  /**
+   * Inicializa la base de datos IndexedDB para almacenar archivos adjuntos
+   */
+  async initAttachmentsDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open("msnai-attachments", 2);
+
+      request.onerror = () => {
+        console.error("❌ Error abriendo IndexedDB:", request.error);
+        reject(request.error);
+      };
+
+      request.onsuccess = () => {
+        this.db = request.result;
+        console.log("✅ IndexedDB inicializada para archivos adjuntos");
+        resolve();
+      };
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains("attachments")) {
+          const objectStore = db.createObjectStore("attachments", {
+            keyPath: "id",
+          });
+          objectStore.createIndex("chatId", "chatId", { unique: false });
+          console.log("📦 Object store 'attachments' creado");
+        }
+        // Nuevo store para archivos binarios (PDF y TXT originales)
+        if (!db.objectStoreNames.contains("fileAttachments")) {
+          const fileStore = db.createObjectStore("fileAttachments", {
+            keyPath: "key",
+          });
+          fileStore.createIndex("chatId", "chatId", { unique: false });
+          console.log("📦 Object store 'fileAttachments' creado");
+        }
+      };
+    });
+  }
+
+  /**
+   * Guarda un archivo adjunto en IndexedDB
+   * @param {Object} attachment - Objeto con datos del archivo
+   */
+  async saveAttachment(attachment) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["attachments"], "readwrite");
+      const objectStore = transaction.objectStore("attachments");
+      const request = objectStore.put(attachment);
+
+      request.onsuccess = () => {
+        console.log(`✅ Archivo guardado en IndexedDB: ${attachment.name}`);
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error guardando archivo en IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Obtiene un archivo adjunto desde IndexedDB
+   * @param {string} attachmentId - ID del archivo adjunto
+   */
+  async getAttachment(attachmentId) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["attachments"], "readonly");
+      const objectStore = transaction.objectStore("attachments");
+      const request = objectStore.get(attachmentId);
+
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error obteniendo archivo de IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Guarda un archivo binario en IndexedDB
+   * @param {string} key - Clave única del archivo
+   * @param {ArrayBuffer} data - Datos binarios del archivo
+   * @param {string} type - Tipo MIME del archivo
+   * @param {string} name - Nombre del archivo
+   * @param {string} chatId - ID del chat
+   */
+  async saveFileAttachment(key, data, type, name, chatId) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["fileAttachments"], "readwrite");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const request = objectStore.put({ key, data, type, name, chatId });
+
+      request.onsuccess = () => {
+        console.log(`✅ Archivo binario guardado en IndexedDB: ${name}`);
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error guardando archivo binario en IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Obtiene un archivo binario desde IndexedDB
+   * @param {string} key - Clave única del archivo
+   */
+  async getFileAttachment(key) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["fileAttachments"], "readonly");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const request = objectStore.get(key);
+
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error obteniendo archivo binario de IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Elimina un archivo binario de IndexedDB
+   * @param {string} key - Clave única del archivo
+   */
+  async deleteFileAttachment(key) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["fileAttachments"], "readwrite");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const request = objectStore.delete(key);
+
+      request.onsuccess = () => {
+        console.log(`🗑️ Archivo binario eliminado de IndexedDB: ${key}`);
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error eliminando archivo binario de IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Elimina un archivo adjunto de IndexedDB
+   * @param {string} attachmentId - ID del archivo adjunto
+   */
+  async deleteAttachment(attachmentId) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["attachments"], "readwrite");
+      const objectStore = transaction.objectStore("attachments");
+      const request = objectStore.delete(attachmentId);
+
+      request.onsuccess = () => {
+        console.log(`🗑️ Archivo eliminado de IndexedDB: ${attachmentId}`);
+        resolve();
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error eliminando archivo de IndexedDB:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Elimina todos los archivos adjuntos de un chat
+   * @param {string} chatId - ID del chat
+   */
+  async deleteAllChatAttachments(chatId) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      // Eliminar archivos de texto/contenido
+      const transaction = this.db.transaction(["attachments"], "readwrite");
+      const objectStore = transaction.objectStore("attachments");
+      const index = objectStore.index("chatId");
+      const request = index.openCursor(IDBKeyRange.only(chatId));
+
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        } else {
+          console.log(`🗑️ Todos los archivos del chat ${chatId} eliminados`);
+
+          // Eliminar archivos binarios
+          this.deleteAllChatFileAttachments(chatId)
+            .then(() => resolve())
+            .catch((err) => {
+              console.error("Error eliminando archivos binarios:", err);
+              resolve(); // Continuar aunque falle
+            });
+        }
+      };
+
+      request.onerror = () => {
+        console.error("❌ Error eliminando archivos del chat:", request.error);
+        reject(request.error);
+      };
+    });
+  }
+
+  /**
+   * Elimina todos los archivos binarios de un chat
+   * @param {string} chatId - ID del chat
+   */
+  async deleteAllChatFileAttachments(chatId) {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        reject(new Error("IndexedDB no inicializada"));
+        return;
+      }
+
+      const transaction = this.db.transaction(["fileAttachments"], "readwrite");
+      const objectStore = transaction.objectStore("fileAttachments");
+      const index = objectStore.index("chatId");
+      const request = index.openCursor(IDBKeyRange.only(chatId));
+
+      request.onsuccess = (event) => {
+        const cursor = event.target.result;
+        if (cursor) {
+          cursor.delete();
+          cursor.continue();
+        } else {
+          console.log(
+            `🗑️ Todos los archivos binarios del chat ${chatId} eliminados`,
+          );
+          resolve();
+        }
+      };
+
+      request.onerror = () => {
+        console.error(
+          "❌ Error eliminando archivos binarios del chat:",
+          request.error,
+        );
+        reject(request.error);
+      };
+    });
+  }
+
+  // =================== CARGA DE ARCHIVOS DE TEXTO ===================
+
   uploadTextFile() {
+    if (!this.currentChatId) {
+      alert(
+        this.t("errors.select_chat_first") ||
+          "Por favor selecciona un chat primero",
+      );
+      return;
+    }
+
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".txt,text/plain";
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      if (!file.name.endsWith(".txt") || file.type !== "text/plain") {
+      if (!file.name.endsWith(".txt") && file.type !== "text/plain") {
         alert(this.t("errors.only_txt_files"));
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+
+      // Leer el archivo como texto
+      const textReader = new FileReader();
+      textReader.onload = async (ev) => {
         const content = ev.target.result;
         const inputEl = document.getElementById("message-input");
-        this.pendingFileAttachment = {
-          name: file.name,
-          content: content,
+
+        // Fragmentar el contenido en chunks
+        const chunks = this.chunkTextByTokens(content, 6000);
+
+        // Crear clave para el archivo binario
+        const fileKey = `txt-${this.currentChatId}-${Date.now()}`;
+
+        // Leer el archivo como ArrayBuffer para guardarlo completo
+        const binaryReader = new FileReader();
+        binaryReader.onload = async (binaryEv) => {
+          const arrayBuffer = binaryEv.target.result;
+
+          // Crear objeto de attachment
+          const attachmentId = `${this.currentChatId}_${Date.now()}_${file.name}`;
+          const attachment = {
+            id: attachmentId,
+            chatId: this.currentChatId,
+            name: file.name,
+            type: "text/plain",
+            size: file.size,
+            content: content,
+            chunks: chunks,
+            uploadDate: new Date().toISOString(),
+            fileAttachmentKey: fileKey, // Referencia al archivo binario
+          };
+
+          try {
+            // Guardar archivo binario en IndexedDB
+            await this.saveFileAttachment(
+              fileKey,
+              arrayBuffer,
+              file.type || "text/plain",
+              file.name,
+              this.currentChatId,
+            );
+
+            // Guardar el attachment con el contenido de texto
+            await this.saveAttachment(attachment);
+
+            // Agregar a la lista de attachments del chat
+            const chat = this.chats.find((c) => c.id === this.currentChatId);
+            if (chat) {
+              if (!chat.attachments) {
+                chat.attachments = [];
+              }
+              chat.attachments.push({
+                id: attachmentId,
+                name: file.name,
+                type: "text/plain",
+                size: file.size,
+                chunks: chunks.length,
+                uploadDate: attachment.uploadDate,
+                fileAttachmentKey: fileKey, // Guardar la referencia
+              });
+              this.saveChats();
+            }
+
+            // Establecer como pending para el próximo mensaje
+            this.pendingFileAttachment = {
+              name: file.name,
+              content: content,
+              chunks: chunks,
+            };
+
+            const currentMsg = inputEl.value.trim();
+            inputEl.value = `${currentMsg ? currentMsg + " " : ""}[Archivo adjunto: ${file.name}]`;
+            inputEl.focus();
+
+            // Renderizar el chat para mostrar el attachment
+            this.renderMessages(chat);
+
+            console.log(`📎 Archivo TXT adjuntado al chat: ${file.name}`);
+          } catch (error) {
+            console.error("Error guardando archivo adjunto:", error);
+            alert(
+              this.t("errors.attachment_save_failed") ||
+                "Error al guardar el archivo adjunto",
+            );
+          }
         };
-        const currentMsg = inputEl.value.trim();
-        inputEl.value = `${currentMsg ? currentMsg + " " : ""}[Archivo adjunto: ${file.name}]`;
-        inputEl.focus();
+        binaryReader.readAsArrayBuffer(file);
       };
-      reader.readAsText(file);
+      textReader.readAsText(file);
     };
     input.click();
   }
@@ -1084,6 +1476,14 @@ class MSNAI {
    * Abre diálogo para cargar archivo PDF y lo procesa
    */
   uploadPdfFile() {
+    if (!this.currentChatId) {
+      alert(
+        this.t("errors.select_chat_first") ||
+          "Por favor selecciona un chat primero",
+      );
+      return;
+    }
+
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".pdf,application/pdf";
@@ -1118,24 +1518,93 @@ class MSNAI {
           return;
         }
 
-        // Guardar contexto PDF temporalmente (no en historial)
-        this.pendingPdfContext = {
-          name: file.name,
-          text: pdfData.text,
-          pages: pdfData.numPages,
-          chunks: this.chunkPdfText(pdfData.text, 6000), // Fragmentar en chunks de ~6000 tokens
+        // Crear clave para el archivo binario
+        const fileKey = `pdf-${this.currentChatId}-${Date.now()}`;
+
+        // Leer el archivo como ArrayBuffer para guardarlo completo
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+          const arrayBuffer = ev.target.result;
+
+          // Crear objeto de attachment persistente
+          const attachmentId = `${this.currentChatId}_${Date.now()}_${file.name}`;
+          const attachment = {
+            id: attachmentId,
+            chatId: this.currentChatId,
+            name: file.name,
+            type: "application/pdf",
+            size: file.size,
+            content: pdfData.text,
+            pages: pdfData.numPages,
+            chunks: this.chunkTextByTokens(pdfData.text, 6000),
+            uploadDate: new Date().toISOString(),
+            fileAttachmentKey: fileKey, // Referencia al archivo binario
+          };
+
+          try {
+            // Guardar archivo binario en IndexedDB
+            await this.saveFileAttachment(
+              fileKey,
+              arrayBuffer,
+              file.type || "application/pdf",
+              file.name,
+              this.currentChatId,
+            );
+
+            // Guardar el attachment con el contenido de texto extraído
+            await this.saveAttachment(attachment);
+
+            // Agregar a la lista de attachments del chat
+            const chat = this.chats.find((c) => c.id === this.currentChatId);
+            if (chat) {
+              if (!chat.attachments) {
+                chat.attachments = [];
+              }
+              chat.attachments.push({
+                id: attachmentId,
+                name: file.name,
+                type: "application/pdf",
+                size: file.size,
+                pages: pdfData.numPages,
+                uploadDate: attachment.uploadDate,
+                fileAttachmentKey: fileKey, // Guardar la referencia
+              });
+              this.saveChats();
+            }
+
+            // Guardar contexto PDF temporalmente para el próximo mensaje
+            this.pendingPdfContext = {
+              name: file.name,
+              text: pdfData.text,
+              pages: pdfData.numPages,
+              chunks: attachment.chunks,
+            };
+
+            // Actualizar input con indicador visual
+            const inputEl = document.getElementById("message-input");
+            const currentMsg = inputEl.value.trim();
+            inputEl.value = `${currentMsg ? currentMsg + " " : ""}[PDF: ${file.name} - ${pdfData.numPages} ${this.t("pdf.pages")}]`;
+            inputEl.focus();
+
+            // Renderizar el chat para mostrar el attachment
+            this.renderMessages(chat);
+
+            this.showNotification(
+              this.t("errors.pdf_loaded", { filename: file.name }),
+              "success",
+            );
+
+            console.log(`📎 Archivo PDF adjuntado al chat: ${file.name}`);
+          } catch (saveError) {
+            console.error("Error guardando archivo adjunto:", saveError);
+            this.showNotification(
+              this.t("errors.attachment_save_failed") ||
+                "Error al guardar el archivo adjunto",
+              "error",
+            );
+          }
         };
-
-        // Actualizar input con indicador visual
-        const inputEl = document.getElementById("message-input");
-        const currentMsg = inputEl.value.trim();
-        inputEl.value = `${currentMsg ? currentMsg + " " : ""}[PDF: ${file.name} - ${pdfData.numPages} ${this.t("pdf.pages")}]`;
-        inputEl.focus();
-
-        this.showNotification(
-          this.t("errors.pdf_loaded", { filename: file.name }),
-          "success",
-        );
+        reader.readAsArrayBuffer(file);
       } catch (error) {
         console.error("Error procesando PDF:", error);
         this.showNotification(
@@ -1258,24 +1727,43 @@ class MSNAI {
   }
 
   /**
-   * Fragmenta el texto del PDF en chunks apropiados
-   * @param {string} text - Texto completo del PDF
+   * Fragmenta texto en chunks basados en tokens estimados
+   * @param {string} text - Texto completo a fragmentar
    * @param {number} maxTokens - Máximo de tokens por chunk (aproximado)
    * @returns {Array<string>}
    */
-  chunkPdfText(text, maxTokens = 6000) {
+  chunkTextByTokens(text, maxTokens = 6000) {
     // Estimación: 1 token ≈ 4 caracteres
     const maxChars = maxTokens * 4;
-    const paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
+
+    // Intentar dividir por párrafos (doble salto de línea)
+    let paragraphs = text.split(/\n\n+/).filter((p) => p.trim());
+
+    // Si no hay párrafos separados por doble salto, usar saltos de línea simples
+    if (paragraphs.length === 1) {
+      paragraphs = text.split(/\n/).filter((p) => p.trim());
+    }
+
+    // Si tampoco hay saltos de línea, dividir por oraciones
+    if (paragraphs.length === 1 && text.length > maxChars) {
+      paragraphs = text.split(/\. /).filter((p) => p.trim());
+    }
+
     const chunks = [];
     let currentChunk = "";
 
     for (const paragraph of paragraphs) {
+      const separator = text.includes("\n\n")
+        ? "\n\n"
+        : text.includes("\n")
+          ? "\n"
+          : ". ";
+
       if ((currentChunk + paragraph).length > maxChars && currentChunk) {
         chunks.push(currentChunk.trim());
         currentChunk = paragraph;
       } else {
-        currentChunk += (currentChunk ? "\n\n" : "") + paragraph;
+        currentChunk += (currentChunk ? separator : "") + paragraph;
       }
     }
 
@@ -1351,7 +1839,7 @@ class MSNAI {
       this.selectChat(this.currentChatId);
     }
   }
-  exportSelectedChats() {
+  async exportSelectedChats() {
     const selectedChats = this.chats.filter((chat) => chat.selected);
 
     if (selectedChats.length === 0) {
@@ -1359,21 +1847,73 @@ class MSNAI {
       return;
     }
 
-    const data = {
-      version: "1.0",
-      exportDate: new Date().toISOString(),
-      chats: selectedChats,
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `msn-ai-selected-chats-${new Date().toISOString().split("T")[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    this.playSound("nudge");
+    try {
+      // Verificar estado de IndexedDB
+      if (!this.db) {
+        console.warn(
+          "⚠️ IndexedDB no está inicializada, esperando inicialización...",
+        );
+        await this.initAttachmentsDB();
+      }
+
+      // Obtener todos los attachments de IndexedDB
+      const allAttachments = await this.getAllAttachments();
+
+      // Filtrar solo los attachments de los chats seleccionados
+      const selectedChatIds = new Set(selectedChats.map((c) => c.id));
+      const selectedAttachments = allAttachments.filter((att) =>
+        selectedChatIds.has(att.chatId),
+      );
+
+      console.log(
+        `📤 Exportando ${selectedChats.length} chats con ${selectedAttachments.length} archivos adjuntos`,
+      );
+
+      if (selectedAttachments.length > 0) {
+        console.log(
+          "📦 Primeros 3 attachments:",
+          selectedAttachments.slice(0, 3).map((a) => ({
+            id: a.id,
+            name: a.name,
+            type: a.type,
+            hasContent: !!a.content,
+            contentLength: a.content ? a.content.length : 0,
+          })),
+        );
+      }
+
+      const data = {
+        version: "2.0",
+        exportDate: new Date().toISOString(),
+        chats: selectedChats,
+        attachments: selectedAttachments,
+      };
+
+      console.log(
+        `📦 Tamaño total del JSON: ${JSON.stringify(data).length} caracteres`,
+      );
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `msn-ai-selected-chats-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      this.playSound("nudge");
+
+      console.log("✅ Exportación selectiva completada exitosamente");
+    } catch (error) {
+      console.error("❌ Error exportando chats seleccionados:", error);
+      alert(
+        this.t("errors.export_failed") ||
+          "Error al exportar chats seleccionados",
+      );
+    }
   }
 
   exportCurrentChat() {
@@ -1433,6 +1973,55 @@ class MSNAI {
 
   showInfo() {
     document.getElementById("info-modal").style.display = "block";
+  }
+
+  /**
+   * Muestra una notificación temporal al usuario
+   * @param {string} message - Mensaje a mostrar
+   * @param {string} type - Tipo de notificación: 'info', 'success', 'error'
+   */
+  showNotification(message, type = "info") {
+    // Crear elemento de notificación si no existe
+    let notification = document.getElementById("app-notification");
+    if (!notification) {
+      notification = document.createElement("div");
+      notification.id = "app-notification";
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 4px;
+        font-size: 8pt;
+        font-family: Tahoma, sans-serif;
+        z-index: 10000;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: opacity 0.3s ease;
+        max-width: 300px;
+      `;
+      document.body.appendChild(notification);
+    }
+
+    // Establecer estilo según tipo
+    const colors = {
+      info: { bg: "#2196F3", color: "#fff" },
+      success: { bg: "#4CAF50", color: "#fff" },
+      error: { bg: "#f44336", color: "#fff" },
+    };
+    const style = colors[type] || colors.info;
+    notification.style.backgroundColor = style.bg;
+    notification.style.color = style.color;
+    notification.textContent = message;
+    notification.style.display = "block";
+    notification.style.opacity = "1";
+
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+      notification.style.opacity = "0";
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 300);
+    }, 3000);
   }
 
   // =================== ENVÍO DE MENSAJE CON ARCHIVO ===================
@@ -1499,7 +2088,13 @@ class MSNAI {
 
       // Construir mensaje con archivo de texto si existe
       if (fileContent) {
-        actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${fileContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
+        // Si hay chunks, usar solo los primeros 3
+        let textContent = fileContent;
+        if (originalAttachment.chunks && originalAttachment.chunks.length > 0) {
+          const relevantChunks = originalAttachment.chunks.slice(0, 3);
+          textContent = relevantChunks.join("\n\n[...]\n\n");
+        }
+        actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${textContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
       }
 
       // Construir contexto con PDF si existe (se pasa por separado)
@@ -1620,6 +2215,12 @@ class MSNAI {
     const saved = localStorage.getItem("msnai-chats");
     if (saved) {
       this.chats = JSON.parse(saved);
+      // Asegurar que todos los chats tengan la propiedad attachments
+      this.chats.forEach((chat) => {
+        if (!chat.attachments) {
+          chat.attachments = [];
+        }
+      });
     } else {
       this.chats = [
         {
@@ -1627,6 +2228,7 @@ class MSNAI {
           title: "Bienvenida a MSN-AI",
           date: new Date().toISOString(),
           model: this.settings.selectedModel,
+          attachments: [],
           messages: [
             {
               type: "ai",
@@ -1710,11 +2312,49 @@ class MSNAI {
       )
       .join("\n");
 
-    // Construir prompt: Contexto PDF (si existe) + Historial + Mensaje actual
+    // Cargar todos los archivos adjuntos del chat desde IndexedDB
+    let attachmentsContext = "";
+    if (chat.attachments && chat.attachments.length > 0) {
+      const attachmentsData = [];
+      for (const attachmentMeta of chat.attachments) {
+        try {
+          const attachment = await this.getAttachment(attachmentMeta.id);
+          if (attachment) {
+            if (attachment.type === "text/plain") {
+              // Si hay chunks, usar solo los primeros 3
+              let textContent = attachment.content;
+              if (attachment.chunks && attachment.chunks.length > 0) {
+                const relevantChunks = attachment.chunks.slice(0, 3);
+                textContent = relevantChunks.join("\n\n[...]\n\n");
+              }
+              attachmentsData.push(
+                `[Archivo TXT: ${attachment.name}]\n${textContent}\n`,
+              );
+            } else if (attachment.type === "application/pdf") {
+              const relevantChunks = attachment.chunks
+                ? attachment.chunks.slice(0, 3)
+                : [];
+              attachmentsData.push(
+                `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${relevantChunks.join("\n\n[...]\n\n")}\n`,
+              );
+            }
+          }
+        } catch (error) {
+          console.error(
+            `Error cargando attachment ${attachmentMeta.id}:`,
+            error,
+          );
+        }
+      }
+      if (attachmentsData.length > 0) {
+        attachmentsContext = `\n\n=== ${this.t("chat.attachments_context_header")} ===\n${attachmentsData.join("\n---\n")}\n=== ${this.t("chat.attachments_context_footer")} ===\n\n`;
+      }
+    }
+
+    // Construir prompt: Archivos adjuntos + Contexto PDF temporal (si existe) + Historial + Mensaje actual
     let prompt = "";
-    if (pdfContext) {
-      // El contexto PDF se incluye primero, pero NO cuenta como parte del historial
-      prompt = `${pdfContext}\n\n---\n\nHistorial de conversación:\n${context}\n\nUsuario: ${message}`;
+    if (attachmentsContext || pdfContext) {
+      prompt = `${attachmentsContext}${pdfContext ? pdfContext + "\n\n---\n\n" : ""}Historial de conversación:\n${context}\n\nUsuario: ${message}`;
     } else {
       prompt = context ? `${context}\nUsuario: ${message}` : message;
     }
@@ -1861,6 +2501,7 @@ class MSNAI {
       date: new Date().toISOString(),
       model: this.settings.selectedModel,
       messages: [],
+      attachments: [],
     };
     this.chats.unshift(newChat);
     this.saveChats();
@@ -1929,8 +2570,16 @@ class MSNAI {
     return title.length < firstMessage.content.length ? title + "..." : title;
   }
 
-  deleteChat(chatId) {
+  async deleteChat(chatId) {
     // Ya no se necesita confirm() aquí: la confirmación se hizo en el modal
+
+    // Eliminar todos los archivos adjuntos del chat de IndexedDB
+    try {
+      await this.deleteAllChatAttachments(chatId);
+    } catch (error) {
+      console.error("Error eliminando archivos adjuntos del chat:", error);
+    }
+
     this.chats = this.chats.filter((c) => c.id !== chatId);
     this.saveChats();
     this.renderChatList();
@@ -2248,6 +2897,144 @@ class MSNAI {
 
     messagesArea.innerHTML = "";
 
+    // Mostrar archivos adjuntos al inicio si existen
+    if (chat.attachments && chat.attachments.length > 0) {
+      const attachmentsContainer = document.createElement("div");
+      attachmentsContainer.className = "attachments-container";
+      attachmentsContainer.style.cssText =
+        "padding: 10px; background: #f0f8ff; border-bottom: 1px solid #cce7ff; margin-bottom: 10px;";
+
+      const attachmentsTitle = document.createElement("div");
+      attachmentsTitle.style.cssText =
+        "font-weight: bold; font-size: 8pt; color: #0066cc; margin-bottom: 5px;";
+      attachmentsTitle.textContent = `📎 ${this.t("chat.attachments_title")} (${chat.attachments.length})`;
+      attachmentsContainer.appendChild(attachmentsTitle);
+
+      chat.attachments.forEach((attachment) => {
+        const attachmentItem = document.createElement("div");
+        attachmentItem.className = "attachment-item";
+        attachmentItem.style.cssText =
+          "display: flex; align-items: center; gap: 8px; padding: 5px; background: white; border: 1px solid #cce7ff; border-radius: 3px; margin-bottom: 4px; font-size: 7.5pt;";
+
+        const icon = attachment.type === "application/pdf" ? "📄" : "📝";
+        const sizeKB = (attachment.size / 1024).toFixed(1);
+        const date = new Date(attachment.uploadDate).toLocaleDateString(
+          "es-ES",
+        );
+
+        // Información adicional según tipo de archivo
+        let extraInfo = "";
+        if (attachment.pages) {
+          extraInfo = `• ${attachment.pages} páginas`;
+        } else if (attachment.chunks && attachment.chunks > 1) {
+          extraInfo = `• ${attachment.chunks} fragmentos`;
+        }
+
+        // Determinar si tiene archivo binario disponible para descarga
+        const hasFileAttachment = attachment.fileAttachmentKey ? true : false;
+        const downloadBtnTooltip =
+          attachment.type === "application/pdf"
+            ? this.t("tooltips.download_pdf")
+            : this.t("tooltips.download_txt");
+
+        const downloadButton = hasFileAttachment
+          ? `<button class="download-attachment-btn" data-attachment-key="${attachment.fileAttachmentKey}" data-attachment-name="${this.escapeHtml(attachment.name)}" style="background: #0066cc; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 7pt; margin-right: 4px;" title="${downloadBtnTooltip}">💾</button>`
+          : "";
+
+        attachmentItem.innerHTML = `
+          <span style="font-size: 16px;">${icon}</span>
+          <div style="flex: 1;">
+            <div style="font-weight: bold; color: #333;">${this.escapeHtml(attachment.name)}</div>
+            <div style="color: #666; font-size: 7pt;">${sizeKB} KB ${extraInfo} • ${date}</div>
+          </div>
+          <div style="display: flex; gap: 4px;">
+            ${downloadButton}
+            <button class="delete-attachment-btn" data-attachment-id="${attachment.id}" data-attachment-key="${attachment.fileAttachmentKey || ""}" style="background: #ff4444; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 7pt;" title="${this.t("tooltips.delete_attachment")}">🗑️</button>
+          </div>
+        `;
+
+        attachmentsContainer.appendChild(attachmentItem);
+      });
+
+      messagesArea.appendChild(attachmentsContainer);
+
+      // Event listeners para descargar attachments
+      attachmentsContainer
+        .querySelectorAll(".download-attachment-btn")
+        .forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const fileKey = e.target.dataset.attachmentKey;
+            const fileName = e.target.dataset.attachmentName;
+
+            try {
+              const fileData = await this.getFileAttachment(fileKey);
+              if (!fileData) {
+                throw new Error("Archivo no encontrado");
+              }
+
+              // Crear blob y descargar
+              const blob = new Blob([fileData.data], { type: fileData.type });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = fileName;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+
+              console.log(`💾 Archivo descargado: ${fileName}`);
+            } catch (error) {
+              console.error("Error descargando archivo:", error);
+              alert(
+                this.t("errors.download_file_failed") ||
+                  "Error al descargar el archivo",
+              );
+            }
+          });
+        });
+
+      // Event listeners para eliminar attachments
+      attachmentsContainer
+        .querySelectorAll(".delete-attachment-btn")
+        .forEach((btn) => {
+          btn.addEventListener("click", async (e) => {
+            const attachmentId = e.target.dataset.attachmentId;
+            const fileKey = e.target.dataset.attachmentKey;
+
+            if (
+              confirm(
+                this.t("confirm.delete_attachment") ||
+                  "¿Eliminar este archivo adjunto?",
+              )
+            ) {
+              try {
+                // Eliminar attachment de texto/contenido
+                await this.deleteAttachment(attachmentId);
+
+                // Eliminar archivo binario si existe
+                if (fileKey) {
+                  await this.deleteFileAttachment(fileKey);
+                }
+
+                chat.attachments = chat.attachments.filter(
+                  (a) => a.id !== attachmentId,
+                );
+                this.saveChats();
+                this.renderMessages(chat);
+                console.log(`🗑️ Archivo adjunto eliminado: ${attachmentId}`);
+              } catch (error) {
+                console.error("Error eliminando attachment:", error);
+                alert(
+                  this.t("errors.delete_attachment_failed") ||
+                    "Error al eliminar el archivo",
+                );
+              }
+            }
+          });
+        });
+    }
+
     chat.messages.forEach((message) => {
       const messageElement = document.createElement("div");
       messageElement.className = "message";
@@ -2479,33 +3266,125 @@ class MSNAI {
       notifyStatusEl.checked = this.settings.notifyStatusChanges; // ✅ NUEVO
   }
   //--------------------------------
-  exportChats() {
-    const data = {
-      version: "1.0",
-      exportDate: new Date().toISOString(),
-      chats: this.chats,
-      settings: this.settings,
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
+  async exportChats() {
+    try {
+      // Verificar estado de IndexedDB
+      if (!this.db) {
+        console.warn(
+          "⚠️ IndexedDB no está inicializada, esperando inicialización...",
+        );
+        await this.initAttachmentsDB();
+      }
+
+      // Exportar todos los archivos adjuntos de IndexedDB
+      const attachments = await this.getAllAttachments();
+      console.log(
+        `📤 Exportando ${attachments.length} archivos adjuntos de IndexedDB`,
+      );
+
+      if (attachments.length > 0) {
+        console.log(
+          "📦 Primeros 3 attachments:",
+          attachments.slice(0, 3).map((a) => ({
+            id: a.id,
+            name: a.name,
+            type: a.type,
+            hasContent: !!a.content,
+            contentLength: a.content ? a.content.length : 0,
+            hasChunks: !!a.chunks,
+            chunksCount: Array.isArray(a.chunks) ? a.chunks.length : 0,
+          })),
+        );
+      } else {
+        console.log("ℹ️ No hay archivos adjuntos para exportar");
+      }
+
+      const data = {
+        version: "2.0",
+        exportDate: new Date().toISOString(),
+        chats: this.chats,
+        settings: this.settings,
+        attachments: attachments,
+      };
+
+      console.log(
+        `📦 Tamaño total del JSON: ${JSON.stringify(data).length} caracteres`,
+      );
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `msn-ai-chats-${new Date().toISOString().split("T")[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      this.playSound("nudge");
+
+      console.log("✅ Exportación completada exitosamente");
+    } catch (error) {
+      console.error("❌ Error exportando chats:", error);
+      alert(this.t("errors.export_failed") || "Error al exportar chats");
+    }
+  }
+
+  /**
+   * Obtiene todos los archivos adjuntos de IndexedDB
+   */
+  async getAllAttachments() {
+    return new Promise((resolve, reject) => {
+      if (!this.db) {
+        resolve([]);
+        return;
+      }
+
+      const transaction = this.db.transaction(["attachments"], "readonly");
+      const objectStore = transaction.objectStore("attachments");
+      const request = objectStore.getAll();
+
+      request.onsuccess = () => {
+        resolve(request.result || []);
+      };
+
+      request.onerror = () => {
+        console.error("Error obteniendo attachments:", request.error);
+        reject(request.error);
+      };
     });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `msn-ai-chats-${new Date().toISOString().split("T")[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    this.playSound("nudge");
   }
 
   importChats(file) {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = JSON.parse(e.target.result);
         if (data.chats && Array.isArray(data.chats)) {
+          // Si hay archivos adjuntos en la exportación, importarlos primero
+          if (data.attachments && Array.isArray(data.attachments)) {
+            console.log(
+              `📥 Importando ${data.attachments.length} archivos adjuntos`,
+            );
+            if (data.attachments.length > 0) {
+              console.log(
+                "📦 Primeros 3 attachments a importar:",
+                data.attachments.slice(0, 3).map((a) => ({
+                  id: a.id,
+                  name: a.name,
+                  type: a.type,
+                  hasContent: !!a.content,
+                  contentLength: a.content ? a.content.length : 0,
+                })),
+              );
+            }
+            await this.importAttachments(data.attachments);
+          } else {
+            console.log(
+              "⚠️ No se encontraron archivos adjuntos en la importación",
+            );
+          }
           this.processImportedChats(data.chats);
         } else {
           alert(this.t("errors.invalid_json"));
@@ -2516,6 +3395,162 @@ class MSNAI {
       }
     };
     reader.readAsText(file);
+  }
+
+  /**
+   * Importa los archivos adjuntos a IndexedDB
+   */
+  async importAttachments(attachments) {
+    if (!this.db) {
+      console.error(
+        "❌ IndexedDB no está inicializada para importar attachments",
+      );
+      return;
+    }
+
+    if (!attachments || attachments.length === 0) {
+      console.log("ℹ️ No hay archivos adjuntos para importar");
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(["attachments"], "readwrite");
+      const objectStore = transaction.objectStore("attachments");
+
+      let completed = 0;
+      let errors = 0;
+
+      attachments.forEach((attachment) => {
+        const request = objectStore.put(attachment);
+
+        request.onsuccess = () => {
+          completed++;
+          console.log(
+            `✅ Attachment importado (${completed}/${attachments.length}): ${attachment.name}`,
+          );
+          if (completed + errors === attachments.length) {
+            console.log(
+              `✅ Importación completada: ${completed} archivos adjuntos importados`,
+            );
+            if (errors > 0) {
+              console.warn(`⚠️ ${errors} archivos adjuntos fallaron`);
+            }
+            resolve();
+          }
+        };
+
+        request.onerror = () => {
+          console.error(
+            `❌ Error importando attachment: ${attachment.id} - ${attachment.name}`,
+            request.error,
+          );
+          errors++;
+          if (completed + errors === attachments.length) {
+            if (completed > 0) {
+              console.log(
+                `⚠️ Importación parcial: ${completed} importados, ${errors} fallidos`,
+              );
+            } else {
+              console.error(
+                `❌ Importación fallida: todos los ${errors} archivos fallaron`,
+              );
+            }
+            resolve();
+          }
+        };
+      });
+    });
+  }
+
+  /**
+   * Actualiza el chatId de todos los attachments de un chat específico
+   * @param {string} oldChatId - ID antiguo del chat
+   * @param {string} newChatId - ID nuevo del chat
+   */
+  async updateAttachmentsChatId(oldChatId, newChatId) {
+    if (!this.db) {
+      console.error("❌ IndexedDB no está inicializada");
+      return;
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db.transaction(["attachments"], "readwrite");
+      const objectStore = transaction.objectStore("attachments");
+      const index = objectStore.index("chatId");
+      const request = index.getAll(oldChatId);
+
+      request.onsuccess = () => {
+        const attachments = request.result;
+
+        if (!attachments || attachments.length === 0) {
+          console.log(
+            `ℹ️ No se encontraron attachments para el chat ${oldChatId}`,
+          );
+          resolve();
+          return;
+        }
+
+        let updated = 0;
+        let errors = 0;
+
+        attachments.forEach((attachment) => {
+          // Crear nueva entrada con el nuevo chatId
+          const oldId = attachment.id;
+          const newId = oldId.replace(oldChatId, newChatId);
+
+          const updatedAttachment = {
+            ...attachment,
+            id: newId,
+            chatId: newChatId,
+          };
+
+          // Eliminar la entrada antigua
+          const deleteRequest = objectStore.delete(oldId);
+
+          deleteRequest.onsuccess = () => {
+            // Agregar la nueva entrada
+            const putRequest = objectStore.put(updatedAttachment);
+
+            putRequest.onsuccess = () => {
+              updated++;
+              if (updated + errors === attachments.length) {
+                console.log(
+                  `✅ ${updated} attachments actualizados de ${oldChatId} a ${newChatId}`,
+                );
+                resolve();
+              }
+            };
+
+            putRequest.onerror = () => {
+              console.error(
+                `❌ Error actualizando attachment ${newId}:`,
+                putRequest.error,
+              );
+              errors++;
+              if (updated + errors === attachments.length) {
+                resolve();
+              }
+            };
+          };
+
+          deleteRequest.onerror = () => {
+            console.error(
+              `❌ Error eliminando attachment ${oldId}:`,
+              deleteRequest.error,
+            );
+            errors++;
+            if (updated + errors === attachments.length) {
+              resolve();
+            }
+          };
+        });
+      };
+
+      request.onerror = () => {
+        console.error("❌ Error obteniendo attachments:", request.error);
+        reject(request.error);
+      };
+    });
   }
 
   async processImportedChats(importedChats) {
@@ -2530,7 +3565,25 @@ class MSNAI {
 
       if (!duplicate) {
         // No existe, importar directamente
-        importedChat.id = "imported-" + Date.now() + "-" + Math.random();
+        const oldChatId = importedChat.id;
+        const newChatId = "imported-" + Date.now() + "-" + Math.random();
+        importedChat.id = newChatId;
+
+        // Actualizar los IDs de los attachments para que coincidan con el nuevo chatId
+        if (importedChat.attachments && importedChat.attachments.length > 0) {
+          await this.updateAttachmentsChatId(oldChatId, newChatId);
+
+          // Actualizar también los IDs en el array de attachments del chat
+          importedChat.attachments = importedChat.attachments.map((att) => ({
+            ...att,
+            id: att.id.replace(oldChatId, newChatId),
+          }));
+
+          console.log(
+            `🔄 Actualizados ${importedChat.attachments.length} attachments del chat ${oldChatId} -> ${newChatId}`,
+          );
+        }
+
         this.chats.unshift(importedChat);
         imported++;
       } else {
@@ -2662,7 +3715,7 @@ class MSNAI {
         modal.style.display = "block";
 
         // Manejar clic en aplicar
-        const handleApply = () => {
+        const handleApply = async () => {
           const selectedAction = document.querySelector(
             'input[name="conflict-action"]:checked',
           ).value;
@@ -2698,12 +3751,50 @@ class MSNAI {
               skipped++;
             } else {
               const index = this.chats.indexOf(existingChat);
-              importedChat.id = existingChat.id;
+              const oldChatId = importedChat.id;
+              const existingChatId = existingChat.id;
+
+              // Actualizar IDs de attachments si existen
+              if (
+                importedChat.attachments &&
+                importedChat.attachments.length > 0
+              ) {
+                // Eliminar attachments antiguos del chat existente
+                if (
+                  existingChat.attachments &&
+                  existingChat.attachments.length > 0
+                ) {
+                  for (const att of existingChat.attachments) {
+                    try {
+                      await this.deleteAttachment(att.id);
+                    } catch (error) {
+                      console.error(
+                        `Error eliminando attachment antiguo ${att.id}:`,
+                        error,
+                      );
+                    }
+                  }
+                }
+
+                // Actualizar IDs de attachments importados
+                await this.updateAttachmentsChatId(oldChatId, existingChatId);
+                importedChat.attachments = importedChat.attachments.map(
+                  (att) => ({
+                    ...att,
+                    id: att.id.replace(oldChatId, existingChatId),
+                  }),
+                );
+                console.log(
+                  `🔄 Attachments actualizados para reemplazo: ${oldChatId} -> ${existingChatId}`,
+                );
+              }
+
+              importedChat.id = existingChatId;
               this.chats[index] = importedChat;
               replaced++;
             }
           } else if (selectedAction === "merge") {
-            this.mergeChats(existingChat, importedChat);
+            await this.mergeChats(existingChat, importedChat);
             merged++;
           } else if (selectedAction === "skip") {
             skipped++;
@@ -2721,7 +3812,41 @@ class MSNAI {
     });
   }
 
-  mergeChats(existingChat, importedChat) {
+  async mergeChats(existingChat, importedChat) {
+    // Primero, manejar los attachments
+    if (importedChat.attachments && importedChat.attachments.length > 0) {
+      const oldChatId = importedChat.id;
+      const existingChatId = existingChat.id;
+
+      // Actualizar IDs de attachments importados
+      await this.updateAttachmentsChatId(oldChatId, existingChatId);
+
+      // Actualizar referencias en el array
+      const updatedImportedAttachments = importedChat.attachments.map(
+        (att) => ({
+          ...att,
+          id: att.id.replace(oldChatId, existingChatId),
+        }),
+      );
+
+      // Combinar attachments (evitar duplicados por ID)
+      if (!existingChat.attachments) {
+        existingChat.attachments = [];
+      }
+
+      const existingAttachmentIds = new Set(
+        existingChat.attachments.map((a) => a.id),
+      );
+      const newAttachments = updatedImportedAttachments.filter(
+        (att) => !existingAttachmentIds.has(att.id),
+      );
+
+      existingChat.attachments.push(...newAttachments);
+      console.log(
+        `🔄 ${newAttachments.length} attachments nuevos agregados en merge`,
+      );
+    }
+
     // Unión inteligente: detectar mensajes parciales y completarlos
     const existingMsgMap = new Map();
 
@@ -3677,6 +4802,9 @@ class MSNAI {
   /////---------------------------------------------
   async init() {
     console.log("🚀 Iniciando MSN-AI...");
+
+    // Inicializar IndexedDB para archivos adjuntos
+    await this.initAttachmentsDB();
 
     // ✅ CARGAR EL ESTADO GUARDADO PRIMERO (antes de cargar idiomas)
     // Esto evita que updateUI() sobrescriba el estado durante loadLanguages()

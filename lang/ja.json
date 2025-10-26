@@ -66,7 +66,10 @@
     "generate_prompt": "プロンプトジェネレーター - 構造化されたプロンプトを作成",
     "manage_prompts": "プロンプトマネージャー - 保存されたプロンプトを管理",
     "chats_export": "チャットをエクスポート",
-    "chats_import": "チャットをインポート"
+    "chats_import": "チャットをインポート",
+    "delete_attachment": "ファイルを削除",
+    "download_pdf": "PDFをダウンロード",
+    "download_txt": "TXTファイルをダウンロード"
   },
   "settings": {
     "title": "AIモデル設定",
@@ -189,7 +192,10 @@
     "search_placeholder": "チャットを検索...",
     "show_more": "さらに{count}件表示...",
     "show_less": "表示を減らす",
-    "message_placeholder": "ここにメッセージを入力..."
+    "message_placeholder": "ここにメッセージを入力...",
+    "attachments_title": "添付ファイル",
+    "attachments_context_header": "チャットに添付されたファイル",
+    "attachments_context_footer": "添付ファイルの終わり"
   },
   "messages": {
     "status_changed": "ステータスを{status}に変更しました。{message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF読み込み完了：{filename}",
     "pdf_error": "PDF処理エラー：{error}",
     "pdf_no_text": "PDFからテキストを抽出できませんでした。別のファイルをお試しください。",
-    "pdf_attached": "PDF添付済み：{filename}（{pages}ページ）"
+    "pdf_attached": "PDF添付済み：{filename}（{pages}ページ）",
+    "select_chat_first": "最初にチャットを選択してください",
+    "attachment_save_failed": "添付ファイルの保存に失敗しました",
+    "delete_attachment_failed": "添付ファイルの削除に失敗しました",
+    "export_failed": "チャットのエクスポートに失敗しました",
+    "import_failed": "チャットのインポートに失敗しました",
+    "download_file_failed": "ファイルのダウンロードに失敗しました"
+  },
+  "confirm": {
+    "delete_attachment": "この添付ファイルを削除しますか？"
   },
   "connection": {
     "status": "接続ステータス：",

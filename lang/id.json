@@ -65,8 +65,12 @@
     "close_chat": "Tutup obrolan saat ini dan buat yang baru",
     "generate_prompt": "Generator Prompt - Buat prompt terstruktur",
     "manage_prompts": "Pengelola Prompt - Kelola prompt yang disimpan",
+    "upload_pdf_file": "Lampirkan file PDF",
     "chats_export": "Ekspor obrolan",
-    "chats_import": "Impor obrolan"
+    "chats_import": "Impor obrolan",
+    "delete_attachment": "Hapus file",
+    "download_pdf": "Unduh PDF",
+    "download_txt": "Unduh file TXT"
   },
   "settings": {
     "title": "Pengaturan Model AI",
@@ -189,7 +193,10 @@
     "search_placeholder": "Cari di obrolan...",
     "show_more": "Lihat {count} lagi...",
     "show_less": "Lihat lebih sedikit",
-    "message_placeholder": "Tulis pesan Anda di sini..."
+    "message_placeholder": "Tulis pesan Anda di sini...",
+    "attachments_title": "File terlampir",
+    "attachments_context_header": "FILE TERLAMPIR KE OBROLAN",
+    "attachments_context_footer": "AKHIR FILE TERLAMPIR"
   },
   "messages": {
     "status_changed": "Saya telah mengubah status saya menjadi {status}. {message}",
@@ -225,7 +232,16 @@
     "pdf_loaded": "PDF dimuat: {filename}",
     "pdf_error": "Kesalahan memproses PDF: {error}",
     "pdf_no_text": "Tidak dapat mengekstrak teks dari PDF. Coba dengan file lain.",
-    "pdf_attached": "PDF dilampirkan: {filename} ({pages} halaman)"
+    "pdf_attached": "PDF dilampirkan: {filename} ({pages} halaman)",
+    "select_chat_first": "Silakan pilih obrolan terlebih dahulu",
+    "attachment_save_failed": "Gagal menyimpan lampiran",
+    "delete_attachment_failed": "Gagal menghapus lampiran",
+    "export_failed": "Gagal mengekspor obrolan",
+    "import_failed": "Gagal mengimpor obrolan",
+    "download_file_failed": "Gagal mengunduh file"
+  },
+  "confirm": {
+    "delete_attachment": "Hapus lampiran ini?"
   },
   "connection": {
     "status": "Status koneksi:",

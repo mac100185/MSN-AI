@@ -64,9 +64,12 @@
     "close_chat": "सध्याची चॅट बंद करा आणि नवीन तयार करा",
     "generate_prompt": "प्रॉम्प्ट जनरेटर - संरचित प्रॉम्प्ट तयार करा",
     "manage_prompts": "प्रॉम्प्ट मॅनेजर - जतन केलेले प्रॉम्प्ट व्यवस्थापित करा",
-    "upload_pdf_file": "पीडीएफ फाइल जोडा",
+    "upload_pdf_file": "पीडीएफ फाइल संलग्न करा",
     "chats_import": "चॅट आयात करा",
-    "chats_export": "चॅट निर्यात करा"
+    "chats_export": "चॅट निर्यात करा",
+    "delete_attachment": "फाइल हटवा",
+    "download_pdf": "PDF डाउनलोड करा",
+    "download_txt": "TXT फाइल डाउनलोड करा"
   },
   "settings": {
     "title": "एआय मॉडेल सेटिंग्ज",
@@ -189,7 +192,10 @@
     "search_placeholder": "चॅटमध्ये शोधा...",
     "show_more": "आणखी {count} पहा...",
     "show_less": "कमी पहा",
-    "message_placeholder": "तुमचा संदेश येथे लिहा..."
+    "message_placeholder": "तुमचा संदेश येथे लिहा...",
+    "attachments_title": "संलग्न फायली",
+    "attachments_context_header": "चॅटला संलग्न फायली",
+    "attachments_context_footer": "संलग्न फायलींचा शेवट"
   },
   "messages": {
     "status_changed": "मी माझी स्थिती {status} मध्ये बदलली आहे. {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "कृपया प्रथम चॅट निवडा",
+    "attachment_save_failed": "संलग्नक जतन करताना त्रुटी",
+    "delete_attachment_failed": "संलग्नक हटवताना त्रुटी",
+    "export_failed": "चॅट निर्यात करताना त्रुटी",
+    "import_failed": "चॅट आयात करताना त्रुटी",
+    "download_file_failed": "फाइल डाउनलोड करताना त्रुटी"
+  },
+  "confirm": {
+    "delete_attachment": "ही संलग्नक हटवायची?"
   },
   "connection": {
     "status": "कनेक्शन स्थिती:",

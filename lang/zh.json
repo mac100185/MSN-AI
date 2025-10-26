@@ -66,7 +66,10 @@
     "manage_prompts": "提示词管理器 - 管理已保存的提示词",
     "upload_pdf_file": "附加PDF文件",
     "chats_import": "导入聊天",
-    "chats_export": "导出聊天"
+    "chats_export": "导出聊天",
+    "delete_attachment": "删除文件",
+    "download_pdf": "下载PDF",
+    "download_txt": "下载TXT文件"
   },
   "settings": {
     "title": "AI模型设置",
@@ -268,7 +271,10 @@
     "search_placeholder": "在聊天中搜索...",
     "show_more": "查看更多 {count} 个...",
     "show_less": "显示更少",
-    "message_placeholder": "在此输入您的消息..."
+    "message_placeholder": "在此输入您的消息...",
+    "attachments_title": "附件",
+    "attachments_context_header": "聊天附件",
+    "attachments_context_footer": "附件结束"
   },
   "messages": {
     "status_changed": "我已将状态更改为{status}。{message}",
@@ -304,7 +310,16 @@
     "pdf_loaded": "PDF已加载：{filename}",
     "pdf_error": "处理PDF时出错：{error}",
     "pdf_no_text": "无法从PDF提取文本。请尝试其他文件。",
-    "pdf_attached": "PDF已附加：{filename}（{pages}页）"
+    "pdf_attached": "PDF已附加：{filename}（{pages}页）",
+    "select_chat_first": "请先选择一个聊天",
+    "attachment_save_failed": "保存附件时出错",
+    "delete_attachment_failed": "删除附件时出错",
+    "export_failed": "导出聊天时出错",
+    "import_failed": "导入聊天时出错",
+    "download_file_failed": "下载文件时出错"
+  },
+  "confirm": {
+    "delete_attachment": "删除此附件？"
   },
   "connection": {
     "status": "连接状态：",

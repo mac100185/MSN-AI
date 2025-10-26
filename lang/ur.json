@@ -64,9 +64,12 @@
     "close_chat": "موجودہ چیٹ بند کریں اور نیا بنائیں",
     "generate_prompt": "پرامپٹ جنریٹر - ساختی پرامپٹ بنائیں",
     "manage_prompts": "پرامپٹ مینیجر - محفوظ شدہ پرامپٹ کا انتظام کریں",
-    "upload_pdf_file": "PDF فائل منسلک کریں",
+    "upload_pdf_file": "پی ڈی ایف فائل منسلک کریں",
     "chats_import": "چیٹس درآمد کریں",
-    "chats_export": "چیٹس برآمد کریں"
+    "chats_export": "چیٹس برآمد کریں",
+    "delete_attachment": "فائل حذف کریں",
+    "download_pdf": "PDF ڈاؤن لوڈ کریں",
+    "download_txt": "TXT فائل ڈاؤن لوڈ کریں"
   },
   "settings": {
     "title": "اے آئی ماڈل کی ترتیبات",
@@ -189,7 +192,10 @@
     "search_placeholder": "چیٹس میں تلاش کریں...",
     "show_more": "مزید {count} دیکھیں...",
     "show_less": "کم دیکھیں",
-    "message_placeholder": "اپنا پیغام یہاں لکھیں..."
+    "message_placeholder": "اپنا پیغام یہاں لکھیں...",
+    "attachments_title": "منسلک فائلیں",
+    "attachments_context_header": "چیٹ میں منسلک فائلیں",
+    "attachments_context_footer": "منسلک فائلوں کا اختتام"
   },
   "messages": {
     "status_changed": "میں نے اپنی حیثیت {status} میں تبدیل کر دی ہے۔ {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "براہ کرم پہلے ایک چیٹ منتخب کریں",
+    "attachment_save_failed": "منسلکہ محفوظ کرنے میں خرابی",
+    "delete_attachment_failed": "منسلکہ حذف کرنے میں خرابی",
+    "export_failed": "چیٹس برآمد کرنے میں خرابی",
+    "import_failed": "چیٹس درآمد کرنے میں خرابی",
+    "download_file_failed": "فائل ڈاؤن لوڈ کرنے میں خرابی"
+  },
+  "confirm": {
+    "delete_attachment": "اس منسلکہ کو حذف کریں؟"
   },
   "connection": {
     "status": "کنکشن کی حیثیت:",

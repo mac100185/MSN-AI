@@ -66,7 +66,10 @@
     "manage_prompts": "Менеджер промптов - Управление сохраненными промптами",
     "upload_pdf_file": "Прикрепить PDF файл",
     "chats_import": "Импортировать чаты",
-    "chats_export": "Экспортировать чаты"
+    "chats_export": "Экспортировать чаты",
+    "delete_attachment": "Удалить файл",
+    "download_pdf": "Скачать PDF",
+    "download_txt": "Скачать TXT файл"
   },
   "settings": {
     "title": "Настройки модели ИИ",
@@ -268,7 +271,10 @@
     "search_placeholder": "Поиск в чатах...",
     "show_more": "Показать ещё {count}...",
     "show_less": "Показать меньше",
-    "message_placeholder": "Введите ваше сообщение здесь..."
+    "message_placeholder": "Введите ваше сообщение здесь...",
+    "attachments_title": "Прикрепленные файлы",
+    "attachments_context_header": "ПРИКРЕПЛЕННЫЕ ФАЙЛЫ К ЧАТУ",
+    "attachments_context_footer": "КОНЕЦ ПРИКРЕПЛЕННЫХ ФАЙЛОВ"
   },
   "messages": {
     "status_changed": "Я изменил свой статус на {status}. {message}",
@@ -304,7 +310,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "Пожалуйста, сначала выберите чат",
+    "attachment_save_failed": "Ошибка при сохранении вложения",
+    "delete_attachment_failed": "Ошибка при удалении вложения",
+    "export_failed": "Ошибка при экспорте чатов",
+    "import_failed": "Ошибка при импорте чатов",
+    "download_file_failed": "Ошибка при скачивании файла"
+  },
+  "confirm": {
+    "delete_attachment": "Удалить это вложение?"
   },
   "connection": {
     "status": "Статус соединения:",

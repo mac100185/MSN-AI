@@ -66,7 +66,10 @@
     "manage_prompts": "प्रॉम्प्ट मैनेजर - सहेजे गए प्रॉम्प्ट प्रबंधित करें",
     "upload_pdf_file": "पीडीएफ फ़ाइल संलग्न करें",
     "chats_import": "चैट आयात करें",
-    "chats_export": "चैट निर्यात करें"
+    "chats_export": "चैट निर्यात करें",
+    "delete_attachment": "फ़ाइल हटाएं",
+    "download_pdf": "PDF डाउनलोड करें",
+    "download_txt": "TXT फ़ाइल डाउनलोड करें"
   },
   "settings": {
     "title": "एआई मॉडल सेटिंग्स",
@@ -189,7 +192,10 @@
     "search_placeholder": "चैट में खोजें...",
     "show_more": "{count} और देखें...",
     "show_less": "कम दिखाएं",
-    "message_placeholder": "यहाँ अपना संदेश लिखें..."
+    "message_placeholder": "यहाँ अपना संदेश लिखें...",
+    "attachments_title": "संलग्न फ़ाइलें",
+    "attachments_context_header": "चैट में संलग्न फ़ाइलें",
+    "attachments_context_footer": "संलग्न फ़ाइलों का अंत"
   },
   "messages": {
     "status_changed": "मैंने अपनी स्थिति {status} में बदल दी है। {message}",
@@ -225,7 +231,16 @@
     "pdf_loaded": "PDF loaded: {filename}",
     "pdf_error": "Error processing PDF: {error}",
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
-    "pdf_attached": "PDF attached: {filename} ({pages} pages)"
+    "pdf_attached": "PDF attached: {filename} ({pages} pages)",
+    "select_chat_first": "कृपया पहले एक चैट चुनें",
+    "attachment_save_failed": "संलग्नक सहेजने में त्रुटि",
+    "delete_attachment_failed": "संलग्नक हटाने में त्रुटि",
+    "export_failed": "चैट निर्यात करने में त्रुटि",
+    "import_failed": "चैट आयात करने में त्रुटि",
+    "download_file_failed": "फ़ाइल डाउनलोड करने में त्रुटि"
+  },
+  "confirm": {
+    "delete_attachment": "इस अटैचमेंट को हटाएं?"
   },
   "connection": {
     "status": "कनेक्शन स्थिति:",
