@@ -3714,6 +3714,16 @@ class MSNAI {
             chatId: newChatId,
           };
 
+          // Actualizar también el fileAttachmentKey si existe
+          if (updatedAttachment.fileAttachmentKey) {
+            const oldKey = updatedAttachment.fileAttachmentKey;
+            updatedAttachment.fileAttachmentKey =
+              updatedAttachment.fileAttachmentKey.replace(oldChatId, newChatId);
+            console.log(
+              `🔑 FileAttachmentKey actualizado: ${oldKey} -> ${updatedAttachment.fileAttachmentKey}`,
+            );
+          }
+
           // Eliminar la entrada antigua
           const deleteRequest = objectStore.delete(oldId);
 
@@ -3875,10 +3885,20 @@ class MSNAI {
           await this.updateAttachmentsChatId(oldChatId, newChatId);
 
           // Actualizar también los IDs en el array de attachments del chat
-          importedChat.attachments = importedChat.attachments.map((att) => ({
-            ...att,
-            id: att.id.replace(oldChatId, newChatId),
-          }));
+          importedChat.attachments = importedChat.attachments.map((att) => {
+            const updatedAtt = {
+              ...att,
+              id: att.id.replace(oldChatId, newChatId),
+            };
+
+            // Actualizar también el fileAttachmentKey si existe
+            if (updatedAtt.fileAttachmentKey) {
+              updatedAtt.fileAttachmentKey =
+                updatedAtt.fileAttachmentKey.replace(oldChatId, newChatId);
+            }
+
+            return updatedAtt;
+          });
 
           console.log(
             `🔄 Actualizados ${importedChat.attachments.length} attachments del chat ${oldChatId} -> ${newChatId}`,
@@ -4080,10 +4100,23 @@ class MSNAI {
                 // Actualizar IDs de attachments importados
                 await this.updateAttachmentsChatId(oldChatId, existingChatId);
                 importedChat.attachments = importedChat.attachments.map(
-                  (att) => ({
-                    ...att,
-                    id: att.id.replace(oldChatId, existingChatId),
-                  }),
+                  (att) => {
+                    const updatedAtt = {
+                      ...att,
+                      id: att.id.replace(oldChatId, existingChatId),
+                    };
+
+                    // Actualizar también el fileAttachmentKey si existe
+                    if (updatedAtt.fileAttachmentKey) {
+                      updatedAtt.fileAttachmentKey =
+                        updatedAtt.fileAttachmentKey.replace(
+                          oldChatId,
+                          existingChatId,
+                        );
+                    }
+
+                    return updatedAtt;
+                  },
                 );
                 console.log(
                   `🔄 Attachments actualizados para reemplazo: ${oldChatId} -> ${existingChatId}`,
@@ -4123,12 +4156,22 @@ class MSNAI {
       await this.updateAttachmentsChatId(oldChatId, existingChatId);
 
       // Actualizar referencias en el array
-      const updatedImportedAttachments = importedChat.attachments.map(
-        (att) => ({
+      const updatedImportedAttachments = importedChat.attachments.map((att) => {
+        const updatedAtt = {
           ...att,
           id: att.id.replace(oldChatId, existingChatId),
-        }),
-      );
+        };
+
+        // Actualizar también el fileAttachmentKey si existe
+        if (updatedAtt.fileAttachmentKey) {
+          updatedAtt.fileAttachmentKey = updatedAtt.fileAttachmentKey.replace(
+            oldChatId,
+            existingChatId,
+          );
+        }
+
+        return updatedAtt;
+      });
 
       // Combinar attachments (evitar duplicados por ID)
       if (!existingChat.attachments) {
