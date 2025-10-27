@@ -26,6 +26,8 @@ class MSNAI {
     this.lastMainThreadCheck = Date.now(); // Para detectar bloqueos del hilo principal
     this.userInteracting = false; // Flag para detectar interacción del usuario
     this.lastUserInteraction = 0; // Timestamp de última interacción
+    this.markdownCache = new Map(); // Caché de renderizado de markdown (content -> html)
+    this.lastStreamRender = {}; // Timestamp del último render durante streaming por chatId
 
     this.translations = {}; // Diccionario de traducciones
     this.availableLanguages = []; // Idiomas disponibles
@@ -110,10 +112,10 @@ class MSNAI {
           this.userInteracting = true;
           this.lastUserInteraction = Date.now();
 
-          // Resetear flag después de 300ms
+          // Resetear flag después de 100ms para mayor fluidez
           setTimeout(() => {
             this.userInteracting = false;
-          }, 300);
+          }, 100);
         },
         { passive: true, capture: true },
       );
@@ -155,13 +157,12 @@ class MSNAI {
   }
 
   /**
-   * Renderiza Markdown de forma segura usando marked + DOMPurify
+   * Renderiza Markdown de forma segura usando marked + DOMPurify con caché
    * @param {string} markdown - Texto en Markdown
+   * @param {boolean} useCache - Si usar caché (default: true)
    * @returns {string} HTML sanitizado
    */
-  renderMarkdownSafe(markdown) {
-    const renderStart = performance.now();
-
+  renderMarkdownSafe(markdown, useCache = true) {
     if (typeof markdown !== "string") {
       console.warn("renderMarkdownSafe recibió un valor no string:", markdown);
       return "";
@@ -172,16 +173,22 @@ class MSNAI {
       return this.escapeHtml(markdown);
     }
 
+    // Verificar caché para contenido ya procesado
+    if (useCache && this.markdownCache.has(markdown)) {
+      return this.markdownCache.get(markdown);
+    }
+
+    const renderStart = performance.now();
+
     try {
       const mdLength = markdown.length;
-      console.log(`🔵 [Markdown] Procesando ${mdLength} caracteres`);
 
       // 1. Convertir Markdown a HTML
       const parseStart = performance.now();
       const rawHtml = marked.parse(markdown);
       const parseTime = performance.now() - parseStart;
 
-      if (parseTime > 50) {
+      if (parseTime > 100) {
         console.warn(
           `⚠️ [Markdown] marked.parse LENTO: ${parseTime.toFixed(2)}ms para ${mdLength} caracteres`,
         );
@@ -250,7 +257,7 @@ class MSNAI {
 
       // 3. Agregar botones de copiar y descargar a bloques de código
       const buttonsStart = performance.now();
-      const result = this.addCodeBlockButtons(cleanHtml);
+      const safeHtml = this.addCodeBlockButtons(cleanHtml);
       const buttonsTime = performance.now() - buttonsStart;
 
       if (buttonsTime > 50) {
@@ -260,17 +267,25 @@ class MSNAI {
       }
 
       const totalTime = performance.now() - renderStart;
-      console.log(
-        `✅ [Markdown] Renderizado completado en ${totalTime.toFixed(2)}ms (parse: ${parseTime.toFixed(2)}ms, sanitize: ${sanitizeTime.toFixed(2)}ms, buttons: ${buttonsTime.toFixed(2)}ms)`,
-      );
+
+      // Guardar en caché si el contenido es final (más de 100 caracteres)
+      if (useCache && mdLength > 100) {
+        this.markdownCache.set(markdown, safeHtml);
+
+        // Limitar el tamaño del caché a 100 entradas
+        if (this.markdownCache.size > 100) {
+          const firstKey = this.markdownCache.keys().next().value;
+          this.markdownCache.delete(firstKey);
+        }
+      }
 
       if (totalTime > 100) {
         console.warn(
-          `⚠️ [Markdown] Renderizado TOTAL LENTO: ${totalTime.toFixed(2)}ms`,
+          `⚠️ [Markdown] Renderizado LENTO: ${totalTime.toFixed(2)}ms para ${mdLength} caracteres`,
         );
       }
 
-      return result;
+      return safeHtml;
     } catch (error) {
       console.error("❌ Error al renderizar Markdown:", error);
       return `<p style="color: #c00;">⚠️ Error al procesar la respuesta.</p>`;
@@ -959,9 +974,9 @@ class MSNAI {
       // Limpiar recursos de streaming
       this.cleanupStreamResources(chat.id);
 
-      // Render completo final para asegurar que todo esté correcto
+      // Render final optimizado del último mensaje
       if (this.currentChatId === chat.id) {
-        this.renderMessages(chat);
+        this.updateFinalMessage(chat);
       }
 
       this.playSound("message-in");
@@ -1121,9 +1136,9 @@ class MSNAI {
       // Limpiar recursos de streaming
       this.cleanupStreamResources(chat.id);
 
-      // Render completo final para asegurar que todo esté correcto
+      // Render final optimizado del último mensaje
       if (this.currentChatId === chat.id) {
-        this.renderMessages(chat);
+        this.updateFinalMessage(chat);
       }
 
       this.playSound("message-in");
@@ -2310,24 +2325,18 @@ class MSNAI {
       // Limpiar recursos de streaming
       this.cleanupStreamResources(chat.id);
 
-      // Render completo final para asegurar que todo esté correcto
-      console.log(`🔵 [SendMessage] Haciendo render final completo`);
+      // Render final optimizado: solo actualizar el último mensaje
+      console.log(`🔵 [SendMessage] Haciendo render final del último mensaje`);
       const renderStart = performance.now();
 
       if (this.currentChatId === chat.id) {
-        this.renderMessages(chat);
+        this.updateFinalMessage(chat);
       }
 
       const renderTime = performance.now() - renderStart;
       console.log(
         `✅ [SendMessage] Render final completado en ${renderTime.toFixed(2)}ms`,
       );
-
-      if (renderTime > 100) {
-        console.warn(
-          `⚠️ [SendMessage] Render final LENTO: ${renderTime.toFixed(2)}ms`,
-        );
-      }
 
       this.playSound("message-in");
     } catch (error) {
@@ -2887,6 +2896,10 @@ class MSNAI {
     }
 
     this.chats = this.chats.filter((c) => c.id !== chatId);
+
+    // Limpiar caché de markdown para liberar memoria
+    this.markdownCache.clear();
+
     this.saveChats();
     this.renderChatList();
     if (this.currentChatId === chatId) {
@@ -3195,123 +3208,75 @@ class MSNAI {
   // =================== SISTEMA DE STREAMING ASÍNCRONO ===================
 
   /**
-   * Programa una actualización del stream con debouncing agresivo
-   * Esto permite que el navegador respire entre actualizaciones
-   * Usa requestIdleCallback cuando está disponible para dar prioridad a interacciones del usuario
+   * Programa una actualización del último mensaje durante streaming
+   * Usa requestAnimationFrame para actualizaciones fluidas sin bloquear
    */
   scheduleStreamUpdate(chat) {
     const chatId = chat.id;
-    const scheduleTime = performance.now();
 
     // VERIFICAR QUE ESTAMOS EN STREAMING
     if (!this.respondingChats.has(chatId)) {
-      console.warn(
-        `⚠️ [UI] scheduleStreamUpdate llamado pero chat ${chatId} NO está en respondingChats`,
-      );
-    }
-
-    // Si el usuario está interactuando, posponer actualización
-    if (this.userInteracting) {
-      console.log(
-        `🖱️ [UI] Usuario interactuando, posponiendo actualización de chat ${chatId}`,
-      );
-      // Reintentar después de que termine la interacción
-      setTimeout(() => {
-        if (!this.userInteracting && this.respondingChats.has(chatId)) {
-          this.scheduleStreamUpdate(chat);
-        }
-      }, 350);
       return;
     }
 
-    // Si ya hay un frame pendiente, cancelarlo para hacer debouncing
-    if (this.pendingFrames[chatId]) {
-      clearTimeout(this.pendingFrames[chatId]);
-      // Solo log si es verbose
-      // console.log(`🟡 [UI] Cancelando actualización pendiente para chat ${chatId}`);
+    // Si el usuario está interactuando, no programar actualización
+    if (this.userInteracting) {
+      return;
     }
 
-    // Programar actualización con un pequeño delay para hacer debouncing
-    // Solo la última actualización en este período se ejecutará
-    this.pendingFrames[chatId] = setTimeout(() => {
+    // Si ya se está procesando o hay un frame pendiente, saltar
+    if (this.isProcessingStream[chatId] || this.pendingFrames[chatId]) {
+      return;
+    }
+
+    // Usar requestAnimationFrame directamente para máxima fluidez
+    this.pendingFrames[chatId] = requestAnimationFrame(() => {
       delete this.pendingFrames[chatId];
-      const delayTime = performance.now() - scheduleTime;
-      console.log(
-        `🟢 [UI] Ejecutando actualización después de ${delayTime.toFixed(2)}ms delay`,
-      );
 
-      // Verificar nuevamente si el usuario está interactuando
-      if (this.userInteracting) {
-        console.log(
-          `🖱️ [UI] Usuario interactuando justo antes de actualizar, cancelando`,
-        );
-        // Reprogramar
-        this.scheduleStreamUpdate(chat);
-        return;
+      // Verificación final antes de actualizar
+      if (
+        !this.userInteracting &&
+        this.respondingChats.has(chatId) &&
+        !this.isProcessingStream[chatId]
+      ) {
+        this.updateLastMessageStream(chat);
       }
-
-      // Usar requestIdleCallback si está disponible (mejor para no bloquear interacciones)
-      // Si no está disponible, usar requestAnimationFrame como fallback
-      if (typeof requestIdleCallback !== "undefined") {
-        requestIdleCallback(
-          () => {
-            // console.log(`🟢 [UI] requestIdleCallback ejecutando para chat ${chatId}`);
-            // Verificación final antes de actualizar
-            if (!this.userInteracting) {
-              this.updateLastMessageStream(chat);
-            } else {
-              console.log(
-                `🖱️ [UI] Usuario interactuando en requestIdleCallback, saltando`,
-              );
-            }
-          },
-          { timeout: 150 },
-        ); // Timeout más largo para dar más prioridad a interacciones
-      } else {
-        requestAnimationFrame(() => {
-          // console.log(`🟢 [UI] requestAnimationFrame ejecutando para chat ${chatId}`);
-          // Verificación final antes de actualizar
-          if (!this.userInteracting) {
-            this.updateLastMessageStream(chat);
-          } else {
-            console.log(
-              `🖱️ [UI] Usuario interactuando en requestAnimationFrame, saltando`,
-            );
-          }
-        });
-      }
-    }, 100); // Aumentado a 100ms para reducir frecuencia de actualizaciones
+    });
   }
 
   /**
-   * Actualiza el último mensaje durante streaming de forma optimizada
+   * Actualiza el último mensaje durante streaming con renderizado markdown en tiempo real
    */
   updateLastMessageStream(chat) {
     const chatId = chat.id;
     const updateStart = performance.now();
 
+    // Throttling: no renderizar más de una vez cada 100ms por chat
+    const now = performance.now();
+    if (
+      this.lastStreamRender[chatId] &&
+      now - this.lastStreamRender[chatId] < 100
+    ) {
+      return;
+    }
+    this.lastStreamRender[chatId] = now;
+
     // Si ya se está procesando este chat, salir
     if (this.isProcessingStream[chatId]) {
-      console.log(
-        `⚠️ [UI] Ya se está procesando chat ${chatId}, saltando actualización`,
-      );
       return;
     }
 
     // Marcar que se está procesando
     this.isProcessingStream[chatId] = true;
-    // console.log(`🟢 [UI] Iniciando actualización de mensaje para chat ${chatId}`);
 
     try {
       const messagesArea = document.getElementById("messages-area");
       if (!messagesArea) {
-        console.warn(`⚠️ [UI] No se encontró messages-area`);
         return;
       }
 
       const messageElements = messagesArea.querySelectorAll(".message");
       if (messageElements.length === 0) {
-        console.log(`🟡 [UI] No hay mensajes, haciendo render completo`);
         this.renderMessages(chat);
         return;
       }
@@ -3320,13 +3285,11 @@ class MSNAI {
       const lastMessage = chat.messages[chat.messages.length - 1];
 
       if (!lastMessage) {
-        console.warn(`⚠️ [UI] No hay último mensaje`);
         return;
       }
 
       const contentDiv = lastMessageElement.querySelector(".message-content");
       if (!contentDiv) {
-        console.warn(`⚠️ [UI] No se encontró message-content div`);
         return;
       }
 
@@ -3335,25 +3298,19 @@ class MSNAI {
         messagesArea.scrollHeight - messagesArea.scrollTop <=
         messagesArea.clientHeight + 50;
 
+      // RENDERIZAR MARKDOWN EN TIEMPO REAL durante el streaming
+      // Esto permite al usuario ver el formato mientras se genera la respuesta
       const contentLength = lastMessage.content.length;
-      // console.log(`🟢 [UI] Actualizando contenido: ${contentLength} caracteres`);
 
-      // Durante el streaming, mostrar texto sin formato para máxima velocidad
-      // El formateo Markdown completo se hará solo al final
-      const lines = lastMessage.content.split("\n");
-      const maxPreviewLines = 100; // Limitar líneas visibles durante streaming
-      const preview = lines.slice(0, maxPreviewLines).join("\n");
-      const hasMore = lines.length > maxPreviewLines;
+      // Renderizar markdown de forma segura (sin caché durante streaming)
+      const formattedContent = this.renderMarkdownSafe(
+        lastMessage.content,
+        false,
+      );
+      contentDiv.innerHTML = formattedContent;
 
-      const textUpdateStart = performance.now();
-      contentDiv.textContent = preview + (hasMore ? "\n..." : "");
-      const textUpdateTime = performance.now() - textUpdateStart;
-
-      if (textUpdateTime > 10) {
-        console.warn(
-          `⚠️ [UI] Actualización de texto lenta: ${textUpdateTime.toFixed(2)}ms`,
-        );
-      }
+      // Configurar botones de código después de actualizar el contenido
+      this.setupCodeBlockButtons();
 
       // Scroll inteligente
       if (!this.userScrolledUp || wasAtBottom) {
@@ -3361,11 +3318,10 @@ class MSNAI {
       }
 
       const totalTime = performance.now() - updateStart;
-      // console.log(`✅ [UI] Actualización completada en ${totalTime.toFixed(2)}ms`);
 
-      if (totalTime > 16) {
+      if (totalTime > 50) {
         console.warn(
-          `⚠️ [UI] Actualización excedió 16ms (1 frame): ${totalTime.toFixed(2)}ms - Contenido: ${contentLength} chars`,
+          `⚠️ [UI] Actualización lenta: ${totalTime.toFixed(2)}ms para ${contentLength} chars`,
         );
       }
     } finally {
@@ -3382,17 +3338,71 @@ class MSNAI {
       `🧹 [Cleanup] Limpiando recursos de streaming para chat ${chatId}`,
     );
 
-    // Cancelar timer pendiente
+    // Cancelar frame pendiente
     if (this.pendingFrames[chatId]) {
-      clearTimeout(this.pendingFrames[chatId]);
+      cancelAnimationFrame(this.pendingFrames[chatId]);
       delete this.pendingFrames[chatId];
-      console.log(`🧹 [Cleanup] Timer cancelado`);
+      console.log(`🧹 [Cleanup] Frame cancelado`);
     }
 
-    // Limpiar flags
+    // Limpiar flags y timers
     delete this.isProcessingStream[chatId];
     delete this.streamingBuffers[chatId];
+    delete this.lastStreamRender[chatId];
     console.log(`✅ [Cleanup] Recursos liberados`);
+  }
+
+  /**
+   * Actualiza solo el último mensaje después de finalizar el streaming
+   * Más eficiente que re-renderizar todos los mensajes
+   */
+  updateFinalMessage(chat) {
+    const updateStart = performance.now();
+
+    const messagesArea = document.getElementById("messages-area");
+    if (!messagesArea) {
+      return;
+    }
+
+    const messageElements = messagesArea.querySelectorAll(".message");
+    if (messageElements.length === 0) {
+      this.renderMessages(chat);
+      return;
+    }
+
+    const lastMessageElement = messageElements[messageElements.length - 1];
+    const lastMessage = chat.messages[chat.messages.length - 1];
+
+    if (!lastMessage) {
+      return;
+    }
+
+    const contentDiv = lastMessageElement.querySelector(".message-content");
+    if (!contentDiv) {
+      return;
+    }
+
+    // Guardar posición del scroll
+    const wasAtBottom =
+      messagesArea.scrollHeight - messagesArea.scrollTop <=
+      messagesArea.clientHeight + 50;
+
+    // Renderizar markdown final con caché activado
+    const formattedContent = this.renderMarkdownSafe(lastMessage.content, true);
+    contentDiv.innerHTML = formattedContent;
+
+    // Configurar botones de código
+    this.setupCodeBlockButtons();
+
+    // Scroll al final si corresponde
+    if (!this.userScrolledUp || wasAtBottom) {
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+
+    const totalTime = performance.now() - updateStart;
+    console.log(
+      `✅ [UpdateFinal] Último mensaje actualizado en ${totalTime.toFixed(2)}ms`,
+    );
   }
 
   /**
