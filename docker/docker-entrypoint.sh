@@ -6,7 +6,7 @@
 # License: GNU General Public License v3.0
 # Description: Intelligent startup script for MSN-AI container
 
-set -e
+set -eo pipefail
 
 echo "🐳 MSN-AI v1.0.0 - Docker Container Starting..."
 echo "============================================="
@@ -23,21 +23,28 @@ MSN_AI_VERSION=${MSN_AI_VERSION:-1.0.0}
 # Function to wait for Ollama service
 wait_for_ollama() {
     echo "🔄 Esperando a que Ollama esté listo..."
-    local max_attempts=30
+    local max_attempts=60
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
-        if curl -s "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
-            echo "✅ Ollama está listo y respondiendo"
-            return 0
+        # First check basic connectivity
+        if curl -s --connect-timeout 5 "http://${OLLAMA_HOST}/" >/dev/null 2>&1; then
+            # Then check API
+            if curl -s --connect-timeout 5 "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
+                echo "✅ Ollama está listo y respondiendo"
+                return 0
+            else
+                echo "⏳ Intento $attempt/$max_attempts - API de Ollama iniciándose..."
+            fi
+        else
+            echo "⏳ Intento $attempt/$max_attempts - Esperando conexión con Ollama..."
         fi
 
-        echo "⏳ Intento $attempt/$max_attempts - Ollama no responde aún..."
-        sleep 2
+        sleep 3
         attempt=$((attempt + 1))
     done
 
-    echo "⚠️ Ollama no responde después de $max_attempts intentos"
+    echo "⚠️ Ollama no responde después de $((max_attempts * 3)) segundos"
     echo "   Continuando sin IA (funcionalidad limitada)"
     return 1
 }
@@ -98,6 +105,12 @@ check_assets() {
 start_web_server() {
     echo "🌍 Iniciando servidor web en puerto $MSN_AI_PORT..."
 
+    # Change to app directory to serve files
+    cd /app || {
+        echo "❌ Error: No se puede acceder al directorio /app"
+        exit 1
+    }
+
     # Try Python first
     if command -v python3 >/dev/null 2>&1; then
         echo "🐍 Usando Python 3 HTTP Server"
@@ -149,20 +162,25 @@ trap cleanup SIGTERM SIGINT
 
 # Main execution flow
 main() {
+    echo "🔧 Iniciando secuencia de arranque..."
+
     # Setup directories
     setup_directories
 
     # Check assets
-    check_assets
+    check_assets || {
+        echo "⚠️ Algunos assets faltan, pero continuando..."
+    }
 
-    # Wait for Ollama (optional)
-    wait_for_ollama || echo "⚠️ Continuando sin Ollama"
+    # Wait for Ollama (optional but important)
+    if wait_for_ollama; then
+        echo "✅ Sistema de IA disponible"
+    else
+        echo "⚠️ Continuando sin sistema de IA"
+    fi
 
     # Log startup information
     log_startup_info
-
-    # Change to app directory
-    cd /app
 
     # Start web server (this blocks)
     start_web_server
@@ -171,8 +189,12 @@ main() {
 # Check if running as intended user
 if [ "$(id -u)" = "0" ]; then
     echo "⚠️ Ejecutándose como root, esto no es recomendado"
-    echo "   Cambiando a usuario msnai..."
-    exec gosu msnai "$0" "$@"
+    if command -v gosu >/dev/null 2>&1; then
+        echo "   Cambiando a usuario msnai..."
+        exec gosu msnai "$0" "$@"
+    else
+        echo "   gosu no disponible, continuando como root (no recomendado)"
+    fi
 fi
 
 # Run main function

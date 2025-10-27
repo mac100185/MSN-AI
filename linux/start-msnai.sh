@@ -1,10 +1,10 @@
 #!/bin/bash
-# start-msnai-mac.sh - Script de inicio para MSN-AI en macOS
+# Script de inicio rápido para MSN-AI
 # Versión: 1.0.0
 # Autor: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # Licencia: GNU General Public License v3.0
-# Descripción: Inicia MSN-AI con verificaciones automáticas en macOS
+# Descripción: Inicia MSN-AI con verificaciones automáticas
 
 echo "🚀 MSN-AI v1.0.0 - Iniciando aplicación..."
 echo "============================================"
@@ -65,19 +65,58 @@ check_ollama() {
     echo "🧠 Verificando modelos de IA..."
     MODELS=$(ollama list 2>/dev/null | tail -n +2 | wc -l)
 
+    # Modelos requeridos por defecto
+    REQUIRED_MODELS=(
+        "qwen3-vl:235b-cloud"
+        "gpt-oss:120b-cloud"
+        "qwen3-coder:480b-cloud"
+    )
+
     if [ "$MODELS" -eq 0 ]; then
         echo "⚠️  No hay modelos instalados"
-        echo "   ¿Deseas instalar mistral:7b (recomendado)? (s/n)"
-        read -r install_model
+        echo ""
+        echo "📦 Modelos requeridos por defecto:"
+        for model in "${REQUIRED_MODELS[@]}"; do
+            echo "   - $model"
+        done
+        echo ""
+        echo "   ¿Deseas instalar los modelos requeridos? (s/n)"
+        read -r install_models
 
-        if [[ "$install_model" =~ ^[sS]$ ]]; then
-            echo "📥 Descargando mistral:7b..."
-            ollama pull mistral:7b
+        if [[ "$install_models" =~ ^[sS]$ ]]; then
+            echo ""
+            echo "📥 Instalando modelos requeridos..."
+            echo "⚠️  NOTA: Este proceso puede tardar bastante tiempo dependiendo de tu conexión"
+            echo ""
 
-            if [ $? -eq 0 ]; then
-                echo "✅ Modelo instalado correctamente"
-            else
-                echo "❌ Error instalando modelo"
+            local installed_count=0
+            local failed_count=0
+
+            for model in "${REQUIRED_MODELS[@]}"; do
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                echo "📥 Descargando: $model"
+                echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+                ollama pull "$model"
+
+                if [ $? -eq 0 ]; then
+                    echo "✅ Modelo $model instalado correctamente"
+                    installed_count=$((installed_count + 1))
+                else
+                    echo "❌ Error instalando modelo $model"
+                    failed_count=$((failed_count + 1))
+                fi
+                echo ""
+            done
+
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "📊 Resumen de instalación:"
+            echo "   ✅ Instalados: $installed_count/${#REQUIRED_MODELS[@]}"
+            echo "   ❌ Fallidos: $failed_count/${#REQUIRED_MODELS[@]}"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            if [ $installed_count -eq 0 ]; then
+                echo "❌ No se pudo instalar ningún modelo"
                 return 1
             fi
         else
@@ -95,50 +134,61 @@ check_ollama() {
 detect_browser() {
     echo "🌐 Detectando navegador por defecto del sistema..."
 
-    # Detectar navegadores comunes en macOS
-    FOUND_BROWSERS=0
+    # Detectar SO
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        # Linux - Contar navegadores disponibles
+        FOUND_BROWSERS=0
 
-    if [ -d "/Applications/Google Chrome.app" ]; then
-        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
-    fi
+        if command -v firefox &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            FIRST_BROWSER="firefox"
+        fi
 
-    if [ -d "/Applications/Microsoft Edge.app" ]; then
-        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
-    fi
+        if command -v microsoft-edge &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="microsoft-edge"
+        fi
 
-    if [ -d "/Applications/Firefox.app" ]; then
-        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
-    fi
+        if command -v microsoft-edge-stable &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="microsoft-edge-stable"
+        fi
 
-    if [ -d "/Applications/Safari.app" ]; then
-        FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
-    fi
+        if command -v google-chrome &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="google-chrome"
+        fi
 
-    # Si hay múltiples navegadores, usar el navegador por defecto del sistema
-    if [ $FOUND_BROWSERS -gt 1 ]; then
-        echo "✅ Múltiples navegadores detectados. Usando navegador por defecto del sistema"
+        if command -v chromium-browser &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="chromium-browser"
+        fi
+
+        if command -v google-chrome-stable &> /dev/null; then
+            FOUND_BROWSERS=$((FOUND_BROWSERS + 1))
+            [ -z "$FIRST_BROWSER" ] && FIRST_BROWSER="google-chrome-stable"
+        fi
+
+        # Si hay múltiples navegadores, usar el navegador por defecto
+        if [ $FOUND_BROWSERS -gt 1 ]; then
+            echo "✅ Múltiples navegadores detectados. Usando navegador por defecto del sistema"
+            BROWSER="xdg-open"
+        elif [ $FOUND_BROWSERS -eq 1 ]; then
+            echo "✅ Navegador detectado: $FIRST_BROWSER"
+            BROWSER="$FIRST_BROWSER"
+        else
+            echo "✅ Usando navegador por defecto del sistema"
+            BROWSER="xdg-open"
+        fi
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
         BROWSER="open"
-        BROWSER_NAME="Default"
-    elif [ -d "/Applications/Google Chrome.app" ]; then
-        BROWSER="open -a 'Google Chrome'"
-        BROWSER_NAME="Chrome"
-        echo "✅ Navegador detectado: Chrome"
-    elif [ -d "/Applications/Microsoft Edge.app" ]; then
-        BROWSER="open -a 'Microsoft Edge'"
-        BROWSER_NAME="Edge"
-        echo "✅ Navegador detectado: Edge"
-    elif [ -d "/Applications/Firefox.app" ]; then
-        BROWSER="open -a Firefox"
-        BROWSER_NAME="Firefox"
-        echo "✅ Navegador detectado: Firefox"
-    elif [ -d "/Applications/Safari.app" ]; then
-        BROWSER="open -a Safari"
-        BROWSER_NAME="Safari"
-        echo "✅ Navegador detectado: Safari"
+    elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]]; then
+        # Windows
+        BROWSER="start"
     else
-        BROWSER="open"
-        BROWSER_NAME="Default"
-        echo "✅ Usando navegador por defecto del sistema"
+        echo "⚠️  Sistema operativo no detectado"
+        BROWSER="xdg-open"
     fi
 }
 
@@ -158,7 +208,7 @@ start_server() {
 
     echo "📡 Servidor web en puerto: $PORT"
 
-    # Intentar Python 3 primero, luego Python 2
+    # Intentar Python 3 primero, luego Python 2, luego Node.js
     if command -v python3 &> /dev/null; then
         echo "🐍 Usando Python 3..."
         python3 -m http.server $PORT &
@@ -169,24 +219,18 @@ start_server() {
         python -m SimpleHTTPServer $PORT &
         SERVER_PID=$!
         SERVER_CMD="python"
+    elif command -v node &> /dev/null && command -v npx &> /dev/null; then
+        echo "📗 Usando Node.js..."
+        npx http-server -p $PORT &
+        SERVER_PID=$!
+        SERVER_CMD="node"
     else
-        echo "⚠️  No se encontró Python. Instalando con Homebrew si está disponible..."
+        echo "⚠️  No se encontró servidor web disponible"
+        echo "   Instalando python3-http-server simple..."
 
-        if command -v brew &> /dev/null; then
-            echo "📦 Instalando Python 3 con Homebrew..."
-            brew install python3
-            if [ $? -eq 0 ]; then
-                python3 -m http.server $PORT &
-                SERVER_PID=$!
-                SERVER_CMD="python3"
-            else
-                echo "❌ Error instalando Python"
-                return 2
-            fi
-        else
-            echo "⚠️ Sin Python ni Homebrew. Modo directo..."
-            return 2
-        fi
+        # Crear servidor simple en bash (último recurso)
+        echo "🔧 Modo directo (sin servidor)"
+        return 2
     fi
 
     if [ $? -eq 0 ]; then
@@ -206,37 +250,60 @@ start_server() {
 # Función para abrir la aplicación
 open_app() {
     local url=$1
+    local file_path=$2
 
     echo "🚀 Abriendo MSN-AI..."
 
     if [ -n "$url" ]; then
         # Abrir URL del servidor
-        if [ "$BROWSER_NAME" = "Default" ]; then
+        if [ "$BROWSER" = "xdg-open" ] || [ "$BROWSER" = "open" ] || [ "$BROWSER" = "start" ]; then
             # Usar navegador por defecto del sistema
-            open "$url/msn-ai.html"
+            $BROWSER "$url/msn-ai.html" &
         else
             # Usar navegador específico detectado
-            case $BROWSER_NAME in
-                "Chrome")
-                    open -a "Google Chrome" "$url/msn-ai.html"
+            case $BROWSER in
+                "firefox")
+                    firefox "$url/msn-ai.html" &
                     ;;
-                "Edge")
-                    open -a "Microsoft Edge" "$url/msn-ai.html"
+                "microsoft-edge"|"microsoft-edge-stable")
+                    $BROWSER --new-window "$url/msn-ai.html" &
                     ;;
-                "Firefox")
-                    open -a Firefox "$url/msn-ai.html"
+                "google-chrome"|"google-chrome-stable")
+                    $BROWSER --new-window "$url/msn-ai.html" &
                     ;;
-                "Safari")
-                    open -a Safari "$url/msn-ai.html"
+                "chromium-browser")
+                    chromium-browser --new-window "$url/msn-ai.html" &
                     ;;
                 *)
-                    open "$url/msn-ai.html"
+                    $BROWSER "$url/msn-ai.html" &
                     ;;
             esac
         fi
     else
-        # Abrir archivo directamente (siempre usa navegador por defecto)
-        open "file://$(pwd)/msn-ai.html"
+        # Abrir archivo directamente
+        if [ "$BROWSER" = "xdg-open" ] || [ "$BROWSER" = "open" ] || [ "$BROWSER" = "start" ]; then
+            # Usar navegador por defecto del sistema
+            $BROWSER "file://$(pwd)/msn-ai.html" &
+        else
+            # Usar navegador específico detectado
+            case $BROWSER in
+                "firefox")
+                    firefox "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "microsoft-edge"|"microsoft-edge-stable")
+                    $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "google-chrome"|"google-chrome-stable")
+                    $BROWSER --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                "chromium-browser")
+                    chromium-browser --new-window --allow-file-access-from-files "file://$(pwd)/msn-ai.html" &
+                    ;;
+                *)
+                    $BROWSER "file://$(pwd)/msn-ai.html" &
+                    ;;
+            esac
+        fi
     fi
 
     echo "✅ MSN-AI abierto en el navegador"
@@ -270,7 +337,7 @@ cleanup() {
         fi
     fi
 
-    # Verificar procesos restantes
+    # Verificar que todo esté limpio
     echo "🔍 Verificando limpieza..."
     if pgrep -f "python.*http.server" >/dev/null 2>&1; then
         echo "⚠️ Limpiando servidores Python restantes..."
@@ -326,14 +393,14 @@ case $METHOD in
         SERVER_STATUS=$?
 
         if [ $SERVER_STATUS -eq 0 ]; then
-            open_app "http://localhost:$PORT"
+            open_app "http://localhost:$PORT" ""
 
             echo ""
             echo "🎉 ¡MSN-AI v1.0.0 está ejecutándose!"
             echo "============================================"
             echo "📱 URL: http://localhost:$PORT/msn-ai.html"
             echo "🔧 Ollama: $([ $OLLAMA_OK -eq 0 ] && echo "✅ Funcionando" || echo "⚠️ No disponible")"
-            echo "🌐 Navegador: $BROWSER_NAME"
+            echo "🌐 Navegador: $BROWSER"
             echo "📧 Desarrollador: Alan Mac-Arthur García Díaz"
             echo ""
             echo "💡 Consejos importantes:"
@@ -360,13 +427,13 @@ case $METHOD in
             done
         else
             echo "⚠️ Error con servidor, intentando modo directo..."
-            open_app ""
+            open_app "" "$(pwd)/msn-ai.html"
         fi
         ;;
 
     2)
         echo "📁 Abriendo archivo directo..."
-        open_app ""
+        open_app "" "$(pwd)/msn-ai.html"
 
         echo ""
         echo "🎉 ¡MSN-AI v1.0.0 abierto!"
@@ -384,12 +451,12 @@ case $METHOD in
         echo "============================================"
         echo "✅ MSN-AI: Archivo encontrado"
         echo "🔧 Ollama: $([ $OLLAMA_OK -eq 0 ] && echo "✅ Funcionando" || echo "❌ No disponible")"
-        echo "🌐 Navegador: $BROWSER_NAME detectado"
+        echo "🌐 Navegador: $BROWSER detectado"
         echo "📧 Desarrollador: Alan Mac-Arthur García Díaz"
         echo "⚖️ Licencia: GPL-3.0"
         echo ""
         echo "💡 Para iniciar la aplicación:"
-        echo "   ./start-msnai-mac.sh --auto"
+        echo "   $0 --auto"
         echo ""
         echo "💡 Para detener correctamente (cuando esté ejecutándose):"
         echo "   Ctrl+C en la terminal del servidor"

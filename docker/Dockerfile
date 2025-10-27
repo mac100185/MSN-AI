@@ -40,7 +40,8 @@ RUN groupadd -r msnai && useradd -r -g msnai -d /app -s /bin/bash msnai
 COPY --chown=msnai:msnai . .
 
 # Set executable permissions for scripts
-RUN chmod +x /app/*.sh 2>/dev/null || true
+RUN chmod +x /app/*.sh 2>/dev/null || true && \
+    chmod +x /app/docker/*.sh 2>/dev/null || true
 
 # Create directories for data persistence
 RUN mkdir -p /app/data/chats /app/data/logs /app/data/config \
@@ -48,7 +49,8 @@ RUN mkdir -p /app/data/chats /app/data/logs /app/data/config \
 
 # Copy Docker-specific scripts
 COPY --chown=msnai:msnai docker/scripts/ /app/docker/scripts/
-RUN chmod +x /app/docker/scripts/*.sh
+RUN chmod +x /app/docker/scripts/*.sh && \
+    chown -R msnai:msnai /app/docker
 
 # Install Node.js as backup web server (lightweight alternative)
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
@@ -57,7 +59,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Health check script
-COPY docker/healthcheck.sh /app/healthcheck.sh
+COPY --chown=msnai:msnai docker/healthcheck.sh /app/healthcheck.sh
 RUN chmod +x /app/healthcheck.sh
 
 # Health check
@@ -74,9 +76,10 @@ EXPOSE 8000
 VOLUME ["/app/data"]
 
 # Startup script
-COPY docker/docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY --chown=msnai:msnai docker/docker-entrypoint.sh /app/docker-entrypoint.sh
 USER root
-RUN chmod +x /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh && \
+    chown msnai:msnai /app/docker-entrypoint.sh
 USER msnai
 
 # Default command

@@ -95,6 +95,16 @@ detect_hardware() {
     fi
 }
 
+# Function to get default required models
+get_required_models() {
+    # Modelos requeridos por defecto según especificaciones
+    REQUIRED_MODELS=(
+        "qwen3-vl:235b-cloud"
+        "gpt-oss:120b-cloud"
+        "qwen3-coder:480b-cloud"
+    )
+}
+
 # Function to recommend model based on hardware
 recommend_model() {
     echo ""
@@ -229,6 +239,51 @@ install_model() {
     fi
 }
 
+# Function to install required models
+install_required_models() {
+    echo ""
+    echo "📦 Instalando modelos requeridos por defecto..."
+    echo "=============================================="
+
+    get_required_models
+
+    local installed_count=0
+    local failed_count=0
+
+    for model in "${REQUIRED_MODELS[@]}"; do
+        echo ""
+        echo "🔄 Procesando modelo: $model"
+
+        # Check if model already exists
+        if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\":\"$model"; then
+            echo "✅ Modelo $model ya está instalado"
+            installed_count=$((installed_count + 1))
+        else
+            echo "📥 Instalando modelo: $model"
+
+            if install_model "$model"; then
+                echo "✅ Modelo $model instalado exitosamente"
+                installed_count=$((installed_count + 1))
+            else
+                echo "⚠️  Error instalando modelo $model"
+                failed_count=$((failed_count + 1))
+            fi
+        fi
+    done
+
+    echo ""
+    echo "📊 Resumen de instalación de modelos requeridos:"
+    echo "   ✅ Instalados correctamente: $installed_count/${#REQUIRED_MODELS[@]}"
+    echo "   ⚠️  Fallidos: $failed_count/${#REQUIRED_MODELS[@]}"
+    echo ""
+
+    if [ $installed_count -gt 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Function to test model
 test_model() {
     local model=$1
@@ -337,52 +392,55 @@ main() {
     # Recommend optimal model
     recommend_model
 
-    # Check if models already exist
-    if check_existing_models; then
-        echo "ℹ️  Modelos existentes encontrados"
-        echo "   Configuración automática: Usando modelo existente"
-        echo "   Modelo recomendado para este hardware: $RECOMMENDED_MODEL"
-    else
-        echo "📦 No se encontraron modelos, instalando: $RECOMMENDED_MODEL"
+    # Install required default models
+    echo "📦 Instalando modelos requeridos por defecto..."
+    install_required_models
 
-        # Check timeout before starting model installation
-        current_time=$(date +%s)
-        elapsed=$((current_time - start_time))
-        if [ $elapsed -ge $((SETUP_TIMEOUT - 60)) ]; then
-            echo "⏰ Tiempo insuficiente para instalar modelo, usando modelo básico"
-            RECOMMENDED_MODEL="phi3:mini"
-        fi
+    # Check timeout after installing required models
+    current_time=$(date +%s)
+    elapsed=$((current_time - start_time))
 
-        if install_model "$RECOMMENDED_MODEL"; then
-            echo "✅ Instalación exitosa"
+    if [ $elapsed -lt $((SETUP_TIMEOUT - 60)) ]; then
+        # Check if models already exist beyond required ones
+        if check_existing_models; then
+            echo "ℹ️  Modelos adicionales encontrados"
+            echo "   Configuración automática: Usando modelos existentes"
+            echo "   Modelo recomendado para este hardware: $RECOMMENDED_MODEL"
+        else
+            echo "📦 Instalando modelo recomendado adicional: $RECOMMENDED_MODEL"
 
-            # Test the model if we have time
+            # Check timeout before starting model installation
             current_time=$(date +%s)
             elapsed=$((current_time - start_time))
-            if [ $elapsed -lt $((SETUP_TIMEOUT - 30)) ]; then
-                if test_model "$RECOMMENDED_MODEL"; then
-                    echo "🎉 Configuración de IA completada exitosamente"
-                else
-                    echo "⚠️  Modelo instalado pero falló la prueba (puede ser normal al inicio)"
-                fi
+            if [ $elapsed -ge $((SETUP_TIMEOUT - 60)) ]; then
+                echo "⏰ Tiempo insuficiente para instalar modelo adicional"
             else
-                echo "⏰ Saltando test del modelo por tiempo"
-            fi
-        else
-            echo "❌ Error en la instalación del modelo principal"
-            echo "   Intentando con modelo de respaldo: phi3:mini"
+                if install_model "$RECOMMENDED_MODEL"; then
+                    echo "✅ Instalación exitosa del modelo recomendado"
 
-            if install_model "phi3:mini"; then
-                RECOMMENDED_MODEL="phi3:mini"
-                RECOMMENDED_LEVEL="Básico (modelo de respaldo)"
-                echo "✅ Modelo de respaldo instalado correctamente"
-            else
-                echo "❌ Error instalando modelo de respaldo"
-                echo "   MSN-AI funcionará sin modelo preinstalado"
-                echo "   Puedes instalar modelos manualmente desde la interfaz"
+                    # Test the model if we have time
+                    current_time=$(date +%s)
+                    elapsed=$((current_time - start_time))
+                    if [ $elapsed -lt $((SETUP_TIMEOUT - 30)) ]; then
+                        if test_model "$RECOMMENDED_MODEL"; then
+                            echo "🎉 Configuración de IA completada exitosamente"
+                        else
+                            echo "⚠️  Modelo instalado pero falló la prueba (puede ser normal al inicio)"
+                        fi
+                    else
+                        echo "⏰ Saltando test del modelo por tiempo"
+                    fi
+                else
+                    echo "⚠️  Error en la instalación del modelo recomendado"
+                    echo "   Los modelos requeridos ya están instalados"
+                fi
             fi
         fi
+    else
+        echo "⏰ Tiempo insuficiente para modelos adicionales"
+        echo "   Los modelos requeridos ya fueron instalados"
     fi
+</text>
 
     # Save configuration
     save_config "$RECOMMENDED_MODEL"
@@ -390,7 +448,13 @@ main() {
     echo ""
     echo "🎉 Configuración de MSN-AI Docker completada"
     echo "============================================="
-    echo "🤖 Modelo configurado: $RECOMMENDED_MODEL"
+    echo "🤖 Modelos requeridos instalados:"
+    get_required_models
+    for model in "${REQUIRED_MODELS[@]}"; do
+        echo "   📦 $model"
+    done
+    echo ""
+    echo "🤖 Modelo adicional recomendado: $RECOMMENDED_MODEL"
     echo "🎯 Nivel: $RECOMMENDED_LEVEL"
     echo "🐳 Host Ollama: $OLLAMA_HOST"
     echo "💾 Configuración: /app/data/config/ai-config.json"

@@ -173,35 +173,66 @@ function Test-Ollama {
         $modelLines = $modelsOutput | Select-String -Pattern "^\w" | Where-Object { $_ -notmatch "^NAME" }
         $modelCount = ($modelLines | Measure-Object).Count
 
+        # Modelos requeridos por defecto
+        $requiredModels = @(
+            "qwen3-vl:235b-cloud",
+            "gpt-oss:120b-cloud",
+            "qwen3-coder:480b-cloud"
+        )
+
         if ($modelCount -eq 0) {
             Write-Host "No hay modelos de IA instalados" -ForegroundColor Yellow
             Write-Host ""
-            $installModel = Read-Host "Deseas instalar el modelo mistral:7b (recomendado, 4.1GB)? (s/n)"
+            Write-Host "Modelos requeridos por defecto:" -ForegroundColor Cyan
+            foreach ($model in $requiredModels) {
+                Write-Host "   - $model" -ForegroundColor White
+            }
+            Write-Host ""
+            $installModels = Read-Host "Deseas instalar los modelos requeridos? (s/n)"
 
-            if ($installModel -eq "s" -or $installModel -eq "S") {
+            if ($installModels -eq "s" -or $installModels -eq "S") {
                 Write-Host ""
-                Write-Host "Descargando modelo mistral:7b..." -ForegroundColor Green
-                Write-Host "NOTA: Esto puede tardar varios minutos dependiendo de tu conexion" -ForegroundColor Yellow
-                Write-Host "      El modelo pesa aproximadamente 4.1 GB" -ForegroundColor Yellow
+                Write-Host "Instalando modelos requeridos..." -ForegroundColor Green
+                Write-Host "NOTA: Este proceso puede tardar bastante tiempo dependiendo de tu conexion" -ForegroundColor Yellow
                 Write-Host ""
 
-                & ollama pull mistral:7b
+                $installedCount = 0
+                $failedCount = 0
 
-                if ($LASTEXITCODE -eq 0) {
+                foreach ($model in $requiredModels) {
+                    Write-Host "==========================================" -ForegroundColor Cyan
+                    Write-Host "Descargando: $model" -ForegroundColor Green
+                    Write-Host "==========================================" -ForegroundColor Cyan
+
+                    & ollama pull $model
+
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-Host "Modelo $model instalado correctamente" -ForegroundColor Green
+                        $installedCount++
+                    }
+                    else {
+                        Write-Host "Error instalando modelo $model" -ForegroundColor Red
+                        $failedCount++
+                    }
                     Write-Host ""
-                    Write-Host "Modelo instalado correctamente" -ForegroundColor Green
                 }
-                else {
+
+                Write-Host "==========================================" -ForegroundColor Cyan
+                Write-Host "Resumen de instalacion:" -ForegroundColor Yellow
+                Write-Host "   Instalados: $installedCount/$($requiredModels.Count)" -ForegroundColor Green
+                Write-Host "   Fallidos: $failedCount/$($requiredModels.Count)" -ForegroundColor Red
+                Write-Host "==========================================" -ForegroundColor Cyan
+
+                if ($installedCount -eq 0) {
                     Write-Host ""
-                    Write-Host "Error al instalar el modelo" -ForegroundColor Red
-                    Write-Host "Puedes instalarlo manualmente mas tarde con: ollama pull mistral:7b" -ForegroundColor Yellow
+                    Write-Host "No se pudo instalar ningun modelo" -ForegroundColor Red
                     return $false
                 }
             }
             else {
                 Write-Host ""
                 Write-Host "Continuando sin modelos de IA" -ForegroundColor Yellow
-                Write-Host "Puedes instalar modelos mas tarde con: ollama pull mistral:7b" -ForegroundColor Cyan
+                Write-Host "Puedes instalar modelos mas tarde manualmente" -ForegroundColor Cyan
                 Write-Host ""
                 Start-Sleep -Seconds 2
             }

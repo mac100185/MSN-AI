@@ -50,7 +50,7 @@ $NVIDIA_GPUS = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -l
 if ($NVIDIA_GPUS) {
     $GPU_DETECTED = $true
     Write-Host "GPU NVIDIA detectada: $($NVIDIA_GPUS[0].Name)" -ForegroundColor Green
-    
+
     # Intentar obtener VRAM con nvidia-smi
     if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
         try {
@@ -149,11 +149,24 @@ else {
     }
 }
 
-Write-Host "Modelo recomendado para tu sistema:" -ForegroundColor Green
+# Modelos requeridos por defecto
+$requiredModels = @(
+    "qwen3-vl:235b-cloud",
+    "gpt-oss:120b-cloud",
+    "qwen3-coder:480b-cloud"
+)
+
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "Modelos requeridos por defecto:" -ForegroundColor Green
+foreach ($model in $requiredModels) {
+    Write-Host "   - $model" -ForegroundColor White
+}
 Write-Host ""
+Write-Host "Modelo recomendado adicional para tu sistema:" -ForegroundColor Green
 Write-Host "  Modelo: $MODEL" -ForegroundColor Cyan
 Write-Host "  Tamano: $SIZE" -ForegroundColor Yellow
 Write-Host "  Nivel: $LEVEL" -ForegroundColor White
+Write-Host "==========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Otros modelos disponibles:" -ForegroundColor Cyan
 Write-Host "  - tinyllama (637 MB) - Ultra ligero y rapido"
@@ -168,7 +181,7 @@ if (-not (Get-Command ollama -ErrorAction SilentlyContinue)) {
     Write-Host "Ollama no esta instalado" -ForegroundColor Red
     Write-Host ""
     $installOllama = Read-Host "Deseas abrir la pagina de descarga de Ollama? (s/n)"
-    
+
     if ($installOllama -eq "s" -or $installOllama -eq "S") {
         Write-Host ""
         Write-Host "Abriendo pagina de descarga de Ollama..." -ForegroundColor Green
@@ -211,7 +224,7 @@ Write-Host "Verificando modelos ya instalados..." -ForegroundColor Cyan
 try {
     $installedModels = & ollama list 2>&1
     $modelLines = $installedModels | Select-String -Pattern "^\w" | Where-Object { $_ -notmatch "^NAME" }
-    
+
     if ($modelLines) {
         Write-Host "Modelos ya instalados:" -ForegroundColor Green
         $modelLines | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
@@ -222,26 +235,65 @@ catch {
     Write-Host "No se pudieron verificar los modelos instalados" -ForegroundColor Yellow
 }
 
-$CONFIRM = Read-Host "Deseas instalar el modelo recomendado ($MODEL - $SIZE)? (s/n)"
+$CONFIRM = Read-Host "Deseas instalar todos los modelos requeridos? (s/n)"
 if ($CONFIRM -eq "s" -or $CONFIRM -eq "S") {
     Write-Host ""
-    Write-Host "Descargando modelo $MODEL..." -ForegroundColor Green
-    Write-Host "IMPORTANTE: Esto puede tardar varios minutos" -ForegroundColor Yellow
-    Write-Host "            Tamano de descarga: $SIZE" -ForegroundColor Yellow
+    Write-Host "Instalando modelos requeridos..." -ForegroundColor Green
+    Write-Host "IMPORTANTE: Esto puede tardar bastante tiempo" -ForegroundColor Yellow
     Write-Host ""
-    
+
+    $installedCount = 0
+    $failedCount = 0
+
+    # Instalar modelos requeridos
+    foreach ($model in $requiredModels) {
+        Write-Host "==========================================" -ForegroundColor Cyan
+        Write-Host "Descargando: $model" -ForegroundColor Green
+        Write-Host "==========================================" -ForegroundColor Cyan
+
+        & ollama pull $model
+
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Modelo $model instalado correctamente" -ForegroundColor Green
+            $installedCount++
+        }
+        else {
+            Write-Host "Error instalando modelo $model" -ForegroundColor Red
+            $failedCount++
+        }
+        Write-Host ""
+    }
+
+    # Instalar modelo recomendado adicional
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "Descargando modelo recomendado: $MODEL" -ForegroundColor Green
+    Write-Host "==========================================" -ForegroundColor Cyan
+
     & ollama pull $MODEL
-    
+
     if ($LASTEXITCODE -eq 0) {
+        Write-Host "Modelo $MODEL instalado correctamente" -ForegroundColor Green
+        $installedCount++
+    }
+    else {
+        Write-Host "Error instalando modelo $MODEL" -ForegroundColor Red
+        $failedCount++
+    }
+    Write-Host ""
+
+    # Resumen
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "Resumen de instalacion:" -ForegroundColor Yellow
+    Write-Host "   Instalados: $installedCount" -ForegroundColor Green
+    Write-Host "   Fallidos: $failedCount" -ForegroundColor Red
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    if ($installedCount -gt 0) {
+        Write-Host "Instalacion completada" -ForegroundColor Green
         Write-Host ""
-        Write-Host "============================================" -ForegroundColor Green
-        Write-Host "  Instalacion completada exitosamente" -ForegroundColor Green
-        Write-Host "============================================" -ForegroundColor Green
-        Write-Host ""
-        Write-Host "El modelo $MODEL esta listo para usar" -ForegroundColor Green
-        Write-Host ""
-        Write-Host "Puedes probarlo con:" -ForegroundColor Cyan
-        Write-Host "  ollama run $MODEL" -ForegroundColor White
+        Write-Host "Puedes probar los modelos con:" -ForegroundColor Cyan
+        Write-Host "  ollama run <modelo>" -ForegroundColor White
         Write-Host ""
         Write-Host "O iniciar MSN-AI con:" -ForegroundColor Cyan
         Write-Host "  .\start-msnai.ps1 --auto" -ForegroundColor White
@@ -249,7 +301,7 @@ if ($CONFIRM -eq "s" -or $CONFIRM -eq "S") {
     }
     else {
         Write-Host ""
-        Write-Host "Error al descargar el modelo" -ForegroundColor Red
+        Write-Host "Error al descargar los modelos" -ForegroundColor Red
         Write-Host ""
         Write-Host "Posibles causas:" -ForegroundColor Yellow
         Write-Host "  - Problema de conexion a internet" -ForegroundColor White
@@ -258,23 +310,18 @@ if ($CONFIRM -eq "s" -or $CONFIRM -eq "S") {
         Write-Host ""
         Write-Host "Intenta manualmente:" -ForegroundColor Cyan
         Write-Host "  1. Verifica tu conexion a internet" -ForegroundColor White
-        Write-Host "  2. Asegurate de tener al menos 5GB libres en disco" -ForegroundColor White
+        Write-Host "  2. Asegurate de tener espacio libre en disco" -ForegroundColor White
         Write-Host "  3. Ejecuta: ollama serve" -ForegroundColor White
-        Write-Host "  4. En otra ventana: ollama pull $MODEL" -ForegroundColor White
+        Write-Host "  4. En otra ventana: ollama pull <modelo>" -ForegroundColor White
         Write-Host ""
     }
 }
 else {
     Write-Host ""
-    Write-Host "Instalacion de modelo omitida" -ForegroundColor Yellow
+    Write-Host "Instalacion de modelos omitida" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "Puedes instalar un modelo mas tarde con:" -ForegroundColor Cyan
-    Write-Host "  ollama pull $MODEL" -ForegroundColor White
-    Write-Host ""
-    Write-Host "O cualquier otro modelo:" -ForegroundColor Cyan
-    Write-Host "  ollama pull tinyllama" -ForegroundColor White
-    Write-Host "  ollama pull phi3:mini" -ForegroundColor White
-    Write-Host "  ollama pull mistral:7b" -ForegroundColor White
+    Write-Host "Puedes instalar modelos mas tarde con:" -ForegroundColor Cyan
+    Write-Host "  ollama pull <modelo>" -ForegroundColor White
     Write-Host ""
 }
 
