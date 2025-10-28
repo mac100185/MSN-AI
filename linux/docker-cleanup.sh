@@ -12,10 +12,20 @@ echo "📧 Por: Alan Mac-Arthur García Díaz"
 echo "⚖️ Licencia: GPL-3.0"
 echo "=============================================="
 
-# Check if we're in the correct directory
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
+# Verify we're in the correct directory
 if [ ! -f "docker/docker-compose.yml" ]; then
     echo "❌ Error: docker-compose.yml no encontrado"
-    echo "   Ejecuta este script desde el directorio raíz de MSN-AI"
+    echo "   Estructura del proyecto incorrecta"
     exit 1
 fi
 
@@ -430,22 +440,23 @@ echo "🔍 Verificando limpieza final..."
 
 FINAL_CONTAINERS=$(docker ps -aq --filter "label=com.msnai.service" 2>/dev/null | wc -l)
 # Also check by name
-FINAL_CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | sort -u | wc -l)
+FINAL_CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null)
+FINAL_CONTAINERS_BY_NAME=$(echo "$FINAL_CONTAINERS_BY_NAME" | sort -u | wc -l)
 FINAL_CONTAINERS=$((FINAL_CONTAINERS + FINAL_CONTAINERS_BY_NAME))
 
 FINAL_IMAGES=$(docker images --filter "label=com.msnai.service" -q 2>/dev/null | wc -l)
 # Also check by name
-FINAL_IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" 2>/dev/null || echo 0)
+FINAL_IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" 2>/dev/null | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" || echo 0)
 FINAL_IMAGES=$((FINAL_IMAGES + FINAL_IMAGES_BY_NAME))
 
 FINAL_VOLUMES=$(docker volume ls --filter "label=com.msnai.volume" -q 2>/dev/null | wc -l)
 # Also check by name
-FINAL_VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+FINAL_VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" 2>/dev/null | grep -cE "(msn-ai|msnai)" || echo 0)
 FINAL_VOLUMES=$((FINAL_VOLUMES + FINAL_VOLUMES_BY_NAME))
 
 FINAL_NETWORKS=$(docker network ls --filter "label=com.msnai.network" -q 2>/dev/null | wc -l)
 # Also check by name
-FINAL_NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+FINAL_NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" 2>/dev/null | grep -cE "(msn-ai|msnai)" || echo 0)
 FINAL_NETWORKS=$((FINAL_NETWORKS + FINAL_NETWORKS_BY_NAME))
 
 echo ""

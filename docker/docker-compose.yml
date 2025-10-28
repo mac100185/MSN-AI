@@ -60,11 +60,11 @@ services:
       - msn-ai-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:11434/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+      test: ["CMD-SHELL", "pgrep ollama || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 30
+      start_period: 180s
     labels:
       - "com.msnai.service=ai"
       - "com.msnai.version=2.1.0"
