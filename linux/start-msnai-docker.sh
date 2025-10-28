@@ -156,9 +156,56 @@ install_docker_compose_standalone() {
     fi
 }
 
+# Function to check disk space
+check_disk_space() {
+    echo "🔍 Verificando espacio en disco..."
+
+    # Get available space in /var/lib/docker (where Docker stores images)
+    local docker_dir="/var/lib/docker"
+    if [ ! -d "$docker_dir" ]; then
+        docker_dir="/"
+    fi
+
+    local available_gb=$(df -BG "$docker_dir" | awk 'NR==2 {print $4}' | sed 's/G//')
+    local required_gb=5  # Minimum 5GB required for Ollama and MSN-AI images
+
+    echo "   Espacio disponible: ${available_gb}GB"
+    echo "   Espacio requerido: ${required_gb}GB"
+
+    if [ "$available_gb" -lt "$required_gb" ]; then
+        echo ""
+        echo "❌ ERROR: Espacio en disco insuficiente"
+        echo "   Disponible: ${available_gb}GB"
+        echo "   Requerido: ${required_gb}GB mínimo"
+        echo ""
+        echo "💡 Soluciones:"
+        echo "   1. Libera espacio en disco eliminando archivos innecesarios"
+        echo "   2. Limpia imágenes Docker antiguas:"
+        echo "      docker system prune -a --volumes"
+        echo "   3. Aumenta el espacio del disco/partición"
+        echo ""
+        echo "📊 Uso actual del disco:"
+        df -h "$docker_dir" | head -2
+        echo ""
+
+        read -p "¿Deseas continuar de todas formas? (s/N): " continue_anyway
+        if [[ ! "$continue_anyway" =~ ^[sS]$ ]]; then
+            echo "❌ Instalación cancelada por falta de espacio"
+            exit 1
+        fi
+        echo "⚠️  Continuando con espacio limitado (puede fallar)..."
+    else
+        echo "✅ Espacio en disco suficiente: ${available_gb}GB disponible"
+    fi
+    echo ""
+}
+
 # Function to check Docker installation
 check_docker() {
     echo "🔍 Verificando Docker..."
+
+    # Check disk space first
+    check_disk_space
 
     if ! command -v docker &> /dev/null; then
         echo "❌ Docker no está instalado"
@@ -436,6 +483,24 @@ start_containers() {
     echo "📝 Los logs se guardarán en: $BUILD_LOG"
     echo ""
 
+    # Check disk space before build
+    echo "🔍 Verificando espacio antes de construir..."
+    local available_gb=$(df -BG /var/lib/docker 2>/dev/null || df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
+    echo "   Espacio disponible: ${available_gb}GB"
+
+    if [ "$available_gb" -lt 3 ]; then
+        echo ""
+        echo "⚠️  ADVERTENCIA: Espacio muy limitado (${available_gb}GB)"
+        echo "   La construcción puede fallar por falta de espacio"
+        echo ""
+        read -p "¿Continuar de todas formas? (s/N): " continue_build
+        if [[ ! "$continue_build" =~ ^[sS]$ ]]; then
+            echo "❌ Construcción cancelada"
+            exit 1
+        fi
+    fi
+    echo ""
+
     # Build images with verbose output
     echo "📦 Construyendo imagen MSN-AI..."
     echo "   Esto puede tardar varios minutos en la primera ejecución..."
@@ -453,9 +518,14 @@ start_containers() {
         echo "📝 Revisa los logs en: $BUILD_LOG"
         echo ""
         echo "💡 Diagnóstico rápido:"
-        echo "   - Verifica que tienes suficiente espacio en disco: df -h"
-        echo "   - Verifica memoria disponible: free -h"
-        echo "   - Revisa los últimos errores del log:"
+        echo ""
+        echo "📊 Espacio en disco:"
+        df -h /var/lib/docker 2>/dev/null || df -h /
+        echo ""
+        echo "💾 Memoria disponible:"
+        free -h
+        echo ""
+        echo "📝 Últimos errores del log:"
         tail -30 "$BUILD_LOG"
         echo ""
         echo "🔍 Para diagnóstico completo, ejecuta:"
@@ -495,6 +565,10 @@ start_containers() {
         echo ""
         echo "❌ Error iniciando los servicios (código de salida: $STARTUP_EXIT_CODE)"
         echo "📝 Revisa los logs en: $STARTUP_LOG"
+        echo ""
+        echo "📊 Diagnóstico del sistema:"
+        echo "Espacio en disco:"
+        df -h /var/lib/docker 2>/dev/null || df -h /
         echo ""
         echo "💡 Mostrando logs recientes de los contenedores:"
         echo ""

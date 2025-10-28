@@ -4,6 +4,31 @@ Esta guía te ayudará a diagnosticar y resolver problemas con MSN-AI Docker.
 
 ## 🚀 Inicio Rápido
 
+### Problema: "No space left on device"
+
+Si ves el error `write /var/lib/docker/tmp/...: no space left on device`:
+
+```bash
+# 1. Verifica espacio disponible
+df -h /var/lib/docker
+
+# 2. Limpia Docker completamente
+docker system prune -a --volumes
+
+# 3. O usa el script de limpieza
+bash linux/docker-cleanup.sh
+
+# 4. Libera espacio del sistema
+# - Elimina archivos temporales: sudo rm -rf /tmp/*
+# - Limpia logs antiguos: sudo journalctl --vacuum-size=100M
+# - Elimina paquetes no usados: sudo apt autoremove
+```
+
+**Espacio mínimo requerido:**
+- **Sistema base**: 5GB libres mínimo
+- **Docker + Ollama**: 3GB adicionales
+- **Total recomendado**: 10GB libres
+
 ### Problema: Docker falla sin mensajes
 
 Si Docker cierra la conexión SSH o falla sin mostrar mensajes:
@@ -109,7 +134,40 @@ bash linux/start-msnai-docker.sh
 
 ## 🔍 Problemas Comunes y Soluciones
 
-### 1. "Docker cierra la conexión SSH"
+### 1. "No space left on device" / Sin espacio en disco
+
+**Síntomas:**
+- Error durante `docker compose up`
+- Error durante descarga de imagen Ollama
+- Mensaje: `write /var/lib/docker/tmp/...: no space left on device`
+- Contenedores no inician
+
+**Causa:** El disco está lleno. Ollama requiere ~2GB, imágenes base ~1GB.
+
+**Solución inmediata:**
+```bash
+# Ver espacio disponible
+df -h
+
+# Limpiar Docker (CUIDADO: elimina TODO lo de Docker)
+docker system prune -a --volumes -f
+
+# Verificar cuánto se liberó
+docker system df
+
+# Si no es suficiente, limpiar sistema
+sudo apt clean
+sudo apt autoremove
+sudo rm -rf /tmp/*
+sudo journalctl --vacuum-size=100M
+```
+
+**Prevención:**
+- Mantén al menos 10GB libres antes de instalar
+- Usa el script: `bash linux/start-msnai-docker.sh` (ahora verifica espacio)
+- Limpia regularmente: `bash linux/docker-cleanup.sh`
+
+### 2. "Docker cierra la conexión SSH"
 
 **Causa probable**: Falta de memoria o recursos.
 
@@ -129,8 +187,9 @@ bash linux/start-msnai-docker.sh
    ```
 
 3. Aumenta memoria disponible o reduce límites.
+4. **Verifica espacio en disco:** El error de SSH puede ser por falta de espacio
 
-### 2. "Build falla sin mensaje"
+### 3. "Build falla sin mensaje"
 
 **Causa probable**: Falta de espacio en disco o timeout.
 
@@ -145,7 +204,13 @@ bash linux/start-msnai-docker.sh
    bash linux/docker-start-debug.sh
    ```
 
-### 3. "Ollama no responde"
+3. **Verifica espacio en disco:**
+   ```bash
+   df -h /var/lib/docker
+   # Si < 5GB: docker system prune -a --volumes
+   ```
+
+### 4. "Ollama no responde"
 
 **Causa probable**: Ollama tarda en iniciar o faltan recursos.
 
@@ -167,7 +232,7 @@ bash linux/start-msnai-docker.sh
    netstat -tuln | grep 11434
    ```
 
-### 4. "Contenedor se detiene inmediatamente"
+### 5. "Contenedor se detiene inmediatamente"
 
 **Causa probable**: Error en entrypoint o falta de archivo.
 
@@ -188,7 +253,12 @@ bash linux/start-msnai-docker.sh
    cat diagnostics_*/error_analysis.txt
    ```
 
-### 5. "Error construyendo imagen"
+4. **Verifica espacio en disco:**
+   ```bash
+   docker logs msn-ai-app | grep -i "space\|disk"
+   ```
+
+### 6. "Error construyendo imagen"
 
 **Causa probable**: Problema en Dockerfile o contexto de build.
 
@@ -344,11 +414,56 @@ bash linux/docker-start-debug.sh
 
 ## 💡 Tips para Evitar Problemas
 
-1. **Asegura suficiente memoria**: Mínimo 4GB RAM disponible
-2. **Espacio en disco**: Mínimo 10GB libres
-3. **No cierres SSH**: Usa `screen` o `tmux` para sesiones persistentes
-4. **Revisa firewall**: Asegura que puertos 8000 y 11434 estén abiertos
-5. **Usa logs**: Siempre revisa los logs antes de reportar problemas
+1. **Verifica espacio ANTES de instalar**: `df -h` (mínimo 10GB libres)
+2. **Limpia Docker regularmente**: `docker system prune -a --volumes`
+3. **Asegura suficiente memoria**: Mínimo 4GB RAM disponible
+4. **Espacio en disco**: Mínimo 10GB libres (crítico para Ollama)
+5. **No cierres SSH**: Usa `screen` o `tmux` para sesiones persistentes
+6. **Revisa firewall**: Asegura que puertos 8000 y 11434 estén abiertos
+7. **Usa logs**: Siempre revisa los logs antes de reportar problemas
+8. **Monitorea espacio**: `watch -n 5 df -h` durante instalación
+
+## 📊 Requisitos de Espacio en Disco
+
+### Desglose de Espacio Necesario:
+
+| Componente | Espacio Requerido |
+|------------|-------------------|
+| Imagen base Python | ~500 MB |
+| MSN-AI aplicación | ~100 MB |
+| Imagen Ollama | ~1.9 GB |
+| Modelos de IA (opcional) | Variable (1-10 GB) |
+| Espacio temporal Docker | ~1 GB |
+| **TOTAL MÍNIMO** | **5 GB** |
+| **RECOMENDADO** | **10-15 GB** |
+
+### Verificar Espacio:
+```bash
+# Espacio total disponible
+df -h /
+
+# Espacio usado por Docker
+docker system df
+
+# Espacio detallado de Docker
+du -sh /var/lib/docker
+
+# Limpiar si es necesario
+docker system prune -a --volumes -f
+```
+
+### Si se Queda Sin Espacio Durante Instalación:
+
+1. **Detener la instalación**: `Ctrl+C`
+2. **Limpiar Docker**: `docker system prune -a --volumes -f`
+3. **Limpiar sistema**: 
+   ```bash
+   sudo apt clean
+   sudo apt autoremove
+   sudo rm -rf /tmp/*
+   ```
+4. **Verificar espacio liberado**: `df -h`
+5. **Reintentar**: `bash linux/start-msnai-docker.sh`
 
 ## 📚 Referencias
 

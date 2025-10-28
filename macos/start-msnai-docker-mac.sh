@@ -72,9 +72,57 @@ detect_mac_info() {
     fi
 }
 
+# Function to check disk space
+check_disk_space() {
+    echo "🔍 Verificando espacio en disco..."
+
+    # Get available space in /var (where Docker Desktop stores data on macOS)
+    local docker_dir="/"
+    if [ -d "$HOME/Library/Containers/com.docker.docker/Data" ]; then
+        docker_dir="$HOME/Library/Containers/com.docker.docker/Data"
+    fi
+
+    local available_gb=$(df -g "$docker_dir" | awk 'NR==2 {print $4}')
+    local required_gb=5  # Minimum 5GB required for Ollama and MSN-AI images
+
+    echo "   Espacio disponible: ${available_gb}GB"
+    echo "   Espacio requerido: ${required_gb}GB"
+
+    if [ "$available_gb" -lt "$required_gb" ]; then
+        echo ""
+        echo "❌ ERROR: Espacio en disco insuficiente"
+        echo "   Disponible: ${available_gb}GB"
+        echo "   Requerido: ${required_gb}GB mínimo"
+        echo ""
+        echo "💡 Soluciones:"
+        echo "   1. Libera espacio en disco eliminando archivos innecesarios"
+        echo "   2. Limpia imágenes Docker antiguas:"
+        echo "      docker system prune -a --volumes"
+        echo "   3. Aumenta el espacio del disco/partición"
+        echo "   4. Vacía la papelera de macOS"
+        echo ""
+        echo "📊 Uso actual del disco:"
+        df -h "$docker_dir" | head -2
+        echo ""
+
+        read -p "¿Deseas continuar de todas formas? (s/N): " continue_anyway
+        if [[ ! "$continue_anyway" =~ ^[sS]$ ]]; then
+            echo "❌ Instalación cancelada por falta de espacio"
+            exit 1
+        fi
+        echo "⚠️  Continuando con espacio limitado (puede fallar)..."
+    else
+        echo "✅ Espacio en disco suficiente: ${available_gb}GB disponible"
+    fi
+    echo ""
+}
+
 # Function to check Docker installation
 check_docker() {
     echo "🔍 Verificando Docker..."
+
+    # Check disk space first
+    check_disk_space
 
     if ! command -v docker &> /dev/null; then
         echo "❌ Docker no está instalado"

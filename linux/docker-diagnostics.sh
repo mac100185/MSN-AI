@@ -92,8 +92,19 @@ run_diagnostic "Sistema operativo" "uname -a" "system_uname.txt"
 run_diagnostic "Distribución Linux" "cat /etc/os-release" "system_distribution.txt"
 run_diagnostic "Información CPU" "lscpu" "system_cpu.txt"
 run_diagnostic "Memoria del sistema" "free -h" "system_memory.txt"
-run_diagnostic "Espacio en disco" "df -h" "system_disk.txt"
+run_diagnostic "Espacio en disco (general)" "df -h" "system_disk.txt"
+run_diagnostic "Espacio en disco (Docker)" "df -h /var/lib/docker" "system_disk_docker.txt"
 run_diagnostic "Procesos del sistema" "ps aux" "system_processes.txt"
+
+# Check for low disk space
+echo "  Analizando espacio en disco..." | tee -a "$DIAG_DIR/diagnostics.log"
+DISK_AVAILABLE=$(df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
+if [ "$DISK_AVAILABLE" -lt 5 ]; then
+    echo "  ⚠️  ADVERTENCIA: Espacio bajo detectado (${DISK_AVAILABLE}GB)" | tee -a "$DIAG_DIR/diagnostics.log"
+    echo "ADVERTENCIA: Espacio en disco muy bajo (${DISK_AVAILABLE}GB disponible)" > "$DIAG_DIR/WARNING_LOW_DISK_SPACE.txt"
+    echo "Se recomienda al menos 5GB para operaciones de Docker." >> "$DIAG_DIR/WARNING_LOW_DISK_SPACE.txt"
+    echo "Libera espacio con: docker system prune -a --volumes" >> "$DIAG_DIR/WARNING_LOW_DISK_SPACE.txt"
+fi
 
 # Docker Installation
 print_section "2. INSTALACIÓN DE DOCKER"
@@ -302,6 +313,9 @@ echo "  Buscando errores comunes..." | tee -a "$DIAG_DIR/diagnostics.log"
     echo ""
     echo "--- Errores en logs de Setup ---"
     grep -i "error\|fail\|exception\|fatal" "$DIAG_DIR/logs_setup.txt" 2>/dev/null | tail -20 || echo "No se encontraron errores"
+    echo ""
+    echo "--- Errores de espacio en disco ---"
+    grep -i "no space left on device" "$DIAG_DIR"/*.txt 2>/dev/null | head -5 || echo "No se encontraron errores de espacio"
 } > "$DIAG_DIR/error_analysis.txt" 2>&1
 echo "  ✅ Análisis de errores completado" | tee -a "$DIAG_DIR/diagnostics.log"
 
@@ -355,7 +369,26 @@ print_section "20. RESUMEN EJECUTIVO"
     echo "CPU: $(nproc) núcleos"
     echo "RAM Total: $(free -h | awk '/^Mem:/ {print $2}')"
     echo "RAM Usada: $(free -h | awk '/^Mem:/ {print $3}')"
-    echo "Disco Raíz: $(df -h / | awk 'NR==2 {print $4}') disponible"
+
+    # Check disk space and warn if low
+    DISK_AVAILABLE=$(df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
+    echo "Disco Raíz: ${DISK_AVAILABLE}GB disponible"
+
+    if [ "$DISK_AVAILABLE" -lt 5 ]; then
+        echo "⚠️  ADVERTENCIA: Espacio en disco muy bajo (${DISK_AVAILABLE}GB)"
+        echo "   Se recomienda al menos 5GB para Docker + Ollama"
+    fi
+
+    # Check Docker directory space
+    if [ -d /var/lib/docker ]; then
+        DOCKER_DISK_AVAILABLE=$(df -BG /var/lib/docker | awk 'NR==2 {print $4}' | sed 's/G//')
+        echo "Disco Docker (/var/lib/docker): ${DOCKER_DISK_AVAILABLE}GB disponible"
+
+        if [ "$DOCKER_DISK_AVAILABLE" -lt 3 ]; then
+            echo "❌ CRÍTICO: Espacio Docker muy bajo (${DOCKER_DISK_AVAILABLE}GB)"
+            echo "   Docker puede fallar con 'no space left on device'"
+        fi
+    fi
     echo ""
 
     echo "--- Volúmenes ---"

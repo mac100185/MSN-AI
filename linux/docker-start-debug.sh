@@ -90,6 +90,20 @@ log_debug "Docker info:"
 docker info 2>&1 | tee -a "$DEBUG_LOG_FILE"
 log_debug ""
 
+# Check disk space
+log_debug "=== ESPACIO EN DISCO ==="
+df -h / | tee -a "$DEBUG_LOG_FILE"
+df -h /var/lib/docker 2>/dev/null | tee -a "$DEBUG_LOG_FILE" || true
+log_debug ""
+AVAILABLE_GB=$(df -BG /var/lib/docker 2>/dev/null | awk 'NR==2 {print $4}' | sed 's/G//' || df -BG / | awk 'NR==2 {print $4}' | sed 's/G//')
+log_debug "Espacio disponible: ${AVAILABLE_GB}GB"
+if [ "$AVAILABLE_GB" -lt 5 ]; then
+    log_debug "⚠️  ADVERTENCIA: Espacio muy limitado (${AVAILABLE_GB}GB)"
+    log_debug "   Se recomienda al menos 5GB para Docker + Ollama"
+    log_debug "   La instalación puede fallar por 'no space left on device'"
+fi
+log_debug ""
+
 # Check docker-compose
 log_debug "=== DOCKER COMPOSE ==="
 if command -v docker-compose &> /dev/null; then
@@ -152,6 +166,15 @@ else
     log_debug ""
     log_debug "❌ Build falló con código: $BUILD_EXIT"
     log_debug "📝 Log completo guardado en: $DEBUG_LOG_FILE"
+    log_debug ""
+    log_debug "📊 Diagnóstico del fallo:"
+    log_debug "Espacio en disco actual:"
+    df -h /var/lib/docker 2>/dev/null | tee -a "$DEBUG_LOG_FILE" || df -h / | tee -a "$DEBUG_LOG_FILE"
+    log_debug ""
+    if grep -q "no space left on device" "$DEBUG_LOG_FILE"; then
+        log_debug "❌ ERROR: Sin espacio en disco detectado"
+        log_debug "   Libera espacio con: docker system prune -a --volumes"
+    fi
     exit $BUILD_EXIT
 fi
 log_debug ""
@@ -205,13 +228,32 @@ log_debug "   Código de salida: $COMPOSE_EXIT"
 log_debug ""
 log_debug "📝 Log completo guardado en: $DEBUG_LOG_FILE"
 
+# Check for common issues
+log_debug ""
+log_debug "📊 Diagnóstico post-ejecución:"
+log_debug "Espacio en disco final:"
+df -h /var/lib/docker 2>/dev/null | tee -a "$DEBUG_LOG_FILE" || df -h / | tee -a "$DEBUG_LOG_FILE"
+log_debug ""
+
 if [ $COMPOSE_EXIT -ne 0 ]; then
     echo ""
     echo "❌ Los contenedores se detuvieron con errores"
     echo "📝 Revisa el log completo: $DEBUG_LOG_FILE"
     echo ""
+
+    # Check for specific errors
+    if grep -q "no space left on device" "$DEBUG_LOG_FILE"; then
+        echo "❌ ERROR IDENTIFICADO: Sin espacio en disco"
+        echo ""
+        echo "💡 Soluciones:"
+        echo "   1. Libera espacio: docker system prune -a --volumes"
+        echo "   2. Verifica espacio: df -h"
+        echo "   3. Elimina archivos innecesarios del sistema"
+        echo ""
+    fi
+
     echo "🔍 Últimos 50 errores encontrados:"
-    grep -i "error\|fail\|exception\|fatal" "$DEBUG_LOG_FILE" | tail -50
+    grep -i "error\|fail\|exception\|fatal\|no space" "$DEBUG_LOG_FILE" | tail -50
     echo ""
     exit $COMPOSE_EXIT
 fi
