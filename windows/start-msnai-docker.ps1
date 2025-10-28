@@ -526,6 +526,30 @@ Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "     Script completado" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "Problemas? alan.mac.arthur.garcia.diaz@gmail.com" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host "☁️  MODELOS CLOUD DISPONIBLES" -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host ""
+Write-Host "Los siguientes modelos cloud requieren autenticación:" -ForegroundColor White
+Write-Host "  📦 qwen3-vl:235b-cloud" -ForegroundColor Gray
+Write-Host "  📦 gpt-oss:120b-cloud" -ForegroundColor Gray
+Write-Host "  📦 qwen3-coder:480b-cloud" -ForegroundColor Gray
+Write-Host ""
+Write-Host "⚠️  Los modelos cloud NO se instalan automáticamente" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "📋 Para instalar modelos cloud:" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "1️⃣  Usa el script helper:" -ForegroundColor White
+Write-Host "   .\windows\docker-install-cloud-models.ps1" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "O manualmente:" -ForegroundColor White
+Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cyan
+Write-Host "   (Abre el enlace en tu navegador y aprueba)" -ForegroundColor Gray
+Write-Host "   docker exec -it msn-ai-ollama ollama pull qwen3-vl:235b-cloud" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "💡 Los modelos locales ya están instalados y funcionando" -ForegroundColor Yellow
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 Write-Host "Licencia: GPL-3.0" -ForegroundColor Green
 Write-Host "GitHub: https://github.com/mac100185/MSN-AI" -ForegroundColor Cyan
 Write-Host ""

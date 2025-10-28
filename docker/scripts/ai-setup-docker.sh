@@ -117,12 +117,10 @@ detect_hardware() {
 
 # Function to get default required models
 get_required_models() {
-    # Modelos requeridos por defecto según especificaciones
-    REQUIRED_MODELS=(
-        "qwen3-vl:235b-cloud"
-        "gpt-oss:120b-cloud"
-        "qwen3-coder:480b-cloud"
-    )
+    # Cloud models require signin - skip automatic installation
+    # Users must signin manually: docker exec -it msn-ai-ollama ollama signin
+    # Then pull models: docker exec -it msn-ai-ollama ollama pull qwen3-vl:235b-cloud
+    REQUIRED_MODELS=()
 }
 
 # Function to recommend model based on hardware
@@ -206,21 +204,30 @@ install_model() {
     echo "📥 Instalando modelo: $model"
     echo "⏰ Esto puede tomar varios minutos dependiendo del modelo y conexión..."
 
-    # Check if model is a cloud model and API key is required
+    # Check if model is a cloud model - these require signin
     if [[ "$model" == *"-cloud"* ]] || [[ "$model" == *":cloud"* ]]; then
-        if [ -z "$OLLAMA_API_KEY" ]; then
-            echo "⚠️  Modelo cloud detectado: $model"
-            echo "❌ ERROR: OLLAMA_API_KEY no configurada"
-            echo "   Los modelos cloud requieren una API Key válida"
-            echo "ℹ️  Modelo cloud sin API Key: $model"
-            echo "   Este modelo se puede instalar manualmente más tarde"
-            echo ""
-            echo "💡 Para usar modelos cloud:"
-            echo "   1. Configura OLLAMA_API_KEY en .env"
-            echo "   2. Instala el modelo desde la interfaz de MSN-AI"
-            echo ""
-            return 1
-        fi
+        echo ""
+        echo "⚠️  Modelo cloud detectado: $model"
+        echo "ℹ️  Los modelos cloud requieren autenticación con Ollama"
+        echo ""
+        echo "📋 IMPORTANTE: Los modelos cloud NO se instalan automáticamente"
+        echo "   Debes hacer signin manualmente después de la instalación"
+        echo ""
+        echo "💡 Para instalar modelos cloud después:"
+        echo "   1. Accede al contenedor:"
+        echo "      docker exec -it msn-ai-ollama /bin/bash"
+        echo ""
+        echo "   2. Haz signin con Ollama:"
+        echo "      ollama signin"
+        echo "      (Abre el enlace generado en tu navegador y aprueba el acceso)"
+        echo ""
+        echo "   3. Instala el modelo:"
+        echo "      ollama pull $model"
+        echo ""
+        echo "   4. Sal del contenedor:"
+        echo "      exit"
+        echo ""
+        return 1
     fi
 
     # Use curl to pull the model via Ollama API with streaming
@@ -287,29 +294,60 @@ install_model() {
 # Function to install required models
 install_required_models() {
     echo ""
-    echo "📦 Instalando modelos requeridos por defecto..."
+    echo "📦 Verificando modelos requeridos por defecto..."
     echo "=============================================="
 
-    # Check API key status for cloud models
-    local has_cloud_models=false
     get_required_models
 
-    for model in "${REQUIRED_MODELS[@]}"; do
-        if [[ "$model" == *"-cloud"* ]] || [[ "$model" == *":cloud"* ]]; then
-            has_cloud_models=true
-            break
-        fi
+    # Check if any cloud models were requested
+    local has_cloud_models=false
+    local cloud_models=("qwen3-vl:235b-cloud" "gpt-oss:120b-cloud" "qwen3-coder:480b-cloud")
+
+    for model in "${cloud_models[@]}"; do
+        has_cloud_models=true
+        break
     done
 
-    if [ "$has_cloud_models" = true ] && [ -z "$OLLAMA_API_KEY" ]; then
+    if [ "$has_cloud_models" = true ]; then
         echo ""
-        echo "ℹ️  INFORMACIÓN: Modelos cloud detectados"
-        echo "   OLLAMA_API_KEY no está configurada"
-        echo "   Los modelos cloud se saltarán (esto es normal)"
+        echo "ℹ️  MODELOS CLOUD DISPONIBLES"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        echo "💡 Para instalar modelos cloud más tarde:"
-        echo "   1. Configura OLLAMA_API_KEY en .env"
-        echo "   2. Reinicia el setup: docker compose restart ai-setup"
+        echo "Los siguientes modelos cloud están disponibles:"
+        for model in "${cloud_models[@]}"; do
+            echo "  📦 $model"
+        done
+        echo ""
+        echo "⚠️  Los modelos cloud requieren autenticación y NO se instalan"
+        echo "   automáticamente durante el setup de Docker."
+        echo ""
+        echo "📋 PARA INSTALAR MODELOS CLOUD:"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "1️⃣  Accede al contenedor de Ollama:"
+        echo "   docker exec -it msn-ai-ollama /bin/bash"
+        echo ""
+        echo "2️⃣  Haz signin con tu cuenta de Ollama:"
+        echo "   ollama signin"
+        echo ""
+        echo "3️⃣  Abre el enlace generado en tu navegador"
+        echo "   (aparecerá algo como: https://ollama.com/connect?name=...)"
+        echo ""
+        echo "4️⃣  Aprueba el acceso en el navegador"
+        echo ""
+        echo "5️⃣  Instala los modelos cloud que necesites:"
+        echo "   ollama pull qwen3-vl:235b-cloud"
+        echo "   ollama pull gpt-oss:120b-cloud"
+        echo "   ollama pull qwen3-coder:480b-cloud"
+        echo ""
+        echo "6️⃣  Verifica que se instalaron:"
+        echo "   ollama list"
+        echo ""
+        echo "7️⃣  Sal del contenedor:"
+        echo "   exit"
+        echo ""
+        echo "💡 Los modelos cloud solo funcionan con signin activo"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
     fi
 
@@ -544,30 +582,49 @@ main() {
     echo ""
     echo "🎉 Configuración de MSN-AI Docker completada"
     echo "============================================="
-    echo "🤖 Modelos requeridos:"
-    get_required_models
-    for model in "${REQUIRED_MODELS[@]}"; do
-        if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\":\"$model"; then
-            echo "   ✅ $model"
-        else
-            if [[ "$model" == *"-cloud"* ]] && [ -z "$OLLAMA_API_KEY" ]; then
-                echo "   ⏭️  $model (requiere API Key)"
-            else
-                echo "   ⚠️  $model (no instalado - puede instalarse manualmente)"
+    echo ""
+    echo "📊 RESUMEN DE MODELOS:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    # Show installed local models
+    echo ""
+    echo "✅ Modelos locales instalados:"
+    if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\""; then
+        curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -o '"name":"[^"]*"' | cut -d'"' -f4 | while read model; do
+            if [[ ! "$model" == *"-cloud"* ]]; then
+                echo "   📦 $model"
             fi
+        done
+    else
+        echo "   (ninguno aún)"
+    fi
+
+    # Show cloud models information
+    echo ""
+    echo "☁️  Modelos cloud (requieren signin):"
+    local cloud_models=("qwen3-vl:235b-cloud" "gpt-oss:120b-cloud" "qwen3-coder:480b-cloud")
+    for model in "${cloud_models[@]}"; do
+        if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\":\"$model"; then
+            echo "   ✅ $model (instalado)"
+        else
+            echo "   ⏭️  $model (pendiente - requiere signin manual)"
         fi
     done
+
     echo ""
     echo "🤖 Modelo adicional recomendado: $RECOMMENDED_MODEL"
     echo "🎯 Nivel: $RECOMMENDED_LEVEL"
+    echo "⚖️ Licencia: GPL-3.0"
     echo "🐳 Host Ollama: $OLLAMA_HOST"
-    if [ -n "$OLLAMA_API_KEY" ]; then
-        MASKED_KEY="${OLLAMA_API_KEY:0:8}***${OLLAMA_API_KEY: -4}"
-        echo "🔑 API Key: ${MASKED_KEY}"
-    else
-        echo "⚠️  API Key: No configurada (modelos cloud deshabilitados)"
-    fi
     echo "💾 Configuración: /app/data/config/ai-config.json"
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "💡 PARA USAR MODELOS CLOUD:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "   docker exec -it msn-ai-ollama ollama signin"
+    echo "   (Abre el enlace en tu navegador y aprueba)"
+    echo "   docker exec -it msn-ai-ollama ollama pull qwen3-vl:235b-cloud"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo "⏱️  Tiempo total: $(($(date +%s) - start_time))s"
     echo ""
     echo "✅ MSN-AI está listo para usar (setup completado)"
