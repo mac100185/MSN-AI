@@ -31,12 +31,18 @@ services:
     networks:
       - msn-ai-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
     healthcheck:
-      test: ["CMD", "/app/healthcheck.sh"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/msn-ai.html || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 20s
+      start_period: 40s
     labels:
       - "com.msnai.service=web"
       - "com.msnai.version=2.1.0"
@@ -59,8 +65,18 @@ services:
     networks:
       - msn-ai-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 512M
     healthcheck:
-      test: ["CMD-SHELL", "pgrep ollama || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:11434/api/tags || pgrep ollama || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 30
@@ -99,6 +115,12 @@ services:
         condition: service_healthy
     command: ["/bin/bash", "/app/docker/scripts/ai-setup-docker.sh"]
     restart: "no"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
     labels:
       - "com.msnai.service=setup"
       - "com.msnai.version=2.1.0"

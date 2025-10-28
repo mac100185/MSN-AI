@@ -17,18 +17,32 @@ echo "=================================="
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+echo "🔍 Detectando directorio del proyecto..."
+echo "   Script ubicado en: $SCRIPT_DIR"
+echo "   Directorio raíz: $PROJECT_ROOT"
+
 # Change to project root
 cd "$PROJECT_ROOT" || {
     echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    echo "   Ruta intentada: $PROJECT_ROOT"
     exit 1
 }
 
+echo "   Directorio actual: $(pwd)"
+
 # Verify we're in the correct directory
 if [ ! -f "msn-ai.html" ]; then
-    echo "❌ Error: No se encuentra msn-ai.html"
-    echo "   Estructura del proyecto incorrecta"
+    echo "❌ Error: No se encuentra msn-ai.html en $(pwd)"
+    echo "   Archivos encontrados:"
+    ls -la | head -10
+    echo ""
+    echo "💡 Asegúrate de ejecutar este script desde:"
+    echo "   $PROJECT_ROOT/linux/start-msnai-docker.sh"
     exit 1
 fi
+
+echo "✅ Proyecto MSN-AI detectado correctamente"
+echo ""
 
 # Check if docker directory exists
 if [ ! -d "docker" ]; then
@@ -412,50 +426,165 @@ EOF
 # Function to build and start containers
 start_containers() {
     echo "🏗️  Construyendo e iniciando contenedores..."
+    echo ""
 
-    # Build images
+    # Create build log directory
+    BUILD_LOG_DIR="$PROJECT_ROOT/docker/logs"
+    mkdir -p "$BUILD_LOG_DIR"
+    BUILD_LOG="$BUILD_LOG_DIR/build_$(date +%Y%m%d_%H%M%S).log"
+
+    echo "📝 Los logs se guardarán en: $BUILD_LOG"
+    echo ""
+
+    # Build images with verbose output
     echo "📦 Construyendo imagen MSN-AI..."
-    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml build --no-cache
+    echo "   Esto puede tardar varios minutos en la primera ejecución..."
+    echo "   Comando: $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml build --no-cache"
+    echo ""
 
-    if [ $? -ne 0 ]; then
-        echo "❌ Error construyendo la imagen"
+    # Run build with full output
+    if $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml build --no-cache --progress=plain 2>&1 | tee "$BUILD_LOG"; then
+        echo ""
+        echo "✅ Imagen construida exitosamente"
+    else
+        BUILD_EXIT_CODE=$?
+        echo ""
+        echo "❌ Error construyendo la imagen (código de salida: $BUILD_EXIT_CODE)"
+        echo "📝 Revisa los logs en: $BUILD_LOG"
+        echo ""
+        echo "💡 Diagnóstico rápido:"
+        echo "   - Verifica que tienes suficiente espacio en disco: df -h"
+        echo "   - Verifica memoria disponible: free -h"
+        echo "   - Revisa los últimos errores del log:"
+        tail -30 "$BUILD_LOG"
+        echo ""
+        echo "🔍 Para diagnóstico completo, ejecuta:"
+        echo "   bash linux/docker-diagnostics.sh"
         exit 1
     fi
 
-    # Start services
-    echo "🚀 Iniciando servicios..."
-    $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml up -d
+    echo ""
 
-    if [ $? -ne 0 ]; then
-        echo "❌ Error iniciando los servicios"
+    # Start services with verbose output
+    echo "🚀 Iniciando servicios..."
+    echo "   Comando: $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml up -d"
+    echo ""
+
+    # Create startup log
+    STARTUP_LOG="$BUILD_LOG_DIR/startup_$(date +%Y%m%d_%H%M%S).log"
+
+    if $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml up -d 2>&1 | tee "$STARTUP_LOG"; then
+        echo ""
+        echo "✅ Servicios iniciados"
+        echo ""
+
+        # Show container status
+        echo "📊 Estado de los contenedores:"
+        $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
+        echo ""
+    else
+        STARTUP_EXIT_CODE=$?
+        echo ""
+        echo "❌ Error iniciando los servicios (código de salida: $STARTUP_EXIT_CODE)"
+        echo "📝 Revisa los logs en: $STARTUP_LOG"
+        echo ""
+        echo "💡 Mostrando logs recientes de los contenedores:"
+        echo ""
+        echo "--- Logs de msn-ai-app ---"
+        docker logs msn-ai-app 2>&1 | tail -20 || echo "Contenedor no disponible"
+        echo ""
+        echo "--- Logs de msn-ai-ollama ---"
+        docker logs msn-ai-ollama 2>&1 | tail -20 || echo "Contenedor no disponible"
+        echo ""
+        echo "--- Logs de msn-ai-setup ---"
+        docker logs msn-ai-setup 2>&1 | tail -20 || echo "Contenedor no disponible"
+        echo ""
+        echo "🔍 Para diagnóstico completo, ejecuta:"
+        echo "   bash linux/docker-diagnostics.sh"
         exit 1
     fi
 
     echo "✅ Contenedores iniciados correctamente"
+    echo ""
 }
 
 # Function to wait for services
 wait_for_services() {
     echo "⏳ Esperando que los servicios estén listos..."
+    echo ""
 
-    local max_attempts=30
+    local max_attempts=60
     local attempt=1
+    local ollama_ready=false
+    local webapp_ready=false
 
+    # First wait for Ollama
+    echo "🔄 Verificando servicio Ollama..."
     while [ $attempt -le $max_attempts ]; do
-        if curl -s http://localhost:8000/msn-ai.html >/dev/null 2>&1; then
-            echo "✅ MSN-AI está listo"
+        if curl -s --max-time 2 http://localhost:11434/api/tags >/dev/null 2>&1; then
+            echo "✅ Ollama está listo (intento $attempt/$max_attempts)"
+            ollama_ready=true
             break
         fi
 
-        echo "⏳ Intento $attempt/$max_attempts..."
+        if [ $((attempt % 5)) -eq 0 ]; then
+            echo "⏳ Esperando Ollama... intento $attempt/$max_attempts"
+            # Show container status
+            docker ps --filter name=msn-ai-ollama --format "   Estado: {{.Status}}"
+        fi
+
         sleep 2
         attempt=$((attempt + 1))
     done
 
-    if [ $attempt -gt $max_attempts ]; then
-        echo "⚠️  Timeout esperando los servicios"
-        echo "   Verifica los logs: $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml logs"
+    if [ "$ollama_ready" = false ]; then
+        echo "⚠️  Ollama no respondió después de $((max_attempts * 2)) segundos"
+        echo "   Logs de Ollama:"
+        docker logs --tail 30 msn-ai-ollama
+        echo ""
     fi
+
+    # Then wait for web app
+    echo "🔄 Verificando aplicación web MSN-AI..."
+    attempt=1
+    while [ $attempt -le $max_attempts ]; do
+        if curl -s --max-time 2 http://localhost:8000/msn-ai.html >/dev/null 2>&1; then
+            echo "✅ MSN-AI está listo (intento $attempt/$max_attempts)"
+            webapp_ready=true
+            break
+        fi
+
+        if [ $((attempt % 5)) -eq 0 ]; then
+            echo "⏳ Esperando MSN-AI Web... intento $attempt/$max_attempts"
+            # Show container status
+            docker ps --filter name=msn-ai-app --format "   Estado: {{.Status}}"
+        fi
+
+        sleep 2
+        attempt=$((attempt + 1))
+    done
+
+    echo ""
+
+    if [ "$webapp_ready" = false ]; then
+        echo "⚠️  MSN-AI Web no respondió después de $((max_attempts * 2)) segundos"
+        echo ""
+        echo "📋 Estado de contenedores:"
+        $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
+        echo ""
+        echo "📝 Logs recientes de MSN-AI App:"
+        docker logs --tail 30 msn-ai-app
+        echo ""
+        echo "🔍 Para ver todos los logs:"
+        echo "   $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml logs"
+        echo ""
+        echo "🔍 Para diagnóstico completo:"
+        echo "   bash linux/docker-diagnostics.sh"
+        echo ""
+        return 1
+    fi
+
+    return 0
 }
 
 # Function to open application

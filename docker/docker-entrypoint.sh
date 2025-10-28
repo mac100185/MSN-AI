@@ -8,6 +8,11 @@
 
 set -eo pipefail
 
+# Enable verbose mode if DEBUG is set
+if [ "${DEBUG:-0}" = "1" ]; then
+    set -x
+fi
+
 echo "🐳 MSN-AI v1.0.0 - Docker Container Starting..."
 echo "============================================="
 echo "📧 Desarrollado por: Alan Mac-Arthur García Díaz"
@@ -23,21 +28,26 @@ MSN_AI_VERSION=${MSN_AI_VERSION:-1.0.0}
 # Function to wait for Ollama service
 wait_for_ollama() {
     echo "🔄 Esperando a que Ollama esté listo..."
+    echo "   Host: ${OLLAMA_HOST}"
     local max_attempts=60
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
         # First check basic connectivity
-        if curl -s --connect-timeout 5 "http://${OLLAMA_HOST}/" >/dev/null 2>&1; then
+        if curl -s --connect-timeout 5 --max-time 10 "http://${OLLAMA_HOST}/" >/dev/null 2>&1; then
             # Then check API
-            if curl -s --connect-timeout 5 "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
-                echo "✅ Ollama está listo y respondiendo"
+            if curl -s --connect-timeout 5 --max-time 10 "http://${OLLAMA_HOST}/api/tags" >/dev/null 2>&1; then
+                echo "✅ Ollama está listo y respondiendo (intento $attempt)"
                 return 0
             else
-                echo "⏳ Intento $attempt/$max_attempts - API de Ollama iniciándose..."
+                if [ $((attempt % 10)) -eq 0 ]; then
+                    echo "⏳ Intento $attempt/$max_attempts - API de Ollama iniciándose..."
+                fi
             fi
         else
-            echo "⏳ Intento $attempt/$max_attempts - Esperando conexión con Ollama..."
+            if [ $((attempt % 10)) -eq 0 ]; then
+                echo "⏳ Intento $attempt/$max_attempts - Esperando conexión con Ollama..."
+            fi
         fi
 
         sleep 3
@@ -46,6 +56,7 @@ wait_for_ollama() {
 
     echo "⚠️ Ollama no responde después de $((max_attempts * 3)) segundos"
     echo "   Continuando sin IA (funcionalidad limitada)"
+    echo "   Verifica que el contenedor ollama esté ejecutándose"
     return 1
 }
 
@@ -54,16 +65,27 @@ setup_directories() {
     echo "📁 Configurando directorios..."
 
     # Ensure data directories exist
-    mkdir -p /app/data/chats
-    mkdir -p /app/data/logs
-    mkdir -p /app/data/config
+    mkdir -p /app/data/chats || {
+        echo "⚠️ No se pudo crear /app/data/chats"
+        return 1
+    }
+    mkdir -p /app/data/logs || {
+        echo "⚠️ No se pudo crear /app/data/logs"
+        return 1
+    }
+    mkdir -p /app/data/config || {
+        echo "⚠️ No se pudo crear /app/data/config"
+        return 1
+    }
 
     # Set permissions
-    chmod 755 /app/data/chats
-    chmod 755 /app/data/logs
-    chmod 755 /app/data/config
+    chmod 755 /app/data/chats || echo "⚠️ No se pudieron establecer permisos en chats"
+    chmod 755 /app/data/logs || echo "⚠️ No se pudieron establecer permisos en logs"
+    chmod 755 /app/data/config || echo "⚠️ No se pudieron establecer permisos en config"
 
-    echo "✅ Directorios configurados"
+    echo "✅ Directorios configurados correctamente"
+    ls -la /app/data/
+    return 0
 }
 
 # Function to check assets
@@ -108,21 +130,37 @@ start_web_server() {
     # Change to app directory to serve files
     cd /app || {
         echo "❌ Error: No se puede acceder al directorio /app"
+        echo "   Contenido del directorio actual:"
+        ls -la
         exit 1
     }
+
+    # Verify critical files exist
+    if [ ! -f "msn-ai.html" ]; then
+        echo "❌ Error: No se encuentra msn-ai.html en /app"
+        echo "   Contenido de /app:"
+        ls -la /app/
+        exit 1
+    fi
+
+    echo "✅ Archivo principal encontrado: msn-ai.html"
 
     # Try Python first
     if command -v python3 >/dev/null 2>&1; then
         echo "🐍 Usando Python 3 HTTP Server"
+        echo "   Comando: python3 -m http.server $MSN_AI_PORT --bind 0.0.0.0"
         exec python3 -m http.server "$MSN_AI_PORT" --bind 0.0.0.0
     elif command -v python >/dev/null 2>&1; then
         echo "🐍 Usando Python HTTP Server"
+        echo "   Comando: python -m http.server $MSN_AI_PORT --bind 0.0.0.0"
         exec python -m http.server "$MSN_AI_PORT" --bind 0.0.0.0
     elif command -v http-server >/dev/null 2>&1; then
         echo "📗 Usando Node.js HTTP Server"
+        echo "   Comando: http-server -p $MSN_AI_PORT -a 0.0.0.0 --cors"
         exec http-server -p "$MSN_AI_PORT" -a 0.0.0.0 --cors
     else
         echo "❌ No se encontró servidor web disponible"
+        echo "   Servidores buscados: python3, python, http-server"
         exit 1
     fi
 }
@@ -163,14 +201,25 @@ trap cleanup SIGTERM SIGINT
 # Main execution flow
 main() {
     echo "🔧 Iniciando secuencia de arranque..."
+    echo "   PID: $$"
+    echo "   Usuario: $(whoami)"
+    echo "   Directorio actual: $(pwd)"
+    echo ""
 
     # Setup directories
-    setup_directories
+    if ! setup_directories; then
+        echo "❌ Error configurando directorios"
+        exit 1
+    fi
+    echo ""
 
     # Check assets
-    check_assets || {
+    if check_assets; then
+        echo "✅ Verificación de assets completada"
+    else
         echo "⚠️ Algunos assets faltan, pero continuando..."
-    }
+    fi
+    echo ""
 
     # Wait for Ollama (optional but important)
     if wait_for_ollama; then
@@ -178,11 +227,13 @@ main() {
     else
         echo "⚠️ Continuando sin sistema de IA"
     fi
+    echo ""
 
     # Log startup information
     log_startup_info
 
     # Start web server (this blocks)
+    echo "🚀 Iniciando servidor web..."
     start_web_server
 }
 
@@ -197,5 +248,13 @@ if [ "$(id -u)" = "0" ]; then
     fi
 fi
 
-# Run main function
-main "$@"
+echo ""
+echo "🚀 Ejecutando función principal..."
+
+# Run main function with error handling
+if ! main "$@"; then
+    echo ""
+    echo "❌ Error en la función principal"
+    echo "   Código de salida: $?"
+    exit 1
+fi

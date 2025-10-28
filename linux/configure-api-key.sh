@@ -17,18 +17,32 @@ echo ""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+echo "🔍 Detectando directorio del proyecto..."
+echo "   Script ubicado en: $SCRIPT_DIR"
+echo "   Directorio raíz: $PROJECT_ROOT"
+
 # Change to project root
 cd "$PROJECT_ROOT" || {
     echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    echo "   Ruta intentada: $PROJECT_ROOT"
     exit 1
 }
 
+echo "   Directorio actual: $(pwd)"
+
 # Verify we're in the correct directory
 if [ ! -f "msn-ai.html" ]; then
-    echo "❌ Error: No se encuentra msn-ai.html"
-    echo "   Estructura del proyecto incorrecta"
+    echo "❌ Error: No se encuentra msn-ai.html en $(pwd)"
+    echo "   Archivos encontrados:"
+    ls -la | head -10
+    echo ""
+    echo "💡 Asegúrate de ejecutar este script desde:"
+    echo "   $PROJECT_ROOT/linux/configure-api-key.sh"
     exit 1
 fi
+
+echo "✅ Proyecto MSN-AI detectado correctamente"
+echo ""
 
 # Function to validate API key format (basic validation)
 validate_api_key() {

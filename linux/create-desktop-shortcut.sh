@@ -34,20 +34,32 @@ echo ""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+echo "🔍 Detectando directorio del proyecto..."
+echo "   Script ubicado en: $SCRIPT_DIR"
+echo "   Directorio raíz: $PROJECT_ROOT"
+
 # Change to project root
 cd "$PROJECT_ROOT" || {
     echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    echo "   Ruta intentada: $PROJECT_ROOT"
     exit 1
 }
 
+echo "   Directorio actual: $(pwd)"
+
 # Verificar que estamos en el directorio correcto
 if [ ! -f "msn-ai.html" ]; then
-    echo "❌ ERROR: No se encuentra msn-ai.html"
-    echo "   Estructura del proyecto incorrecta"
+    echo "❌ ERROR: No se encuentra msn-ai.html en $(pwd)"
+    echo "   Archivos encontrados:"
+    ls -la | head -10
     echo ""
-    read -p "Presiona Enter para salir..."
+    echo "💡 Asegúrate de ejecutar este script desde:"
+    echo "   $PROJECT_ROOT/linux/create-desktop-shortcut.sh"
     exit 1
 fi
+
+echo "✅ Proyecto MSN-AI detectado correctamente"
+echo ""
 
 # Obtener rutas
 CURRENT_PATH="$(pwd)"

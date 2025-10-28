@@ -32,17 +32,30 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
+Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
+Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
+
 # Change to project root
 Set-Location $ProjectRoot
 
+Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
+
 # Verificar que estamos en el directorio correcto
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "ERROR: No se encuentra msn-ai.html" -ForegroundColor Red
-    Write-Host "Estructura del proyecto incorrecta" -ForegroundColor Yellow
+    Write-Host "❌ ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
+    Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
+    Write-Host ""
+    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "   $ProjectRoot\windows\create-desktop-shortcut.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
+
+Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host ""
 
 # Obtener rutas
 $currentPath = (Get-Location).Path

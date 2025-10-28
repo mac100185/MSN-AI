@@ -1,0 +1,56 @@
+# Docker logs and diagnostics
+docker/logs/
+diagnostics_*/
+msn-ai-diagnostics-*.tar.gz
+msn-ai-diagnostics-*.zip
+
+# Environment files with secrets
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+temp/
+*.tmp
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Node modules (if any)
+node_modules/
+
+# Python cache (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+
+# Upload directory contents (keep directory structure)
+upload/*
+!upload/.gitkeep
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Local configuration
+config.local.*
