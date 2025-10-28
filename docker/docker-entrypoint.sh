@@ -55,8 +55,14 @@ wait_for_ollama() {
     done
 
     echo "⚠️ Ollama no responde después de $((max_attempts * 3)) segundos"
-    echo "   Continuando sin IA (funcionalidad limitada)"
-    echo "   Verifica que el contenedor ollama esté ejecutándose"
+    echo ""
+    echo "ℹ️  Esto puede ser normal si:"
+    echo "   - Es la primera ejecución (Ollama aún descargando modelos)"
+    echo "   - Recursos del sistema limitados (CPU/RAM)"
+    echo "   - El contenedor Ollama aún está iniciando"
+    echo ""
+    echo "📝 MSN-AI continuará sin IA (funcionalidad limitada)"
+    echo "   Las capacidades de IA estarán disponibles cuando Ollama responda"
     return 1
 }
 
@@ -137,13 +143,17 @@ start_web_server() {
 
     # Verify critical files exist
     if [ ! -f "msn-ai.html" ]; then
-        echo "❌ Error: No se encuentra msn-ai.html en /app"
+        echo "❌ Error crítico: No se encuentra msn-ai.html en /app"
         echo "   Contenido de /app:"
-        ls -la /app/
+        ls -la /app/ | head -20
+        echo ""
+        echo "💡 Esto indica un problema en la construcción de la imagen Docker"
+        echo "   Reconstruye la imagen: docker compose build --no-cache"
         exit 1
     fi
 
     echo "✅ Archivo principal encontrado: msn-ai.html"
+    echo "   Tamaño: $(stat -c%s msn-ai.html 2>/dev/null || echo 'unknown') bytes"
 
     # Try Python first
     if command -v python3 >/dev/null 2>&1; then
@@ -206,10 +216,15 @@ main() {
     echo "   Directorio actual: $(pwd)"
     echo ""
 
+    # Give system a moment to stabilize
+    echo "⏳ Esperando estabilización del sistema (5 segundos)..."
+    sleep 5
+    echo ""
+
     # Setup directories
     if ! setup_directories; then
         echo "❌ Error configurando directorios"
-        exit 1
+        echo "⚠️  Continuando de todas formas..."
     fi
     echo ""
 
@@ -222,10 +237,13 @@ main() {
     echo ""
 
     # Wait for Ollama (optional but important)
+    echo "🔄 Verificando disponibilidad de IA..."
     if wait_for_ollama; then
         echo "✅ Sistema de IA disponible"
     else
-        echo "⚠️ Continuando sin sistema de IA"
+        echo "ℹ️  Sistema de IA no disponible (esto es normal al inicio)"
+        echo "   MSN-AI funcionará sin capacidades de IA"
+        echo "   Los modelos pueden instalarse más tarde"
     fi
     echo ""
 
@@ -234,6 +252,9 @@ main() {
 
     # Start web server (this blocks)
     echo "🚀 Iniciando servidor web..."
+    echo "   Puerto: $MSN_AI_PORT"
+    echo "   Bind: 0.0.0.0"
+    echo ""
     start_web_server
 }
 
@@ -250,11 +271,18 @@ fi
 
 echo ""
 echo "🚀 Ejecutando función principal..."
+echo ""
 
 # Run main function with error handling
 if ! main "$@"; then
     echo ""
     echo "❌ Error en la función principal"
     echo "   Código de salida: $?"
+    echo ""
+    echo "💡 Soluciones sugeridas:"
+    echo "   1. Verifica los logs: docker logs msn-ai-app"
+    echo "   2. Revisa recursos del sistema: docker stats"
+    echo "   3. Ejecuta diagnóstico: bash linux/docker-diagnostics.sh"
+    echo ""
     exit 1
 fi

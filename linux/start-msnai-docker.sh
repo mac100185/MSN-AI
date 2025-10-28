@@ -482,6 +482,14 @@ start_containers() {
         echo "📊 Estado de los contenedores:"
         $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
         echo ""
+
+        # Check if ai-setup failed (non-critical)
+        if docker ps -a --format '{{.Names}} {{.Status}}' | grep -q "msn-ai-setup.*Exited"; then
+            echo "ℹ️  NOTA: El servicio ai-setup finalizó (esto es normal)"
+            echo "   Este servicio configura modelos de IA automáticamente"
+            echo "   Los modelos pueden instalarse manualmente desde la interfaz"
+            echo ""
+        fi
     else
         STARTUP_EXIT_CODE=$?
         echo ""
@@ -504,8 +512,20 @@ start_containers() {
         exit 1
     fi
 
-    echo "✅ Contenedores iniciados correctamente"
+    echo "✅ Contenedores Docker iniciados"
     echo ""
+
+    # Show friendly message about ai-setup
+    if docker ps -a --format '{{.Names}} {{.State.ExitCode}}' | grep -q "msn-ai-setup"; then
+        SETUP_EXIT_CODE=$(docker inspect msn-ai-setup --format='{{.State.ExitCode}}' 2>/dev/null || echo "unknown")
+        if [ "$SETUP_EXIT_CODE" = "0" ]; then
+            echo "ℹ️  Configuración de IA: Completada exitosamente"
+        else
+            echo "ℹ️  Configuración de IA: Finalizada con advertencias (no crítico)"
+            echo "   Los modelos de IA pueden instalarse manualmente"
+        fi
+        echo ""
+    fi
 }
 
 # Function to wait for services
@@ -573,7 +593,12 @@ wait_for_services() {
         $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml ps
         echo ""
         echo "📝 Logs recientes de MSN-AI App:"
-        docker logs --tail 30 msn-ai-app
+        docker logs --tail 30 msn-ai-app 2>&1 || echo "El contenedor msn-ai-app no se inició correctamente"
+        echo ""
+        echo "💡 Posibles causas:"
+        echo "   1. El contenedor aún está iniciando (espera 1-2 minutos más)"
+        echo "   2. Falta de recursos del sistema (RAM/CPU)"
+        echo "   3. Error en la construcción de la imagen"
         echo ""
         echo "🔍 Para ver todos los logs:"
         echo "   $DOCKER_COMPOSE_CMD -f docker/docker-compose.yml logs"

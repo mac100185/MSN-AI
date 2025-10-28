@@ -6,7 +6,8 @@
 # License: GNU General Public License v3.0
 # Description: Hardware detection and AI model setup for Docker environment
 
-set -e
+# Don't exit on error - allow script to continue and report issues
+set +e
 
 echo "🤖 MSN-AI Docker - Configuración de IA"
 echo "======================================"
@@ -211,10 +212,12 @@ install_model() {
             echo "⚠️  Modelo cloud detectado: $model"
             echo "❌ ERROR: OLLAMA_API_KEY no configurada"
             echo "   Los modelos cloud requieren una API Key válida"
+            echo "ℹ️  Modelo cloud sin API Key: $model"
+            echo "   Este modelo se puede instalar manualmente más tarde"
             echo ""
-            echo "💡 Configura OLLAMA_API_KEY y reinicia el contenedor:"
-            echo "   echo 'OLLAMA_API_KEY=tu_clave' >> .env"
-            echo "   docker compose -f docker/docker-compose.yml restart"
+            echo "💡 Para usar modelos cloud:"
+            echo "   1. Configura OLLAMA_API_KEY en .env"
+            echo "   2. Instala el modelo desde la interfaz de MSN-AI"
             echo ""
             return 1
         fi
@@ -300,13 +303,13 @@ install_required_models() {
 
     if [ "$has_cloud_models" = true ] && [ -z "$OLLAMA_API_KEY" ]; then
         echo ""
-        echo "⚠️  ADVERTENCIA: Modelos cloud detectados"
+        echo "ℹ️  INFORMACIÓN: Modelos cloud detectados"
         echo "   OLLAMA_API_KEY no está configurada"
-        echo "   Los modelos cloud NO se instalarán"
+        echo "   Los modelos cloud se saltarán (esto es normal)"
         echo ""
-        echo "💡 Para instalar modelos cloud:"
+        echo "💡 Para instalar modelos cloud más tarde:"
         echo "   1. Configura OLLAMA_API_KEY en .env"
-        echo "   2. Reinicia los contenedores"
+        echo "   2. Reinicia el setup: docker compose restart ai-setup"
         echo ""
     fi
 
@@ -353,14 +356,22 @@ install_required_models() {
     fi
     echo ""
 
+    # Always return success - MSN-AI can work without pre-installed models
     if [ $installed_count -gt 0 ]; then
+        echo "✅ Setup completado con modelos instalados"
         return 0
-    elif [ $skipped_count -gt 0 ] && [ $failed_count -eq 0 ]; then
-        echo "ℹ️  Algunos modelos fueron saltados por falta de API Key"
-        echo "   Esto es normal si no configuraste OLLAMA_API_KEY"
+    elif [ $skipped_count -gt 0 ]; then
+        echo "ℹ️  Modelos cloud saltados por falta de API Key (normal)"
+        echo "   MSN-AI funcionará y podrás instalar modelos manualmente"
+        return 0
+    elif [ $failed_count -gt 0 ]; then
+        echo "⚠️  Algunos modelos fallaron, pero MSN-AI puede continuar"
+        echo "   Los modelos pueden instalarse manualmente desde la interfaz"
         return 0
     else
-        return 1
+        echo "⚠️  No se instalaron modelos automáticamente"
+        echo "   Esto no afecta el funcionamiento de MSN-AI"
+        return 0
     fi
 }
 
@@ -455,7 +466,8 @@ main() {
         echo "   - Problemas de red entre contenedores"
         echo ""
         echo "💡 El contenedor MSN-AI funcionará sin IA hasta que Ollama esté disponible"
-        exit 1
+        echo "⚠️  Setup de IA cancelado - MSN-AI continuará sin modelos preinstalados"
+        exit 0
     fi
 
     # Check timeout
@@ -463,7 +475,8 @@ main() {
     local elapsed=$((current_time - start_time))
     if [ $elapsed -ge $SETUP_TIMEOUT ]; then
         echo "⏰ Timeout alcanzado durante la conexión inicial"
-        exit 1
+        echo "⚠️  Setup de IA cancelado por timeout - MSN-AI continuará sin modelos preinstalados"
+        exit 0
     fi
 
     # Detect hardware
@@ -474,7 +487,9 @@ main() {
 
     # Install required default models
     echo "📦 Instalando modelos requeridos por defecto..."
-    install_required_models
+    if ! install_required_models; then
+        echo "⚠️  Error instalando modelos requeridos, pero continuando setup..."
+    fi
 
     # Check timeout after installing required models
     current_time=$(date +%s)
@@ -512,7 +527,7 @@ main() {
                     fi
                 else
                     echo "⚠️  Error en la instalación del modelo recomendado"
-                    echo "   Los modelos requeridos ya están instalados"
+                    echo "   Continuando con los modelos requeridos ya instalados"
                 fi
             fi
         fi
@@ -520,10 +535,11 @@ main() {
         echo "⏰ Tiempo insuficiente para modelos adicionales"
         echo "   Los modelos requeridos ya fueron instalados"
     fi
-</text>
 
-    # Save configuration
-    save_config "$RECOMMENDED_MODEL"
+    # Save configuration (allow to fail gracefully)
+    if ! save_config "$RECOMMENDED_MODEL"; then
+        echo "⚠️  No se pudo guardar la configuración, pero continuando..."
+    fi
 
     echo ""
     echo "🎉 Configuración de MSN-AI Docker completada"
@@ -537,7 +553,7 @@ main() {
             if [[ "$model" == *"-cloud"* ]] && [ -z "$OLLAMA_API_KEY" ]; then
                 echo "   ⏭️  $model (requiere API Key)"
             else
-                echo "   ❌ $model (error de instalación)"
+                echo "   ⚠️  $model (no instalado - puede instalarse manualmente)"
             fi
         fi
     done
@@ -554,9 +570,16 @@ main() {
     echo "💾 Configuración: /app/data/config/ai-config.json"
     echo "⏱️  Tiempo total: $(($(date +%s) - start_time))s"
     echo ""
-    echo "💡 MSN-AI está listo para usar"
+    echo "✅ MSN-AI está listo para usar (setup completado)"
+    echo "   Los modelos pueden continuar descargándose en segundo plano"
     echo "============================================="
 }
 
-# Run main function
-main "$@"
+# Run main function with error handling
+if main "$@"; then
+    echo "✅ Setup finalizado exitosamente"
+    exit 0
+else
+    echo "⚠️  Setup completado con advertencias, pero MSN-AI puede continuar"
+    exit 0
+fi

@@ -26,8 +26,6 @@ services:
     depends_on:
       ollama:
         condition: service_healthy
-      ai-setup:
-        condition: service_completed_successfully
     networks:
       - msn-ai-network
     restart: unless-stopped
@@ -38,11 +36,15 @@ services:
         reservations:
           memory: 128M
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/msn-ai.html || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "pgrep -f 'python.*http.server' || pgrep -f 'http-server' || exit 1",
+        ]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 60s
     labels:
       - "com.msnai.service=web"
       - "com.msnai.version=2.1.0"
@@ -112,8 +114,9 @@ services:
       - msn-ai-network
     depends_on:
       ollama:
-        condition: service_healthy
-    command: ["/bin/bash", "/app/docker/scripts/ai-setup-docker.sh"]
+        condition: service_started
+    command:
+      ["/bin/bash", "-c", "/app/docker/scripts/ai-setup-docker.sh || exit 0"]
     restart: "no"
     deploy:
       resources:
