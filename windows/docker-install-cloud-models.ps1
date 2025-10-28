@@ -53,8 +53,20 @@ Write-Host ""
 Write-Host "🔍 Verificando estado de autenticación..." -ForegroundColor Cyan
 $SigninStatus = docker exec msn-ai-ollama ollama list 2>&1
 
+# Try to verify signin with a cloud model check
+Write-Host "🔍 Verificando acceso a modelos cloud..." -ForegroundColor Cyan
+$CloudTest = docker exec msn-ai-ollama ollama show qwen3-vl:235b-cloud 2>&1
+
+$NeedsSignin = $false
 if ($SigninStatus -match "You need to be signed in") {
-    Write-Host "⚠️  No has hecho signin con Ollama" -ForegroundColor Yellow
+    $NeedsSignin = $true
+}
+elseif ($CloudTest -match "You need to be signed in") {
+    $NeedsSignin = $true
+}
+
+if ($NeedsSignin) {
+    Write-Host "⚠️  No has hecho signin con Ollama o la sesión expiró" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "📋 PROCESO DE SIGNIN:" -ForegroundColor Cyan
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
@@ -68,6 +80,9 @@ if ($SigninStatus -match "You need to be signed in") {
     Write-Host "4️⃣  Aprueba el acceso del contenedor" -ForegroundColor White
     Write-Host ""
     Write-Host "5️⃣  Vuelve a esta ventana y espera la confirmación" -ForegroundColor White
+    Write-Host ""
+    Write-Host "⚠️  IMPORTANTE: El signin puede expirar con el tiempo" -ForegroundColor Yellow
+    Write-Host "   Si los modelos dejan de funcionar, repite este proceso" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
     Write-Host ""
@@ -113,8 +128,26 @@ if ($SigninStatus -match "You need to be signed in") {
     Write-Host ""
     Write-Host "✅ Signin completado" -ForegroundColor Green
     Write-Host ""
+
+    # Wait a moment for signin to propagate
+    Write-Host "⏳ Esperando propagación del signin..." -ForegroundColor Cyan
+    Start-Sleep -Seconds 2
+
+    # Verify signin worked
+    $VerifyTest = docker exec msn-ai-ollama ollama list 2>&1
+    if ($VerifyTest -match "You need to be signed in") {
+        Write-Host ""
+        Write-Host "⚠️  Signin no se completó correctamente" -ForegroundColor Yellow
+        Write-Host "   Intenta de nuevo o verifica en el navegador" -ForegroundColor Yellow
+        Write-Host ""
+        Read-Host "Presiona Enter para salir"
+        exit 1
+    }
+
+    Write-Host "✅ Signin verificado correctamente" -ForegroundColor Green
+    Write-Host ""
 } else {
-    Write-Host "✅ Ya has hecho signin con Ollama" -ForegroundColor Green
+    Write-Host "✅ Signin activo - acceso a modelos cloud disponible" -ForegroundColor Green
     Write-Host ""
 }
 
@@ -261,11 +294,49 @@ Write-Host ""
 Write-Host "Modelos instalados:" -ForegroundColor White
 docker exec msn-ai-ollama ollama list
 Write-Host ""
+
+# Verify cloud models can actually be accessed
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
-Write-Host "✅ Proceso completado" -ForegroundColor Green
+Write-Host "🔍 VERIFICACIÓN DE ACCESO A MODELOS CLOUD" -ForegroundColor Cyan
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host ""
+
+$CloudAccessOK = $true
+foreach ($model in $CloudModels) {
+    # Check if model is installed
+    $InstalledCheck = docker exec msn-ai-ollama ollama list 2>&1
+    if ($InstalledCheck -match [regex]::Escape($model)) {
+        # Verify signin is active for this model
+        $TestResult = docker exec msn-ai-ollama ollama show $model 2>&1
+        if ($TestResult -match "You need to be signed in") {
+            Write-Host "❌ $model - Signin requerido (no funcional)" -ForegroundColor Red
+            $CloudAccessOK = $false
+        } else {
+            Write-Host "✅ $model - Accesible y funcional" -ForegroundColor Green
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+
+if ($CloudAccessOK) {
+    Write-Host "✅ Proceso completado - Todos los modelos funcionando" -ForegroundColor Green
+} else {
+    Write-Host "⚠️  Proceso completado - Signin adicional requerido" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "Los modelos están instalados pero necesitas signin activo:" -ForegroundColor Yellow
+    Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cyan
+}
+
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "💡 Los modelos cloud ahora están disponibles en MSN-AI" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "⚠️  IMPORTANTE: Si los modelos dejan de funcionar:" -ForegroundColor Yellow
+Write-Host "   1. Verifica signin: docker exec msn-ai-ollama ollama list" -ForegroundColor White
+Write-Host "   2. Si dice 'You need to be signed in', ejecuta:" -ForegroundColor White
+Write-Host "      docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "🌐 Accede a MSN-AI en: http://localhost:8000/msn-ai.html" -ForegroundColor Cyan
 Write-Host ""

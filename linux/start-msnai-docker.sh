@@ -816,6 +816,10 @@ show_status() {
     echo "5️⃣  Sal del contenedor:"
     echo "   exit"
     echo ""
+    echo "⚠️  IMPORTANTE: El signin puede expirar con el tiempo"
+    echo "   Si los modelos dejan de funcionar, repite el signin:"
+    echo "   docker exec -it msn-ai-ollama ollama signin"
+    echo ""
     echo "💡 Los modelos locales ya están instalados y funcionando"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }

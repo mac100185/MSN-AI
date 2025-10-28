@@ -500,6 +500,10 @@ show_status() {
     echo "   ollama pull qwen3-vl:235b-cloud"
     echo "   exit"
     echo ""
+    echo "⚠️  IMPORTANTE: El signin puede expirar con el tiempo"
+    echo "   Si los modelos dejan de funcionar, repite el signin:"
+    echo "   docker exec -it msn-ai-ollama ollama signin"
+    echo ""
     echo "💡 Los modelos locales ya están instalados y funcionando"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 }

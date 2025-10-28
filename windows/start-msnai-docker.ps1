@@ -548,6 +548,10 @@ Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cya
 Write-Host "   (Abre el enlace en tu navegador y aprueba)" -ForegroundColor Gray
 Write-Host "   docker exec -it msn-ai-ollama ollama pull qwen3-vl:235b-cloud" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "⚠️  IMPORTANTE: El signin puede expirar con el tiempo" -ForegroundColor Yellow
+Write-Host "   Si los modelos dejan de funcionar, repite el signin:" -ForegroundColor Yellow
+Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cyan
+Write-Host ""
 Write-Host "💡 Los modelos locales ya están instalados y funcionando" -ForegroundColor Yellow
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
 Write-Host "Licencia: GPL-3.0" -ForegroundColor Green

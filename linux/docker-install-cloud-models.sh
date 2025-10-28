@@ -48,8 +48,19 @@ echo ""
 echo "🔍 Verificando estado de autenticación..."
 SIGNIN_STATUS=$(docker exec msn-ai-ollama ollama list 2>&1)
 
+# Try to verify signin with a cloud model check
+echo "🔍 Verificando acceso a modelos cloud..."
+CLOUD_TEST=$(docker exec msn-ai-ollama ollama show qwen3-vl:235b-cloud 2>&1)
+
+NEEDS_SIGNIN=false
 if echo "$SIGNIN_STATUS" | grep -q "You need to be signed in"; then
-    echo "⚠️  No has hecho signin con Ollama"
+    NEEDS_SIGNIN=true
+elif echo "$CLOUD_TEST" | grep -q "You need to be signed in"; then
+    NEEDS_SIGNIN=true
+fi
+
+if [ "$NEEDS_SIGNIN" = true ]; then
+    echo "⚠️  No has hecho signin con Ollama o la sesión expiró"
     echo ""
     echo "📋 PROCESO DE SIGNIN:"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -63,6 +74,9 @@ if echo "$SIGNIN_STATUS" | grep -q "You need to be signed in"; then
     echo "4️⃣  Aprueba el acceso del contenedor"
     echo ""
     echo "5️⃣  Vuelve a esta ventana y espera la confirmación"
+    echo ""
+    echo "⚠️  IMPORTANTE: El signin puede expirar con el tiempo"
+    echo "   Si los modelos dejan de funcionar, repite este proceso"
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
@@ -103,8 +117,24 @@ if echo "$SIGNIN_STATUS" | grep -q "You need to be signed in"; then
     echo ""
     echo "✅ Signin completado"
     echo ""
+
+    # Wait a moment for signin to propagate
+    echo "⏳ Esperando propagación del signin..."
+    sleep 2
+
+    # Verify signin worked
+    VERIFY_TEST=$(docker exec msn-ai-ollama ollama list 2>&1)
+    if echo "$VERIFY_TEST" | grep -q "You need to be signed in"; then
+        echo ""
+        echo "⚠️  Signin no se completó correctamente"
+        echo "   Intenta de nuevo o verifica en el navegador"
+        exit 1
+    fi
+
+    echo "✅ Signin verificado correctamente"
+    echo ""
 else
-    echo "✅ Ya has hecho signin con Ollama"
+    echo "✅ Signin activo - acceso a modelos cloud disponible"
     echo ""
 fi
 
@@ -243,11 +273,48 @@ echo ""
 echo "Modelos instalados:"
 docker exec msn-ai-ollama ollama list
 echo ""
+
+# Verify cloud models can actually be accessed
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✅ Proceso completado"
+echo "🔍 VERIFICACIÓN DE ACCESO A MODELOS CLOUD"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+CLOUD_ACCESS_OK=true
+for model in "${CLOUD_MODELS[@]}"; do
+    # Check if model is installed
+    if docker exec msn-ai-ollama ollama list 2>&1 | grep -q "$model"; then
+        # Verify signin is active for this model
+        TEST_RESULT=$(docker exec msn-ai-ollama ollama show "$model" 2>&1)
+        if echo "$TEST_RESULT" | grep -q "You need to be signed in"; then
+            echo "❌ $model - Signin requerido (no funcional)"
+            CLOUD_ACCESS_OK=false
+        else
+            echo "✅ $model - Accesible y funcional"
+        fi
+    fi
+done
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+if [ "$CLOUD_ACCESS_OK" = true ]; then
+    echo "✅ Proceso completado - Todos los modelos funcionando"
+else
+    echo "⚠️  Proceso completado - Signin adicional requerido"
+    echo ""
+    echo "Los modelos están instalados pero necesitas signin activo:"
+    echo "   docker exec -it msn-ai-ollama ollama signin"
+fi
+
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "💡 Los modelos cloud ahora están disponibles en MSN-AI"
+echo ""
+echo "⚠️  IMPORTANTE: Si los modelos dejan de funcionar:"
+echo "   1. Verifica signin: docker exec msn-ai-ollama ollama list"
+echo "   2. Si dice 'You need to be signed in', ejecuta:"
+echo "      docker exec -it msn-ai-ollama ollama signin"
 echo ""
 echo "🌐 Accede a MSN-AI en: http://localhost:8000/msn-ai.html"
 echo ""
