@@ -12,12 +12,23 @@ echo "📧 Desarrollado por: Alan Mac-Arthur García Díaz"
 echo "⚖️ Licencia: GPL-3.0 | 🔗 alan.mac.arthur.garcia.diaz@gmail.com"
 echo "🐳 Modo: Docker Container"
 echo "🍎 Plataforma: macOS"
-echo "=========================================="
+echo "🐳 Modo: Docker Container (Sin Firewall)"
+echo "=================================="
 
-# Check if we're in the correct directory
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
+# Verify we're in the correct directory
 if [ ! -f "msn-ai.html" ]; then
     echo "❌ Error: No se encuentra msn-ai.html"
-    echo "   Asegúrate de ejecutar este script desde el directorio MSN-AI"
+    echo "   Estructura del proyecto incorrecta"
     exit 1
 fi
 

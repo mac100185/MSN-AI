@@ -31,10 +31,20 @@ echo "Este script creara un acceso directo en tu escritorio"
 echo "para que puedas iniciar MSN-AI con solo hacer doble clic"
 echo ""
 
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
 # Verificar que estamos en el directorio correcto
 if [ ! -f "msn-ai.html" ]; then
     echo "❌ ERROR: No se encuentra msn-ai.html"
-    echo "   Por favor, ejecuta este script desde el directorio MSN-AI"
+    echo "   Estructura del proyecto incorrecta"
     echo ""
     read -p "Presiona Enter para salir..."
     exit 1
@@ -42,7 +52,7 @@ fi
 
 # Obtener rutas
 CURRENT_PATH="$(pwd)"
-SCRIPT_PATH="$CURRENT_PATH/start-msnai-mac.sh"
+SCRIPT_PATH="$CURRENT_PATH/macos/start-msnai-mac.sh"
 DESKTOP_PATH="$HOME/Desktop"
 APP_PATH="$DESKTOP_PATH/MSN-AI.app"
 ICON_PATH="$CURRENT_PATH/assets/general/logo.png"

@@ -13,10 +13,20 @@ echo "⚖️ Licencia: GPL-3.0 | 🔗 alan.mac.arthur.garcia.diaz@gmail.com"
 echo "🐳 Modo: Docker Container (Sin Firewall)"
 echo "=================================="
 
-# Check if we're in the correct directory
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
+# Verify we're in the correct directory
 if [ ! -f "msn-ai.html" ]; then
     echo "❌ Error: No se encuentra msn-ai.html"
-    echo "   Asegúrate de ejecutar este script desde el directorio MSN-AI"
+    echo "   Estructura del proyecto incorrecta"
     exit 1
 fi
 
@@ -322,6 +332,56 @@ check_port_conflicts() {
 setup_environment() {
     echo "⚙️  Configurando entorno Docker..."
 
+    # Check for existing OLLAMA_API_KEY
+    OLLAMA_API_KEY_VALUE=""
+
+    # Check if .env file exists and has API key
+    if [ -f ".env" ]; then
+        OLLAMA_API_KEY_VALUE=$(grep "^OLLAMA_API_KEY=" .env 2>/dev/null | cut -d'=' -f2-)
+    fi
+
+    # If not in .env, check environment
+    if [ -z "$OLLAMA_API_KEY_VALUE" ] && [ -n "$OLLAMA_API_KEY" ]; then
+        OLLAMA_API_KEY_VALUE="$OLLAMA_API_KEY"
+    fi
+
+    # If still not found, prompt user
+    if [ -z "$OLLAMA_API_KEY_VALUE" ]; then
+        echo ""
+        echo "🔑 Configuración de API Key para modelos cloud"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "⚠️  Los modelos cloud requieren una API Key:"
+        echo "   - qwen3-vl:235b-cloud"
+        echo "   - gpt-oss:120b-cloud"
+        echo "   - qwen3-coder:480b-cloud"
+        echo ""
+        echo "💡 Si no tienes una API Key, estos modelos no funcionarán"
+        echo "   (puedes configurarla después)"
+        echo ""
+        read -p "¿Deseas configurar la API Key ahora? (s/N): " CONFIGURE_API_KEY
+
+        if [[ "$CONFIGURE_API_KEY" =~ ^[sS]$ ]]; then
+            echo ""
+            read -p "Ingresa tu OLLAMA_API_KEY: " OLLAMA_API_KEY_VALUE
+
+            if [ -n "$OLLAMA_API_KEY_VALUE" ]; then
+                echo "✅ API Key configurada"
+            else
+                echo "⚠️  No se ingresó API Key, continuando sin ella"
+            fi
+        else
+            echo "⏭️  Continuando sin API Key"
+            echo "   Para configurarla después, ejecuta:"
+            echo "   echo 'OLLAMA_API_KEY=tu_clave_aqui' >> .env"
+        fi
+        echo ""
+    else
+        # Mask the key for display
+        MASKED_KEY="${OLLAMA_API_KEY_VALUE:0:8}***${OLLAMA_API_KEY_VALUE: -4}"
+        echo "✅ API Key encontrada: ${MASKED_KEY}"
+    fi
+
     # Create .env file for Docker Compose
     cat > .env << EOF
 # MSN-AI Docker Environment Configuration
@@ -330,6 +390,14 @@ MSN_AI_PORT=8000
 COMPOSE_PROJECT_NAME=msn-ai
 DOCKER_BUILDKIT=1
 EOF
+
+    # Add API Key if configured
+    if [ -n "$OLLAMA_API_KEY_VALUE" ]; then
+        echo "OLLAMA_API_KEY=${OLLAMA_API_KEY_VALUE}" >> .env
+        echo "✅ API Key agregada al archivo .env"
+    else
+        echo "# OLLAMA_API_KEY=your_api_key_here" >> .env
+    fi
 
     # Add GPU configuration if available
     if [ "$USE_GPU" = true ]; then

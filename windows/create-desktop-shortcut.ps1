@@ -28,10 +28,17 @@ Write-Host "Este script creara un acceso directo en tu escritorio" -ForegroundCo
 Write-Host "para que puedas iniciar MSN-AI con solo hacer doble clic" -ForegroundColor Yellow
 Write-Host ""
 
+# Detect and change to project root directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+
+# Change to project root
+Set-Location $ProjectRoot
+
 # Verificar que estamos en el directorio correcto
 if (-not (Test-Path "msn-ai.html")) {
     Write-Host "ERROR: No se encuentra msn-ai.html" -ForegroundColor Red
-    Write-Host "Por favor, ejecuta este script desde el directorio MSN-AI" -ForegroundColor Yellow
+    Write-Host "Estructura del proyecto incorrecta" -ForegroundColor Yellow
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
@@ -77,10 +84,10 @@ Write-Host "Creando acceso directo..." -ForegroundColor Cyan
 try {
     # Crear objeto WScript.Shell
     $WScriptShell = New-Object -ComObject WScript.Shell
-    
+
     # Crear acceso directo
     $Shortcut = $WScriptShell.CreateShortcut($shortcutPath)
-    
+
     # Configurar el acceso directo para ejecutar PowerShell con el script
     # Usamos -ExecutionPolicy Bypass para evitar problemas con politicas
     $Shortcut.TargetPath = "powershell.exe"
@@ -88,7 +95,7 @@ try {
     $Shortcut.WorkingDirectory = $currentPath
     $Shortcut.Description = "MSN-AI - Windows Live Messenger con IA Local"
     $Shortcut.WindowStyle = 1  # 1 = Normal window
-    
+
     # Intentar usar un icono (si existe el logo)
     $iconPath = Join-Path $currentPath "assets\general\logo.png"
     if (Test-Path $iconPath) {
@@ -99,10 +106,10 @@ try {
     else {
         $Shortcut.IconLocation = "powershell.exe,0"
     }
-    
+
     # Guardar el acceso directo
     $Shortcut.Save()
-    
+
     Write-Host ""
     Write-Host "============================================" -ForegroundColor Green
     Write-Host "  Acceso directo creado exitosamente!" -ForegroundColor Green
@@ -123,7 +130,7 @@ try {
     Write-Host ""
     Write-Host "Deseas probar el acceso directo ahora?" -ForegroundColor Cyan
     $test = Read-Host "(s/n)"
-    
+
     if ($test -eq "s" -or $test -eq "S") {
         Write-Host ""
         Write-Host "Iniciando MSN-AI desde el acceso directo..." -ForegroundColor Green
@@ -132,7 +139,7 @@ try {
         Write-Host "MSN-AI se esta iniciando en una nueva ventana de PowerShell" -ForegroundColor Green
         Write-Host "Puedes cerrar esta ventana de forma segura" -ForegroundColor Yellow
     }
-    
+
     Write-Host ""
     Write-Host "============================================" -ForegroundColor Cyan
     Write-Host "  Configuracion completada" -ForegroundColor Cyan

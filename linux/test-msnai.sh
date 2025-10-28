@@ -23,6 +23,16 @@ echo "⚖️ Licencia: GPL-3.0 | 🔗 alan.mac.arthur.garcia.diaz@gmail.com"
 echo "🖥️  Sistema: $OS_TYPE"
 echo "======================================="
 
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
 # Contador de errores
 ERRORS=0
 

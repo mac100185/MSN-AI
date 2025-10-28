@@ -17,8 +17,27 @@ echo "======================================"
 
 # Environment variables
 OLLAMA_HOST=${OLLAMA_HOST:-ollama:11434}
+OLLAMA_API_KEY=${OLLAMA_API_KEY:-}
 SETUP_TIMEOUT=${SETUP_TIMEOUT:-300}  # 5 minutes timeout
 MAX_RETRIES=${MAX_RETRIES:-10}       # Maximum connection retries
+
+# Check and display API Key status
+check_api_key() {
+    if [ -n "$OLLAMA_API_KEY" ]; then
+        # Mask the key for display
+        MASKED_KEY="${OLLAMA_API_KEY:0:8}***${OLLAMA_API_KEY: -4}"
+        echo "🔑 API Key detectada: ${MASKED_KEY}"
+        return 0
+    else
+        echo "⚠️  API Key no configurada"
+        echo "   Los modelos cloud NO funcionarán sin OLLAMA_API_KEY"
+        return 1
+    fi
+}
+
+echo ""
+check_api_key || echo "   Configure OLLAMA_API_KEY para usar modelos cloud"
+echo ""
 
 # Function to wait for Ollama
 wait_for_ollama() {
@@ -186,6 +205,21 @@ install_model() {
     echo "📥 Instalando modelo: $model"
     echo "⏰ Esto puede tomar varios minutos dependiendo del modelo y conexión..."
 
+    # Check if model is a cloud model and API key is required
+    if [[ "$model" == *"-cloud"* ]] || [[ "$model" == *":cloud"* ]]; then
+        if [ -z "$OLLAMA_API_KEY" ]; then
+            echo "⚠️  Modelo cloud detectado: $model"
+            echo "❌ ERROR: OLLAMA_API_KEY no configurada"
+            echo "   Los modelos cloud requieren una API Key válida"
+            echo ""
+            echo "💡 Configura OLLAMA_API_KEY y reinicia el contenedor:"
+            echo "   echo 'OLLAMA_API_KEY=tu_clave' >> .env"
+            echo "   docker compose -f docker/docker-compose.yml restart"
+            echo ""
+            return 1
+        fi
+    fi
+
     # Use curl to pull the model via Ollama API with streaming
     echo "🔄 Iniciando descarga con progreso..."
 
@@ -193,9 +227,17 @@ install_model() {
     local pull_success=false
     local temp_file="/tmp/ollama_pull_$$.json"
 
+    # Prepare headers
+    local headers=(-H "Content-Type: application/json")
+
+    # Add API key header if available
+    if [ -n "$OLLAMA_API_KEY" ]; then
+        headers+=(-H "Authorization: Bearer ${OLLAMA_API_KEY}")
+    fi
+
     # Make the pull request and capture the response
     if curl -s -X POST "http://${OLLAMA_HOST}/api/pull" \
-        -H "Content-Type: application/json" \
+        "${headers[@]}" \
         -d "{\"name\":\"$model\"}" \
         --max-time 1800 > "$temp_file" 2>/dev/null; then
 
@@ -245,14 +287,45 @@ install_required_models() {
     echo "📦 Instalando modelos requeridos por defecto..."
     echo "=============================================="
 
+    # Check API key status for cloud models
+    local has_cloud_models=false
     get_required_models
+
+    for model in "${REQUIRED_MODELS[@]}"; do
+        if [[ "$model" == *"-cloud"* ]] || [[ "$model" == *":cloud"* ]]; then
+            has_cloud_models=true
+            break
+        fi
+    done
+
+    if [ "$has_cloud_models" = true ] && [ -z "$OLLAMA_API_KEY" ]; then
+        echo ""
+        echo "⚠️  ADVERTENCIA: Modelos cloud detectados"
+        echo "   OLLAMA_API_KEY no está configurada"
+        echo "   Los modelos cloud NO se instalarán"
+        echo ""
+        echo "💡 Para instalar modelos cloud:"
+        echo "   1. Configura OLLAMA_API_KEY en .env"
+        echo "   2. Reinicia los contenedores"
+        echo ""
+    fi
 
     local installed_count=0
     local failed_count=0
+    local skipped_count=0
 
     for model in "${REQUIRED_MODELS[@]}"; do
         echo ""
         echo "🔄 Procesando modelo: $model"
+
+        # Check if model is cloud and we don't have API key
+        if [[ "$model" == *"-cloud"* ]] || [[ "$model" == *":cloud"* ]]; then
+            if [ -z "$OLLAMA_API_KEY" ]; then
+                echo "⏭️  Saltando modelo cloud (sin API Key): $model"
+                skipped_count=$((skipped_count + 1))
+                continue
+            fi
+        fi
 
         # Check if model already exists
         if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\":\"$model"; then
@@ -275,9 +348,16 @@ install_required_models() {
     echo "📊 Resumen de instalación de modelos requeridos:"
     echo "   ✅ Instalados correctamente: $installed_count/${#REQUIRED_MODELS[@]}"
     echo "   ⚠️  Fallidos: $failed_count/${#REQUIRED_MODELS[@]}"
+    if [ $skipped_count -gt 0 ]; then
+        echo "   ⏭️  Saltados (sin API Key): $skipped_count/${#REQUIRED_MODELS[@]}"
+    fi
     echo ""
 
     if [ $installed_count -gt 0 ]; then
+        return 0
+    elif [ $skipped_count -gt 0 ] && [ $failed_count -eq 0 ]; then
+        echo "ℹ️  Algunos modelos fueron saltados por falta de API Key"
+        echo "   Esto es normal si no configuraste OLLAMA_API_KEY"
         return 0
     else
         return 1
@@ -448,15 +528,29 @@ main() {
     echo ""
     echo "🎉 Configuración de MSN-AI Docker completada"
     echo "============================================="
-    echo "🤖 Modelos requeridos instalados:"
+    echo "🤖 Modelos requeridos:"
     get_required_models
     for model in "${REQUIRED_MODELS[@]}"; do
-        echo "   📦 $model"
+        if curl -s "http://${OLLAMA_HOST}/api/tags" 2>/dev/null | grep -q "\"name\":\"$model"; then
+            echo "   ✅ $model"
+        else
+            if [[ "$model" == *"-cloud"* ]] && [ -z "$OLLAMA_API_KEY" ]; then
+                echo "   ⏭️  $model (requiere API Key)"
+            else
+                echo "   ❌ $model (error de instalación)"
+            fi
+        fi
     done
     echo ""
     echo "🤖 Modelo adicional recomendado: $RECOMMENDED_MODEL"
     echo "🎯 Nivel: $RECOMMENDED_LEVEL"
     echo "🐳 Host Ollama: $OLLAMA_HOST"
+    if [ -n "$OLLAMA_API_KEY" ]; then
+        MASKED_KEY="${OLLAMA_API_KEY:0:8}***${OLLAMA_API_KEY: -4}"
+        echo "🔑 API Key: ${MASKED_KEY}"
+    else
+        echo "⚠️  API Key: No configurada (modelos cloud deshabilitados)"
+    fi
     echo "💾 Configuración: /app/data/config/ai-config.json"
     echo "⏱️  Tiempo total: $(($(date +%s) - start_time))s"
     echo ""

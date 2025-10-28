@@ -16,6 +16,7 @@ services:
     environment:
       - MSN_AI_VERSION=2.1.0
       - OLLAMA_HOST=ollama:11434
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-}
       - MSN_AI_PORT=8000
       - PYTHONUNBUFFERED=1
     volumes:
@@ -50,7 +51,8 @@ services:
     environment:
       - OLLAMA_KEEP_ALIVE=24h
       - OLLAMA_HOST=0.0.0.0:11434
-      - OLLAMA_ORIGINS="*"
+      - OLLAMA_ORIGINS=*
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-}
     volumes:
       - ollama-data:/root/.ollama
       - ./scripts/:/scripts:ro
@@ -58,17 +60,11 @@ services:
       - msn-ai-network
     restart: unless-stopped
     healthcheck:
-      test:
-        [
-          "CMD",
-          "sh",
-          "-c",
-          "curl -f http://localhost:11434/ && curl -f http://localhost:11434/api/tags",
-        ]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 120s
+      test: ["CMD-SHELL", "curl -sf http://localhost:11434/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     labels:
       - "com.msnai.service=ai"
       - "com.msnai.version=2.1.0"
@@ -89,6 +85,7 @@ services:
     container_name: msn-ai-setup
     environment:
       - OLLAMA_HOST=ollama:11434
+      - OLLAMA_API_KEY=${OLLAMA_API_KEY:-}
       - SETUP_TIMEOUT=1800
       - MAX_RETRIES=20
     volumes:

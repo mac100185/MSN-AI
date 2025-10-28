@@ -53,10 +53,17 @@ Write-Host "Modo: Docker Container" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Check if we're in the correct directory
+# Detect and change to project root directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+
+# Change to project root
+Set-Location $ProjectRoot
+
+# Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
     Write-Host "ERROR: No se encuentra msn-ai.html" -ForegroundColor Red
-    Write-Host "Asegurate de ejecutar este script desde el directorio MSN-AI" -ForegroundColor Yellow
+    Write-Host "Estructura del proyecto incorrecta" -ForegroundColor Yellow
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
@@ -451,19 +458,19 @@ else {
 
 if ($continue -eq "s" -or $continue -eq "S") {
     Write-Host ""
-    
+
     # Setup environment
     Set-Environment
     Write-Host ""
-    
+
     # Start containers
     Start-Containers
     Write-Host ""
-    
+
     # Open application
     $url = "http://localhost:8000/msn-ai.html"
     Open-Application $url
-    
+
     Write-Host ""
     Write-Host "============================================" -ForegroundColor Cyan
     Write-Host "     MSN-AI v1.0.0 Docker - Ejecutandose!" -ForegroundColor Green
@@ -481,7 +488,7 @@ if ($continue -eq "s" -or $continue -eq "S") {
     Write-Host "Los contenedores seguiran ejecutandose en segundo plano" -ForegroundColor Green
     Write-Host "Para detener: Presiona Ctrl+C o usa el comando 'Detener' de arriba" -ForegroundColor Green
     Write-Host ""
-    
+
     # Wait for user interrupt
     Write-Host "Presiona Ctrl+C para detener los contenedores..." -ForegroundColor Yellow
     try {

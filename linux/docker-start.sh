@@ -15,10 +15,20 @@ echo "📧 Por: Alan Mac-Arthur García Díaz"
 echo "⚖️ Licencia: GPL-3.0"
 echo "========================================"
 
+# Detect and change to project root directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Change to project root
+cd "$PROJECT_ROOT" || {
+    echo "❌ Error: No se pudo cambiar al directorio del proyecto"
+    exit 1
+}
+
 # Check if we're in the correct directory
 if [ ! -f "docker/docker-compose.yml" ]; then
     echo "❌ Error: docker-compose.yml no encontrado"
-    echo "   Ejecuta este script desde el directorio raíz de MSN-AI"
+    echo "   Estructura del proyecto incorrecta"
     exit 1
 fi
 

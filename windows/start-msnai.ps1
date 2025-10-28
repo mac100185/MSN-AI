@@ -51,10 +51,17 @@ Write-Host "GitHub: https://github.com/mac100185/MSN-AI" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Verificar si estamos en el directorio correcto
+# Detect and change to project root directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ProjectRoot = Split-Path -Parent $ScriptDir
+
+# Change to project root
+Set-Location $ProjectRoot
+
+# Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
     Write-Host "ERROR: No se encuentra msn-ai.html" -ForegroundColor Red
-    Write-Host "Asegurate de ejecutar este script desde el directorio MSN-AI" -ForegroundColor Yellow
+    Write-Host "Estructura del proyecto incorrecta" -ForegroundColor Yellow
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1

@@ -132,22 +132,23 @@ echo "🔍 Analizando instalación MSN-AI Docker..."
 # Check what exists
 CONTAINERS_EXIST=$(docker ps -aq --filter "label=com.msnai.service" 2>/dev/null | wc -l)
 # Also check for containers by name pattern
-CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null | sort -u | wc -l)
+CONTAINERS_BY_NAME=$(docker ps -aq --filter "name=msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-msn-ai" 2>/dev/null; docker ps -aq --filter "name=docker-ai-setup" 2>/dev/null)
+CONTAINERS_BY_NAME=$(echo "$CONTAINERS_BY_NAME" | sort -u | wc -l)
 CONTAINERS_EXIST=$((CONTAINERS_EXIST + CONTAINERS_BY_NAME))
 
 IMAGES_EXIST=$(docker images --filter "label=com.msnai.service" -q 2>/dev/null | wc -l)
 # Also check for images by name pattern
-IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" 2>/dev/null || echo 0)
+IMAGES_BY_NAME=$(docker images --format "{{.Repository}}" 2>/dev/null | grep -cE "(msn-ai|docker-msn-ai|docker-ai-setup)" || echo 0)
 IMAGES_EXIST=$((IMAGES_EXIST + IMAGES_BY_NAME))
 
 VOLUMES_EXIST=$(docker volume ls --filter "label=com.msnai.volume" -q 2>/dev/null | wc -l)
 # Also check for volumes by name pattern
-VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+VOLUMES_BY_NAME=$(docker volume ls --format "{{.Name}}" 2>/dev/null | grep -cE "(msn-ai|msnai)" || echo 0)
 VOLUMES_EXIST=$((VOLUMES_EXIST + VOLUMES_BY_NAME))
 
 NETWORKS_EXIST=$(docker network ls --filter "label=com.msnai.network" -q 2>/dev/null | wc -l)
 # Also check for networks by name pattern
-NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" | grep -cE "(msn-ai|msnai)" 2>/dev/null || echo 0)
+NETWORKS_BY_NAME=$(docker network ls --format "{{.Name}}" 2>/dev/null | grep -cE "(msn-ai|msnai)" || echo 0)
 NETWORKS_EXIST=$((NETWORKS_EXIST + NETWORKS_BY_NAME))
 
 echo ""
