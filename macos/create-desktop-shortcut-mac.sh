@@ -137,7 +137,7 @@ if [ -f "$CONFIG_FILE" ]; then
         osascript <<APPLESCRIPT
 tell application "Terminal"
     activate
-    do script "cd '$PROJECT_PATH' && ./start-msnai-mac.sh --auto"
+    do script "cd '$PROJECT_PATH' && ./macos/start-msnai-mac.sh --auto"
 end tell
 APPLESCRIPT
     else
@@ -233,7 +233,7 @@ if [ ! -d "$APP_PATH" ]; then
     echo "     - Abre Automator"
     echo "     - Selecciona 'Aplicacion'"
     echo "     - Agrega 'Ejecutar script de shell'"
-    echo "     - Pega: cd '$CURRENT_PATH' && ./start-msnai-mac.sh --auto"
+    echo "     - Pega: cd '$CURRENT_PATH' && ./macos/start-msnai-mac.sh --auto"
     echo "     - Guarda en el escritorio como 'MSN-AI'"
     echo ""
     read -p "Presiona Enter para salir..."

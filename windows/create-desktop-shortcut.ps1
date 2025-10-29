@@ -59,7 +59,7 @@ Write-Host ""
 
 # Obtener rutas
 $currentPath = (Get-Location).Path
-$scriptPath = Join-Path $currentPath "start-msnai.ps1"
+$scriptPath = Join-Path $currentPath "windows\start-msnai.ps1"
 $desktopPath = [Environment]::GetFolderPath("Desktop")
 $shortcutPath = Join-Path $desktopPath "MSN-AI.lnk"
 

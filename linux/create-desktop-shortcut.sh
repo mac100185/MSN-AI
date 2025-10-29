@@ -125,7 +125,7 @@ Version=1.0
 Type=Application
 Name=MSN-AI
 Comment=Windows Live Messenger con IA Local
-Exec=bash -c "cd '$CURRENT_PATH' && ./start-msnai.sh --auto"
+Exec=bash -c "cd '$CURRENT_PATH' && ./linux/start-msnai.sh --auto"
 Icon=$ICON_PATH
 Terminal=true
 Categories=Network;InstantMessaging;
@@ -151,7 +151,7 @@ if [ ! -f "$SHORTCUT_PATH" ]; then
     echo "Type=Application"
     echo "Name=MSN-AI"
     echo "Comment=Windows Live Messenger con IA Local"
-    echo "Exec=bash -c \"cd '$CURRENT_PATH' && ./start-msnai.sh --auto\""
+    echo "Exec=bash -c \"cd '$CURRENT_PATH' && ./linux/start-msnai.sh --auto\""
     echo "Icon=$ICON_PATH"
     echo "Terminal=true"
     echo "Categories=Network;InstantMessaging;"
@@ -207,7 +207,7 @@ if [[ "$test" =~ ^[sS]$ ]]; then
         exo-open "$SHORTCUT_PATH" &
     else
         # Fallback: ejecutar directamente
-        bash -c "cd '$CURRENT_PATH' && ./start-msnai.sh --auto" &
+        bash -c "cd '$CURRENT_PATH' && ./linux/start-msnai.sh --auto" &
     fi
 
     echo ""
