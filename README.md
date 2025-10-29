@@ -224,8 +224,26 @@ cd macos
 - Local: `http://localhost:8000/msn-ai.html`
 - Remoto: `http://[IP-SERVIDOR]:8000/msn-ai.html`
 
-### 💻 Local Edition
+### 💻 Local Edition - Un comando
+#### 🐧 Linux / 🍎 macOS
+```bash
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+cd linux
+chmod +x *.sh
+./start.sh --auto        # Iniciar MSN-AI
+```
+#### 🪟 Windows
+```powershell
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Unblock-File -Path .\start.ps1
+.\start.ps1 --auto       # Iniciar MSN-AI
+```
 
+
+### 💻 Local Edition - Por sistema operativo individual
 #### 🐧 Linux
 ```bash
 git clone https://github.com/mac100185/MSN-AI.git
@@ -234,7 +252,7 @@ cd linux
 chmod +x *.sh
 ./ai_check_all.sh              # Detecta hardware (opcional)
 ./start-msnai.sh --auto        # Iniciar MSN-AI
-./create-desktop-shortcut.sh   # Crear lanzador (NUEVO v2.1.1)
+./create-desktop-shortcut.sh   # Crear lanzador
 ```
 
 #### 🍎 macOS
@@ -245,7 +263,7 @@ cd macos
 chmod +x *.sh
 ./ai_check_all_mac.sh          # Detecta hardware (opcional)
 ./start-msnai-mac.sh --auto    # Iniciar MSN-AI
-./create-desktop-shortcut-mac.sh  # Crear app (NUEVO v2.1.1)
+./create-desktop-shortcut-mac.sh  # Crear app
 ```
 
 #### 🪟 Windows
@@ -265,22 +283,25 @@ Unblock-File -Path .\create-desktop-shortcut.ps1
 **Acceso:**
 - Local: `http://localhost:8000/msn-ai.html`
 
+**Nota importante:** Si el puerto 8000 está en uso, MSN-AI intentará usar el puerto 8001 y así sucesivamente hasta encontrar uno disponible. Si por lo tanto los chats estarán disponibles en el puerto libre encontrado. Por ejemplo si creaste chats en el puerto 8000 y si luego MSN-AI pasa al 8001, los chats del puerto 8000 no estarán disponibles en el puerto 8001.
+
 ### ⏹️ Detener Correctamente
 
-**Docker:**
+**En Docker:**
 ```bash
-cd linux  # o macos
+cd linux  # Linux o macOS
 ./docker-stop.sh
 ```
+**En Windows usar la GUI de Docker para detener MSN-AI**
 
-**Local:**
+**En Local:**
 ```bash
-Ctrl + C  # En la terminal donde se ejecutó
+Ctrl + C  # En la terminal donde se ejecutó (Windows, Linux, macOS)
 ```
 
 **Emergencia Docker:**
 ```bash
-cd linux  # o macos
+cd linux  # Linux o macOS
 ./docker-cleanup.sh -a  # Reset completo MSN-AI
 ```
 
