@@ -9,7 +9,7 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 
 ---
 
-## [2.1.1] 2025-10-23
+## [2.1.1] - 2025-10-23
 
 ### ✨ Añadido
 
@@ -79,6 +79,16 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
   - Prueba del acceso directo después de crearlo
   - Instrucciones detalladas de uso
   - Manejo de errores con soluciones alternativas
+
+### 🔧 Mejorado
+- **Interfaz de usuario** - Mejoras visuales en modales
+- **Rendimiento** - Optimización de caché de Markdown
+- **Documentación** - README.md completamente actualizado
+
+### 🐛 Corregido
+- ✅ Mejoras en la detección de modelos de IA
+- ✅ Optimización del renderizado de prompts
+- ✅ Correcciones menores de estilo CSS
 
 ---
 
@@ -300,15 +310,15 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - **Coherencia 100%** entre código (HTML/JS/CSS) y documentación
 - **Métricas actualizadas** - Líneas de código, funcionalidades, idiomas
 
-### 💡 Notas Técnicas
+### 💡 Notas Técnicas v2.1.1
 - **Firewall**: MSN-AI funciona con firewall deshabilitado para simplicidad máxima
 - **Puertos**: 8000 (Web) y 11434 (Ollama) quedan automáticamente disponibles
 - **Seguridad**: Para entornos de producción, configurar firewall manualmente según necesidades
 - **Arquitectura**: Aplicación modularizada en 3 archivos (HTML + JS + CSS)
-- **Total líneas de código**: 7,190 líneas (827 HTML + 4,697 JS + 1,666 CSS)
+- **Total líneas de código**: 9,375 líneas (827 HTML + 6,882 JS + 1,666 CSS)
 - **Idiomas**: 22 archivos JSON de traducción en directorio `lang/`
 - **Compatibilidad**: Navegadores modernos (Chrome, Edge, Firefox, Safari)
-- **Almacenamiento**: localStorage del navegador (sin límite práctico)
+- **Almacenamiento**: localStorage del navegador e IndexedDB para archivos
 - **Librerías externas**:
   - marked.js (v12.0.2) - Conversión de Markdown
   - DOMPurify (v3.0.5) - Sanitización HTML
@@ -316,20 +326,20 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
   - PDF.js (v3.11.174) - Procesamiento de PDFs
   - Tesseract.js (v5.0.4) - OCR para PDFs escaneados
 
-### 📊 Estadísticas v2.1.0
-- **50+ características** completamente funcionales
+### 📊 Estadísticas v2.1.1
+- **60+ características** completamente funcionales
 - **22 idiomas** soportados con traducciones completas
-- **25+ funcionalidades UI** avanzadas
-- **19 scripts** de instalación y gestión (7 Docker + 12 locales)
-- **7 scripts Docker** de gestión incluidos
+- **42 scripts** de automatización (32 Shell + 10 PowerShell)
+- **11 campos** en generador de prompts profesional
 - **5 sonidos auténticos** de MSN integrados
 - **4 estados de presencia** implementados (Online, Away, Busy, Invisible)
 - **2 categorías de emoticones** disponibles (30 emojis totales)
-- **7,190 líneas** de código frontend
+- **9,375 líneas** de código frontend
 - **3 archivos principales** (HTML, JS, CSS) modularizados
 - **4 volúmenes Docker** para persistencia de datos
 - **3 servicios Docker** (msn-ai, ollama, ai-setup)
 - **2 modos de instalación** (Docker y Local)
+- **102 archivos multimedia** en carpeta assets/
 
 ---
 
@@ -369,13 +379,13 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - **1 idioma** soportado (Español)
 - **8 scripts** de instalación y gestión
 - **5 sonidos** integrados
-- **~2,500 líneas** de código frontend
+- **~3,500 líneas** de código frontend
 
 ---
 
 ## 🔮 Próximas versiones
 
-### [2.2.0] - Planificado
+### [2.2.0] - En desarrollo
 - 🎨 Personalización de temas y colores
 - 📱 Mejoras en responsive design para móviles
 - 🔐 Cifrado opcional de conversaciones (AES-256)
@@ -386,6 +396,8 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - 📝 Plantillas de prompts predefinidas por categoría
 - 🌟 Sistema de favoritos y destacados
 - 🔍 Búsqueda avanzada con filtros múltiples
+- 🖼️ Soporte para envío de imágenes al chat
+- 🎨 Editor de prompts con vista previa en tiempo real
 
 ### [3.0.0] - Futuro
 - 🎥 Soporte para imágenes en conversaciones (modelos multimodales)
@@ -412,13 +424,15 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - 🚀 **v1.0.0** - Primera versión estable (15 de enero)
 - 🎭 **v2.1.0** - Versión con múltiples mejoras (19 de enero)
 - 📚 Documentación completa y profesional
-- 🌍 Sistema multi-idioma implementado
+- 🌍 Sistema multi-idioma implementado (22 idiomas)
 - 🐳 Docker Edition optimizada
 
 ### Octubre 2025
-- 📝 Sistema de generador de prompts profesional
+- 📝 **v2.1.1** - Sistema de generador de prompts profesional (23 de octubre)
 - 💾 Gestor completo de biblioteca de prompts
+- 🖥️ Accesos directos para escritorio (Linux y macOS)
 - 🔧 Mejoras continuas en estabilidad y UX
+- 📊 Documentación actualizada con estadísticas completas
 
 ---
 
@@ -466,4 +480,18 @@ Para más información sobre la licencia, consulta el archivo [LICENSE](LICENSE)
 
 ---
 
+---
+
+## 🔄 Registro de Actualizaciones
+
+| Versión | Fecha | Tipo | Descripción |
+|---------|-------|------|-------------|
+| 2.1.1 | 2025-10-23 | Minor | Generador de prompts + Gestor de biblioteca + Accesos directos |
+| 2.1.0 | 2025-01-19 | Minor | Instalación simplificada + Multi-idioma + Docker optimizado |
+| 1.0.0 | 2025-01-15 | Major | Primera versión estable |
+
+---
+
 *Última actualización: 23 de octubre de 2025*
+
+*Este changelog se mantiene actualizado con cada versión.*
