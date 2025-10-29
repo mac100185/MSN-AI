@@ -22,7 +22,6 @@
 - [🎮 Guía de Uso](#-guía-de-uso)
 - [⚙️ Configuración](#️-configuración)
 - [🏗️ Arquitectura del Proyecto](#️-arquitectura-del-proyecto)
-- [📊 Métricas del Proyecto](#-métricas-del-proyecto)
 - [🤝 Contribuir](#-contribuir)
 - [📞 Contacto y Soporte](#-contacto-y-soporte)
 - [⚖️ Licencia](#️-licencia)
@@ -32,7 +31,7 @@
 
 ## 🎯 ¿Qué es MSN-AI?
 
-MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows Live Messenger 8.5** con modelos de **IA local y en Nube** ejecutados a través de Ollama.
+MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows Live Messenger ** con modelos de **IA local y en Nube** ejecutados a través de Ollama.
 
 **Dos ediciones disponibles:**
 
@@ -48,14 +47,15 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 ## ✨ Características Principales
 
 ### 🎨 Interfaz y Experiencia
-- **Interfaz auténtica** de Windows Live Messenger 8.5
-- **5 sonidos originales** (login.wav, logout.wav, message_in.wav, message_out.wav, nudge.wav)
+- **Interfaz similar** de Windows Live Messenger (WLM)
+- **5 sonidos similares a los (WLM)** (login.wav, logout.wav, message_in.wav, message_out.wav, nudge.wav)
 - **Estados de presencia** - Online 🟢, Away 🟡, Busy 🔴, Invisible ⚪
 - **Emoticones integrados** - 30 emojis en 2 categorías (Naturales y Amor)
 - **Animaciones MSN** - Efectos visuales auténticos
 
 ### 🤖 Inteligencia Artificial
 - **IA local integrada** - Compatible con todos los modelos de Ollama (Mistral, Llama, Phi3, Qwen, etc.)
+- **IA en Cloud** - Compatible con todos los modelos de Ollama (qwen3-vl:235b-cloud, gpt-oss:120b-cloud, qwen3-coder:480b-cloud etc.)
 - **Detección automática de modelos** - Carga modelos disponibles dinámicamente
 - **Multi-chat simultáneo** - La IA responde en varios chats mientras navegas
 - **Detener respuesta** - Aborta generación de IA en curso
@@ -71,6 +71,11 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Eliminar chat** - Elimina permanentemente (con modal de confirmación)
 - **Imprimir chat** - Versión imprimible con estilos
 
+### Gestión de archivos
+- **Persistencia de archivos** - localStorage del navegador
+- **Descarga de archivos** - Descarga archivos adjuntos en formato original
+- **Subir archivos** - Sube archivos adjuntos desde el dispositivo en formato .txt y .pdf
+
 ### 📝 Edición de Texto
 - **Ajuste de tamaño** - 10px a 32px con botones ±
 - **Formato de texto** - Negrita, cursiva, subrayado
@@ -85,15 +90,15 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Importación inteligente** - Resolución automática de conflictos (Unir/Reemplazar/Omitir)
 
 ### 🌍 Sistema Multiidioma (22 idiomas)
-🇪🇸 Español | 🇬🇧 Inglés | 🇩🇪 Alemán | 🇫🇷 Francés | 🇸🇦 Árabe | 🇨🇳 Chino | 🇮🇳 Hindi | 🇧🇩 Bengalí | 🇵🇹 Portugués | 🇷🇺 Ruso | 🇯🇵 Japonés | 🇰🇷 Coreano | 🇮🇩 Indonesio | 🇹🇷 Turco | 🇵🇰 Urdu | 🇻🇳 Vietnamita | 🇮🇳 Tamil | 🇮🇳 Telugu | 🇮🇳 Maratí | 🇮🇳 Panyabí | 🇵🇪 Quechua | 🇧🇴 Aymara
+🇪🇸 Español | 🇬🇧 Inglés 🇺🇸 | 🇩🇪 Alemán | 🇫🇷 Francés | 🇸🇦 Árabe | 🇨🇳 Chino | 🇮🇳 Hindi | 🇧🇩 Bengalí | 🇵🇹 Portugués | 🇷🇺 Ruso | 🇯🇵 Japonés | 🇰🇷 Coreano | 🇮🇩 Indonesio | 🇹🇷 Turco | 🇵🇰 Urdu | 🇻🇳 Vietnamita | 🇮🇳 Tamil | 🇮🇳 Telugu | 🇮🇳 Maratí | 🇮🇳 Panyabí | 🇵🇪 Quechua | 🇧🇴 Aymara |
 
 - **Detección automática** del idioma del navegador
 - **Cambio manual** desde configuración
 - **Persistencia** entre sesiones
 
-### 🐳 Docker Edition v2.1.0
-- **Instalación simplificada** - Un comando
-- **Scripts de gestión** - docker-start.sh, docker-stop.sh, docker-status.sh, docker-logs.sh, docker-cleanup.sh, docker-check-config.sh, docker-test-ai.sh
+### 🐳 Docker Edition
+- **Instalación simplificada** - Para Windows, macOS y Linux
+- **Scripts de gestión**
 - **Health checks automáticos**
 - **Volúmenes persistentes**
 - **Opción Nuclear** - Reset completo MSN-AI (solo recursos MSN-AI)
@@ -110,59 +115,87 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 
 ### 🐳 Docker Edition (Recomendado)
 
+# 🐧/🍎  Linux / macOS
 ```bash
-# Linux / macOS
-git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI && chmod +x *.sh && ./start-msnai-docker.sh --auto
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+chmod +x *.sh
+./start-msnai-docker.sh --auto
+```
+# Instalación de modelos IA Cloud (Opcional)
+# # Para Linux
+```
+./docker-install-cloud.sh
+```
+# # Para macOS
+```
+./docker-install-cloud-macos.sh
 
+```
 # Windows (PowerShell)
-git clone https://github.com/mac100185/MSN-AI.git; cd MSN-AI; .\start-msnai-docker.ps1 --auto
+```powershell
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Unblock-File -Path .\start-msnai-docker.ps1
+.\start-msnai-docker.ps1 --auto
+```
+# Instalación de modelos IA Cloud (Opcional)
+# Para Windows
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Unblock-File -Path .\docker-install-cloud-models.ps1
+.\docker-install-cloud-models.ps1
 ```
 
-**Scripts de gestión:**
+## **Scripts de gestión Docker en 🐧/🍎 Linux/macOS:**
 ```bash
 ./docker-start.sh              # Iniciar
 ./docker-status.sh             # Estado
 ./docker-logs.sh --follow      # Logs en tiempo real
 ./docker-stop.sh               # Detener
-./docker-cleanup.sh --nuclear  # Reset MSN-AI
+./docker-cleanup.sh -a         # Eliminación total de MSN-AI
 ```
 
-**Acceso:**
+## **Acceso:**
 - Local: `http://localhost:8000/msn-ai.html`
 - Remoto: `http://[IP-SERVIDOR]:8000/msn-ai.html`
 
 ### 💻 Local Edition
 
-#### 🐧 Linux
+#### 🐧/🍎 Linux/macOS
 ```bash
-git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
 chmod +x *.sh
-./ai_check_all.sh              # Detecta hardware y recomienda modelos
-./start-msnai.sh --auto
-./create-desktop-shortcut.sh   # Crear lanzador en escritorio
+./start.sh --auto
+# Para crear un acceso directo en el escritorio en linux
+cd linux
+chmod +x *.sh
+./create-desktop-shortcut.sh   # Crear lanzador en escritorio en linux
+# Para crear un acceso directo en el escritorio en macOS
+cd macos
+chmod +x *.sh
+./create-desktop-shortcut-mac.sh
+
 ```
 
 #### 🪟 Windows
 ```powershell
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd windows
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\ai_check_all.ps1
 Unblock-File -Path .\create-desktop-shortcut.ps1
 .\ai_check_all.ps1             # Detecta hardware y recomienda modelos
-.\start-msnai.ps1 --auto
+.\start-msnai.ps1 --auto       # Iniciar MSN-AI
 .\create-desktop-shortcut.ps1  # Crear acceso directo en escritorio
 ```
 
-#### 🍎 macOS
-```bash
-git clone https://github.com/mac100185/MSN-AI.git && cd MSN-AI
-chmod +x *.sh
-./ai_check_all_mac.sh          # Detecta hardware y recomienda modelos
-./start-msnai-mac.sh --auto
-./create-desktop-shortcut-mac.sh  # Crear MSN-AI.app en escritorio
-```
+**Acceso:**
+- Local: `http://localhost:8000/msn-ai.html`
 
 ### ⏹️ Detener Correctamente
 
@@ -179,7 +212,7 @@ Ctrl + C  # En la terminal donde se ejecutó
 
 **Emergencia Docker:**
 ```bash
-./docker-cleanup.sh --nuclear  # Reset completo MSN-AI
+./docker-cleanup.sh -a  # Reset completo MSN-AI
 ```
 
 **Emergencia Local:**
@@ -200,7 +233,7 @@ Get-Process -Name "python" | Where-Object {$_.CommandLine -like "*http.server*"}
 - **Docker Engine** 20.10+ o Docker Desktop
 - **SO**: Linux (Ubuntu 18.04+, Debian 10+), Windows 10/11, macOS 10.14+
 - **RAM**: 2GB+ (16GB recomendado)
-- **Disco**: 2GB+ libre
+- **Disco**: 10GB+ libre
 - **GPU**: NVIDIA (opcional)
 
 ### 💻 Local Edition
@@ -229,31 +262,31 @@ Get-Process -Name "python" | Where-Object {$_.CommandLine -like "*http.server*"}
 ### 🤖 Modelos Recomendados
 
 **GPU (4GB+ VRAM):**
-- `mistral:7b` (equilibrado)
-- `llama3.2:latest`
-- `qwen2.5:7b`
-- `qwen3-vl:235b-cloud`
-- `gpt-oss:120b-cloud`
-- `qwen3-coder:480b-cloud`
+- `mistral:7b` (Local)
+- `llama3.2:latest` (Local)
+- `qwen2.5:7b` (Local)
+- `qwen3-vl:235b-cloud` (Nube)
+- `gpt-oss:120b-cloud` (Nube)
+- `qwen3-coder:480b-cloud` (Nube)
 
 **CPU + GPU NVIDIA (8GB+ RAM):**
-- `phi3:mini`
-- `gemma2:2b`
-- `tinyllama`
-- `qwen2.5:7b`
-- `qwen3-vl:235b-cloud`
-- `gpt-oss:120b-cloud`
-- `qwen3-coder:480b-cloud`
+- `phi3:mini` (Local)
+- `gemma2:2b` (Local)
+- `tinyllama` (Local)
+- `qwen2.5:7b` (Local)
+- `qwen3-vl:235b-cloud` (Nube)
+- `gpt-oss:120b-cloud` (Nube)
+- `qwen3-coder:480b-cloud` (Nube)
 - `Cualquier modelo disponible en https://ollama.com/search`
 
 **Apple Silicon (M1/M2/M3):**
-- `llama3.2:latest`
-- `mistral:7b`
-- `qwen2.5:7b`
-- `qwen2.5:7b`
-- `qwen3-vl:235b-cloud`
-- `gpt-oss:120b-cloud`
-- `qwen3-coder:480b-cloud`
+- `llama3.2:latest` (Local)
+- `mistral:7b` (Local)
+- `qwen2.5:7b` (Local)
+- `qwen2.5:7b` (Local)
+- `qwen3-vl:235b-cloud` (Nube)
+- `gpt-oss:120b-cloud` (Nube)
+- `qwen3-coder:480b-cloud` (Nube)
 - `Cualquier modelo disponible en https://ollama.com/search`
 
 ---
@@ -265,6 +298,7 @@ Get-Process -Name "python" | Where-Object {$_.CommandLine -like "*http.server*"}
 ```bash
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd linux
 chmod +x start-msnai-docker.sh
 ./start-msnai-docker.sh --auto
 ```
@@ -273,7 +307,11 @@ chmod +x start-msnai-docker.sh
 ```bash
 sudo apt-get install -y nvidia-container-toolkit
 sudo systemctl restart docker
-docker-compose -f docker/docker-compose.yml --profile gpu up -d
+git clone https://github.com/mac100185/MSN-AI.git
+cd MSN-AI
+cd linux
+chmod +x start-msnai-docker.sh
+./start-msnai-docker.sh --auto
 ```
 
 ### 🐳 Docker Windows
@@ -281,6 +319,7 @@ docker-compose -f docker/docker-compose.yml --profile gpu up -d
 ```powershell
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd windows
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Unblock-File -Path .\start-msnai-docker.ps1
 .\start-msnai-docker.ps1 --auto
@@ -291,6 +330,7 @@ Unblock-File -Path .\start-msnai-docker.ps1
 ```bash
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd macos
 chmod +x start-msnai-docker-mac.sh
 ./start-msnai-docker-mac.sh --auto
 ```
@@ -299,15 +339,17 @@ chmod +x start-msnai-docker-mac.sh
 
 ```bash
 # 1. Instalar dependencias
-sudo apt update && sudo apt install -y python3 curl git  # Ubuntu/Debian
+sudo apt update
+sudo apt install -y python3 curl git                     # Ubuntu/Debian
 # sudo dnf install -y python3 curl git                   # Fedora/RHEL
 
 # 2. Clonar y configurar
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd linux
 chmod +x *.sh
 
-# 3. Detectar hardware y configurar IA
+# 3. Detectar hardware y configurar modelos de IA (opcional)
 ./ai_check_all.sh
 
 # 4. Iniciar
@@ -323,6 +365,7 @@ chmod +x *.sh
 # 1. Clonar
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd Windows
 
 # 2. Configurar PowerShell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -332,7 +375,7 @@ Unblock-File -Path .\start-msnai.ps1
 Unblock-File -Path .\ai_check_all.ps1
 Unblock-File -Path .\create-desktop-shortcut.ps1
 
-# 4. Detectar hardware
+# 4. Detectar hardware (opcional)
 .\ai_check_all.ps1
 
 # 5. Iniciar
@@ -348,11 +391,12 @@ Unblock-File -Path .\create-desktop-shortcut.ps1
 # 1. Clonar
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
+cd macos
 
 # 2. Dar permisos
 chmod +x *.sh
 
-# 3. Detectar hardware
+# 3. Detectar hardware (opcional)
 ./ai_check_all_mac.sh
 
 # 4. Iniciar
@@ -563,93 +607,6 @@ MSN-AI/
 └── LICENSE
 ```
 
-### 📱 Frontend (msn-ai.js)
-
-**Clase Principal: MSNAI**
-```javascript
-class MSNAI {
-  constructor() {
-    this.chats = [];
-    this.currentChatId = null;
-    this.isConnected = false;
-    this.availableModels = [];
-    this.sounds = {};
-    this.fontSize = 14;
-    this.chatSortOrder = "asc";
-    this.pendingFileAttachment = null;
-    this.abortControllers = {};
-    this.availableLanguages = [];
-    this.currentLanguage = "es";
-    this.translations = {};
-    this.settings = {
-      soundsEnabled: true,
-      ollamaServer: "http://localhost:11434",
-      selectedModel: "",
-      apiTimeout: 30000,
-      notifyStatusChanges: false,
-      language: "es"
-    };
-  }
-
-  // 45+ métodos implementados
-  async loadLanguages()
-  async setLanguage(langCode)
-  async connectToOllama()
-  async sendMessage()
-  async sendToAI(message, chatId, onToken)
-  async notifyStatusChangeToAI(newStatus, oldStatus)
-  async sendNudge()
-  saveToLocalStorage()
-  exportChats()
-  exportSelectedChats()
-  exportSingleChat(chatId)
-  async processImportedChats(importedChats)
-  async showImportConflictModal(conflicts)
-  searchInCurrentChat(query)
-  sortChatHistory()
-  printCurrentChat()
-  clearCurrentChat()
-  closeCurrentChat()
-  deleteChat(chatId)
-  stopAIResponse()
-  startVoiceInput()
-  uploadTextFile()
-  async checkConnection()
-  async updateAvailableModels()
-  setupEventListeners()
-  async init()
-  // ... y más
-}
-```
-
-### 💾 Almacenamiento (localStorage)
-
-```javascript
-{
-  "version": "1.0",
-  "exportDate": "2025-01-XX...",
-  "chats": [
-    {
-      "id": "chat-...",
-      "title": "Título del chat",
-      "date": "2025-01-XX...",
-      "model": "mistral:7b",
-      "messages": [
-        { "type": "user", "content": "...", "timestamp": "..." },
-        { "type": "ai", "content": "...", "timestamp": "..." }
-      ]
-    }
-  ],
-  "settings": {
-    "soundsEnabled": true,
-    "ollamaServer": "http://localhost:11434",
-    "selectedModel": "mistral:7b",
-    "apiTimeout": 30000,
-    "notifyStatusChanges": false,
-    "language": "es"
-  }
-}
-```
 
 ### 🌍 Sistema de Traducción
 
@@ -661,29 +618,11 @@ class MSNAI {
 
 ---
 
-## 📊 Métricas del Proyecto
-
-### 📏 Código
-- **HTML**: 827 líneas
-- **JavaScript**: 4,697 líneas
-- **CSS**: 1,666 líneas
-- **Total**: 7,190 líneas
-
-### 🎯 Funcionalidades
-- **45+ métodos** en clase MSNAI
-- **22 idiomas** soportados
-- **5 sonidos** auténticos MSN
-- **30 emoticones** (2 categorías)
-- **4 estados** de presencia
-- **3 modos** de exportación
-- **7 scripts** Docker de gestión
-- **9 scripts** de instalación local
-
 ### 🌐 Compatibilidad
 - **3 sistemas operativos**: Linux, Windows, macOS
 - **4 navegadores**: Chrome, Firefox, Safari, Edge
 - **2 ediciones**: Docker y Local
-- **Todos los modelos** de Ollama
+- **Todos los modelos IA** de Ollama
 
 ---
 
@@ -743,60 +682,6 @@ Ver [LICENSE](LICENSE) para texto completo.
 - Assets de Microsoft: Fair Use para preservación histórica
 - Sonidos originales: Fines educativos
 - Marcas registradas de respectivos propietarios
-
----
-
-## 📅 Historial de Cambios
-
-### [2.1.0] - 2025-01-19
-
-**✨ Añadido:**
-- 🎭 Estados de presencia (Online, Away, Busy, Invisible)
-- 📢 Notificación de estado a IA (opcional)
-- 📝 Ajuste de tamaño de fuente (10px-32px)
-- 😊 Emoticones integrados (30 emojis, 2 categorías)
-- 🎤 Dictado por voz (Web Speech API)
-- 📄 Subir archivos de texto
-- 📳 Zumbido/Nudge manual
-- 🔍 Búsqueda avanzada (todos los chats y en chat específico)
-- 📊 Ordenar historial (ascendente/descendente)
-- 📤 Exportación flexible (todos, seleccionados, individual)
-- 🔄 Importación inteligente (resolución de conflictos)
-- 🖨️ Imprimir chat
-- 🧹 Limpiar y cerrar chats
-- 💬 Multi-chat simultáneo
-- 📩 Indicadores de no leídos
-- 🛑 Detener respuesta de IA
-- 🌍 Sistema multiidioma (22 idiomas)
-- 🐳 Docker Edition v2.1.0
-- 🆕 Scripts Docker dedicados (7 scripts)
-- 🔥 Opción Nuclear MSN-AI
-
-**🔧 Mejorado:**
-- Interface modularizada (HTML + JS + CSS)
-- Auto-detección de IP y modelos
-- Zero-config para Docker
-- Logs detallados
-- Manejo robusto de errores
-
-**🐛 Corregido:**
-- Detección de modelos Ollama
-- Indicador de conexión
-- Healthcheck circular dependency
-- docker-compose warnings
-- Encoding de archivos de idioma
-
-### [1.0.0] - 2025-01-15
-
-**🎉 Versión Inicial:**
-- Interfaz auténtica MSN 8.5
-- Integración con Ollama
-- Persistencia de chats
-- Sonidos originales MSN
-- Import/Export básico
-- Scripts de instalación local
-
----
 
 **MSN-AI v2.1.0** - *Donde el pasado conversa con el futuro*
 
