@@ -49,15 +49,15 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 ## ✨ Características Principales
 
 ### 🎨 Interfaz y Experiencia
-- **Interfaz auténtica** de Windows Live Messenger (WLM)
+- **Interfaz** de Windows Live Messenger (WLM/MSN)
 - **5 sonidos originales** de MSN (login, logout, message_in, message_out, nudge)
 - **Estados de presencia** - Online 🟢, Away 🟡, Busy 🔴, Invisible ⚪
 - **30 emoticones integrados** - 2 categorías (Naturales y Amor)
-- **Animaciones MSN auténticas** - Efectos visuales clásicos
+- **Animaciones MSN** - Efectos visuales clásicos
 
 ### 🤖 Inteligencia Artificial
 - **IA local integrada** - Compatible con todos los modelos de Ollama
-- **IA en la nube** - Modelos cloud de Ollama (con API Key)
+- **IA en la nube** - Modelos cloud de Ollama (con API Key o signin)
 - **Detección automática de modelos** - Carga dinámica de modelos disponibles
 - **Multi-chat simultáneo** - La IA responde en varios chats a la vez
 - **Detener respuesta** - Aborta generación en curso
@@ -154,7 +154,7 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Rendimiento nativo** - Sin overhead de contenedores
 - **Scripts automáticos** - Para Linux, Windows y macOS
 - **Detector de hardware** - Recomienda modelos según tu sistema
-- **Accesos directos** (NUEVO v2.1.1) - Lanzadores en escritorio
+- **Accesos directos** - Lanzadores en escritorio
 
 ---
 
@@ -263,7 +263,7 @@ cd macos
 chmod +x *.sh
 ./ai_check_all_mac.sh          # Detecta hardware (opcional)
 ./start-msnai-mac.sh --auto    # Iniciar MSN-AI
-./create-desktop-shortcut-mac.sh  # Crear app
+./create-desktop-shortcut-mac.sh  # Crear un acceso directo en el escritorio
 ```
 
 #### 🪟 Windows
@@ -603,7 +603,7 @@ ollama signout                         # Cerrar sesión
 - **Eliminar**: elimina permanentemente (con modal)
 - **Imprimir**: versión imprimible con estilos
 
-### 📝 Generador de Prompts Profesional (NUEVO v2.1.1)
+### 📝 Generador de Prompts Profesional
 
 **Crear prompt estructurado:**
 1. Clic en "Generador de Prompts" en barra de herramientas
@@ -621,7 +621,7 @@ ollama signout                         # Cerrar sesión
 3. Modifica campos necesarios
 4. Clic en "Actualizar Prompt"
 
-### 📚 Gestión de Prompts Guardados (NUEVO v2.1.1)
+### 📚 Gestión de Prompts Guardados
 
 **Guardar prompt:**
 1. Después de generar, clic en "Guardar"
@@ -769,7 +769,7 @@ MSN-AI/
 │   ├── docker-install-cloud-models.sh # Instalar modelos cloud
 │   ├── ai_check_all.sh         # Detectar hardware
 │   ├── configure-api-key.sh    # Configurar API Key
-│   ├── create-desktop-shortcut.sh # Crear lanzador (NUEVO v2.1.1)
+│   ├── create-desktop-shortcut.sh # Crear lanzador
 │   └── test-msnai.sh           # Tests de componentes
 │
 ├── 📁 macos/                   # Scripts para macOS (9 archivos)
@@ -780,7 +780,7 @@ MSN-AI/
 │   ├── docker-install-cloud-models-mac.sh # Modelos cloud
 │   ├── ai_check_all_mac.sh     # Detectar hardware
 │   ├── configure-api-key.sh    # Configurar API Key
-│   ├── create-desktop-shortcut-mac.sh # Crear app (NUEVO v2.1.1)
+│   ├── create-desktop-shortcut-mac.sh # Crear app
 │   └── docker-start-debug-mac.sh # Debug Docker
 │
 └── 📁 windows/                 # Scripts para Windows (8 archivos)
@@ -961,7 +961,7 @@ Ver [LICENSE](LICENSE) para el texto completo de la licencia.
 ### 📜 Derechos de Terceros
 
 - **Assets de Microsoft**: Uso bajo Fair Use para preservación histórica y fines educativos (Propiedad y licenciado por Microsoft)
-- **Sonidos originales**: Utilizados con fines educativos y nostálgicos Propiedad y licenciado por Microsoft)
+- **Sonidos originales**: Utilizados con fines educativos y nostálgicos Propiedad y licenciado por Microsoft.
 - **Marcas registradas**: Son propiedad de sus respectivos dueños, este proyecto no tiene derechos sobre ellas.
 
 ---
