@@ -6121,7 +6121,9 @@ MSNAI.prototype.showSavePromptModal = function () {
     const prompts = JSON.parse(
       localStorage.getItem("msnai-saved-prompts") || "[]",
     );
-    const prompt = prompts.find((p) => p.id === this.currentPromptId);
+    const prompt = prompts.find(
+      (p) => String(p.id) === String(this.currentPromptId),
+    );
 
     if (prompt) {
       document.getElementById("prompt-name").value = prompt.name || "";
@@ -6198,7 +6200,9 @@ MSNAI.prototype.saveCurrentPrompt = function () {
 
   if (this.isEditMode && this.currentPromptId) {
     // Modo edición: actualizar prompt existente
-    const index = prompts.findIndex((p) => p.id === this.currentPromptId);
+    const index = prompts.findIndex(
+      (p) => String(p.id) === String(this.currentPromptId),
+    );
     if (index !== -1) {
       prompts[index] = {
         ...prompts[index],
@@ -6211,12 +6215,15 @@ MSNAI.prototype.saveCurrentPrompt = function () {
           .value.split(",")
           .map((tag) => tag.trim())
           .filter((tag) => tag.length > 0),
-        date: prompts[index].date, // Mantener fecha de creación
+        date: prompts[index].date || prompts[index].createdAt, // Mantener fecha de creación
+        createdAt: prompts[index].createdAt || prompts[index].date,
         updatedAt: new Date().toISOString(),
+        version: prompts[index].version || "1.0",
       };
     }
   } else {
     // Modo nuevo: crear prompt
+    const now = new Date().toISOString();
     const promptToSave = {
       id: "prompt-" + Date.now(),
       ...this.currentGeneratedPrompt,
@@ -6228,7 +6235,10 @@ MSNAI.prototype.saveCurrentPrompt = function () {
         .value.split(",")
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0),
-      createdAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
+      date: now,
+      version: "1.0",
     };
     prompts.unshift(promptToSave);
   }
@@ -6315,7 +6325,7 @@ MSNAI.prototype.loadSavedPrompts = function () {
 };
 
 MSNAI.prototype.createPromptCard = function (prompt) {
-  const date = new Date(prompt.date).toLocaleDateString();
+  const date = new Date(prompt.date || prompt.createdAt).toLocaleDateString();
   const categoryHtml = prompt.category
     ? `<span class="prompt-card-category">${this.escapeHtml(prompt.category)}</span>`
     : "";
@@ -6332,8 +6342,10 @@ MSNAI.prototype.createPromptCard = function (prompt) {
     ? `<p class="prompt-card-description">${this.escapeHtml(prompt.description)}</p>`
     : "";
 
+  const escapedId = String(prompt.id).replace(/'/g, "\\'");
+
   return `
-    <div class="prompt-card" onclick="msnai.showPromptDetails('${prompt.id}')">
+    <div class="prompt-card" onclick="msnai.showPromptDetails('${escapedId}')">
       <h4>${this.escapeHtml(prompt.name)}</h4>
       <p style="margin: 0 0 8px 0; font-size: 7pt; color: #666;">${date}</p>
       ${descHtml}
@@ -6342,13 +6354,16 @@ MSNAI.prototype.createPromptCard = function (prompt) {
         ${tagsHtml}
       </div>
       <div class="prompt-card-actions" onclick="event.stopPropagation()">
-        <button class="aerobutton" onclick="msnai.usePrompt('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+        <button class="aerobutton" onclick="msnai.usePrompt('${escapedId}')" style="font-size: 7pt; padding: 4px 8px;">
           ${this.t("prompt_manager.use_prompt")}
         </button>
-        <button class="aerobutton" onclick="msnai.showPromptDetails('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+        <button class="aerobutton" onclick="msnai.showPromptDetails('${escapedId}')" style="font-size: 7pt; padding: 4px 8px;">
           ${this.t("prompt_manager.view_prompt")}
         </button>
-        <button class="aerobutton" onclick="msnai.deletePrompt('${prompt.id}')" style="font-size: 7pt; padding: 4px 8px;">
+        <button class="aerobutton" onclick="msnai.exportSinglePrompt('${escapedId}')" style="font-size: 7pt; padding: 4px 8px;">
+          💾 Exportar
+        </button>
+        <button class="aerobutton" onclick="msnai.deletePrompt('${escapedId}')" style="font-size: 7pt; padding: 4px 8px;">
           ${this.t("prompt_manager.delete_prompt")}
         </button>
       </div>
@@ -6383,7 +6398,7 @@ MSNAI.prototype.showPromptDetails = function (promptId) {
   const prompts = JSON.parse(
     localStorage.getItem("msnai-saved-prompts") || "[]",
   );
-  const prompt = prompts.find((p) => p.id === promptId);
+  const prompt = prompts.find((p) => String(p.id) === String(promptId));
 
   if (!prompt) return;
 
@@ -6484,7 +6499,9 @@ MSNAI.prototype.loadPromptToForm = function () {
   const prompts = JSON.parse(
     localStorage.getItem("msnai-saved-prompts") || "[]",
   );
-  const prompt = prompts.find((p) => p.id === this.currentPromptId);
+  const prompt = prompts.find(
+    (p) => String(p.id) === String(this.currentPromptId),
+  );
 
   if (prompt) {
     const fields = [
@@ -6524,7 +6541,9 @@ MSNAI.prototype.editPromptFromDetails = function () {
   const prompts = JSON.parse(
     localStorage.getItem("msnai-saved-prompts") || "[]",
   );
-  const prompt = prompts.find((p) => p.id === this.currentPromptId);
+  const prompt = prompts.find(
+    (p) => String(p.id) === String(this.currentPromptId),
+  );
 
   if (prompt) {
     // Cargar datos al formulario
@@ -6561,7 +6580,7 @@ MSNAI.prototype.editPromptFromDetails = function () {
       boundaries: prompt.boundaries || "",
       consequences: prompt.consequences || "",
       example: prompt.example || "",
-      markdown: prompt.markdown || "",
+      markdown: prompt.markdown || this.generateMarkdownFromPrompt(prompt),
       date: prompt.date,
     };
 
@@ -6653,7 +6672,9 @@ MSNAI.prototype.deletePromptFromDetails = function () {
   if (!confirm(this.t("prompt_manager.delete_confirm"))) return;
 
   let prompts = JSON.parse(localStorage.getItem("msnai-saved-prompts") || "[]");
-  prompts = prompts.filter((p) => p.id !== this.currentPromptId);
+  prompts = prompts.filter(
+    (p) => String(p.id) !== String(this.currentPromptId),
+  );
   localStorage.setItem("msnai-saved-prompts", JSON.stringify(prompts));
 
   document.getElementById("prompt-details-modal").style.display = "none";
@@ -6666,45 +6687,97 @@ MSNAI.prototype.usePrompt = function (promptId) {
   const prompts = JSON.parse(
     localStorage.getItem("msnai-saved-prompts") || "[]",
   );
-  const prompt = prompts.find((p) => p.id === promptId);
+  const prompt = prompts.find((p) => String(p.id) === String(promptId));
 
   if (prompt) {
+    // Si no existe markdown, generarlo a partir de los campos
+    let markdownText = prompt.markdown;
+    if (!markdownText) {
+      markdownText = this.generateMarkdownFromPrompt(prompt);
+    }
+
     const messageInput = document.getElementById("message-input");
-    messageInput.value = prompt.markdown;
+    messageInput.value = markdownText;
     messageInput.focus();
     document.getElementById("prompt-manager-modal").style.display = "none";
     this.showNotification(this.t("prompt_generator.copy_success"), "success");
   }
 };
 
+MSNAI.prototype.generateMarkdownFromPrompt = function (prompt) {
+  const escapeHtml = (text) => {
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;",
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
+  };
+
+  const formatField = (content) => {
+    if (!content) return [];
+    return content.split("\n").filter((l) => l.trim());
+  };
+
+  let markdownOutput = `[PROMPT]`;
+
+  const role = formatField(prompt.role);
+  if (role.length)
+    markdownOutput += `\n  ROLE:\n    ${role.map((r) => `- ${escapeHtml(r)}`).join("\n    ")}`;
+
+  const context = formatField(prompt.context);
+  if (context.length)
+    markdownOutput += `\n  CONTEXT:\n    ${context.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+
+  const audience = formatField(prompt.audience);
+  if (audience.length)
+    markdownOutput += `\n  AUDIENCE:\n    ${audience.map((a) => `- ${escapeHtml(a)}`).join("\n    ")}`;
+
+  const tasks = formatField(prompt.tasks);
+  if (tasks.length)
+    markdownOutput += `\n  TASKS:\n    ${tasks.map((t, i) => `${i + 1}. ${escapeHtml(t)}`).join("\n    ")}`;
+
+  const instructions = formatField(prompt.instructions);
+  if (instructions.length)
+    markdownOutput += `\n  INSTRUCTIONS:\n    ${instructions.map((i) => `- ${escapeHtml(i)}`).join("\n    ")}`;
+
+  const empathy = formatField(prompt.empathy);
+  if (empathy.length)
+    markdownOutput += `\n  EMPATHY:\n    ${empathy.map((e) => `- ${escapeHtml(e)}`).join("\n    ")}`;
+
+  const clarification = formatField(prompt.clarification);
+  if (clarification.length)
+    markdownOutput += `\n  CLARIFICATION:\n    ${clarification.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+
+  const refinement = formatField(prompt.refinement);
+  if (refinement.length)
+    markdownOutput += `\n  REFINEMENT:\n    ${refinement.map((r) => `- ${escapeHtml(r)}`).join("\n    ")}`;
+
+  const boundaries = formatField(prompt.boundaries);
+  if (boundaries.length)
+    markdownOutput += `\n  BOUNDARIES:\n    ${boundaries.map((b) => `- ${escapeHtml(b)}`).join("\n    ")}`;
+
+  const consequences = formatField(prompt.consequences);
+  if (consequences.length)
+    markdownOutput += `\n  CONSEQUENCES:\n    ${consequences.map((c) => `- ${escapeHtml(c)}`).join("\n    ")}`;
+
+  const example = formatField(prompt.example);
+  if (example.length)
+    markdownOutput += `\n  EXAMPLE:\n    ${example.map((e) => `- ${escapeHtml(e)}`).join("\n    ")}`;
+
+  return markdownOutput;
+};
+
 MSNAI.prototype.deletePrompt = function (promptId) {
   if (!confirm(this.t("prompt_manager.delete_confirm"))) return;
 
   let prompts = JSON.parse(localStorage.getItem("msnai-saved-prompts") || "[]");
-  prompts = prompts.filter((p) => p.id !== promptId);
+  prompts = prompts.filter((p) => String(p.id) !== String(promptId));
   localStorage.setItem("msnai-saved-prompts", JSON.stringify(prompts));
   this.loadSavedPrompts();
   this.showNotification(this.t("prompt_manager.delete_success"), "success");
-};
-
-MSNAI.prototype.exportSinglePrompt = function (promptId) {
-  const prompts = JSON.parse(
-    localStorage.getItem("msnai-saved-prompts") || "[]",
-  );
-  const prompt = prompts.find((p) => p.id === promptId);
-
-  if (prompt) {
-    const blob = new Blob([JSON.stringify([prompt], null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `prompt-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    this.showNotification(this.t("prompt_manager.export_success"), "success");
-  }
 };
 
 MSNAI.prototype.exportAllPrompts = function () {
@@ -6717,7 +6790,30 @@ MSNAI.prototype.exportAllPrompts = function () {
     return;
   }
 
-  const blob = new Blob([JSON.stringify(prompts, null, 2)], {
+  // Formatear prompts según el formato del ejemplo
+  const formattedPrompts = prompts.map((prompt) => ({
+    role: prompt.role || "",
+    context: prompt.context || "",
+    audience: prompt.audience || "",
+    tasks: prompt.tasks || "",
+    instructions: prompt.instructions || "",
+    empathy: prompt.empathy || "",
+    clarification: prompt.clarification || "",
+    refinement: prompt.refinement || "",
+    boundaries: prompt.boundaries || "",
+    consequences: prompt.consequences || "",
+    example: prompt.example || "",
+    name: prompt.name || "",
+    description: prompt.description || "",
+    category: prompt.category || "",
+    tags: prompt.tags || [],
+    createdAt: prompt.createdAt || prompt.date || new Date().toISOString(),
+    updatedAt: prompt.updatedAt || prompt.date || new Date().toISOString(),
+    version: prompt.version || "1.0",
+    id: isNaN(prompt.id) ? prompt.id : Number(prompt.id),
+  }));
+
+  const blob = new Blob([JSON.stringify(formattedPrompts, null, 2)], {
     type: "application/json",
   });
   const url = URL.createObjectURL(blob);
@@ -6740,7 +6836,41 @@ MSNAI.prototype.importPrompts = function (file) {
         localStorage.getItem("msnai-saved-prompts") || "[]",
       );
 
-      existingPrompts = existingPrompts.concat(importedPrompts);
+      // Normalizar los prompts importados al formato interno
+      const normalizedPrompts = importedPrompts.map((prompt, index) => {
+        const now = new Date().toISOString();
+        // Normalizar ID a string para compatibilidad
+        const promptId = prompt.id
+          ? String(prompt.id)
+          : "prompt-" + Date.now() + "-" + index;
+
+        const normalized = {
+          id: promptId,
+          role: prompt.role || "",
+          context: prompt.context || "",
+          audience: prompt.audience || "",
+          tasks: prompt.tasks || "",
+          instructions: prompt.instructions || "",
+          empathy: prompt.empathy || "",
+          clarification: prompt.clarification || "",
+          refinement: prompt.refinement || "",
+          boundaries: prompt.boundaries || "",
+          consequences: prompt.consequences || "",
+          example: prompt.example || "",
+          name: prompt.name || "",
+          description: prompt.description || "",
+          category: prompt.category || "",
+          tags: prompt.tags || [],
+          markdown: prompt.markdown || "",
+          createdAt: prompt.createdAt || now,
+          updatedAt: prompt.updatedAt || now,
+          date: prompt.createdAt || prompt.date || now,
+          version: prompt.version || "1.0",
+        };
+        return normalized;
+      });
+
+      existingPrompts = existingPrompts.concat(normalizedPrompts);
       localStorage.setItem(
         "msnai-saved-prompts",
         JSON.stringify(existingPrompts),
@@ -6754,6 +6884,61 @@ MSNAI.prototype.importPrompts = function (file) {
     }
   };
   reader.readAsText(file);
+};
+
+MSNAI.prototype.exportSinglePrompt = function (promptId) {
+  const prompts = JSON.parse(
+    localStorage.getItem("msnai-saved-prompts") || "[]",
+  );
+  const prompt = prompts.find((p) => String(p.id) === String(promptId));
+
+  if (!prompt) {
+    this.showNotification("Prompt no encontrado", "error");
+    return;
+  }
+
+  // Formatear el prompt según el formato del ejemplo
+  const formattedPrompt = [
+    {
+      role: prompt.role || "",
+      context: prompt.context || "",
+      audience: prompt.audience || "",
+      tasks: prompt.tasks || "",
+      instructions: prompt.instructions || "",
+      empathy: prompt.empathy || "",
+      clarification: prompt.clarification || "",
+      refinement: prompt.refinement || "",
+      boundaries: prompt.boundaries || "",
+      consequences: prompt.consequences || "",
+      example: prompt.example || "",
+      name: prompt.name || "",
+      description: prompt.description || "",
+      category: prompt.category || "",
+      tags: prompt.tags || [],
+      createdAt: prompt.createdAt || prompt.date || new Date().toISOString(),
+      updatedAt: prompt.updatedAt || prompt.date || new Date().toISOString(),
+      version: prompt.version || "1.0",
+      id: isNaN(prompt.id) ? prompt.id : Number(prompt.id),
+    },
+  ];
+
+  const blob = new Blob([JSON.stringify(formattedPrompt, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  // Nombre de archivo basado en el nombre del prompt
+  const fileName = prompt.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  a.download = `prompt-${fileName}-${Date.now()}.json`;
+
+  a.click();
+  URL.revokeObjectURL(url);
+  this.showNotification("Prompt exportado correctamente", "success");
 };
 
 MSNAI.prototype.deleteAllPrompts = function () {
