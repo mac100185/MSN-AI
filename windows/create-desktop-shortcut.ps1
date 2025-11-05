@@ -1,4 +1,4 @@
-# create-desktop-shortcut.ps1 - Crea acceso directo de MSN-AI en el escritorio
+﻿# create-desktop-shortcut.ps1 - Crea acceso directo de MSN-AI en el escritorio
 # Version: 1.0.0
 # Autor: Alan Mac-Arthur Garcia Diaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
@@ -32,9 +32,9 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "[INFO] Detectando directorio del proyecto..." -ForegroundColor Cyan
 Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
-Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
+Write-Host "   Directorio raiz: $ProjectRoot" -ForegroundColor Gray
 
 # Change to project root
 Set-Location $ProjectRoot
@@ -43,18 +43,18 @@ Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
 
 # Verificar que estamos en el directorio correcto
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "❌ ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "[ERROR] No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
     Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
     Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
     Write-Host ""
-    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "[INFO] Asegurate de ejecutar este script desde:" -ForegroundColor Yellow
     Write-Host "   $ProjectRoot\windows\create-desktop-shortcut.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
 
-Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host "[OK] Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
 Write-Host ""
 
 # Obtener rutas
@@ -72,7 +72,7 @@ Write-Host ""
 
 # Verificar que el script de inicio existe
 if (-not (Test-Path $scriptPath)) {
-    Write-Host "ERROR: No se encuentra start-msnai.ps1" -ForegroundColor Red
+    Write-Host "[ERROR] No se encuentra start-msnai.ps1" -ForegroundColor Red
     Write-Host "Asegurate de que el archivo existe en: $scriptPath" -ForegroundColor Yellow
     Write-Host ""
     Read-Host "Presiona Enter para salir"
@@ -161,7 +161,7 @@ try {
 }
 catch {
     Write-Host ""
-    Write-Host "ERROR al crear el acceso directo: $_" -ForegroundColor Red
+    Write-Host "[ERROR] al crear el acceso directo: $_" -ForegroundColor Red
     Write-Host ""
     Write-Host "Posibles causas:" -ForegroundColor Yellow
     Write-Host "  - Permisos insuficientes" -ForegroundColor White

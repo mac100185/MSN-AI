@@ -1,14 +1,14 @@
-# Docker Diagnostics and Log Collection Script for Windows
+﻿# Docker Diagnostics and Log Collection Script for Windows
 # Version: 1.0.0
 # Author: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # License: GNU General Public License v3.0
 # Description: Comprehensive Docker diagnostics and log collection for MSN-AI on Windows
 
-Write-Host "🔍 MSN-AI - Diagnóstico Docker Completo" -ForegroundColor Cyan
+Write-Host "[INFO] MSN-AI - Diagnóstico Docker Completo" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "📧 Desarrollado por: Alan Mac-Arthur García Díaz" -ForegroundColor Green
-Write-Host "⚖️ Licencia: GPL-3.0" -ForegroundColor Yellow
+Write-Host "[EMAIL] Desarrollado por: Alan Mac-Arthur García Díaz" -ForegroundColor Green
+Write-Host "[LICENSE] Licencia: GPL-3.0" -ForegroundColor Yellow
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -16,7 +16,7 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "[INFO] Detectando directorio del proyecto..." -ForegroundColor Cyan
 Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
 Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
 
@@ -27,25 +27,25 @@ Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
 
 # Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "❌ Error: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "[ERROR] Error: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
     Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
     Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
     Write-Host ""
-    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "[INFO] Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
     Write-Host "   $ProjectRoot\windows\docker-diagnostics.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
 
-Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host "[OK] Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
 Write-Host ""
 
 # Create diagnostics directory with timestamp
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $DiagDir = Join-Path $ProjectRoot "diagnostics_$Timestamp"
 
-Write-Host "📁 Creando directorio de diagnóstico: $DiagDir" -ForegroundColor Cyan
+Write-Host "[FOLDER] Creando directorio de diagnóstico: $DiagDir" -ForegroundColor Cyan
 New-Item -ItemType Directory -Path $DiagDir -Force | Out-Null
 
 $DiagLogFile = Join-Path $DiagDir "diagnostics.log"
@@ -82,12 +82,12 @@ function Run-Diagnostic {
     try {
         $output = & $Command 2>&1
         $output | Out-File -FilePath $outPath -Encoding UTF8
-        Write-Host "  ✅ Completado: $OutputFile" -ForegroundColor Green
+        Write-Host "  [OK] Completado: $OutputFile" -ForegroundColor Green
         Add-Content -Path $DiagLogFile -Value "▶ $Description - Completado"
     }
     catch {
         "Error: $_" | Out-File -FilePath $outPath -Encoding UTF8
-        Write-Host "  ⚠️  Error ejecutando comando (guardado en $OutputFile)" -ForegroundColor Yellow
+        Write-Host "  [WARN]  Error ejecutando comando (guardado en $OutputFile)" -ForegroundColor Yellow
         Add-Content -Path $DiagLogFile -Value "▶ $Description - Error: $_"
     }
 
@@ -95,10 +95,10 @@ function Run-Diagnostic {
 }
 
 # Start diagnostics
-Write-Host "🔍 Iniciando recopilación de diagnósticos..." -ForegroundColor Cyan
-Add-Content -Path $DiagLogFile -Value "📅 Fecha: $(Get-Date)"
-Add-Content -Path $DiagLogFile -Value "🖥️  Host: $env:COMPUTERNAME"
-Add-Content -Path $DiagLogFile -Value "👤 Usuario: $env:USERNAME"
+Write-Host "[INFO] Iniciando recopilación de diagnósticos..." -ForegroundColor Cyan
+Add-Content -Path $DiagLogFile -Value "[DATE] Fecha: $(Get-Date)"
+Add-Content -Path $DiagLogFile -Value "[COMPUTER]  Host: $env:COMPUTERNAME"
+Add-Content -Path $DiagLogFile -Value "[USER] Usuario: $env:USERNAME"
 Add-Content -Path $DiagLogFile -Value ""
 
 # System Information
@@ -151,7 +151,7 @@ Run-Diagnostic "Stats de contenedores" { docker stats --no-stream } "docker_cont
 
 # Container Logs
 Print-Section "8. LOGS DE CONTENEDORES"
-Write-Host "📝 Extrayendo logs de contenedores..." -ForegroundColor Cyan
+Write-Host "[NOTE] Extrayendo logs de contenedores..." -ForegroundColor Cyan
 
 # MSN-AI App logs
 $containers = docker ps -a --format "{{.Names}}" 2>$null
@@ -159,9 +159,9 @@ if ($containers -contains "msn-ai-app") {
     Write-Host "  Extrayendo logs de msn-ai-app..." -ForegroundColor Gray
     docker logs msn-ai-app 2>&1 | Out-File -FilePath (Join-Path $DiagDir "logs_msnai_app.txt") -Encoding UTF8
     docker logs --tail 100 msn-ai-app 2>&1 | Out-File -FilePath (Join-Path $DiagDir "logs_msnai_app_last100.txt") -Encoding UTF8
-    Write-Host "  ✅ Logs de msn-ai-app guardados" -ForegroundColor Green
+    Write-Host "  [OK] Logs de msn-ai-app guardados" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠️  Contenedor msn-ai-app no existe" -ForegroundColor Yellow
+    Write-Host "  [WARN]  Contenedor msn-ai-app no existe" -ForegroundColor Yellow
     "Contenedor no existe" | Out-File -FilePath (Join-Path $DiagDir "logs_msnai_app.txt") -Encoding UTF8
 }
 
@@ -170,9 +170,9 @@ if ($containers -contains "msn-ai-ollama") {
     Write-Host "  Extrayendo logs de msn-ai-ollama..." -ForegroundColor Gray
     docker logs msn-ai-ollama 2>&1 | Out-File -FilePath (Join-Path $DiagDir "logs_ollama.txt") -Encoding UTF8
     docker logs --tail 100 msn-ai-ollama 2>&1 | Out-File -FilePath (Join-Path $DiagDir "logs_ollama_last100.txt") -Encoding UTF8
-    Write-Host "  ✅ Logs de msn-ai-ollama guardados" -ForegroundColor Green
+    Write-Host "  [OK] Logs de msn-ai-ollama guardados" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠️  Contenedor msn-ai-ollama no existe" -ForegroundColor Yellow
+    Write-Host "  [WARN]  Contenedor msn-ai-ollama no existe" -ForegroundColor Yellow
     "Contenedor no existe" | Out-File -FilePath (Join-Path $DiagDir "logs_ollama.txt") -Encoding UTF8
 }
 
@@ -180,9 +180,9 @@ if ($containers -contains "msn-ai-ollama") {
 if ($containers -contains "msn-ai-setup") {
     Write-Host "  Extrayendo logs de msn-ai-setup..." -ForegroundColor Gray
     docker logs msn-ai-setup 2>&1 | Out-File -FilePath (Join-Path $DiagDir "logs_setup.txt") -Encoding UTF8
-    Write-Host "  ✅ Logs de msn-ai-setup guardados" -ForegroundColor Green
+    Write-Host "  [OK] Logs de msn-ai-setup guardados" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠️  Contenedor msn-ai-setup no existe" -ForegroundColor Yellow
+    Write-Host "  [WARN]  Contenedor msn-ai-setup no existe" -ForegroundColor Yellow
     "Contenedor no existe" | Out-File -FilePath (Join-Path $DiagDir "logs_setup.txt") -Encoding UTF8
 }
 
@@ -193,13 +193,13 @@ Print-Section "9. ESTADO DE DOCKER COMPOSE"
 if (Test-Path "docker\docker-compose.yml") {
     Write-Host "  Archivo docker-compose.yml encontrado" -ForegroundColor Gray
     Copy-Item "docker\docker-compose.yml" -Destination (Join-Path $DiagDir "docker-compose.yml.bak")
-    Write-Host "  ✅ Copia de docker-compose.yml guardada" -ForegroundColor Green
+    Write-Host "  [OK] Copia de docker-compose.yml guardada" -ForegroundColor Green
 
     Run-Diagnostic "Estado de servicios (docker-compose)" { Set-Location docker; docker compose ps } "docker_compose_ps.txt"
     Run-Diagnostic "Configuración de Compose" { Set-Location docker; docker compose config } "docker_compose_config.txt"
     Set-Location $ProjectRoot
 } else {
-    Write-Host "  ⚠️  Archivo docker-compose.yml no encontrado" -ForegroundColor Yellow
+    Write-Host "  [WARN]  Archivo docker-compose.yml no encontrado" -ForegroundColor Yellow
 }
 
 # Project Structure
@@ -211,7 +211,7 @@ Run-Diagnostic "Archivos en directorio docker" { Get-ChildItem docker\ -Force } 
 Print-Section "11. VARIABLES DE ENTORNO"
 Write-Host "  Extrayendo variables de entorno relevantes..." -ForegroundColor Gray
 Get-ChildItem Env: | Where-Object { $_.Name -match "docker|compose|ollama|msn" } | Out-File -FilePath (Join-Path $DiagDir "environment_vars.txt") -Encoding UTF8
-Write-Host "  ✅ Variables de entorno guardadas" -ForegroundColor Green
+Write-Host "  [OK] Variables de entorno guardadas" -ForegroundColor Green
 
 # Network Connectivity
 Print-Section "12. CONECTIVIDAD DE RED"
@@ -234,7 +234,7 @@ catch {
     "Error probando conectividad: $_" | Out-File -FilePath $connectivityOutput -Append -Encoding UTF8
 }
 
-Write-Host "  ✅ Pruebas de conectividad completadas" -ForegroundColor Green
+Write-Host "  [OK] Pruebas de conectividad completadas" -ForegroundColor Green
 
 # Health Checks
 Print-Section "13. VERIFICACIONES DE SALUD"
@@ -242,7 +242,7 @@ Write-Host "  Ejecutando health checks..." -ForegroundColor Gray
 $healthOutput = Join-Path $DiagDir "health_checks.txt"
 "=== Health Status de Contenedores ===" | Out-File -FilePath $healthOutput -Encoding UTF8
 docker ps --format "table {{.Names}}\t{{.Status}}" | Out-File -FilePath $healthOutput -Append -Encoding UTF8
-Write-Host "  ✅ Health checks completados" -ForegroundColor Green
+Write-Host "  [OK] Health checks completados" -ForegroundColor Green
 
 # Resource Usage
 Print-Section "14. USO DE RECURSOS"
@@ -262,9 +262,9 @@ if ($containers -contains "msn-ai-ollama") {
     # Ollama API test
     docker exec msn-ai-ollama curl -s http://localhost:11434/api/tags 2>&1 | Out-File -FilePath (Join-Path $DiagDir "ollama_api_test.txt") -Encoding UTF8
 
-    Write-Host "  ✅ Diagnósticos de Ollama completados" -ForegroundColor Green
+    Write-Host "  [OK] Diagnósticos de Ollama completados" -ForegroundColor Green
 } else {
-    Write-Host "  ⚠️  Contenedor de Ollama no está en ejecución" -ForegroundColor Yellow
+    Write-Host "  [WARN]  Contenedor de Ollama no está en ejecución" -ForegroundColor Yellow
     "Contenedor no en ejecución" | Out-File -FilePath (Join-Path $DiagDir "ollama_diagnostics.txt") -Encoding UTF8
 }
 
@@ -284,7 +284,7 @@ if (Test-Path (Join-Path $DiagDir "logs_ollama.txt")) {
     Get-Content (Join-Path $DiagDir "logs_ollama.txt") | Select-String -Pattern "error|fail|exception|fatal" -CaseSensitive:$false | Select-Object -Last 20 | Out-File -FilePath $errorOutput -Append -Encoding UTF8
 }
 
-Write-Host "  ✅ Análisis de errores completado" -ForegroundColor Green
+Write-Host "  [OK] Análisis de errores completado" -ForegroundColor Green
 
 # Summary Report
 Print-Section "17. RESUMEN EJECUTIVO"
@@ -302,26 +302,26 @@ Host: $env:COMPUTERNAME
 try {
     docker info | Out-Null 2>&1
     $dockerVersion = docker --version
-    $summary += "`n✅ Docker daemon en ejecución`n   Versión: $dockerVersion`n"
+    $summary += "`n[OK] Docker daemon en ejecución`n   Versión: $dockerVersion`n"
 }
 catch {
-    $summary += "`n❌ Docker daemon no está en ejecución`n"
+    $summary += "`n[ERROR] Docker daemon no está en ejecución`n"
 }
 
 $summary += "`n--- Estado de Contenedores ---`n"
 
 if ($containers -contains "msn-ai-app") {
     $status = docker ps --filter name=msn-ai-app --format "{{.Status}}"
-    $summary += "✅ msn-ai-app: $status`n"
+    $summary += "[OK] msn-ai-app: $status`n"
 } else {
-    $summary += "❌ msn-ai-app: No encontrado`n"
+    $summary += "[ERROR] msn-ai-app: No encontrado`n"
 }
 
 if ($containers -contains "msn-ai-ollama") {
     $status = docker ps --filter name=msn-ai-ollama --format "{{.Status}}"
-    $summary += "✅ msn-ai-ollama: $status`n"
+    $summary += "[OK] msn-ai-ollama: $status`n"
 } else {
-    $summary += "❌ msn-ai-ollama: No encontrado`n"
+    $summary += "[ERROR] msn-ai-ollama: No encontrado`n"
 }
 
 $summary += "`n--- Conectividad ---`n"
@@ -329,20 +329,20 @@ $summary += "`n--- Conectividad ---`n"
 try {
     $test8000 = Test-NetConnection -ComputerName localhost -Port 8000 -WarningAction SilentlyContinue
     if ($test8000.TcpTestSucceeded) {
-        $summary += "✅ MSN-AI Web (puerto 8000): Accesible`n"
+        $summary += "[OK] MSN-AI Web (puerto 8000): Accesible`n"
     } else {
-        $summary += "❌ MSN-AI Web (puerto 8000): No accesible`n"
+        $summary += "[ERROR] MSN-AI Web (puerto 8000): No accesible`n"
     }
 
     $test11434 = Test-NetConnection -ComputerName localhost -Port 11434 -WarningAction SilentlyContinue
     if ($test11434.TcpTestSucceeded) {
-        $summary += "✅ Ollama API (puerto 11434): Accesible`n"
+        $summary += "[OK] Ollama API (puerto 11434): Accesible`n"
     } else {
-        $summary += "❌ Ollama API (puerto 11434): No accesible`n"
+        $summary += "[ERROR] Ollama API (puerto 11434): No accesible`n"
     }
 }
 catch {
-    $summary += "⚠️  Error probando conectividad`n"
+    $summary += "[WARN]  Error probando conectividad`n"
 }
 
 $summary += "`n--- Recursos del Sistema ---`n"
@@ -368,41 +368,41 @@ Add-Content -Path $DiagLogFile -Value $summary
 
 # Create ZIP archive
 Print-Section "18. EMPAQUETADO FINAL"
-Write-Host "📦 Creando archivo comprimido..." -ForegroundColor Cyan
+Write-Host "[PACKAGE] Creando archivo comprimido..." -ForegroundColor Cyan
 
 $zipFile = Join-Path $ProjectRoot "msn-ai-diagnostics-$Timestamp.zip"
 try {
     Compress-Archive -Path $DiagDir -DestinationPath $zipFile -Force
     $zipSize = [math]::Round((Get-Item $zipFile).Length / 1MB, 2)
-    Write-Host "✅ Archivo de diagnóstico creado: $zipFile" -ForegroundColor Green
+    Write-Host "[OK] Archivo de diagnóstico creado: $zipFile" -ForegroundColor Green
     Write-Host "   Tamaño: $zipSize MB" -ForegroundColor Gray
 }
 catch {
-    Write-Host "❌ Error creando archivo comprimido: $_" -ForegroundColor Red
+    Write-Host "[ERROR] Error creando archivo comprimido: $_" -ForegroundColor Red
 }
 
 # Final Summary
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "✅ DIAGNÓSTICO COMPLETADO" -ForegroundColor White
+Write-Host "[OK] DIAGNÓSTICO COMPLETADO" -ForegroundColor White
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "📂 Directorio de diagnóstico: $DiagDir" -ForegroundColor Cyan
-Write-Host "📦 Archivo comprimido: $zipFile" -ForegroundColor Cyan
+Write-Host "[FOLDER] Directorio de diagnóstico: $DiagDir" -ForegroundColor Cyan
+Write-Host "[PACKAGE] Archivo comprimido: $zipFile" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📊 Archivos generados:" -ForegroundColor Yellow
+Write-Host "[STATUS] Archivos generados:" -ForegroundColor Yellow
 $fileCount = (Get-ChildItem $DiagDir).Count
 Write-Host "   Total: $fileCount archivos" -ForegroundColor Gray
 Write-Host ""
-Write-Host "💡 Para revisar el resumen ejecutivo:" -ForegroundColor Yellow
+Write-Host "[INFO] Para revisar el resumen ejecutivo:" -ForegroundColor Yellow
 Write-Host "   Get-Content $summaryOutput" -ForegroundColor Gray
 Write-Host ""
-Write-Host "💡 Para ver los logs completos:" -ForegroundColor Yellow
+Write-Host "[INFO] Para ver los logs completos:" -ForegroundColor Yellow
 Write-Host "   Get-Content $DiagLogFile" -ForegroundColor Gray
 Write-Host ""
-Write-Host "📧 Si necesitas soporte, envía el archivo:" -ForegroundColor Yellow
+Write-Host "[EMAIL] Si necesitas soporte, envía el archivo:" -ForegroundColor Yellow
 Write-Host "   $zipFile" -ForegroundColor Gray
 Write-Host ""
-Write-Host "🎉 ¡Diagnóstico completado exitosamente!" -ForegroundColor Green
+Write-Host "[SUCCESS] ¡Diagnóstico completado exitosamente!" -ForegroundColor Green
 Write-Host ""
 Read-Host "Presiona Enter para salir"

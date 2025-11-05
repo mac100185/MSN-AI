@@ -1,4 +1,4 @@
-# start-msnai.ps1 - Script de inicio para MSN-AI en Windows
+﻿# start-msnai.ps1 - Script de inicio para MSN-AI en Windows
 # Version: 1.0.0
 # Autor: Alan Mac-Arthur Garcia Diaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
@@ -55,7 +55,7 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "[INFO] Detectando directorio del proyecto..." -ForegroundColor Cyan
 Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
 Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
 
@@ -66,18 +66,18 @@ Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
 
 # Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "❌ ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "[ERROR] ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
     Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
     Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
     Write-Host ""
-    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "[INFO] Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
     Write-Host "   $ProjectRoot\windows\start-msnai.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
 
-Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host "[OK] Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
 Write-Host ""
 
 # Variables globales para procesos

@@ -1,4 +1,4 @@
-# start-msnai-docker.ps1 - Docker Startup Script for MSN-AI - Windows
+﻿# start-msnai-docker.ps1 - Docker Startup Script for MSN-AI - Windows
 # Version: 1.0.0
 # Author: Alan Mac-Arthur Garcia Diaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
@@ -57,7 +57,7 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "[INFO] Detectando directorio del proyecto..." -ForegroundColor Cyan
 Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
 Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
 
@@ -68,18 +68,18 @@ Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
 
 # Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "❌ ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "[ERROR] ERROR: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
     Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
     Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
     Write-Host ""
-    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "[INFO] Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
     Write-Host "   $ProjectRoot\windows\start-msnai-docker.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
 
-Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host "[OK] Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
 Write-Host ""
 
 # Check if docker directory exists
@@ -527,20 +527,20 @@ Write-Host "     Script completado" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host "Problemas? alan.mac.arthur.garcia.diaz@gmail.com" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
-Write-Host "☁️  MODELOS CLOUD DISPONIBLES" -ForegroundColor Cyan
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host "=========================================================================================================================================================━━" -ForegroundColor DarkGray
+Write-Host "[CLOUD]  MODELOS CLOUD DISPONIBLES" -ForegroundColor Cyan
+Write-Host "=========================================================================================================================================================━━" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "Los siguientes modelos cloud requieren autenticación:" -ForegroundColor White
-Write-Host "  📦 qwen3-vl:235b-cloud" -ForegroundColor Gray
-Write-Host "  📦 gpt-oss:120b-cloud" -ForegroundColor Gray
-Write-Host "  📦 qwen3-coder:480b-cloud" -ForegroundColor Gray
+Write-Host "  [PACKAGE] qwen3-vl:235b-cloud" -ForegroundColor Gray
+Write-Host "  [PACKAGE] gpt-oss:120b-cloud" -ForegroundColor Gray
+Write-Host "  [PACKAGE] qwen3-coder:480b-cloud" -ForegroundColor Gray
 Write-Host ""
-Write-Host "⚠️  Los modelos cloud NO se instalan automáticamente" -ForegroundColor Yellow
+Write-Host "[WARN]  Los modelos cloud NO se instalan automáticamente" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "📋 Para instalar modelos cloud:" -ForegroundColor Cyan
+Write-Host "[MENU] Para instalar modelos cloud:" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "1️⃣  Usa el script helper:" -ForegroundColor White
+Write-Host "1.  Usa el script helper:" -ForegroundColor White
 Write-Host "   .\windows\docker-install-cloud-models.ps1" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "O manualmente:" -ForegroundColor White
@@ -548,12 +548,12 @@ Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cya
 Write-Host "   (Abre el enlace en tu navegador y aprueba)" -ForegroundColor Gray
 Write-Host "   docker exec -it msn-ai-ollama ollama pull qwen3-vl:235b-cloud" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "⚠️  IMPORTANTE: El signin puede expirar con el tiempo" -ForegroundColor Yellow
+Write-Host "[WARN]  IMPORTANTE: El signin puede expirar con el tiempo" -ForegroundColor Yellow
 Write-Host "   Si los modelos dejan de funcionar, repite el signin:" -ForegroundColor Yellow
 Write-Host "   docker exec -it msn-ai-ollama ollama signin" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "💡 Los modelos locales ya están instalados y funcionando" -ForegroundColor Yellow
-Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray
+Write-Host "[INFO] Los modelos locales ya están instalados y funcionando" -ForegroundColor Yellow
+Write-Host "=========================================================================================================================================================━━" -ForegroundColor DarkGray
 Write-Host "Licencia: GPL-3.0" -ForegroundColor Green
 Write-Host "GitHub: https://github.com/mac100185/MSN-AI" -ForegroundColor Cyan
 Write-Host ""

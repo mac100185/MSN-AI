@@ -1,4 +1,4 @@
-# ai_check_all.ps1 - Script para Windows
+﻿# ai_check_all.ps1 - Script para Windows
 # Version: 1.0.0
 # Autor: Alan Mac-Arthur Garcia Diaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com

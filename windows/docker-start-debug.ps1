@@ -1,15 +1,15 @@
-# Docker Debug Mode Startup Script for MSN-AI - Windows
+﻿# Docker Debug Mode Startup Script for MSN-AI - Windows
 # Version: 1.0.0
 # Author: Alan Mac-Arthur García Díaz
 # Email: alan.mac.arthur.garcia.diaz@gmail.com
 # License: GNU General Public License v3.0
 # Description: Start MSN-AI Docker with full debug logging and verbose output
 
-Write-Host "🔍 MSN-AI v2.1.0 - Docker Debug Mode" -ForegroundColor Cyan
+Write-Host "[INFO] MSN-AI v2.1.0 - Docker Debug Mode" -ForegroundColor Cyan
 Write-Host "====================================" -ForegroundColor Cyan
-Write-Host "📧 Desarrollado por: Alan Mac-Arthur García Díaz" -ForegroundColor Green
-Write-Host "⚖️ Licencia: GPL-3.0" -ForegroundColor Yellow
-Write-Host "🐛 Modo: DEBUG COMPLETO" -ForegroundColor Red
+Write-Host "[EMAIL] Desarrollado por: Alan Mac-Arthur García Díaz" -ForegroundColor Green
+Write-Host "[LICENSE] Licencia: GPL-3.0" -ForegroundColor Yellow
+Write-Host "[DEBUG] Modo: DEBUG COMPLETO" -ForegroundColor Red
 Write-Host "====================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -17,7 +17,7 @@ Write-Host ""
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "🔍 Detectando directorio del proyecto..." -ForegroundColor Cyan
+Write-Host "[INFO] Detectando directorio del proyecto..." -ForegroundColor Cyan
 Write-Host "   Script ubicado en: $ScriptDir" -ForegroundColor Gray
 Write-Host "   Directorio raíz: $ProjectRoot" -ForegroundColor Gray
 
@@ -28,18 +28,18 @@ Write-Host "   Directorio actual: $(Get-Location)" -ForegroundColor Gray
 
 # Verify we're in the correct directory
 if (-not (Test-Path "msn-ai.html")) {
-    Write-Host "❌ Error: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
+    Write-Host "[ERROR] Error: No se encuentra msn-ai.html en $(Get-Location)" -ForegroundColor Red
     Write-Host "   Archivos encontrados:" -ForegroundColor Yellow
     Get-ChildItem | Select-Object -First 10 | Format-Table Name, Length
     Write-Host ""
-    Write-Host "💡 Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
+    Write-Host "[INFO] Asegúrate de ejecutar este script desde:" -ForegroundColor Yellow
     Write-Host "   $ProjectRoot\windows\docker-start-debug.ps1" -ForegroundColor Cyan
     Write-Host ""
     Read-Host "Presiona Enter para salir"
     exit 1
 }
 
-Write-Host "✅ Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
+Write-Host "[OK] Proyecto MSN-AI detectado correctamente" -ForegroundColor Green
 Write-Host ""
 
 # Create debug log directory
@@ -48,7 +48,7 @@ New-Item -ItemType Directory -Path $DebugLogDir -Force | Out-Null
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $DebugLogFile = Join-Path $DebugLogDir "debug_$Timestamp.log"
 
-Write-Host "📝 Log de debug: $DebugLogFile" -ForegroundColor Cyan
+Write-Host "[NOTE] Log de debug: $DebugLogFile" -ForegroundColor Cyan
 Write-Host ""
 
 # Function to log with timestamp
@@ -98,7 +98,7 @@ try {
     docker info
 }
 catch {
-    Log-Debug "❌ Error obteniendo información de Docker: $_"
+    Log-Debug "[ERROR] Error obteniendo información de Docker: $_"
     exit 1
 }
 Log-Debug ""
@@ -112,7 +112,7 @@ try {
     $DockerComposeCmd = "docker compose"
 }
 catch {
-    Log-Debug "❌ Docker Compose no encontrado"
+    Log-Debug "[ERROR] Docker Compose no encontrado"
     exit 1
 }
 Log-Debug ""
@@ -127,7 +127,7 @@ try {
     Set-Location $ProjectRoot
 }
 catch {
-    Log-Debug "⚠️  Error limpiando contenedores: $_"
+    Log-Debug "[WARN]  Error limpiando contenedores: $_"
 }
 Log-Debug ""
 
@@ -153,7 +153,7 @@ Log-Debug "=== CONSTRUCCIÓN DE IMAGEN (MODO VERBOSE) ==="
 Log-Debug "Iniciando build con --progress=plain y --no-cache..."
 Log-Debug ""
 
-Write-Host "⚠️  ATENCIÓN: La construcción en modo debug es más lenta pero muestra todos los detalles" -ForegroundColor Yellow
+Write-Host "[WARN]  ATENCIÓN: La construcción en modo debug es más lenta pero muestra todos los detalles" -ForegroundColor Yellow
 Write-Host "   Presiona Ctrl+C para cancelar" -ForegroundColor Yellow
 Write-Host ""
 Start-Sleep -Seconds 3
@@ -169,13 +169,13 @@ $buildCmd = "docker compose build --no-cache --progress=plain"
 Log-Debug "Comando: $buildCmd"
 Log-Debug ""
 
-Write-Host "🏗️  Construyendo imagen..." -ForegroundColor Cyan
+Write-Host "[BUILD]  Construyendo imagen..." -ForegroundColor Cyan
 try {
     & docker compose build --no-cache --progress=plain 2>&1 | Tee-Object -FilePath $DebugLogFile -Append
     $buildSuccess = $?
     if ($buildSuccess) {
         Log-Debug ""
-        Log-Debug "✅ Build completado exitosamente"
+        Log-Debug "[OK] Build completado exitosamente"
     }
     else {
         throw "Build failed"
@@ -183,8 +183,8 @@ try {
 }
 catch {
     Log-Debug ""
-    Log-Debug "❌ Build falló: $_"
-    Log-Debug "📝 Log completo guardado en: $DebugLogFile"
+    Log-Debug "[ERROR] Build falló: $_"
+    Log-Debug "[NOTE] Log completo guardado en: $DebugLogFile"
     Set-Location $ProjectRoot
     Read-Host "Presiona Enter para salir"
     exit 1
@@ -200,7 +200,7 @@ $composeCmd = "docker compose up --remove-orphans"
 Log-Debug "Comando: $composeCmd"
 Log-Debug ""
 
-Write-Host "🚀 Iniciando contenedores en modo debug..." -ForegroundColor Green
+Write-Host "[START] Iniciando contenedores en modo debug..." -ForegroundColor Green
 Write-Host "   Los logs se mostrarán en tiempo real" -ForegroundColor Gray
 Write-Host "   Presiona Ctrl+C para detener (limpiará contenedores)" -ForegroundColor Yellow
 Write-Host ""
@@ -209,14 +209,14 @@ Start-Sleep -Seconds 2
 # Cleanup function
 $cleanupScript = {
     Write-Host ""
-    Write-Host "🛑 Deteniendo contenedores..." -ForegroundColor Yellow
+    Write-Host "[STOP] Deteniendo contenedores..." -ForegroundColor Yellow
     Set-Location (Join-Path $ProjectRoot "docker")
     docker compose down 2>&1 | Out-Null
     Set-Location $ProjectRoot
-    Write-Host "✅ Debug session terminada" -ForegroundColor Green
-    Write-Host "📝 Log completo: $DebugLogFile" -ForegroundColor Cyan
+    Write-Host "[OK] Debug session terminada" -ForegroundColor Green
+    Write-Host "[NOTE] Log completo: $DebugLogFile" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "📊 Resumen del debug:" -ForegroundColor Cyan
+    Write-Host "[STATUS] Resumen del debug:" -ForegroundColor Cyan
     Write-Host "   Log guardado en: $DebugLogFile" -ForegroundColor Gray
     $logSize = [math]::Round((Get-Item $DebugLogFile).Length / 1MB, 2)
     Write-Host "   Tamaño: $logSize MB" -ForegroundColor Gray
@@ -237,24 +237,24 @@ try {
 }
 catch {
     $composeExit = 1
-    Log-Debug "❌ Error ejecutando compose up: $_"
+    Log-Debug "[ERROR] Error ejecutando compose up: $_"
 }
 
 Set-Location $ProjectRoot
 
 # If we get here, containers stopped on their own
 Log-Debug ""
-Log-Debug "⚠️  Contenedores se detuvieron"
+Log-Debug "[WARN]  Contenedores se detuvieron"
 Log-Debug "   Código de salida: $composeExit"
 Log-Debug ""
-Log-Debug "📝 Log completo guardado en: $DebugLogFile"
+Log-Debug "[NOTE] Log completo guardado en: $DebugLogFile"
 
 if ($composeExit -ne 0) {
     Write-Host ""
-    Write-Host "❌ Los contenedores se detuvieron con errores" -ForegroundColor Red
-    Write-Host "📝 Revisa el log completo: $DebugLogFile" -ForegroundColor Yellow
+    Write-Host "[ERROR] Los contenedores se detuvieron con errores" -ForegroundColor Red
+    Write-Host "[NOTE] Revisa el log completo: $DebugLogFile" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "🔍 Últimos errores encontrados:" -ForegroundColor Cyan
+    Write-Host "[INFO] Últimos errores encontrados:" -ForegroundColor Cyan
     Get-Content $DebugLogFile | Select-String -Pattern "error|fail|exception|fatal" -CaseSensitive:$false | Select-Object -Last 50
     Write-Host ""
 }
