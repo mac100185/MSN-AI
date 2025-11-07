@@ -52,9 +52,11 @@
     "settings": "ਏਆਈ ਮਾਡਲ ਸੈਟਿੰਗਾਂ",
     "nudge": "ਨੱਜ ਭੇਜੋ",
     "emoticon_natural": "ਕੁਦਰਤੀ ਇਮੋਟੀਕੌਨ",
-    "emoticon_love": "ਪਿਆਰ ਇਮੋਟੀਕੌਨ",
-    "voice_input": "ਆਵਾਜ਼ ਡਿਕਟੇਸ਼ਨ",
+    "emoticon_love": "ਪਿਆਰ ਦੇ ਇਮੋਟੀਕੋਨ",
+    "voice_input": "ਵੌਇਸ ਡਿਕਟੇਸ਼ਨ",
     "upload_file": "ਟੈਕਸਟ ਫਾਈਲ ਨੱਥੀ ਕਰੋ",
+    "upload_pdf_file": "ਪੀਡੀਐਫ ਫਾਈਲ ਨੱਥੀ ਕਰੋ",
+    "upload_image_file": "ਚਿੱਤਰ ਫਾਈਲ ਨੱਥੀ ਕਰੋ",
     "text_format": "ਟੈਕਸਟ ਫਾਰਮੈਟ (ਬੋਲਡ, ਇਟੈਲਿਕ, ਅੰਡਰਲਾਈਨ)",
     "increase_font": "ਫੌਂਟ ਸਾਈਜ਼ ਵਧਾਓ",
     "decrease_font": "ਫੌਂਟ ਸਾਈਜ਼ ਘਟਾਓ",
@@ -64,12 +66,12 @@
     "close_chat": "ਮੌਜੂਦਾ ਚੈਟ ਬੰਦ ਕਰੋ ਅਤੇ ਨਵੀਂ ਬਣਾਓ",
     "generate_prompt": "ਪ੍ਰੌਂਪਟ ਜਨਰੇਟਰ - ਸੰਰਚਿਤ ਪ੍ਰੌਂਪਟ ਬਣਾਓ",
     "manage_prompts": "ਪ੍ਰੌਂਪਟ ਮੈਨੇਜਰ - ਸੁਰੱਖਿਅਤ ਪ੍ਰੌਂਪਟਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
-    "upload_pdf_file": "ਪੀਡੀਐਫ ਫਾਈਲ ਨੱਥੀ ਕਰੋ",
     "chats_import": "ਚੈਟਾਂ ਆਯਾਤ ਕਰੋ",
     "chats_export": "ਚੈਟਾਂ ਨਿਰਯਾਤ ਕਰੋ",
     "delete_attachment": "ਫਾਈਲ ਮਿਟਾਓ",
-    "download_pdf": "PDF ਡਾਊਨਲੋਡ ਕਰੋ",
-    "download_txt": "TXT ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ"
+    "download_pdf": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ",
+    "download_txt": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ",
+    "download_image": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰੋ"
   },
   "settings": {
     "title": "ਏਆਈ ਮਾਡਲ ਸੈਟਿੰਗਾਂ",
@@ -204,10 +206,13 @@
     "status_busy": "ਮੈਂ ਵਿਅਸਤ ਹਾਂ ਪਰ ਜਦੋਂ ਸੰਭਵ ਹੋਵੇ ਜਵਾਬ ਦੇਵਾਂਗਾ।",
     "status_invisible": "ਮੈਂ ਇਸ ਸਮੇਂ ਦਿਖਾਈ ਨਹੀਂ ਦੇਣਾ ਚਾਹੁੰਦਾ।",
     "nudge_sent": "ਕੀ ਤੁਸੀਂ ਉੱਥੇ ਹੋ?",
-    "nudge_received": "ਨੱਜ ਭੇਜੀ ਗਈ (ਜਵਾਬ ਰੋਕਿਆ ਗਿਆ)",
+    "nudge_received": "ਨੱਜ ਭੇਜਿਆ ਗਿਆ (ਜਵਾਬ ਰੋਕਿਆ ਗਿਆ)",
     "nudge_stopped": "ਜਵਾਬ ਰੋਕਿਆ ਗਿਆ",
     "file_attached": "ਨੱਥੀ ਫਾਈਲ: {filename}",
-    "no_message": "ਕੋਈ ਵਾਧੂ ਸੁਨੇਹਾ ਨਹੀਂ"
+    "image_attached": "ਚਿੱਤਰ ਨੱਥੀ ਕੀਤਾ ਗਿਆ",
+    "no_message": "ਕੋਈ ਵਾਧੂ ਸੁਨੇਹਾ ਨਹੀਂ",
+    "image_processing": "ਚਿੱਤਰ ਪ੍ਰੋਸੈਸ ਹੋ ਰਿਹਾ ਹੈ...",
+    "image_loaded": "ਚਿੱਤਰ ਲੋਡ ਹੋ ਗਿਆ: {filename}"
   },
   "errors": {
     "no_connection": "Ollama ਨਾਲ ਕੋਈ ਕਨੈਕਸ਼ਨ ਨਹੀਂ",
@@ -233,12 +238,15 @@
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
     "pdf_attached": "PDF attached: {filename} ({pages} pages)",
     "select_chat_first": "ਕਿਰਪਾ ਕਰਕੇ ਪਹਿਲਾਂ ਇੱਕ ਚੈਟ ਚੁਣੋ",
-    "attachment_save_failed": "ਅਟੈਚਮੈਂਟ ਸੁਰੱਖਿਅਤ ਕਰਨ ਵਿੱਚ ਤਰੁੱਟੀ",
     "attachment_save_failed": "ਅਟੈਚਮੈਂਟ ਸੰਭਾਲਣ ਵਿੱਚ ਗਲਤੀ",
-    "delete_attachment_failed": "ਅਟੈਚਮੈਂਟ ਮਿਟਾਉਣ ਵਿੱਚ ਗਲਤੀ",
+    "delete_attachment_failed": "ਨੱਥੀ ਹਟਾਉਣ ਵਿੱਚ ਗਲਤੀ",
     "export_failed": "ਚੈਟਾਂ ਨਿਰਯਾਤ ਕਰਨ ਵਿੱਚ ਗਲਤੀ",
     "import_failed": "ਚੈਟਾਂ ਆਯਾਤ ਕਰਨ ਵਿੱਚ ਗਲਤੀ",
-    "download_file_failed": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ"
+    "download_file_failed": "ਫਾਈਲ ਡਾਊਨਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ",
+    "only_image_files": "ਸਿਰਫ਼ ਚਿੱਤਰ ਫਾਈਲਾਂ ਦੀ ਇਜਾਜ਼ਤ ਹੈ (JPG, PNG, GIF, WebP)",
+    "image_too_large": "ਚਿੱਤਰ ਬਹੁਤ ਵੱਡਾ ਹੈ। ਵੱਧ ਤੋਂ ਵੱਧ ਇਜਾਜ਼ਤ: 20 MB",
+    "image_error": "ਚਿੱਤਰ ਪ੍ਰੋਸੈਸਿੰਗ ਵਿੱਚ ਗਲਤੀ: {error}",
+    "model_no_image_support": "ਚੁਣਿਆ ਗਿਆ AI ਮਾਡਲ ਚਿੱਤਰ ਪ੍ਰੋਸੈਸਿੰਗ ਦਾ ਸਮਰਥਨ ਨਹੀਂ ਕਰਦਾ"
   },
   "confirm": {
     "delete_attachment": "ਇਹ ਅਟੈਚਮੈਂਟ ਮਿਟਾਓ?"

@@ -65,11 +65,13 @@
     "generate_prompt": "Генератор промптов - Создание структурированных промптов",
     "manage_prompts": "Менеджер промптов - Управление сохраненными промптами",
     "upload_pdf_file": "Прикрепить PDF файл",
+    "upload_image_file": "Прикрепить файл изображения",
     "chats_import": "Импортировать чаты",
     "chats_export": "Экспортировать чаты",
     "delete_attachment": "Удалить файл",
-    "download_pdf": "Скачать PDF",
-    "download_txt": "Скачать TXT файл"
+    "download_pdf": "Скачать файл",
+    "download_txt": "Скачать файл",
+    "download_image": "Скачать файл"
   },
   "settings": {
     "title": "Настройки модели ИИ",
@@ -283,10 +285,13 @@
     "status_busy": "Я занят, но отвечу, когда смогу.",
     "status_invisible": "Я предпочитаю быть невидимым в данный момент.",
     "nudge_sent": "Вы там?",
-    "nudge_received": "Подталкивание отправлено (ответ остановлен)",
+    "nudge_received": "Сигнал отправлен (ответ остановлен)",
     "nudge_stopped": "Ответ остановлен",
-    "file_attached": "Прикреплённый файл: {filename}",
-    "no_message": "без дополнительного сообщения"
+    "file_attached": "Прикрепленный файл: {filename}",
+    "image_attached": "Изображение прикреплено",
+    "no_message": "без дополнительного сообщения",
+    "image_processing": "Обработка изображения...",
+    "image_loaded": "Изображение загружено: {filename}"
   },
   "errors": {
     "no_connection": "Нет соединения с Ollama",
@@ -316,7 +321,11 @@
     "delete_attachment_failed": "Ошибка при удалении вложения",
     "export_failed": "Ошибка при экспорте чатов",
     "import_failed": "Ошибка при импорте чатов",
-    "download_file_failed": "Ошибка при скачивании файла"
+    "download_file_failed": "Ошибка при загрузке файла",
+    "only_image_files": "Разрешены только файлы изображений (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Изображение слишком большое. Максимально допустимо: 20 МБ",
+    "image_error": "Ошибка обработки изображения: {error}",
+    "model_no_image_support": "Выбранная модель ИИ не поддерживает обработку изображений"
   },
   "confirm": {
     "delete_attachment": "Удалить это вложение?"

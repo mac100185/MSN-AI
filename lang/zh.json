@@ -55,6 +55,8 @@
     "emoticon_love": "爱心表情",
     "voice_input": "语音输入",
     "upload_file": "附加文本文件",
+    "upload_pdf_file": "附加PDF文件",
+    "upload_image_file": "附加图像文件",
     "text_format": "文本格式（粗体、斜体、下划线）",
     "increase_font": "增大字体大小",
     "decrease_font": "减小字体大小",
@@ -64,12 +66,12 @@
     "close_chat": "关闭当前聊天并创建新聊天",
     "generate_prompt": "提示词生成器 - 创建结构化提示词",
     "manage_prompts": "提示词管理器 - 管理已保存的提示词",
-    "upload_pdf_file": "附加PDF文件",
     "chats_import": "导入聊天",
     "chats_export": "导出聊天",
     "delete_attachment": "删除文件",
-    "download_pdf": "下载PDF",
-    "download_txt": "下载TXT文件"
+    "download_pdf": "下载文件",
+    "download_txt": "下载文件",
+    "download_image": "下载文件"
   },
   "settings": {
     "title": "AI模型设置",
@@ -283,10 +285,13 @@
     "status_busy": "我现在很忙，但会尽快回复。",
     "status_invisible": "我现在不想被看到。",
     "nudge_sent": "你在吗？",
-    "nudge_received": "提醒已发送（响应已停止）",
+    "nudge_received": "已发送轻推（响应已停止）",
     "nudge_stopped": "响应已停止",
-    "file_attached": "附件：{filename}",
-    "no_message": "无附加消息"
+    "file_attached": "附加文件：{filename}",
+    "image_attached": "图像已附加",
+    "no_message": "无附加消息",
+    "image_processing": "正在处理图像...",
+    "image_loaded": "图像已加载：{filename}"
   },
   "errors": {
     "no_connection": "无法连接到Ollama",
@@ -311,12 +316,16 @@
     "pdf_error": "处理PDF时出错：{error}",
     "pdf_no_text": "无法从PDF提取文本。请尝试其他文件。",
     "pdf_attached": "PDF已附加：{filename}（{pages}页）",
-    "select_chat_first": "请先选择一个聊天",
+    "select_chat_first": "请先选择聊天",
     "attachment_save_failed": "保存附件时出错",
     "delete_attachment_failed": "删除附件时出错",
     "export_failed": "导出聊天时出错",
     "import_failed": "导入聊天时出错",
-    "download_file_failed": "下载文件时出错"
+    "download_file_failed": "下载文件时出错",
+    "only_image_files": "仅允许图像文件（JPG、PNG、GIF、WebP）",
+    "image_too_large": "图像太大。最大允许：20 MB",
+    "image_error": "处理图像时出错：{error}",
+    "model_no_image_support": "所选的AI模型不支持图像处理"
   },
   "confirm": {
     "delete_attachment": "删除此附件？"

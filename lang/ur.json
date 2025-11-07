@@ -55,21 +55,23 @@
     "emoticon_love": "محبت کے ایموٹیکون",
     "voice_input": "صوتی لکھائی",
     "upload_file": "متن کی فائل منسلک کریں",
+    "upload_pdf_file": "پی ڈی ایف فائل منسلک کریں",
+    "upload_image_file": "تصویری فائل منسلک کریں",
     "text_format": "متن کی شکل (بولڈ، اٹالک، انڈر لائن)",
     "increase_font": "فونٹ کا سائز بڑھائیں",
     "decrease_font": "فونٹ کا سائز گھٹائیں",
     "export_chat": "موجودہ چیٹ کو متن کی فائل میں برآمد کریں",
     "print_chat": "موجودہ چیٹ پرنٹ کریں",
     "search_chat": "موجودہ چیٹ میں تلاش کریں",
-    "close_chat": "موجودہ چیٹ بند کریں اور نیا بنائیں",
+    "close_chat": "موجودہ چیٹ بند کریں اور نئی بنائیں",
     "generate_prompt": "پرامپٹ جنریٹر - ساختی پرامپٹ بنائیں",
-    "manage_prompts": "پرامپٹ مینیجر - محفوظ شدہ پرامپٹ کا انتظام کریں",
-    "upload_pdf_file": "پی ڈی ایف فائل منسلک کریں",
+    "manage_prompts": "پرامپٹ منیجر - محفوظ شدہ پرامپٹس کا نظم کریں",
     "chats_import": "چیٹس درآمد کریں",
     "chats_export": "چیٹس برآمد کریں",
     "delete_attachment": "فائل حذف کریں",
-    "download_pdf": "PDF ڈاؤن لوڈ کریں",
-    "download_txt": "TXT فائل ڈاؤن لوڈ کریں"
+    "download_pdf": "فائل ڈاؤن لوڈ کریں",
+    "download_txt": "فائل ڈاؤن لوڈ کریں",
+    "download_image": "فائل ڈاؤن لوڈ کریں"
   },
   "settings": {
     "title": "اے آئی ماڈل کی ترتیبات",
@@ -204,10 +206,13 @@
     "status_busy": "میں مصروف ہوں لیکن جب ممکن ہو گا جواب دوں گا۔",
     "status_invisible": "میں اس وقت نظر نہیں آنا چاہتا۔",
     "nudge_sent": "کیا آپ وہاں ہیں؟",
-    "nudge_received": "نج بھیجی گئی (جواب رک گیا)",
-    "nudge_stopped": "جواب رک گیا",
+    "nudge_received": "نج بھیجا گیا (جواب روک دیا گیا)",
+    "nudge_stopped": "جواب روک دیا گیا",
     "file_attached": "منسلک فائل: {filename}",
-    "no_message": "کوئی اضافی پیغام نہیں"
+    "image_attached": "تصویر منسلک",
+    "no_message": "کوئی اضافی پیغام نہیں",
+    "image_processing": "تصویر پر کارروائی ہو رہی ہے...",
+    "image_loaded": "تصویر لوڈ ہو گئی: {filename}"
   },
   "errors": {
     "no_connection": "Ollama سے کوئی کنکشن نہیں",
@@ -237,7 +242,11 @@
     "delete_attachment_failed": "منسلکہ حذف کرنے میں خرابی",
     "export_failed": "چیٹس برآمد کرنے میں خرابی",
     "import_failed": "چیٹس درآمد کرنے میں خرابی",
-    "download_file_failed": "فائل ڈاؤن لوڈ کرنے میں خرابی"
+    "download_file_failed": "فائل ڈاؤن لوڈ کرنے میں خرابی",
+    "only_image_files": "صرف تصویری فائلوں کی اجازت ہے (JPG, PNG, GIF, WebP)",
+    "image_too_large": "تصویر بہت بڑی ہے۔ زیادہ سے زیادہ اجازت: 20 MB",
+    "image_error": "تصویر پر کارروائی میں خرابی: {error}",
+    "model_no_image_support": "منتخب AI ماڈل تصویر کی پروسیسنگ کی حمایت نہیں کرتا"
   },
   "confirm": {
     "delete_attachment": "اس منسلکہ کو حذف کریں؟"

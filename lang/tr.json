@@ -55,6 +55,8 @@
     "emoticon_love": "Aşk ifadeleri",
     "voice_input": "Sesli dikte",
     "upload_file": "Metin dosyası ekle",
+    "upload_pdf_file": "PDF dosyası ekle",
+    "upload_image_file": "Resim dosyası ekle",
     "text_format": "Metin biçimi (Kalın, İtalik, Altı Çizili)",
     "increase_font": "Yazı boyutunu büyüt",
     "decrease_font": "Yazı boyutunu küçült",
@@ -64,12 +66,12 @@
     "close_chat": "Mevcut sohbeti kapat ve yeni bir tane oluştur",
     "generate_prompt": "Prompt Üretici - Yapılandırılmış promptlar oluştur",
     "manage_prompts": "Prompt Yöneticisi - Kayıtlı promptları yönet",
-    "upload_pdf_file": "PDF dosyası ekle",
     "chats_export": "Sohbetleri dışa aktar",
     "chats_import": "Sohbetleri içe aktar",
     "delete_attachment": "Dosyayı sil",
-    "download_pdf": "PDF indir",
-    "download_txt": "TXT dosyasını indir"
+    "download_pdf": "Dosyayı indir",
+    "download_txt": "Dosyayı indir",
+    "download_image": "Dosyayı indir"
   },
   "settings": {
     "title": "Yapay Zeka Modeli Ayarları",
@@ -204,10 +206,13 @@
     "status_busy": "Meşgulüm ama yapabilirsem yanıt vereceğim.",
     "status_invisible": "Şu anda görünmemeyi tercih ediyorum.",
     "nudge_sent": "Orada mısın?",
-    "nudge_received": "Dürt gönderildi (yanıt durduruldu)",
+    "nudge_received": "Dürtme gönderildi (yanıt durduruldu)",
     "nudge_stopped": "Yanıt durduruldu",
-    "file_attached": "Ekli dosya: {filename}",
-    "no_message": "ek mesaj yok"
+    "file_attached": "Eklenen dosya: {filename}",
+    "image_attached": "Resim eklendi",
+    "no_message": "ek mesaj yok",
+    "image_processing": "Resim işleniyor...",
+    "image_loaded": "Resim yüklendi: {filename}"
   },
   "errors": {
     "no_connection": "Ollama ile bağlantı yok",
@@ -234,10 +239,14 @@
     "pdf_attached": "PDF eklendi: {filename} ({pages} sayfa)",
     "select_chat_first": "Lütfen önce bir sohbet seçin",
     "attachment_save_failed": "Ek kaydedilirken hata",
-    "delete_attachment_failed": "Ek silinirken hata",
-    "export_failed": "Sohbetler dışa aktarılırken hata",
-    "import_failed": "Sohbetler içe aktarılırken hata",
-    "download_file_failed": "Dosya indirilirken hata"
+    "delete_attachment_failed": "Eki silme hatası",
+    "export_failed": "Sohbetleri dışa aktarma hatası",
+    "import_failed": "Sohbetleri içe aktarma hatası",
+    "download_file_failed": "Dosya indirme hatası",
+    "only_image_files": "Yalnızca resim dosyalarına izin verilir (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Resim çok büyük. İzin verilen maksimum: 20 MB",
+    "image_error": "Resim işlenirken hata: {error}",
+    "model_no_image_support": "Seçilen AI modeli resim işlemeyi desteklemiyor"
   },
   "confirm": {
     "delete_attachment": "Bu eki silmek istiyor musunuz?"

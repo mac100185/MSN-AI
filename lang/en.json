@@ -54,9 +54,10 @@
     "emoticon_natural": "Natural emoticons",
     "emoticon_love": "Love emoticons",
     "voice_input": "Voice Dictation",
-    "upload_file": "Attach Text File",
-    "upload_pdf_file": "Attach PDF File",
-    "text_format": "Text Format (Bold, Italic, Underline)",
+    "upload_file": "Attach text file",
+    "upload_pdf_file": "Attach PDF file",
+    "upload_image_file": "Attach image file",
+    "text_format": "Text format (Bold, Italic, Underline)",
     "generate_prompt": "Prompt Generator - Create structured prompts",
     "manage_prompts": "Prompt Manager - Manage saved prompts",
     "increase_font": "Increase Font Size",
@@ -68,8 +69,9 @@
     "chats_export": "Export chats",
     "chats_import": "Import chats",
     "delete_attachment": "Delete file",
-    "download_pdf": "Download PDF",
-    "download_txt": "Download TXT file"
+    "download_pdf": "Download file",
+    "download_txt": "Download file",
+    "download_image": "Download file"
   },
   "settings": {
     "title": "AI Model Settings",
@@ -286,7 +288,10 @@
     "nudge_received": "Nudge sent (response stopped)",
     "nudge_stopped": "Response stopped",
     "file_attached": "Attached file: {filename}",
-    "no_message": "no additional message"
+    "image_attached": "Image attached",
+    "no_message": "no additional message",
+    "image_processing": "Processing image...",
+    "image_loaded": "Image loaded: {filename}"
   },
   "errors": {
     "no_connection": "No connection to Ollama",
@@ -313,10 +318,14 @@
     "pdf_attached": "PDF attached: {filename} ({pages} pages)",
     "select_chat_first": "Please select a chat first",
     "attachment_save_failed": "Error saving attachment",
-    "delete_attachment_failed": "Error deleting attachment",
+    "delete_attachment_failed": "Error deleting attached file",
     "export_failed": "Error exporting chats",
     "import_failed": "Error importing chats",
-    "download_file_failed": "Error downloading file"
+    "download_file_failed": "Error downloading file",
+    "only_image_files": "Only image files are allowed (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Image is too large. Maximum allowed: 20 MB",
+    "image_error": "Error processing image: {error}",
+    "model_no_image_support": "The selected AI model does not support image processing"
   },
 
   "confirm": {

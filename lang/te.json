@@ -52,24 +52,26 @@
     "settings": "AI మోడల్ సెట్టింగ్‌లు",
     "nudge": "నడ్జ్ పంపండి",
     "emoticon_natural": "సహజ ఎమోటికాన్‌లు",
-    "emoticon_love": "ప్రేమ ఎమోటికాన్‌లు",
+    "emoticon_love": "ప్రేమ ఎమోటికాన్లు",
     "voice_input": "వాయిస్ డిక్టేషన్",
-    "upload_file": "టెక్స్ట్ ఫైల్ జతచేయండి",
-    "text_format": "టెక్స్ట్ ఫార్మాట్ (బోల్డ్, ఇటాలిక్, అండర్‌లైన్)",
+    "upload_file": "టెక్స్ట్ ఫైల్ను జోడించండి",
+    "upload_pdf_file": "PDF ఫైల్‌ను జోడించండి",
+    "upload_image_file": "చిత్ర ఫైల్‌ను జోడించండి",
+    "text_format": "టెక్స్ట్ ఫార్మాట్ (బోల్డ్, ఇటాలిక్, అండర్లైన్)",
     "increase_font": "ఫాంట్ పరిమాణం పెంచండి",
     "decrease_font": "ఫాంట్ పరిమాణం తగ్గించండి",
     "export_chat": "ప్రస్తుత చాట్‌ను టెక్స్ట్ ఫైల్‌కు ఎగుమతి చేయండి",
     "print_chat": "ప్రస్తుత చాట్ ప్రింట్ చేయండి",
     "search_chat": "ప్రస్తుత చాట్‌లో వెతకండి",
-    "close_chat": "ప్రస్తుత చాట్ మూసివేసి కొత్తది సృష్టించండి",
-    "generate_prompt": "ప్రాంప్ట్ జనరేటర్ - నిర్మాణాత్మక ప్రాంప్ట్‌లను సృష్టించండి",
+    "close_chat": "ప్రస్తుత చాట్‌ను మూసివేసి కొత్తది సృష్టించండి",
+    "generate_prompt": "ప్రాంప్ట్ జెనరేటర్ - నిర్మాణాత్మక ప్రాంప్ట్‌లను సృష్టించండి",
     "manage_prompts": "ప్రాంప్ట్ మేనేజర్ - సేవ్ చేసిన ప్రాంప్ట్‌లను నిర్వహించండి",
-    "upload_pdf_file": "PDF ఫైల్‌ను జత చేయండి",
     "chats_import": "చాట్‌లను దిగుమతి చేయండి",
     "chats_export": "చాట్‌లను ఎగుమతి చేయండి",
-    "delete_attachment": "ఫైల్ తొలగించండి",
-    "download_pdf": "PDF డౌన్‌లోడ్ చేయండి",
-    "download_txt": "TXT ఫైల్ డౌన్‌లోడ్ చేయండి"
+    "delete_attachment": "ఫైల్‌ను తొలగించండి",
+    "download_pdf": "ఫైల్‌ను డౌన్‌లోడ్ చేయండి",
+    "download_txt": "ఫైల్‌ను డౌన్‌లోడ్ చేయండి",
+    "download_image": "ఫైల్‌ను డౌన్‌లోడ్ చేయండి"
   },
   "settings": {
     "title": "AI మోడల్ సెట్టింగ్‌లు",
@@ -206,8 +208,11 @@
     "nudge_sent": "మీరు అక్కడ ఉన్నారా?",
     "nudge_received": "నడ్జ్ పంపబడింది (ప్రతిస్పందన ఆపబడింది)",
     "nudge_stopped": "ప్రతిస్పందన ఆపబడింది",
-    "file_attached": "జతచేసిన ఫైల్: {filename}",
-    "no_message": "అదనపు సందేశం లేదు"
+    "file_attached": "జోడించిన ఫైల్: {filename}",
+    "image_attached": "చిత్రం జోడించబడింది",
+    "no_message": "అదనపు సందేశం లేదు",
+    "image_processing": "చిత్రాన్ని ప్రాసెస్ చేస్తోంది...",
+    "image_loaded": "చిత్రం లోడ్ చేయబడింది: {filename}"
   },
   "errors": {
     "no_connection": "Ollama తో కనెక్షన్ లేదు",
@@ -233,11 +238,15 @@
     "pdf_no_text": "Could not extract text from PDF. Try a different file.",
     "pdf_attached": "PDF attached: {filename} ({pages} pages)",
     "select_chat_first": "దయచేసి ముందుగా చాట్‌ను ఎంచుకోండి",
-    "attachment_save_failed": "అటాచ్‌మెంట్‌ను సేవ్ చేయడంలో లోపం",
-    "delete_attachment_failed": "అటాచ్‌మెంట్‌ను తొలగించడంలో లోపం",
+    "attachment_save_failed": "అటాచ్‌మెంట్ సేవ్ చేయడంలో లోపం",
+    "delete_attachment_failed": "అటాచ్‌మెంట్ తొలగించడంలో లోపం",
     "export_failed": "చాట్‌లను ఎగుమతి చేయడంలో లోపం",
     "import_failed": "చాట్‌లను దిగుమతి చేయడంలో లోపం",
-    "download_file_failed": "ఫైల్ డౌన్‌లోడ్ చేయడంలో లోపం"
+    "download_file_failed": "ఫైల్ డౌన్‌లోడ్ చేయడంలో లోపం",
+    "only_image_files": "చిత్ర ఫైల్‌లు మాత్రమే అనుమతించబడతాయి (JPG, PNG, GIF, WebP)",
+    "image_too_large": "చిత్రం చాలా పెద్దది. గరిష్ట అనుమతి: 20 MB",
+    "image_error": "చిత్ర ప్రాసెసింగ్‌లో లోపం: {error}",
+    "model_no_image_support": "ఎంచుకున్న AI మోడల్ చిత్ర ప్రాసెసింగ్‌కు మద్దతు ఇవ్వదు"
   },
   "confirm": {
     "delete_attachment": "ఈ అటాచ్‌మెంట్‌ను తొలగించాలా?"

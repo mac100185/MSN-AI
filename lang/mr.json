@@ -55,6 +55,8 @@
     "emoticon_love": "प्रेम इमोटिकॉन्स",
     "voice_input": "आवाज लेखन",
     "upload_file": "मजकूर फाइल जोडा",
+    "upload_pdf_file": "पीडीएफ फाइल संलग्न करा",
+    "upload_image_file": "प्रतिमा फाइल संलग्न करा",
     "text_format": "मजकूर स्वरूप (ठळक, तिरपे, अधोरेखित)",
     "increase_font": "फॉन्ट आकार वाढवा",
     "decrease_font": "फॉन्ट आकार कमी करा",
@@ -64,12 +66,12 @@
     "close_chat": "सध्याची चॅट बंद करा आणि नवीन तयार करा",
     "generate_prompt": "प्रॉम्प्ट जनरेटर - संरचित प्रॉम्प्ट तयार करा",
     "manage_prompts": "प्रॉम्प्ट मॅनेजर - जतन केलेले प्रॉम्प्ट व्यवस्थापित करा",
-    "upload_pdf_file": "पीडीएफ फाइल संलग्न करा",
     "chats_import": "चॅट आयात करा",
     "chats_export": "चॅट निर्यात करा",
     "delete_attachment": "फाइल हटवा",
-    "download_pdf": "PDF डाउनलोड करा",
-    "download_txt": "TXT फाइल डाउनलोड करा"
+    "download_pdf": "फाइल डाउनलोड करा",
+    "download_txt": "फाइल डाउनलोड करा",
+    "download_image": "फाइल डाउनलोड करा"
   },
   "settings": {
     "title": "एआय मॉडेल सेटिंग्ज",
@@ -204,10 +206,13 @@
     "status_busy": "मी व्यस्त आहे पण शक्य तेव्हा उत्तर देईन.",
     "status_invisible": "मला सध्या दिसायचे नाही.",
     "nudge_sent": "तुम्ही तिथे आहात का?",
-    "nudge_received": "नज पाठवली (प्रतिसाद थांबला)",
+    "nudge_received": "नज पाठवला (प्रतिसाद थांबला)",
     "nudge_stopped": "प्रतिसाद थांबला",
-    "file_attached": "जोडलेली फाइल: {filename}",
-    "no_message": "अतिरिक्त संदेश नाही"
+    "file_attached": "संलग्न फाइल: {filename}",
+    "image_attached": "प्रतिमा संलग्न",
+    "no_message": "अतिरिक्त संदेश नाही",
+    "image_processing": "प्रतिमा प्रक्रिया करत आहे...",
+    "image_loaded": "प्रतिमा लोड झाली: {filename}"
   },
   "errors": {
     "no_connection": "Ollama शी कनेक्शन नाही",
@@ -235,9 +240,13 @@
     "select_chat_first": "कृपया प्रथम चॅट निवडा",
     "attachment_save_failed": "संलग्नक जतन करताना त्रुटी",
     "delete_attachment_failed": "संलग्नक हटवताना त्रुटी",
-    "export_failed": "चॅट निर्यात करताना त्रुटी",
-    "import_failed": "चॅट आयात करताना त्रुटी",
-    "download_file_failed": "फाइल डाउनलोड करताना त्रुटी"
+    "export_failed": "चॅट्स निर्यात करताना त्रुटी",
+    "import_failed": "चॅट्स आयात करताना त्रुटी",
+    "download_file_failed": "फाइल डाउनलोड करताना त्रुटी",
+    "only_image_files": "फक्त प्रतिमा फाइलींना परवानगी आहे (JPG, PNG, GIF, WebP)",
+    "image_too_large": "प्रतिमा खूप मोठी आहे. कमाल परवानगी: 20 MB",
+    "image_error": "प्रतिमा प्रक्रियेत त्रुटी: {error}",
+    "model_no_image_support": "निवडलेले AI मॉडेल प्रतिमा प्रक्रियेस समर्थन देत नाही"
   },
   "confirm": {
     "delete_attachment": "ही संलग्नक हटवायची?"

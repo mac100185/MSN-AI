@@ -55,6 +55,8 @@
     "emoticon_love": "প্রেমের ইমোটিকন",
     "voice_input": "ভয়েস ডিক্টেশন",
     "upload_file": "টেক্সট ফাইল সংযুক্ত করুন",
+    "upload_pdf_file": "পিডিএফ ফাইল সংযুক্ত করুন",
+    "upload_image_file": "ছবি ফাইল সংযুক্ত করুন",
     "text_format": "টেক্সট ফরম্যাট (বোল্ড, ইটালিক, আন্ডারলাইন)",
     "increase_font": "ফন্ট সাইজ বাড়ান",
     "decrease_font": "ফন্ট সাইজ কমান",
@@ -62,14 +64,14 @@
     "print_chat": "বর্তমান চ্যাট প্রিন্ট করুন",
     "search_chat": "বর্তমান চ্যাটে অনুসন্ধান করুন",
     "close_chat": "বর্তমান চ্যাট বন্ধ করুন এবং নতুন তৈরি করুন",
-    "generate_prompt": "প্রম্পট জেনারেটর - কাঠামোগত প্রম্পট তৈরি করুন",
+    "generate_prompt": "প্রম্পট জেনারেটর - কাঠামোবদ্ধ প্রম্পট তৈরি করুন",
     "manage_prompts": "প্রম্পট ম্যানেজার - সংরক্ষিত প্রম্পট পরিচালনা করুন",
-    "upload_pdf_file": "পিডিএফ ফাইল সংযুক্ত করুন",
     "chats_import": "চ্যাট আমদানি করুন",
     "chats_export": "চ্যাট রপ্তানি করুন",
     "delete_attachment": "ফাইল মুছুন",
-    "download_pdf": "PDF ডাউনলোড করুন",
-    "download_txt": "TXT ফাইল ডাউনলোড করুন"
+    "download_pdf": "ফাইল ডাউনলোড করুন",
+    "download_txt": "ফাইল ডাউনলোড করুন",
+    "download_image": "ফাইল ডাউনলোড করুন"
   },
   "settings": {
     "title": "এআই মডেল সেটিংস",
@@ -204,10 +206,13 @@
     "status_busy": "আমি ব্যস্ত কিন্তু সম্ভব হলে উত্তর দেব।",
     "status_invisible": "আমি এই মুহূর্তে দেখা যেতে চাই না।",
     "nudge_sent": "আপনি কি সেখানে আছেন?",
-    "nudge_received": "ঝাঁকুনি পাঠানো হয়েছে (প্রতিক্রিয়া বন্ধ)",
+    "nudge_received": "নজ পাঠানো হয়েছে (প্রতিক্রিয়া বন্ধ)",
     "nudge_stopped": "প্রতিক্রিয়া বন্ধ",
     "file_attached": "সংযুক্ত ফাইল: {filename}",
-    "no_message": "কোনো অতিরিক্ত বার্তা নেই"
+    "image_attached": "ছবি সংযুক্ত",
+    "no_message": "কোন অতিরিক্ত বার্তা নেই",
+    "image_processing": "ছবি প্রক্রিয়াকরণ হচ্ছে...",
+    "image_loaded": "ছবি লোড হয়েছে: {filename}"
   },
   "errors": {
     "no_connection": "Ollama এর সাথে কোনো সংযোগ নেই",
@@ -237,7 +242,11 @@
     "delete_attachment_failed": "সংযুক্তি মুছতে ত্রুটি",
     "export_failed": "চ্যাট রপ্তানিতে ত্রুটি",
     "import_failed": "চ্যাট আমদানিতে ত্রুটি",
-    "download_file_failed": "ফাইল ডাউনলোড করতে ত্রুটি"
+    "download_file_failed": "ফাইল ডাউনলোড করতে ত্রুটি",
+    "only_image_files": "শুধুমাত্র ছবি ফাইল অনুমোদিত (JPG, PNG, GIF, WebP)",
+    "image_too_large": "ছবি খুব বড়। সর্বোচ্চ অনুমোদিত: 20 MB",
+    "image_error": "ছবি প্রক্রিয়াকরণে ত্রুটি: {error}",
+    "model_no_image_support": "নির্বাচিত AI মডেল ছবি প্রক্রিয়াকরণ সমর্থন করে না"
   },
   "confirm": {
     "delete_attachment": "এই সংযুক্তিটি মুছবেন?"

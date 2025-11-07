@@ -56,6 +56,7 @@
     "voice_input": "Ditado por voz",
     "upload_file": "Anexar arquivo de texto",
     "upload_pdf_file": "Anexar arquivo PDF",
+    "upload_image_file": "Anexar arquivo de imagem",
     "text_format": "Formato de texto (Negrito, Itálico, Sublinhado)",
     "generate_prompt": "Gerador de Prompt - Criar prompts estruturados",
     "manage_prompts": "Gestor de Prompts - Gerenciar prompts salvos",
@@ -68,8 +69,9 @@
     "chats_export": "Exportar chats",
     "chats_import": "Importar chats",
     "delete_attachment": "Excluir arquivo",
-    "download_pdf": "Baixar PDF",
-    "download_txt": "Baixar arquivo TXT"
+    "download_pdf": "Baixar arquivo",
+    "download_txt": "Baixar arquivo",
+    "download_image": "Baixar arquivo"
   },
   "settings": {
     "title": "Configurações do Modelo de IA",
@@ -283,10 +285,13 @@
     "status_busy": "Estou ocupado mas responderei quando puder.",
     "status_invisible": "Prefiro não ser visto neste momento.",
     "nudge_sent": "Está aí?",
-    "nudge_received": "Vibração enviada (resposta interrompida)",
+    "nudge_received": "Cutucada enviada (resposta interrompida)",
     "nudge_stopped": "Resposta interrompida",
     "file_attached": "Arquivo anexado: {filename}",
-    "no_message": "sem mensagem adicional"
+    "image_attached": "Imagem anexada",
+    "no_message": "sem mensagem adicional",
+    "image_processing": "Processando imagem...",
+    "image_loaded": "Imagem carregada: {filename}"
   },
   "errors": {
     "no_connection": "Não há conexão com Ollama",
@@ -313,10 +318,14 @@
     "pdf_attached": "PDF anexado: {filename} ({pages} páginas)",
     "select_chat_first": "Por favor, selecione um chat primeiro",
     "attachment_save_failed": "Erro ao salvar o anexo",
-    "delete_attachment_failed": "Erro ao excluir o anexo",
+    "delete_attachment_failed": "Erro ao excluir o arquivo anexado",
     "export_failed": "Erro ao exportar os chats",
     "import_failed": "Erro ao importar os chats",
-    "download_file_failed": "Erro ao baixar o arquivo"
+    "download_file_failed": "Erro ao baixar o arquivo",
+    "only_image_files": "Apenas arquivos de imagem são permitidos (JPG, PNG, GIF, WebP)",
+    "image_too_large": "A imagem é muito grande. Máximo permitido: 20 MB",
+    "image_error": "Erro ao processar a imagem: {error}",
+    "model_no_image_support": "O modelo de IA selecionado não suporta processamento de imagens"
   },
   "confirm": {
     "delete_attachment": "Excluir este anexo?"

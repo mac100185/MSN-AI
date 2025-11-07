@@ -56,6 +56,7 @@
     "voice_input": "Kunka qillqay",
     "upload_file": "Qillqa qillqata yapay",
     "upload_pdf_file": "PDF qillqata yapay",
+    "upload_image_file": "Siq'i qillqata yapay",
     "text_format": "Qillqa rikch'ay (Yanqa, Q'iñi, Uray siq'i)",
     "increase_font": "Qillqa hatun kayninta yapay",
     "decrease_font": "Qillqa hatun kayninta pisiyachiy",
@@ -68,8 +69,9 @@
     "chats_export": "Rimanakuykunata lluqsichiy",
     "chats_import": "Rimanakuykunata yaykuchiy",
     "delete_attachment": "Willañiqita qichuy",
-    "download_pdf": "PDF uraykuchiy",
-    "download_txt": "TXT willañiqita uraykuchiy"
+    "download_pdf": "Willañiqita uraykuchiy",
+    "download_txt": "Willañiqita uraykuchiy",
+    "download_image": "Willañiqita uraykuchiy"
   },
   "settings": {
     "title": "AI Modelo Churay",
@@ -207,7 +209,10 @@
     "nudge_received": "Kallpachay kachasqa (kutichiy sayachisqa)",
     "nudge_stopped": "Kutichiy sayachisqa",
     "file_attached": "Qillqa yapasqa: {filename}",
-    "no_message": "mana yapasqa willaychu"
+    "image_attached": "Siq'i yapasqa",
+    "no_message": "mana yapasqa willaychu",
+    "image_processing": "Siq'i rurasqa...",
+    "image_loaded": "Siq'i cargasqa: {filename}"
   },
   "errors": {
     "no_connection": "Ollama-wan mana tinkiychu",
@@ -237,7 +242,11 @@
     "delete_attachment_failed": "Tinkisqa willañiqita qichuypi pantasqa",
     "export_failed": "Rimanakuykunata lluqsichiypi pantasqa",
     "import_failed": "Rimanakuykunata yaykuchiypi pantasqa",
-    "download_file_failed": "Willañiqita uraykuchiypi pantasqa"
+    "download_file_failed": "Willañiqita uraykuchiypi pantasqa",
+    "only_image_files": "Siq'i qillqakunallami kamachikun (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Siq'iqa ancha hatunmi. Ñawpaqman: 20 MB",
+    "image_error": "Siq'ita ruwaypi pantasqa: {error}",
+    "model_no_image_support": "Akllasqa AI modelo mana siq'i ruwaykunata yanapanchu"
   },
   "confirm": {
     "delete_attachment": "¿Kay tinkisqa willañiqita qichunki?"

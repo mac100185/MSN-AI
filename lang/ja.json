@@ -56,7 +56,8 @@
     "voice_input": "音声入力",
     "upload_file": "テキストファイルを添付",
     "upload_pdf_file": "PDFファイルを添付",
-    "text_format": "テキストフォーマット（太字、斜体、下線）",
+    "upload_image_file": "画像ファイルを添付",
+    "text_format": "テキスト書式（太字、斜体、下線）",
     "increase_font": "フォントサイズを大きく",
     "decrease_font": "フォントサイズを小さく",
     "export_chat": "現在のチャットをテキストファイルにエクスポート",
@@ -68,8 +69,9 @@
     "chats_export": "チャットをエクスポート",
     "chats_import": "チャットをインポート",
     "delete_attachment": "ファイルを削除",
-    "download_pdf": "PDFをダウンロード",
-    "download_txt": "TXTファイルをダウンロード"
+    "download_pdf": "ファイルをダウンロード",
+    "download_txt": "ファイルをダウンロード",
+    "download_image": "ファイルをダウンロード"
   },
   "settings": {
     "title": "AIモデル設定",
@@ -204,10 +206,13 @@
     "status_busy": "取り込み中ですが、できるだけ早く返信します。",
     "status_invisible": "現在表示されたくありません。",
     "nudge_sent": "そこにいますか？",
-    "nudge_received": "ナッジが送信されました（応答停止）",
+    "nudge_received": "ナッジ送信（応答停止）",
     "nudge_stopped": "応答停止",
-    "file_attached": "添付ファイル：{filename}",
-    "no_message": "追加メッセージなし"
+    "file_attached": "添付ファイル: {filename}",
+    "image_attached": "画像を添付",
+    "no_message": "追加メッセージなし",
+    "image_processing": "画像を処理中...",
+    "image_loaded": "画像が読み込まれました: {filename}"
   },
   "errors": {
     "no_connection": "Ollamaへの接続がありません",
@@ -234,10 +239,14 @@
     "pdf_attached": "PDF添付済み：{filename}（{pages}ページ）",
     "select_chat_first": "最初にチャットを選択してください",
     "attachment_save_failed": "添付ファイルの保存に失敗しました",
-    "delete_attachment_failed": "添付ファイルの削除に失敗しました",
-    "export_failed": "チャットのエクスポートに失敗しました",
-    "import_failed": "チャットのインポートに失敗しました",
-    "download_file_failed": "ファイルのダウンロードに失敗しました"
+    "delete_attachment_failed": "添付ファイルの削除エラー",
+    "export_failed": "チャットのエクスポートエラー",
+    "import_failed": "チャットのインポートエラー",
+    "download_file_failed": "ファイルのダウンロードエラー",
+    "only_image_files": "画像ファイルのみ許可されています（JPG、PNG、GIF、WebP）",
+    "image_too_large": "画像が大きすぎます。最大許容サイズ: 20 MB",
+    "image_error": "画像の処理エラー: {error}",
+    "model_no_image_support": "選択されたAIモデルは画像処理をサポートしていません"
   },
   "confirm": {
     "delete_attachment": "この添付ファイルを削除しますか？"

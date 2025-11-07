@@ -56,6 +56,7 @@
     "voice_input": "Dictée vocale",
     "upload_file": "Joindre un fichier texte",
     "upload_pdf_file": "Joindre un fichier PDF",
+    "upload_image_file": "Joindre un fichier image",
     "text_format": "Format de texte (Gras, Italique, Souligné)",
     "generate_prompt": "Générateur de Prompt - Créer des prompts structurés",
     "manage_prompts": "Gestionnaire de Prompts - Gérer les prompts sauvegardés",
@@ -68,8 +69,9 @@
     "chats_export": "Exporter les chats",
     "chats_import": "Importer les chats",
     "delete_attachment": "Supprimer le fichier",
-    "download_pdf": "Télécharger le PDF",
-    "download_txt": "Télécharger le fichier TXT"
+    "download_pdf": "Télécharger le fichier",
+    "download_txt": "Télécharger le fichier",
+    "download_image": "Télécharger le fichier"
   },
   "settings": {
     "title": "Paramètres du Modèle IA",
@@ -283,10 +285,13 @@
     "status_busy": "Je suis occupé mais je répondrai dès que possible.",
     "status_invisible": "Je préfère ne pas être vu pour le moment.",
     "nudge_sent": "Êtes-vous là ?",
-    "nudge_received": "Buzz envoyé (réponse arrêtée)",
+    "nudge_received": "Secousse envoyée (réponse arrêtée)",
     "nudge_stopped": "Réponse arrêtée",
-    "file_attached": "Fichier joint : {filename}",
-    "no_message": "pas de message supplémentaire"
+    "file_attached": "Fichier joint: {filename}",
+    "image_attached": "Image jointe",
+    "no_message": "pas de message supplémentaire",
+    "image_processing": "Traitement de l'image...",
+    "image_loaded": "Image chargée: {filename}"
   },
   "errors": {
     "no_connection": "Pas de connexion à Ollama",
@@ -313,10 +318,14 @@
     "pdf_attached": "PDF joint : {filename} ({pages} pages)",
     "select_chat_first": "Veuillez d'abord sélectionner un chat",
     "attachment_save_failed": "Erreur lors de la sauvegarde de la pièce jointe",
-    "delete_attachment_failed": "Erreur lors de la suppression de la pièce jointe",
+    "delete_attachment_failed": "Erreur lors de la suppression du fichier joint",
     "export_failed": "Erreur lors de l'exportation des chats",
     "import_failed": "Erreur lors de l'importation des chats",
-    "download_file_failed": "Erreur lors du téléchargement du fichier"
+    "download_file_failed": "Erreur lors du téléchargement du fichier",
+    "only_image_files": "Seuls les fichiers image sont autorisés (JPG, PNG, GIF, WebP)",
+    "image_too_large": "L'image est trop grande. Maximum autorisé: 20 MB",
+    "image_error": "Erreur lors du traitement de l'image: {error}",
+    "model_no_image_support": "Le modèle d'IA sélectionné ne prend pas en charge le traitement d'images"
   },
   "confirm": {
     "delete_attachment": "Supprimer cette pièce jointe ?"

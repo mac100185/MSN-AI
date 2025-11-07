@@ -63,6 +63,7 @@
     "voice_input": "Dictado por voz",
     "upload_file": "Adjuntar archivo de texto",
     "upload_pdf_file": "Adjuntar archivo PDF",
+    "upload_image_file": "Adjuntar archivo de imagen",
     "text_format": "Formato de texto (Negrita, Cursiva, Subrayado)",
     "generate_prompt": "Generador de Prompt - Crear prompts estructurados",
     "manage_prompts": "Gestor de Prompts - Administrar prompts guardados",
@@ -73,8 +74,9 @@
     "search_chat": "Buscar en el chat actual",
     "close_chat": "Cerrar chat actual y crear uno nuevo",
     "delete_attachment": "Eliminar archivo",
-    "download_pdf": "Descargar PDF",
-    "download_txt": "Descargar archivo TXT"
+    "download_pdf": "Descargar archivo",
+    "download_txt": "Descargar archivo",
+    "download_image": "Descargar archivo"
   },
 
   "settings": {
@@ -304,7 +306,10 @@
     "nudge_received": "Zumbido enviado (respuesta detenida)",
     "nudge_stopped": "Respuesta detenida",
     "file_attached": "Archivo adjunto: {filename}",
-    "no_message": "sin mensaje adicional"
+    "image_attached": "Imagen adjunta",
+    "no_message": "sin mensaje adicional",
+    "image_processing": "Procesando imagen...",
+    "image_loaded": "Imagen cargada: {filename}"
   },
 
   "errors": {
@@ -335,7 +340,11 @@
     "delete_attachment_failed": "Error al eliminar el archivo adjunto",
     "export_failed": "Error al exportar los chats",
     "import_failed": "Error al importar los chats",
-    "download_file_failed": "Error al descargar el archivo"
+    "download_file_failed": "Error al descargar el archivo",
+    "only_image_files": "Solo se permiten archivos de imagen (JPG, PNG, GIF, WebP)",
+    "image_too_large": "La imagen es demasiado grande. Máximo permitido: 20 MB",
+    "image_error": "Error al procesar la imagen: {error}",
+    "model_no_image_support": "El modelo de IA seleccionado no soporta el procesamiento de imágenes"
   },
 
   "confirm": {

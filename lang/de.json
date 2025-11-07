@@ -53,9 +53,10 @@
     "nudge": "Anstoßen senden",
     "emoticon_natural": "Natürliche Emoticons",
     "emoticon_love": "Liebes-Emoticons",
-    "voice_input": "Spracheingabe",
+    "voice_input": "Sprachdiktat",
     "upload_file": "Textdatei anhängen",
     "upload_pdf_file": "PDF-Datei anhängen",
+    "upload_image_file": "Bilddatei anhängen",
     "text_format": "Textformat (Fett, Kursiv, Unterstrichen)",
     "generate_prompt": "Prompt-Generator - Erstellen Sie strukturierte Prompts",
     "manage_prompts": "Prompt-Manager - Verwalten Sie gespeicherte Prompts",
@@ -68,8 +69,9 @@
     "chats_export": "Chats exportieren",
     "chats_import": "Chats importieren",
     "delete_attachment": "Datei löschen",
-    "download_pdf": "PDF herunterladen",
-    "download_txt": "TXT-Datei herunterladen"
+    "download_pdf": "Datei herunterladen",
+    "download_txt": "Datei herunterladen",
+    "download_image": "Datei herunterladen"
   },
   "settings": {
     "title": "KI-Modell Einstellungen",
@@ -283,10 +285,13 @@
     "status_busy": "Ich bin beschäftigt, aber ich werde antworten, wenn ich kann.",
     "status_invisible": "Ich möchte derzeit nicht gesehen werden.",
     "nudge_sent": "Bist du da?",
-    "nudge_received": "Anstoßen gesendet (Antwort gestoppt)",
+    "nudge_received": "Stupser gesendet (Antwort gestoppt)",
     "nudge_stopped": "Antwort gestoppt",
     "file_attached": "Angehängte Datei: {filename}",
-    "no_message": "keine zusätzliche Nachricht"
+    "image_attached": "Bild angehängt",
+    "no_message": "keine zusätzliche Nachricht",
+    "image_processing": "Bild wird verarbeitet...",
+    "image_loaded": "Bild geladen: {filename}"
   },
   "errors": {
     "no_connection": "Keine Verbindung zu Ollama",
@@ -316,7 +321,11 @@
     "delete_attachment_failed": "Fehler beim Löschen des Anhangs",
     "export_failed": "Fehler beim Exportieren der Chats",
     "import_failed": "Fehler beim Importieren der Chats",
-    "download_file_failed": "Fehler beim Herunterladen der Datei"
+    "download_file_failed": "Fehler beim Herunterladen der Datei",
+    "only_image_files": "Nur Bilddateien sind erlaubt (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Das Bild ist zu groß. Maximal erlaubt: 20 MB",
+    "image_error": "Fehler beim Verarbeiten des Bildes: {error}",
+    "model_no_image_support": "Das ausgewählte KI-Modell unterstützt keine Bildverarbeitung"
   },
   "confirm": {
     "delete_attachment": "Diesen Anhang löschen?"

@@ -12,6 +12,7 @@ class MSNAI {
     this.chatSortOrder = "asc"; // valor inicial: ascendente
     this.pendingFileAttachment = null;
     this.pendingPdfContext = null; // Contexto PDF temporal (no se guarda en historial)
+    this.pendingImageContext = null; // Contexto de imágenes temporal (no se guarda en historial)
     this.userScrolledUp = false; // Flag para detectar si el usuario hizo scroll manual
     this.abortControllers = {}; // Mapa de controladores por chatId
     this.respondingChats = new Set(); // Set de chatIds que están recibiendo respuesta
@@ -32,7 +33,17 @@ class MSNAI {
     this.translations = {}; // Diccionario de traducciones
     this.availableLanguages = []; // Idiomas disponibles
     this.currentLanguage = "es"; // Idioma por defecto
+    this.translationsReady = false; // Flag para indicar si las traducciones están listas
     this.db = null; // IndexedDB para almacenar archivos adjuntos
+
+    // Detectar Microsoft Edge
+    const userAgent = navigator.userAgent.toLowerCase();
+    this.isEdgeBrowser = userAgent.includes("edg/");
+    if (this.isEdgeBrowser) {
+      console.log(
+        "🌐 Microsoft Edge detectado - Aplicando optimizaciones específicas",
+      );
+    }
     const currentHost = window.location.hostname;
     const isRemoteAccess =
       currentHost !== "localhost" && currentHost !== "127.0.0.1";
@@ -122,6 +133,55 @@ class MSNAI {
     });
 
     console.log("✅ [Monitor] Detección de interacciones configurada");
+  }
+
+  /**
+   * Fuerza actualización de tooltips específicamente para Microsoft Edge
+   * Este método se ejecuta múltiples veces con retrasos para asegurar que Edge actualice correctamente
+   */
+  forceUpdateTooltipsForEdge() {
+    if (!this.isEdgeBrowser || !this.translationsReady) {
+      return;
+    }
+
+    // Actualizar todos los tooltips con data-i18n-title
+    const tooltipElements = document.querySelectorAll("[data-i18n-title]");
+    tooltipElements.forEach((element) => {
+      const key = element.getAttribute("data-i18n-title");
+      const translation = this.t(key);
+
+      // Verificar que la traducción sea válida y no sea la misma clave
+      if (translation && translation !== key && !translation.includes(".")) {
+        // En Edge, forzar la eliminación y reinserción del atributo
+        element.removeAttribute("title");
+        // Usar requestAnimationFrame para asegurar que el navegador procese la eliminación
+        requestAnimationFrame(() => {
+          element.setAttribute("title", translation);
+          // Forzar un reflow para que Edge actualice el tooltip
+          void element.offsetHeight;
+        });
+      } else if (
+        translation === key ||
+        (translation && translation.includes("."))
+      ) {
+        // Si la traducción falló, intentar nuevamente después de un delay
+        setTimeout(() => {
+          const retranslation = this.t(key);
+          if (
+            retranslation &&
+            retranslation !== key &&
+            !retranslation.includes(".")
+          ) {
+            element.removeAttribute("title");
+            requestAnimationFrame(() => {
+              element.setAttribute("title", retranslation);
+              // Forzar un reflow para que Edge actualice el tooltip
+              void element.offsetHeight;
+            });
+          }
+        }, 100);
+      }
+    });
   }
 
   // =================== RENDERIZADO SEGURO DE MARKDOWN ===================
@@ -659,12 +719,72 @@ class MSNAI {
       this.settings.language = langData.code;
       localStorage.setItem("msnai-language", langData.code);
       console.log(`🌍 Idioma establecido: ${langData.name} (${langData.code})`);
+      console.log(
+        `🔍 Traducciones cargadas: ${Object.keys(this.translations).length} categorías`,
+      );
+      console.log(
+        `🔍 Estructura tooltips:`,
+        this.translations.tooltips
+          ? Object.keys(this.translations.tooltips).length + " claves"
+          : "NO EXISTE",
+      );
+      console.log(
+        `🔍 Ejemplo tooltip:`,
+        this.translations.tooltips?.upload_image_file || "NO ENCONTRADO",
+      );
+
+      // Marcar traducciones como listas
+      this.translationsReady = true;
 
       // Actualizar toda la interfaz
       this.updateUI();
+
+      // En Microsoft Edge, asegurar que los tooltips se actualicen después de que el DOM esté listo
+      // Usar setTimeout con 0ms para permitir que el navegador procese los cambios del DOM
+      setTimeout(() => {
+        this.updateDataI18nElements();
+      }, 0);
+
+      // Asegurar múltiples actualizaciones para Edge con tiempos incrementales
+      setTimeout(() => {
+        this.updateDataI18nElements();
+      }, 50);
+
+      setTimeout(() => {
+        this.updateDataI18nElements();
+      }, 100);
+
+      // Timeouts adicionales para Microsoft Edge con actualizaciones forzadas
+      if (this.isEdgeBrowser) {
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 200);
+
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 500);
+
+        setTimeout(() => {
+          this.forceUpdateTooltipsForEdge();
+        }, 1000);
+      }
+
+      // Forzar re-render del chat actual para actualizar tooltips
+      if (this.currentChatId) {
+        const chat = this.chats.find((c) => c.id === this.currentChatId);
+        if (chat && chat.messages.length > 0) {
+          console.log(
+            `🔄 Re-renderizando chat ${this.currentChatId} después de cambio de idioma`,
+          );
+          this.renderMessages(chat);
+        }
+      }
     } else {
       console.error(`❌ Error crítico: No hay idiomas disponibles para cargar`);
       this.translations = {}; // Asegurar que translations esté definido aunque sea vacío
+      this.translationsReady = false;
     }
   }
 
@@ -673,35 +793,82 @@ class MSNAI {
     const keys = key.split(".");
     let value = this.translations;
 
-    // Verificar que translations esté inicializado
-    if (!this.translations || typeof this.translations !== "object") {
-      console.error(
-        `❌ Error: translations no está inicializado correctamente para la clave: ${key}`,
-      );
-      return key;
+    // Verificar que translations esté inicializado y listo
+    if (
+      !this.translationsReady ||
+      !this.translations ||
+      typeof this.translations !== "object"
+    ) {
+      // Traducciones aún no están listas, usar fallback inmediatamente
+      return this.getFallbackTranslation(key, replacements);
+    }
+
+    // Verificar que translations no esté vacío (Edge puede tener timing issues)
+    if (Object.keys(this.translations).length === 0) {
+      // Traducción aún no cargada, usar fallback inmediatamente sin warning
+      return this.getFallbackTranslation(key, replacements);
     }
 
     for (const k of keys) {
       if (value && typeof value === "object") {
         value = value[k];
       } else {
-        // La traducción no fue encontrada
+        // La traducción no fue encontrada, intentar fallback
         console.warn(
-          `⚠️ Traducción no encontrada: "${key}" en idioma "${this.currentLanguage}"`,
+          `⚠️ Traducción no encontrada: "${key}" en idioma "${this.currentLanguage}", usando fallback`,
         );
-        return key;
+        return this.getFallbackTranslation(key, replacements);
       }
     }
 
+    // Si value es undefined o no es string, intentar fallback
+    if (value === undefined || typeof value !== "string") {
+      console.warn(
+        `⚠️ Traducción no encontrada: "${key}" en idioma "${this.currentLanguage}", usando fallback`,
+      );
+      return this.getFallbackTranslation(key, replacements);
+    }
+
     // Reemplazar variables {variable}
-    if (typeof value === "string" && Object.keys(replacements).length > 0) {
+    if (Object.keys(replacements).length > 0) {
       return value.replace(/\{(\w+)\}/g, (match, key) => {
         return replacements[key] !== undefined ? replacements[key] : match;
       });
     }
 
-    // Si value es undefined, devolver undefined para que el operador || funcione
-    return value !== undefined ? value : undefined;
+    return value;
+  }
+
+  getFallbackTranslation(key, replacements = {}) {
+    // Intentar obtener traducción desde español como fallback
+    const esLang = this.availableLanguages.find((l) => l.code === "es");
+    if (esLang && esLang.data) {
+      const keys = key.split(".");
+      let value = esLang.data;
+
+      for (const k of keys) {
+        if (value && typeof value === "object") {
+          value = value[k];
+        } else {
+          value = undefined;
+          break;
+        }
+      }
+
+      // Si encontramos la traducción en español, usarla
+      if (value !== undefined && typeof value === "string") {
+        // Reemplazar variables si es necesario
+        if (Object.keys(replacements).length > 0) {
+          return value.replace(/\{(\w+)\}/g, (match, key) => {
+            return replacements[key] !== undefined ? replacements[key] : match;
+          });
+        }
+        return value;
+      }
+    }
+
+    // Si tampoco está en español, devolver la clave
+    return key;
   }
 
   updateLanguageSelect() {
@@ -758,7 +925,38 @@ class MSNAI {
     document.querySelectorAll("[data-i18n-title]").forEach((element) => {
       const key = element.getAttribute("data-i18n-title");
       const translation = this.t(key);
-      element.setAttribute("title", translation);
+      // Verificar que la traducción sea válida y no sea la misma clave
+      if (translation && translation !== key && !translation.includes(".")) {
+        // En Edge, forzar la eliminación y reinserción del atributo para asegurar actualización
+        if (this.isEdgeBrowser) {
+          element.removeAttribute("title");
+          requestAnimationFrame(() => {
+            element.setAttribute("title", translation);
+            void element.offsetHeight;
+          });
+        } else {
+          element.setAttribute("title", translation);
+        }
+      } else if (
+        this.isEdgeBrowser &&
+        (translation === key || !translation || translation.includes("."))
+      ) {
+        // En Microsoft Edge, si la traducción falló, intentar nuevamente
+        setTimeout(() => {
+          const retranslation = this.t(key);
+          if (
+            retranslation &&
+            retranslation !== key &&
+            !retranslation.includes(".")
+          ) {
+            element.removeAttribute("title");
+            requestAnimationFrame(() => {
+              element.setAttribute("title", retranslation);
+              void element.offsetHeight;
+            });
+          }
+        }, 100);
+      }
     });
 
     // Actualizar elementos con data-i18n-placeholder (placeholders de input/textarea)
@@ -1143,17 +1341,18 @@ class MSNAI {
 
       this.playSound("message-in");
     } catch (error) {
-      console.error("Error enviando sumbido:", error);
+      console.error("Error enviando mensaje:", error);
 
       // No mostrar error si fue un abort intencional
       if (error.name === "AbortError") {
         if (aiMessage.content) {
           aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
-          aiMessage.content = this.t("messages.nudge_received");
+          aiMessage.content = this.t("chat.response_stopped_before");
         }
       } else {
-        aiMessage.content = `Error: ${error.message}. Verifica que Ollama esté ejecutándose.`;
+        // Mostrar mensaje de error apropiado
+        aiMessage.content = error.message;
       }
 
       // Limpiar recursos de streaming
@@ -1895,6 +2094,190 @@ class MSNAI {
     return ocrText;
   }
 
+  // =================== CARGA Y PROCESAMIENTO DE ARCHIVOS DE IMAGEN ===================
+
+  /**
+   * Abre diálogo para cargar archivo de imagen y lo procesa
+   */
+  uploadImageFile() {
+    if (!this.currentChatId) {
+      alert(
+        this.t("errors.select_chat_first") ||
+          "Por favor selecciona un chat primero",
+      );
+      return;
+    }
+
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/jpeg,image/jpg,image/png,image/gif,image/webp";
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      // Validar tipo de archivo
+      const validTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+      if (
+        !validTypes.includes(file.type) &&
+        !file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+      ) {
+        this.showNotification(this.t("errors.only_image_files"), "error");
+        return;
+      }
+
+      // Validar tamaño (máximo 20 MB)
+      const maxSize = 20 * 1024 * 1024; // 20 MB en bytes
+      if (file.size > maxSize) {
+        this.showNotification(this.t("errors.image_too_large"), "error");
+        return;
+      }
+
+      // Mostrar indicador de procesamiento con traducción validada
+      let processingMsg = this.t("messages.image_processing");
+      if (
+        !processingMsg ||
+        processingMsg.includes("messages.") ||
+        processingMsg === "messages.image_processing"
+      ) {
+        processingMsg = "Procesando imagen...";
+      }
+      this.showNotification(processingMsg, "info");
+
+      try {
+        // Convertir imagen a base64
+        const base64Image = await this.convertImageToBase64(file);
+
+        // Crear clave para el archivo binario
+        const fileKey = `img-${this.currentChatId}-${Date.now()}`;
+
+        // Leer el archivo como ArrayBuffer para guardarlo completo
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+          const arrayBuffer = ev.target.result;
+
+          // Crear objeto de attachment persistente
+          const attachmentId = `${this.currentChatId}_${Date.now()}_${file.name}`;
+          const attachment = {
+            id: attachmentId,
+            chatId: this.currentChatId,
+            name: file.name,
+            type: file.type,
+            size: file.size,
+            base64Data: base64Image, // Base64 puro sin prefijo
+            uploadDate: new Date().toISOString(),
+            fileAttachmentKey: fileKey,
+          };
+
+          try {
+            // Guardar archivo binario en IndexedDB
+            await this.saveFileAttachment(
+              fileKey,
+              arrayBuffer,
+              file.type,
+              file.name,
+              this.currentChatId,
+            );
+
+            // Guardar el attachment con los datos base64
+            await this.saveAttachment(attachment);
+
+            // Agregar a la lista de attachments del chat
+            const chat = this.chats.find((c) => c.id === this.currentChatId);
+            if (chat) {
+              if (!chat.attachments) {
+                chat.attachments = [];
+              }
+              chat.attachments.push({
+                id: attachmentId,
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                uploadDate: attachment.uploadDate,
+                fileAttachmentKey: fileKey,
+              });
+              this.saveChats();
+            }
+
+            // Guardar contexto de imagen temporalmente para el próximo mensaje
+            this.pendingImageContext = {
+              name: file.name,
+              type: file.type,
+              base64Data: base64Image,
+            };
+
+            // Actualizar input con indicador visual
+            const inputEl = document.getElementById("message-input");
+            const currentMsg = inputEl.value.trim();
+            let attachedMsg = this.t("messages.image_attached");
+            if (!attachedMsg || attachedMsg.includes("messages.")) {
+              attachedMsg = "Imagen adjunta";
+            }
+            inputEl.value = `${currentMsg ? currentMsg + " " : ""}[${attachedMsg}: ${file.name}]`;
+            inputEl.focus();
+
+            // Renderizar el chat para mostrar el attachment
+            this.renderMessages(chat);
+
+            // Mostrar notificación de éxito con traducción validada
+            let loadedMsg = this.t("messages.image_loaded", {
+              filename: file.name,
+            });
+            if (
+              !loadedMsg ||
+              loadedMsg.includes("messages.") ||
+              loadedMsg.includes("{filename}")
+            ) {
+              loadedMsg = `Imagen cargada: ${file.name}`;
+            }
+            this.showNotification(loadedMsg, "success");
+
+            console.log(`📎 Archivo de imagen adjuntado al chat: ${file.name}`);
+          } catch (saveError) {
+            console.error("Error guardando archivo adjunto:", saveError);
+            this.showNotification(
+              this.t("errors.attachment_save_failed") ||
+                "Error al guardar el archivo adjunto",
+              "error",
+            );
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      } catch (error) {
+        console.error("Error procesando imagen:", error);
+        this.showNotification(
+          this.t("errors.image_error", { error: error.message }),
+          "error",
+        );
+      }
+    };
+    input.click();
+  }
+
+  /**
+   * Convierte una imagen a base64
+   * @param {File} file - Archivo de imagen
+   * @returns {Promise<string>}
+   */
+  async convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        // Extraer solo la parte base64 (sin el prefijo data:image/...)
+        // Ollama requiere base64 puro, sin prefijo
+        const base64String = e.target.result.split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   /**
    * Fragmenta texto en chunks basados en tokens estimados
    * @param {string} text - Texto completo a fragmentar
@@ -2170,6 +2553,28 @@ class MSNAI {
    * @param {string} type - Tipo de notificación: 'info', 'success', 'error'
    */
   showNotification(message, type = "info") {
+    // Si el mensaje parece ser una clave de traducción sin traducir (contiene puntos y no espacios),
+    // intentar traducirlo
+    if (message && message.includes(".") && !message.includes(" ")) {
+      let translated = this.t(message);
+      // En Edge, asegurarse de que la traducción sea válida antes de usarla
+      if (translated && translated !== message && !translated.includes(".")) {
+        message = translated;
+      } else {
+        // Si la traducción falló, usar un mensaje por defecto si es un error conocido
+        console.warn(`⚠️ Traducción no disponible para: ${message}`);
+        // Intentar mostrar un mensaje por defecto si es un error conocido
+        if (message === "errors.model_no_image_support") {
+          message =
+            "El modelo de IA seleccionado no soporta el procesamiento de imágenes";
+        } else if (message === "messages.image_processing") {
+          message = "Procesando imagen...";
+        } else if (message.includes("messages.image_loaded")) {
+          message = "Imagen cargada correctamente";
+        }
+      }
+    }
+
     // Crear elemento de notificación si no existe
     let notification = document.getElementById("app-notification");
     if (!notification) {
@@ -2225,6 +2630,7 @@ class MSNAI {
     let displayedMessage = message;
     let fileContent = "";
     let pdfContext = null;
+    let imageContext = null;
 
     // Manejar archivo de texto adjunto
     if (this.pendingFileAttachment) {
@@ -2244,10 +2650,20 @@ class MSNAI {
       pdfContext = this.pendingPdfContext;
     }
 
+    // Manejar contexto de imagen (no se guarda en historial)
+    if (this.pendingImageContext) {
+      const imageMatch = message.match(/^(.*?)\s*\[.+?: [^\]]+\]$/);
+      if (imageMatch) {
+        displayedMessage = imageMatch[1] || "";
+      }
+      imageContext = this.pendingImageContext;
+    }
+
     input.value = "";
     const originalAttachment = this.pendingFileAttachment;
     this.pendingFileAttachment = null;
     this.pendingPdfContext = null;
+    this.pendingImageContext = null;
 
     const userMessage = {
       type: "user",
@@ -2315,6 +2731,7 @@ class MSNAI {
         chat.id,
         onToken,
         pdfContextText,
+        imageContext,
       );
 
       const sendTime = performance.now() - sendStart;
@@ -2351,7 +2768,18 @@ class MSNAI {
           aiMessage.content = `[⏹️ ${this.t("messages.nudge_stopped")}]`;
         }
       } else {
-        aiMessage.content = `${this.t("errors.server_error", { status: error.message })}. ${this.t("errors.verify_ollama")}`;
+        // Mostrar mensaje de error apropiado
+        // Si el error tiene una clave de traducción, usarla; sino usar el mensaje directamente
+        if (error.translationKey) {
+          let errorMsg = this.t(error.translationKey);
+          // Si la traducción falló, usar el mensaje del error directamente
+          if (!errorMsg || errorMsg.includes(".")) {
+            errorMsg = error.message;
+          }
+          aiMessage.content = errorMsg;
+        } else {
+          aiMessage.content = error.message;
+        }
       }
 
       // Limpiar recursos de streaming
@@ -2509,7 +2937,13 @@ class MSNAI {
     return false;
   }
 
-  async sendToAI(message, chatId, onToken, pdfContext = null) {
+  async sendToAI(
+    message,
+    chatId,
+    onToken,
+    pdfContext = null,
+    imageContext = null,
+  ) {
     if (!this.isConnected) throw new Error(this.t("errors.no_connection"));
     const chat = this.chats.find((c) => c.id === chatId);
     if (!chat) throw new Error(this.t("errors.chat_not_found"));
@@ -2538,6 +2972,7 @@ class MSNAI {
 
     // Cargar todos los archivos adjuntos del chat desde IndexedDB
     let attachmentsContext = "";
+    let attachmentImages = []; // Array para almacenar imágenes de attachments
     if (chat.attachments && chat.attachments.length > 0) {
       const attachmentsData = [];
       for (const attachmentMeta of chat.attachments) {
@@ -2561,6 +2996,15 @@ class MSNAI {
               attachmentsData.push(
                 `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${relevantChunks.join("\n\n[...]\n\n")}\n`,
               );
+            } else if (
+              attachment.type &&
+              attachment.type.startsWith("image/")
+            ) {
+              // Para imágenes, agregar al array de imágenes (no al contexto de texto)
+              if (attachment.base64Data) {
+                attachmentImages.push(attachment.base64Data);
+                attachmentsData.push(`[Imagen: ${attachment.name}]\n`);
+              }
             }
           }
         } catch (error) {
@@ -2586,25 +3030,97 @@ class MSNAI {
     let fullResponse = ""; // Mover fuera del try para que sea accesible en catch
 
     try {
+      // Preparar el cuerpo de la petición
+      const requestBody = {
+        model: chat.model,
+        prompt: prompt,
+        stream: true,
+        options: { temperature: 0.7, max_tokens: 2000 },
+      };
+
+      // Si hay contexto de imagen o imágenes de attachments, agregarlas
+      // Ollama requiere que las imágenes estén en el array 'images' como base64 puro (sin prefijo data:image)
+      if (imageContext && imageContext.base64Data) {
+        requestBody.images = [imageContext.base64Data];
+      } else if (attachmentImages.length > 0) {
+        // Usar solo la primera imagen de los attachments para no saturar
+        requestBody.images = [attachmentImages[0]];
+      }
+
       const response = await fetch(
         `${this.settings.ollamaServer}/api/generate`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: chat.model,
-            prompt: prompt,
-            stream: true,
-            options: { temperature: 0.7, max_tokens: 2000 },
-          }),
+          body: JSON.stringify(requestBody),
           signal: this.abortControllers[chatId].signal, // Añadir señal de aborto específica del chat
         },
       );
 
-      if (!response.ok)
+      if (!response.ok) {
+        // Manejar error específico de modelo sin soporte de imágenes
+        if (
+          (response.status === 400 || response.status === 500) &&
+          (imageContext || attachmentImages.length > 0)
+        ) {
+          try {
+            const errorText = await response.text();
+            let errorMessage = errorText;
+
+            // Intentar parsear JSON para obtener el mensaje de error real
+            try {
+              const errorJson = JSON.parse(errorText);
+              errorMessage = errorJson.error || errorText;
+            } catch (jsonError) {
+              // Si no es JSON, usar el texto tal cual
+              errorMessage = errorText;
+            }
+
+            // Verificar si el error está relacionado con imágenes no soportadas
+            if (
+              errorMessage.includes("does not support images") ||
+              errorMessage.includes("no soporta imágenes") ||
+              errorMessage.includes("model does not support") ||
+              errorMessage.includes("vision") ||
+              errorMessage.includes("multimodal") ||
+              errorMessage.includes("illegal base64") ||
+              errorMessage.includes("invalid base64") ||
+              errorMessage.includes("unmarshal") ||
+              errorMessage.includes("invalid character") ||
+              errorMessage.includes("looking for beginning of value")
+            ) {
+              // Obtener mensaje traducido antes de lanzar el error
+              let errorMsg = this.t("errors.model_no_image_support");
+              // Si la traducción falló, usar mensaje por defecto
+              if (!errorMsg || errorMsg.includes("errors.")) {
+                errorMsg =
+                  "El modelo de IA seleccionado no soporta el procesamiento de imágenes";
+              }
+              const error = new Error(errorMsg);
+              error.translationKey = "errors.model_no_image_support";
+              throw error;
+            }
+          } catch (e) {
+            // Si es nuestro error personalizado, relanzarlo
+            if (e.translationKey === "errors.model_no_image_support") {
+              throw e;
+            }
+            // Si hay imagen pero error 400/500, probablemente sea falta de soporte
+            let errorMsg = this.t("errors.model_no_image_support");
+            // Si la traducción falló, usar mensaje por defecto
+            if (!errorMsg || errorMsg.includes("errors.")) {
+              errorMsg =
+                "El modelo de IA seleccionado no soporta el procesamiento de imágenes";
+            }
+            const error = new Error(errorMsg);
+            error.translationKey = "errors.model_no_image_support";
+            throw error;
+          }
+        }
         throw new Error(
           this.t("errors.server_error", { status: response.status }),
         );
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -3583,10 +4099,14 @@ class MSNAI {
 
         // Determinar si tiene archivo binario disponible para descarga
         const hasFileAttachment = attachment.fileAttachmentKey ? true : false;
-        const downloadBtnTooltip =
-          attachment.type === "application/pdf"
-            ? this.t("tooltips.download_pdf")
-            : this.t("tooltips.download_txt");
+
+        // Usar tooltip genérico para todos los tipos de archivo
+        let downloadBtnTooltip = this.t("tooltips.download_txt");
+        if (attachment.type === "application/pdf") {
+          downloadBtnTooltip = this.t("tooltips.download_pdf");
+        } else if (attachment.type && attachment.type.startsWith("image/")) {
+          downloadBtnTooltip = this.t("tooltips.download_image");
+        }
 
         const downloadButton = hasFileAttachment
           ? `<button class="download-attachment-btn" data-attachment-key="${attachment.fileAttachmentKey}" data-attachment-name="${this.escapeHtml(attachment.name)}" style="background: #0066cc; color: white; border: none; padding: 3px 8px; border-radius: 3px; cursor: pointer; font-size: 7pt; margin-right: 4px;" title="${downloadBtnTooltip}">💾</button>`
@@ -3608,6 +4128,49 @@ class MSNAI {
       });
 
       messagesArea.appendChild(attachmentsContainer);
+
+      // Actualizar tooltips dinámicos con traducciones inmediatamente
+      this.updateDataI18nElements();
+
+      // Forzar actualización adicional usando requestAnimationFrame
+      requestAnimationFrame(() => {
+        this.updateDataI18nElements();
+        if (this.isEdgeBrowser) {
+          this.forceUpdateTooltipsForEdge();
+        }
+      });
+
+      // Timeouts adicionales específicos para Microsoft Edge con actualizaciones forzadas
+      if (this.isEdgeBrowser) {
+        // Múltiples intentos de actualización para asegurar que Edge procese las traducciones
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 50);
+
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 150);
+
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 300);
+
+        setTimeout(() => {
+          this.updateDataI18nElements();
+          this.forceUpdateTooltipsForEdge();
+        }, 500);
+
+        setTimeout(() => {
+          this.forceUpdateTooltipsForEdge();
+        }, 800);
+
+        setTimeout(() => {
+          this.forceUpdateTooltipsForEdge();
+        }, 1200);
+      }
 
       // Event listeners para descargar attachments
       attachmentsContainer
@@ -3637,10 +4200,7 @@ class MSNAI {
               console.log(`💾 Archivo descargado: ${fileName}`);
             } catch (error) {
               console.error("Error descargando archivo:", error);
-              alert(
-                this.t("errors.download_file_failed") ||
-                  "Error al descargar el archivo",
-              );
+              alert(this.t("errors.download_file_failed"));
             }
           });
         });
@@ -5223,6 +5783,9 @@ class MSNAI {
       .getElementById("upload-pdf-file-btn")
       .addEventListener("click", () => this.uploadPdfFile());
     document
+      .getElementById("upload-image-file-btn")
+      .addEventListener("click", () => this.uploadImageFile());
+    document
       .getElementById("export-current-chat-btn")
       .addEventListener("click", () => this.exportCurrentChat());
     document
@@ -5564,6 +6127,25 @@ class MSNAI {
       ?.addEventListener("click", () => {
         this.deletePromptFromDetails();
       });
+
+    // Actualizar tooltips específicamente para Microsoft Edge
+    if (this.isEdgeBrowser) {
+      setTimeout(() => {
+        this.forceUpdateTooltipsForEdge();
+      }, 100);
+
+      setTimeout(() => {
+        this.forceUpdateTooltipsForEdge();
+      }, 500);
+
+      setTimeout(() => {
+        this.forceUpdateTooltipsForEdge();
+      }, 1000);
+
+      setTimeout(() => {
+        this.forceUpdateTooltipsForEdge();
+      }, 1500);
+    }
   }
   //-----------------------------------------------
   async updateAvailableModels() {

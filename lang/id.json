@@ -56,6 +56,7 @@
     "voice_input": "Dikte suara",
     "upload_file": "Lampirkan file teks",
     "upload_pdf_file": "Lampirkan file PDF",
+    "upload_image_file": "Lampirkan file gambar",
     "text_format": "Format teks (Tebal, Miring, Garis bawah)",
     "increase_font": "Perbesar ukuran font",
     "decrease_font": "Perkecil ukuran font",
@@ -64,13 +65,12 @@
     "search_chat": "Cari di obrolan saat ini",
     "close_chat": "Tutup obrolan saat ini dan buat yang baru",
     "generate_prompt": "Generator Prompt - Buat prompt terstruktur",
-    "manage_prompts": "Pengelola Prompt - Kelola prompt yang disimpan",
-    "upload_pdf_file": "Lampirkan file PDF",
-    "chats_export": "Ekspor obrolan",
+    "manage_prompts": "Manajer Prompt - Kelola prompt yang disimpan",
     "chats_import": "Impor obrolan",
     "delete_attachment": "Hapus file",
-    "download_pdf": "Unduh PDF",
-    "download_txt": "Unduh file TXT"
+    "download_pdf": "Unduh file",
+    "download_txt": "Unduh file",
+    "download_image": "Unduh file"
   },
   "settings": {
     "title": "Pengaturan Model AI",
@@ -205,10 +205,13 @@
     "status_busy": "Saya sedang sibuk tetapi akan merespons saat bisa.",
     "status_invisible": "Saya lebih suka tidak terlihat saat ini.",
     "nudge_sent": "Apakah Anda di sana?",
-    "nudge_received": "Getaran dikirim (respons dihentikan)",
+    "nudge_received": "Senggolan dikirim (respons dihentikan)",
     "nudge_stopped": "Respons dihentikan",
     "file_attached": "File terlampir: {filename}",
-    "no_message": "tanpa pesan tambahan"
+    "image_attached": "Gambar terlampir",
+    "no_message": "tidak ada pesan tambahan",
+    "image_processing": "Memproses gambar...",
+    "image_loaded": "Gambar dimuat: {filename}"
   },
   "errors": {
     "no_connection": "Tidak ada koneksi dengan Ollama",
@@ -234,11 +237,15 @@
     "pdf_no_text": "Tidak dapat mengekstrak teks dari PDF. Coba dengan file lain.",
     "pdf_attached": "PDF dilampirkan: {filename} ({pages} halaman)",
     "select_chat_first": "Silakan pilih obrolan terlebih dahulu",
-    "attachment_save_failed": "Gagal menyimpan lampiran",
-    "delete_attachment_failed": "Gagal menghapus lampiran",
-    "export_failed": "Gagal mengekspor obrolan",
-    "import_failed": "Gagal mengimpor obrolan",
-    "download_file_failed": "Gagal mengunduh file"
+    "attachment_save_failed": "Kesalahan menyimpan lampiran",
+    "delete_attachment_failed": "Kesalahan menghapus lampiran",
+    "export_failed": "Kesalahan mengekspor obrolan",
+    "import_failed": "Kesalahan mengimpor obrolan",
+    "download_file_failed": "Kesalahan mengunduh file",
+    "only_image_files": "Hanya file gambar yang diizinkan (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Gambar terlalu besar. Maksimum yang diizinkan: 20 MB",
+    "image_error": "Kesalahan memproses gambar: {error}",
+    "model_no_image_support": "Model AI yang dipilih tidak mendukung pemrosesan gambar"
   },
   "confirm": {
     "delete_attachment": "Hapus lampiran ini?"

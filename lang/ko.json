@@ -53,9 +53,10 @@
     "nudge": "찌르기 보내기",
     "emoticon_natural": "자연스러운 이모티콘",
     "emoticon_love": "사랑 이모티콘",
-    "voice_input": "음성 받아쓰기",
+    "voice_input": "음성 입력",
     "upload_file": "텍스트 파일 첨부",
     "upload_pdf_file": "PDF 파일 첨부",
+    "upload_image_file": "이미지 파일 첨부",
     "text_format": "텍스트 서식 (굵게, 기울임꼴, 밑줄)",
     "increase_font": "글꼴 크기 늘리기",
     "decrease_font": "글꼴 크기 줄이기",
@@ -68,8 +69,9 @@
     "chats_export": "채팅 내보내기",
     "chats_import": "채팅 가져오기",
     "delete_attachment": "파일 삭제",
-    "download_pdf": "PDF 다운로드",
-    "download_txt": "TXT 파일 다운로드"
+    "download_pdf": "파일 다운로드",
+    "download_txt": "파일 다운로드",
+    "download_image": "파일 다운로드"
   },
   "settings": {
     "title": "AI 모델 설정",
@@ -204,10 +206,13 @@
     "status_busy": "다른 용무 중이지만 가능한 한 빨리 응답하겠습니다.",
     "status_invisible": "지금은 보이고 싶지 않습니다.",
     "nudge_sent": "거기 계세요?",
-    "nudge_received": "찌르기가 전송되었습니다 (응답 중지됨)",
+    "nudge_received": "콕 찌르기 전송됨 (응답 중지됨)",
     "nudge_stopped": "응답 중지됨",
     "file_attached": "첨부 파일: {filename}",
-    "no_message": "추가 메시지 없음"
+    "image_attached": "이미지 첨부됨",
+    "no_message": "추가 메시지 없음",
+    "image_processing": "이미지 처리 중...",
+    "image_loaded": "이미지 로드됨: {filename}"
   },
   "errors": {
     "no_connection": "Ollama에 연결되지 않았습니다",
@@ -234,10 +239,14 @@
     "pdf_attached": "PDF 첨부됨: {filename} ({pages}페이지)",
     "select_chat_first": "먼저 채팅을 선택하세요",
     "attachment_save_failed": "첨부 파일 저장 오류",
-    "delete_attachment_failed": "첨부 파일 삭제 오류",
-    "export_failed": "채팅 내보내기 오류",
-    "import_failed": "채팅 가져오기 오류",
-    "download_file_failed": "파일 다운로드 오류"
+    "delete_attachment_failed": "첨부 파일 삭제 실패",
+    "export_failed": "채팅 내보내기 실패",
+    "import_failed": "채팅 가져오기 실패",
+    "download_file_failed": "파일 다운로드 실패",
+    "only_image_files": "이미지 파일만 허용됩니다 (JPG, PNG, GIF, WebP)",
+    "image_too_large": "이미지가 너무 큽니다. 최대 허용: 20 MB",
+    "image_error": "이미지 처리 오류: {error}",
+    "model_no_image_support": "선택한 AI 모델은 이미지 처리를 지원하지 않습니다"
   },
   "confirm": {
     "delete_attachment": "이 첨부 파일을 삭제하시겠습니까?"

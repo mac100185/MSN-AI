@@ -56,6 +56,7 @@
     "voice_input": "Aru qillqata",
     "upload_file": "Qillqa qillqa yapxataña",
     "upload_pdf_file": "PDF qillqa yapxataña",
+    "upload_image_file": "Uñacht'awi qillqa yapxataña",
     "text_format": "Qillqa uñtawi (Jach'a, Q'añu, Aykhana siq'i)",
     "increase_font": "Qillqa jach'a kaynipa yapxataña",
     "decrease_font": "Qillqa jach'a kaynipa jisk'aptayaña",
@@ -68,8 +69,9 @@
     "chats_export": "Aruskipawinaka mistsuña",
     "chats_import": "Aruskipawinaka mantaña",
     "delete_attachment": "Qillqata chhaqtayaña",
-    "download_pdf": "PDF apaqaña",
-    "download_txt": "TXT qillqata apaqaña"
+    "download_pdf": "Qillqata apaqaña",
+    "download_txt": "Qillqata apaqaña",
+    "download_image": "Qillqata apaqaña"
   },
   "settings": {
     "title": "AI Modelo Wakicht'awinaka",
@@ -207,7 +209,10 @@
     "nudge_received": "Tʼijraña apayata (jaysawi sayt'ata)",
     "nudge_stopped": "Jaysawi sayt'ata",
     "file_attached": "Qillqa yapxatata: {filename}",
-    "no_message": "janiwa yapäkiti yatiyawikiti"
+    "image_attached": "Uñacht'awi yapxatata",
+    "no_message": "janiwa yapäkiti yatiyawikiti",
+    "image_processing": "Uñacht'awi luraña...",
+    "image_loaded": "Uñacht'awi apthapita: {filename}"
   },
   "errors": {
     "no_connection": "Ollama-mpi janiwa mayacht'atakiti",
@@ -231,13 +236,17 @@
     "pdf_loaded": "PDF apantat: {filename}",
     "pdf_error": "PDF luraña pantjata: {error}",
     "pdf_no_text": "Janiwa PDF-manta qillqata mistuñakiti. Yaqha qillqampi yant'aña.",
-    "pdf_attached": "PDF yapxatat: {filename} ({pages} laphinaka)",
-    "select_chat_first": "Nayraqata aruskipawi ajlliñama",
-    "attachment_save_failed": "Wakichata qillqata imaña pantjasiwa",
-    "delete_attachment_failed": "Wakichata qillqata chhaqtayaña pantjasiwa",
-    "export_failed": "Aruskipawinaka mistsuña pantjasiwa",
-    "import_failed": "Aruskipawinaka mantaña pantjasiwa",
-    "download_file_failed": "Qillqata apaqaña pantjasiwa"
+    "pdf_attached": "PDF yapxatata: {filename} ({pages} laphinaka)",
+    "select_chat_first": "Nayraqata aruskipawi chhijllaña",
+    "attachment_save_failed": "Yapxatata qillqa imaña pantjata",
+    "delete_attachment_failed": "Yapxatata qillqa chhaqtayaña pantjata",
+    "export_failed": "Aruskipawinaka mistsuña pantjata",
+    "import_failed": "Aruskipawinaka mantaña pantjata",
+    "download_file_failed": "Qillqa apaqañanxa pantjata",
+    "only_image_files": "Uñacht'awinakakiwa wakisiri (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Uñacht'awix jach'awa. Jach'ata: 20 MB",
+    "image_error": "Uñacht'awi lurañanxa pantjata: {error}",
+    "model_no_image_support": "Ajllijata AI modelo janiwa uñacht'awi lurañarux yanapt'kiti"
   },
   "confirm": {
     "delete_attachment": "¿Aka wakichata qillqata chhaqtayañ munta?"

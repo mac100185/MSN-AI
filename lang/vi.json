@@ -53,8 +53,10 @@
     "nudge": "Gửi rung",
     "emoticon_natural": "Biểu tượng cảm xúc tự nhiên",
     "emoticon_love": "Biểu tượng cảm xúc tình yêu",
-    "voice_input": "Nhập bằng giọng nói",
+    "voice_input": "Nhập giọng nói",
     "upload_file": "Đính kèm tệp văn bản",
+    "upload_pdf_file": "Đính kèm tệp PDF",
+    "upload_image_file": "Đính kèm tệp hình ảnh",
     "text_format": "Định dạng văn bản (Đậm, Nghiêng, Gạch chân)",
     "increase_font": "Tăng kích thước phông chữ",
     "decrease_font": "Giảm kích thước phông chữ",
@@ -63,13 +65,13 @@
     "search_chat": "Tìm kiếm trong trò chuyện hiện tại",
     "close_chat": "Đóng trò chuyện hiện tại và tạo trò chuyện mới",
     "generate_prompt": "Trình tạo Prompt - Tạo prompt có cấu trúc",
-    "manage_prompts": "Quản lý Prompt - Quản lý prompt đã lưu",
-    "upload_pdf_file": "Đính kèm tệp PDF",
+    "manage_prompts": "Trình quản lý Prompt - Quản lý các prompt đã lưu",
     "chats_import": "Nhập trò chuyện",
     "chats_export": "Xuất trò chuyện",
     "delete_attachment": "Xóa tệp",
-    "download_pdf": "Tải xuống PDF",
-    "download_txt": "Tải xuống tệp TXT"
+    "download_pdf": "Tải xuống tệp",
+    "download_txt": "Tải xuống tệp",
+    "download_image": "Tải xuống tệp"
   },
   "settings": {
     "title": "Cài đặt mô hình AI",
@@ -204,10 +206,13 @@
     "status_busy": "Tôi đang bận nhưng sẽ trả lời khi có thể.",
     "status_invisible": "Tôi muốn ẩn vào lúc này.",
     "nudge_sent": "Bạn có đó không?",
-    "nudge_received": "Đã gửi rung (phản hồi đã dừng)",
+    "nudge_received": "Đã gửi nhắc nhở (phản hồi đã dừng)",
     "nudge_stopped": "Phản hồi đã dừng",
     "file_attached": "Tệp đính kèm: {filename}",
-    "no_message": "không có tin nhắn bổ sung"
+    "image_attached": "Hình ảnh đính kèm",
+    "no_message": "không có tin nhắn bổ sung",
+    "image_processing": "Đang xử lý hình ảnh...",
+    "image_loaded": "Hình ảnh đã tải: {filename}"
   },
   "errors": {
     "no_connection": "Không có kết nối với Ollama",
@@ -233,11 +238,15 @@
     "pdf_no_text": "Không thể trích xuất văn bản từ PDF. Thử với tệp khác.",
     "pdf_attached": "PDF đã đính kèm: {filename} ({pages} trang)",
     "select_chat_first": "Vui lòng chọn một cuộc trò chuyện trước",
-    "attachment_save_failed": "Lỗi lưu tệp đính kèm",
-    "delete_attachment_failed": "Lỗi xóa tệp đính kèm",
-    "export_failed": "Lỗi xuất trò chuyện",
-    "import_failed": "Lỗi nhập trò chuyện",
-    "download_file_failed": "Lỗi tải xuống tệp"
+    "attachment_save_failed": "Lỗi khi lưu tệp đính kèm",
+    "delete_attachment_failed": "Lỗi khi xóa tệp đính kèm",
+    "export_failed": "Lỗi khi xuất trò chuyện",
+    "import_failed": "Lỗi khi nhập trò chuyện",
+    "download_file_failed": "Lỗi khi tải xuống tệp",
+    "only_image_files": "Chỉ cho phép tệp hình ảnh (JPG, PNG, GIF, WebP)",
+    "image_too_large": "Hình ảnh quá lớn. Tối đa cho phép: 20 MB",
+    "image_error": "Lỗi xử lý hình ảnh: {error}",
+    "model_no_image_support": "Mô hình AI đã chọn không hỗ trợ xử lý hình ảnh"
   },
   "confirm": {
     "delete_attachment": "Xóa tệp đính kèm này?"

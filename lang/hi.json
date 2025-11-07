@@ -55,6 +55,8 @@
     "emoticon_love": "प्रेम इमोटिकॉन्स",
     "voice_input": "वॉइस डिक्टेशन",
     "upload_file": "टेक्स्ट फ़ाइल संलग्न करें",
+    "upload_pdf_file": "पीडीएफ फ़ाइल संलग्न करें",
+    "upload_image_file": "छवि फ़ाइल संलग्न करें",
     "text_format": "टेक्स्ट प्रारूप (बोल्ड, इटैलिक, अंडरलाइन)",
     "increase_font": "फ़ॉन्ट आकार बढ़ाएं",
     "decrease_font": "फ़ॉन्ट आकार घटाएं",
@@ -64,12 +66,12 @@
     "close_chat": "वर्तमान चैट बंद करें और नई बनाएं",
     "generate_prompt": "प्रॉम्प्ट जेनरेटर - संरचित प्रॉम्प्ट बनाएं",
     "manage_prompts": "प्रॉम्प्ट मैनेजर - सहेजे गए प्रॉम्प्ट प्रबंधित करें",
-    "upload_pdf_file": "पीडीएफ फ़ाइल संलग्न करें",
     "chats_import": "चैट आयात करें",
     "chats_export": "चैट निर्यात करें",
     "delete_attachment": "फ़ाइल हटाएं",
-    "download_pdf": "PDF डाउनलोड करें",
-    "download_txt": "TXT फ़ाइल डाउनलोड करें"
+    "download_pdf": "फ़ाइल डाउनलोड करें",
+    "download_txt": "फ़ाइल डाउनलोड करें",
+    "download_image": "फ़ाइल डाउनलोड करें"
   },
   "settings": {
     "title": "एआई मॉडल सेटिंग्स",
@@ -201,13 +203,16 @@
     "status_changed": "मैंने अपनी स्थिति {status} में बदल दी है। {message}",
     "status_online": "मैं चैट के लिए उपलब्ध हूं।",
     "status_away": "मैं दूर हूं लेकिन आप मुझे संदेश छोड़ सकते हैं।",
-    "status_busy": "मैं व्यस्त हूं लेकिन जब मैं कर सकता हूं तब जवाब दूंगा।",
-    "status_invisible": "मैं इस समय दिखाई नहीं देना पसंद करता हूं।",
-    "nudge_sent": "क्या आप वहाँ हैं?",
+    "status_busy": "मैं व्यस्त हूं लेकिन जल्द ही जवाब दूंगा।",
+    "status_invisible": "मैं इस समय दिखाई नहीं देना चाहता।",
+    "nudge_sent": "क्या आप वहां हैं?",
     "nudge_received": "नज भेजा गया (प्रतिक्रिया रोकी गई)",
     "nudge_stopped": "प्रतिक्रिया रोकी गई",
     "file_attached": "संलग्न फ़ाइल: {filename}",
-    "no_message": "कोई अतिरिक्त संदेश नहीं"
+    "image_attached": "छवि संलग्न",
+    "no_message": "कोई अतिरिक्त संदेश नहीं",
+    "image_processing": "छवि प्रोसेस हो रही है...",
+    "image_loaded": "छवि लोड की गई: {filename}"
   },
   "errors": {
     "no_connection": "Ollama से कोई कनेक्शन नहीं",
@@ -234,10 +239,14 @@
     "pdf_attached": "PDF attached: {filename} ({pages} pages)",
     "select_chat_first": "कृपया पहले एक चैट चुनें",
     "attachment_save_failed": "संलग्नक सहेजने में त्रुटि",
-    "delete_attachment_failed": "संलग्नक हटाने में त्रुटि",
+    "delete_attachment_failed": "अटैचमेंट हटाने में त्रुटि",
     "export_failed": "चैट निर्यात करने में त्रुटि",
     "import_failed": "चैट आयात करने में त्रुटि",
-    "download_file_failed": "फ़ाइल डाउनलोड करने में त्रुटि"
+    "download_file_failed": "फ़ाइल डाउनलोड करने में त्रुटि",
+    "only_image_files": "केवल छवि फ़ाइलों की अनुमति है (JPG, PNG, GIF, WebP)",
+    "image_too_large": "छवि बहुत बड़ी है। अधिकतम अनुमत: 20 MB",
+    "image_error": "छवि संसाधन त्रुटि: {error}",
+    "model_no_image_support": "चयनित AI मॉडल छवि प्रसंस्करण का समर्थन नहीं करता"
   },
   "confirm": {
     "delete_attachment": "इस अटैचमेंट को हटाएं?"

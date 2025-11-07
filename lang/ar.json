@@ -55,6 +55,8 @@
     "emoticon_love": "رموز تعبيرية للحب",
     "voice_input": "الإملاء الصوتي",
     "upload_file": "إرفاق ملف نصي",
+    "upload_pdf_file": "إرفاق ملف PDF",
+    "upload_image_file": "إرفاق ملف صورة",
     "text_format": "تنسيق النص (غامق، مائل، تحته خط)",
     "increase_font": "زيادة حجم الخط",
     "decrease_font": "تقليل حجم الخط",
@@ -64,12 +66,12 @@
     "close_chat": "إغلاق المحادثة الحالية وإنشاء واحدة جديدة",
     "generate_prompt": "منشئ المطالبات - إنشاء مطالبات منظمة",
     "manage_prompts": "مدير المطالبات - إدارة المطالبات المحفوظة",
-    "upload_pdf_file": "إرفاق ملف PDF",
-    "chats_import": "استيراد المحادثات",
+    "chats_import": "استيراد الدردشات",
     "chats_export": "تصدير المحادثات",
     "delete_attachment": "حذف الملف",
-    "download_pdf": "تنزيل PDF",
-    "download_txt": "تنزيل ملف TXT"
+    "download_pdf": "تنزيل الملف",
+    "download_txt": "تنزيل الملف",
+    "download_image": "تنزيل الملف"
   },
   "settings": {
     "title": "إعدادات نموذج الذكاء الاصطناعي",
@@ -205,9 +207,12 @@
     "status_invisible": "أفضل عدم الظهور في الوقت الحالي.",
     "nudge_sent": "هل أنت هناك؟",
     "nudge_received": "تم إرسال التنبيه (تم إيقاف الاستجابة)",
-    "nudge_stopped": "تم إيقاف الاستجابة",
-    "file_attached": "ملف مرفق: {filename}",
-    "no_message": "لا توجد رسالة إضافية"
+    "nudge_stopped": "تم إيقاف الرد",
+    "file_attached": "الملف المرفق: {filename}",
+    "image_attached": "صورة مرفقة",
+    "no_message": "لا توجد رسالة إضافية",
+    "image_processing": "معالجة الصورة...",
+    "image_loaded": "تم تحميل الصورة: {filename}"
   },
   "errors": {
     "no_connection": "لا يوجد اتصال بـ Ollama",
@@ -235,9 +240,13 @@
     "select_chat_first": "يرجى تحديد محادثة أولاً",
     "attachment_save_failed": "خطأ في حفظ المرفق",
     "delete_attachment_failed": "خطأ في حذف المرفق",
-    "export_failed": "خطأ في تصدير المحادثات",
-    "import_failed": "خطأ في استيراد المحادثات",
-    "download_file_failed": "خطأ في تنزيل الملف"
+    "export_failed": "خطأ في تصدير الدردشات",
+    "import_failed": "خطأ في استيراد الدردشات",
+    "download_file_failed": "خطأ في تنزيل الملف",
+    "only_image_files": "يُسمح فقط بملفات الصور (JPG، PNG، GIF، WebP)",
+    "image_too_large": "الصورة كبيرة جدًا. الحد الأقصى المسموح به: 20 ميجابايت",
+    "image_error": "خطأ في معالجة الصورة: {error}",
+    "model_no_image_support": "نموذج الذكاء الاصطناعي المحدد لا يدعم معالجة الصور"
   },
   "confirm": {
     "delete_attachment": "حذف هذا المرفق؟"
