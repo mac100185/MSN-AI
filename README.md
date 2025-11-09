@@ -56,12 +56,12 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Animaciones MSN** - Efectos visuales clásicos
 
 ### 🤖 Inteligencia Artificial
-- **IA local integrada** - Compatible con todos los modelos de Ollama
-- **IA en la nube** - Modelos cloud de Ollama (con API Key o signin)
-- **Detección automática de modelos** - Carga dinámica de modelos disponibles
-- **Multi-chat simultáneo** - La IA responde en varios chats a la vez
-- **Detener respuesta** - Aborta generación en curso
-- **Notificación de estado a IA** - La IA sabe cuando cambias tu estado (opcional)
+- **IA local integrada** - Compatible con todos los modelos de Ollama.
+- **IA en la nube** - Modelos cloud de Ollama (con API Key o signin).
+- **Detección automática de modelos** - Carga dinámica de modelos disponibles.
+- **Multi-chat simultáneo** - La IA responde en varios chats a la vez.
+- **Detener respuesta** - Aborta generación en curso.
+- **Notificación de estado a IA** - La IA sabe cuando cambias tu estado.
 
 ### 💬 Gestión de Chats
 - **Persistencia automática** - localStorage del navegador
@@ -74,14 +74,15 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Imprimir chat** - Versión imprimible con estilos
 
 ### 📁 Gestión de Archivos
-- **Subir archivos TXT** - Carga archivos de texto directamente
-- **Subir archivos PDF** - Procesamiento completo con extracción de texto
-- **OCR integrado** - Tesseract.js para PDFs escaneados
-- **Fragmentación inteligente** - División automática en chunks
-- **Persistencia en IndexedDB** - Almacenamiento de archivos adjuntos
-- **Descarga de archivos** - Recupera archivos en formato original
-- **Preview de archivos** - Vista previa antes de enviar
-- **Límite de 10MB** - Por archivo para rendimiento óptimo
+- **Subir archivos TXT** - Carga archivos de texto directamente.
+- **Subir archivos PDF** - Procesamiento completo con extracción de texto.
+- **Subir archivos JPG, PNG, GIF, SVG** - Procesamiento completo de imágenes.
+- **OCR integrado** - Tesseract.js para PDFs escaneados.
+- **Fragmentación inteligente** - División automática en chunks.
+- **Persistencia en IndexedDB** - Almacenamiento de archivos adjuntos.
+- **Descarga de archivos** - Recupera archivos en formato original.
+- **Preview de archivos** - Vista previa antes de enviar.
+- **Límite de 10MB** - Por archivo para rendimiento óptimo.
 
 ### 📝 Edición de Texto
 - **Ajuste de tamaño** - 10px a 32px con botones ±
@@ -91,49 +92,49 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 
 ### 🎨 Generador de Prompts Profesional
 - **Formulario avanzado** con 11 campos especializados:
-  - 👤 Rol del LLM
-  - 📝 Contexto
-  - 👥 Audiencia
-  - 📋 Tareas (múltiples líneas)
-  - ℹ️ Instrucciones
-  - 💬 Empatía y Tono
-  - ❓ Clarificación
-  - 🔄 Refinamiento
-  - 🚫 Límites
-  - ⚠️ Consecuencias
-  - ✨ Ejemplo de Respuesta
-- **Generación automática** de prompts estructurados
-- **Visualización profesional** con formato
-- **Modo edición** para modificar prompts existentes
+  - 👤 Rol del LLM.
+  - 📝 Contexto.
+  - 👥 Audiencia.
+  - 📋 Tareas (múltiples líneas).
+  - ℹ️ Instrucciones.
+  - 💬 Empatía y Tono.
+  - ❓ Clarificación.
+  - 🔄 Refinamiento.
+  - 🚫 Límites.
+  - ⚠️ Consecuencias.
+  - ✨ Ejemplo de Respuesta.
+- **Generación automática** de prompts estructurados.
+- **Visualización profesional** con formato.
+- **Modo edición** para modificar prompts existentes.
 
 ### 📚 Gestor de Prompts Guardados
 - **Biblioteca completa** de prompts con metadatos:
-  - Nombre personalizado
-  - Descripción detallada
-  - Categoría personalizable
-  - Tags/etiquetas múltiples
-  - Fecha de creación
+  - Nombre personalizado.
+  - Descripción detallada.
+  - Categoría personalizable.
+  - Tags/etiquetas múltiples.
+  - Fecha de creación.
 - **Sistema de filtrado**:
-  - Por categoría
-  - Por búsqueda de texto
-  - Visualización tipo Pinterest
+  - Por categoría.
+  - Por búsqueda de texto.
+  - Visualización tipo Pinterest.
 - **Gestión avanzada**:
-  - Ver detalles completos
-  - Editar prompts guardados
-  - Usar directamente en chat
-  - Cargar en formulario
-  - Eliminar individual o todos
-- **Import/Export** de prompts (JSON)
-- **Contador** de prompts guardados
-- **Almacenamiento** en localStorage
+  - Ver detalles completos.
+  - Editar prompts guardados.
+  - Usar directamente en chat.
+  - Cargar en formulario.
+  - Eliminar individual o todos.
+- **Import/Export** de prompts (JSON).
+- **Contador** de prompts guardados.
+- **Almacenamiento** en localStorage.
 
 ### 📤 Import/Export
-- **Exportar todos** - JSON completo con configuración
-- **Exportar seleccionados** - Con checkboxes
-- **Exportar chat actual** - Conversación individual
-- **Exportar prompts** - Biblioteca completa
-- **Importación inteligente** - Resolución automática de conflictos
-- **Importar prompts** - Desde archivo JSON
+- **Exportar todos** - JSON completo con configuración.
+- **Exportar seleccionados** - Con checkboxes.
+- **Exportar chat actual** - Conversación individual.
+- **Exportar prompts** - Biblioteca completa.
+- **Importación inteligente** - Resolución automática de conflictos.
+- **Importar prompts** - Desde archivo JSON.
 
 ### 🌍 Sistema Multiidioma (22 idiomas)
 🇪🇸 Español | 🇬🇧 Inglés | 🇩🇪 Alemán | 🇫🇷 Francés | 🇸🇦 Árabe | 🇨🇳 Chino | 🇮🇳 Hindi | 🇧🇩 Bengalí | 🇵🇹 Portugués | 🇷🇺 Ruso | 🇯🇵 Japonés | 🇰🇷 Coreano | 🇮🇩 Indonesio | 🇹🇷 Turco | 🇵🇰 Urdu | 🇻🇳 Vietnamita | 🇮🇳 Tamil | 🇮🇳 Telugu | 🇮🇳 Maratí | 🇮🇳 Panyabí | 🇵🇪 Quechua | 🇧🇴 Aymara
