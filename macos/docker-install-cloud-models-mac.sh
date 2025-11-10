@@ -42,6 +42,7 @@ CLOUD_MODELS=(
     "minimax-m2:cloud"
     "kimi-k2:1t-cloud"
     "kimi-k2-thinking:cloud"
+    "glm-4.6:cloud"
 )
 
 echo "📦 Modelos cloud disponibles:"

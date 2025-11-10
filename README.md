@@ -53,7 +53,7 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **5 sonidos originales** de MSN (login, logout, message_in, message_out, nudge)
 - **Estados de presencia** - Online 🟢, Away 🟡, Busy 🔴, Invisible ⚪
 - **30 emoticones integrados** - 2 categorías (Naturales y Amor)
-- **Animaciones MSN** - Efectos visuales clásicos
+- **Animaciones MSN** - Efectos visuales clásicos.
 
 ### 🤖 Inteligencia Artificial
 - **IA local integrada** - Compatible con todos los modelos de Ollama.
@@ -64,14 +64,14 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Notificación de estado a IA** - La IA sabe cuando cambias tu estado.
 
 ### 💬 Gestión de Chats
-- **Persistencia automática** - localStorage del navegador
-- **Búsqueda avanzada** - En todos los chats o dentro de uno específico
-- **Ordenar historial** - Por fecha ascendente/descendente
-- **Indicadores de no leídos** - Resalta chats nuevos en verde
-- **Limpiar chat** - Borra mensajes sin eliminar el chat
+- **Persistencia automática** - localStorage del navegador.
+- **Búsqueda avanzada** - En todos los chats o dentro de uno específico.
+- **Ordenar historial** - Por fecha ascendente/descendente.
+- **Indicadores de no leídos** - Resalta chats nuevos en verde.
+- **Limpiar chat** - Borra mensajes sin eliminar el chat.
 - **Cerrar chat** - Cierra vista sin eliminar (con confirmación)
 - **Eliminar chat** - Elimina permanentemente (con modal)
-- **Imprimir chat** - Versión imprimible con estilos
+- **Imprimir chat** - Versión imprimible con estilos.
 
 ### 📁 Gestión de Archivos
 - **Subir archivos TXT** - Carga archivos de texto directamente.
@@ -86,9 +86,9 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 
 ### 📝 Edición de Texto
 - **Ajuste de tamaño** - 10px a 32px con botones ±
-- **Formato de texto** - Negrita, cursiva, subrayado
-- **Dictado por voz** 🎤 - Web Speech API
-- **Zumbido/Nudge** 📳 - Como MSN original
+- **Formato de texto** - Negrita, cursiva, subrayado.
+- **Dictado por voz** 🎤 - Web Speech API.
+- **Zumbido/Nudge** 📳 - Como MSN original.
 
 ### 🎨 Generador de Prompts Profesional
 - **Formulario avanzado** con 11 campos especializados:
@@ -139,23 +139,23 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 ### 🌍 Sistema Multiidioma (22 idiomas)
 🇪🇸 Español | 🇬🇧 Inglés | 🇩🇪 Alemán | 🇫🇷 Francés | 🇸🇦 Árabe | 🇨🇳 Chino | 🇮🇳 Hindi | 🇧🇩 Bengalí | 🇵🇹 Portugués | 🇷🇺 Ruso | 🇯🇵 Japonés | 🇰🇷 Coreano | 🇮🇩 Indonesio | 🇹🇷 Turco | 🇵🇰 Urdu | 🇻🇳 Vietnamita | 🇮🇳 Tamil | 🇮🇳 Telugu | 🇮🇳 Maratí | 🇮🇳 Panyabí | 🇵🇪 Quechua | 🇧🇴 Aymara
 
-- **Detección automática** del idioma del navegador
-- **Cambio manual** desde configuración
-- **Persistencia** entre sesiones
-- **Traducción completa** de toda la interfaz
+- **Detección automática** del idioma del navegador.
+- **Cambio manual** desde configuración.
+- **Persistencia** entre sesiones.
+- **Traducción completa** de toda la interfaz.
 
 ### 🐳 Docker Edition
-- **Instalación simplificada** - Un comando para instalar
-- **Scripts de gestión** - Inicio, parada, estado, logs, limpieza
-- **Health checks automáticos** - Monitoreo de servicios
-- **Volúmenes persistentes** - Datos y configuración
-- **Opción Nuclear** - Reset completo de MSN-AI
+- **Instalación simplificada** - Un comando para instalar.
+- **Scripts de gestión** - Inicio, parada, estado, logs, limpieza.
+- **Health checks automáticos** - Monitoreo de servicios.
+- **Volúmenes persistentes** - Datos y configuración.
+- **Opción Nuclear** - Reset completo de MSN-AI.
 
 ### 💻 Local Edition
-- **Rendimiento nativo** - Sin overhead de contenedores
-- **Scripts automáticos** - Para Linux, Windows y macOS
-- **Detector de hardware** - Recomienda modelos según tu sistema
-- **Accesos directos** - Lanzadores en escritorio
+- **Rendimiento nativo** - Sin overhead de contenedores.
+- **Scripts automáticos** - Para Linux, Windows y macOS.
+- **Detector de hardware** - Recomienda modelos según tu sistema.
+- **Accesos directos** - Lanzadores en escritorio.
 
 ---
 
@@ -170,6 +170,7 @@ cd MSN-AI
 cd linux  # o cd macos para macOS
 chmod +x start-msnai-docker.sh
 ./start-msnai-docker.sh --auto
+
 ```
 
 **Instalación de modelos IA Cloud (Opcional):**

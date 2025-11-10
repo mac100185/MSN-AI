@@ -47,6 +47,7 @@ $CloudModels = @(
     "minimax-m2:cloud"
     "kimi-k2:1t-cloud"
     "kimi-k2-thinking:cloud"
+    "glm-4.6:cloud"
 )
 
 Write-Host "[PACKAGE] Modelos cloud disponibles:" -ForegroundColor Cyan
