@@ -38,9 +38,15 @@ Write-Host ""
 
 # Available cloud models
 $CloudModels = @(
-    "qwen3-vl:235b-cloud",
-    "gpt-oss:120b-cloud",
+    "qwen3-vl:235b-cloud"
+    "gpt-oss:120b-cloud"
     "qwen3-coder:480b-cloud"
+    "deepseek-v3.1:671b-cloud"
+    "gpt-oss:20b-cloud"
+    "qwen3-vl:235b-instruct-cloud"
+    "minimax-m2:cloud"
+    "kimi-k2:1t-cloud"
+    "kimi-k2-thinking:cloud"
 )
 
 Write-Host "[PACKAGE] Modelos cloud disponibles:" -ForegroundColor Cyan
