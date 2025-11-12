@@ -2098,8 +2098,9 @@ class MSNAI {
 
   /**
    * Abre diálogo para cargar archivo de imagen y lo procesa
+   * @param {File} fileParam - Archivo opcional a procesar (para soporte de paste)
    */
-  uploadImageFile() {
+  async uploadImageFile(fileParam = null) {
     if (!this.currentChatId) {
       alert(
         this.t("errors.select_chat_first") ||
@@ -2108,155 +2109,169 @@ class MSNAI {
       return;
     }
 
+    // Si se proporciona un archivo directamente, procesarlo
+    if (fileParam) {
+      await this.processImageFile(fileParam);
+      return;
+    }
+
+    // Si no hay archivo, abrir el diálogo de selección
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/jpeg,image/jpg,image/png,image/gif,image/webp";
     input.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-
-      // Validar tipo de archivo
-      const validTypes = [
-        "image/jpeg",
-        "image/jpg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
-      if (
-        !validTypes.includes(file.type) &&
-        !file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-      ) {
-        this.showNotification(this.t("errors.only_image_files"), "error");
-        return;
-      }
-
-      // Validar tamaño (máximo 20 MB)
-      const maxSize = 20 * 1024 * 1024; // 20 MB en bytes
-      if (file.size > maxSize) {
-        this.showNotification(this.t("errors.image_too_large"), "error");
-        return;
-      }
-
-      // Mostrar indicador de procesamiento con traducción validada
-      let processingMsg = this.t("messages.image_processing");
-      if (
-        !processingMsg ||
-        processingMsg.includes("messages.") ||
-        processingMsg === "messages.image_processing"
-      ) {
-        processingMsg = "Procesando imagen...";
-      }
-      this.showNotification(processingMsg, "info");
-
-      try {
-        // Convertir imagen a base64
-        const base64Image = await this.convertImageToBase64(file);
-
-        // Crear clave para el archivo binario
-        const fileKey = `img-${this.currentChatId}-${Date.now()}`;
-
-        // Leer el archivo como ArrayBuffer para guardarlo completo
-        const reader = new FileReader();
-        reader.onload = async (ev) => {
-          const arrayBuffer = ev.target.result;
-
-          // Crear objeto de attachment persistente
-          const attachmentId = `${this.currentChatId}_${Date.now()}_${file.name}`;
-          const attachment = {
-            id: attachmentId,
-            chatId: this.currentChatId,
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            base64Data: base64Image, // Base64 puro sin prefijo
-            uploadDate: new Date().toISOString(),
-            fileAttachmentKey: fileKey,
-          };
-
-          try {
-            // Guardar archivo binario en IndexedDB
-            await this.saveFileAttachment(
-              fileKey,
-              arrayBuffer,
-              file.type,
-              file.name,
-              this.currentChatId,
-            );
-
-            // Guardar el attachment con los datos base64
-            await this.saveAttachment(attachment);
-
-            // Agregar a la lista de attachments del chat
-            const chat = this.chats.find((c) => c.id === this.currentChatId);
-            if (chat) {
-              if (!chat.attachments) {
-                chat.attachments = [];
-              }
-              chat.attachments.push({
-                id: attachmentId,
-                name: file.name,
-                type: file.type,
-                size: file.size,
-                uploadDate: attachment.uploadDate,
-                fileAttachmentKey: fileKey,
-              });
-              this.saveChats();
-            }
-
-            // Guardar contexto de imagen temporalmente para el próximo mensaje
-            this.pendingImageContext = {
-              name: file.name,
-              type: file.type,
-              base64Data: base64Image,
-            };
-
-            // Actualizar input con indicador visual
-            const inputEl = document.getElementById("message-input");
-            const currentMsg = inputEl.value.trim();
-            let attachedMsg = this.t("messages.image_attached");
-            if (!attachedMsg || attachedMsg.includes("messages.")) {
-              attachedMsg = "Imagen adjunta";
-            }
-            inputEl.value = `${currentMsg ? currentMsg + " " : ""}[${attachedMsg}: ${file.name}]`;
-            inputEl.focus();
-
-            // Renderizar el chat para mostrar el attachment
-            this.renderMessages(chat);
-
-            // Mostrar notificación de éxito con traducción validada
-            let loadedMsg = this.t("messages.image_loaded", {
-              filename: file.name,
-            });
-            if (
-              !loadedMsg ||
-              loadedMsg.includes("messages.") ||
-              loadedMsg.includes("{filename}")
-            ) {
-              loadedMsg = `Imagen cargada: ${file.name}`;
-            }
-            this.showNotification(loadedMsg, "success");
-
-            console.log(`📎 Archivo de imagen adjuntado al chat: ${file.name}`);
-          } catch (saveError) {
-            console.error("Error guardando archivo adjunto:", saveError);
-            this.showNotification(
-              this.t("errors.attachment_save_failed") ||
-                "Error al guardar el archivo adjunto",
-              "error",
-            );
-          }
-        };
-        reader.readAsArrayBuffer(file);
-      } catch (error) {
-        console.error("Error procesando imagen:", error);
-        this.showNotification(
-          this.t("errors.image_error", { error: error.message }),
-          "error",
-        );
-      }
+      await this.processImageFile(file);
     };
     input.click();
+  }
+
+  /**
+   * Procesa un archivo de imagen (usado tanto para upload como para paste)
+   * @param {File} file - Archivo de imagen a procesar
+   */
+  async processImageFile(file) {
+    // Validar tipo de archivo
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+    if (
+      !validTypes.includes(file.type) &&
+      !file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+    ) {
+      this.showNotification(this.t("errors.only_image_files"), "error");
+      return;
+    }
+
+    // Validar tamaño (máximo 20 MB)
+    const maxSize = 20 * 1024 * 1024; // 20 MB en bytes
+    if (file.size > maxSize) {
+      this.showNotification(this.t("errors.image_too_large"), "error");
+      return;
+    }
+
+    // Mostrar indicador de procesamiento con traducción validada
+    let processingMsg = this.t("messages.image_processing");
+    if (
+      !processingMsg ||
+      processingMsg.includes("messages.") ||
+      processingMsg === "messages.image_processing"
+    ) {
+      processingMsg = "Procesando imagen...";
+    }
+    this.showNotification(processingMsg, "info");
+
+    try {
+      // Convertir imagen a base64
+      const base64Image = await this.convertImageToBase64(file);
+
+      // Crear clave para el archivo binario
+      const fileKey = `img-${this.currentChatId}-${Date.now()}`;
+
+      // Leer el archivo como ArrayBuffer para guardarlo completo
+      const reader = new FileReader();
+      reader.onload = async (ev) => {
+        const arrayBuffer = ev.target.result;
+
+        // Crear objeto de attachment persistente
+        const attachmentId = `${this.currentChatId}_${Date.now()}_${file.name}`;
+        const attachment = {
+          id: attachmentId,
+          chatId: this.currentChatId,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          base64Data: base64Image, // Base64 puro sin prefijo
+          uploadDate: new Date().toISOString(),
+          fileAttachmentKey: fileKey,
+        };
+
+        try {
+          // Guardar archivo binario en IndexedDB
+          await this.saveFileAttachment(
+            fileKey,
+            arrayBuffer,
+            file.type,
+            file.name,
+            this.currentChatId,
+          );
+
+          // Guardar el attachment con los datos base64
+          await this.saveAttachment(attachment);
+
+          // Agregar a la lista de attachments del chat
+          const chat = this.chats.find((c) => c.id === this.currentChatId);
+          if (chat) {
+            if (!chat.attachments) {
+              chat.attachments = [];
+            }
+            chat.attachments.push({
+              id: attachmentId,
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              uploadDate: attachment.uploadDate,
+              fileAttachmentKey: fileKey,
+            });
+            this.saveChats();
+          }
+
+          // Guardar contexto de imagen temporalmente para el próximo mensaje
+          this.pendingImageContext = {
+            name: file.name,
+            type: file.type,
+            base64Data: base64Image,
+          };
+
+          // Actualizar input con indicador visual
+          const inputEl = document.getElementById("message-input");
+          const currentMsg = inputEl.value.trim();
+          let attachedMsg = this.t("messages.image_attached");
+          if (!attachedMsg || attachedMsg.includes("messages.")) {
+            attachedMsg = "Imagen adjunta";
+          }
+          inputEl.value = `${currentMsg ? currentMsg + " " : ""}[${attachedMsg}: ${file.name}]`;
+          inputEl.focus();
+
+          // Renderizar el chat para mostrar el attachment
+          this.renderMessages(chat);
+
+          // Mostrar notificación de éxito con traducción validada
+          let loadedMsg = this.t("messages.image_loaded", {
+            filename: file.name,
+          });
+          if (
+            !loadedMsg ||
+            loadedMsg.includes("messages.") ||
+            loadedMsg.includes("{filename}")
+          ) {
+            loadedMsg = `Imagen cargada: ${file.name}`;
+          }
+          this.showNotification(loadedMsg, "success");
+
+          console.log(`📎 Archivo de imagen adjuntado al chat: ${file.name}`);
+        } catch (saveError) {
+          console.error("Error guardando archivo adjunto:", saveError);
+          this.showNotification(
+            this.t("errors.attachment_save_failed") ||
+              "Error al guardar el archivo adjunto",
+            "error",
+          );
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error("Error procesando imagen:", error);
+      this.showNotification(
+        this.t("errors.image_error", { error: error.message }),
+        "error",
+      );
+    }
   }
 
   /**
@@ -4364,61 +4379,68 @@ class MSNAI {
    * Configura los event listeners para los botones de copiar y descargar
    */
   setupCodeBlockButtons() {
-    // Botones de copiar
-    document.querySelectorAll(".code-block-btn").forEach((btn) => {
+    // Usar delegación de eventos para manejar botones dinámicos
+    // Eliminar listener previo si existe
+    if (this.codeBlockClickHandler) {
+      document.removeEventListener("click", this.codeBlockClickHandler);
+    }
+
+    // Crear handler con delegación de eventos
+    this.codeBlockClickHandler = (e) => {
+      const btn = e.target.closest(".code-block-btn");
+      if (!btn) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const code = btn.getAttribute("data-code");
+      if (!code) return;
+
+      // Botón copiar
       if (btn.innerHTML.includes("Copiar")) {
-        btn.onclick = (e) => {
-          e.preventDefault();
-          const code = btn.getAttribute("data-code");
-          if (code) {
-            navigator.clipboard
-              .writeText(code)
-              .then(() => {
-                const originalText = btn.innerHTML;
-                btn.innerHTML = "✅ Copiado";
-                btn.style.backgroundColor = "#00aa00";
-                setTimeout(() => {
-                  btn.innerHTML = originalText;
-                  btn.style.backgroundColor = "";
-                }, 2000);
-              })
-              .catch((err) => {
-                console.error("Error al copiar:", err);
-                btn.innerHTML = "❌ Error";
-                setTimeout(() => {
-                  btn.innerHTML = "📋 Copiar";
-                }, 2000);
-              });
-          }
-        };
-      }
-
-      // Botones de descargar
-      if (btn.innerHTML.includes("Descargar")) {
-        btn.onclick = (e) => {
-          e.preventDefault();
-          const code = btn.getAttribute("data-code");
-          const lang = btn.getAttribute("data-lang") || "txt";
-          if (code) {
-            const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `code_${Date.now()}.${lang}`;
-            a.click();
-            URL.revokeObjectURL(url);
-
+        navigator.clipboard
+          .writeText(code)
+          .then(() => {
             const originalText = btn.innerHTML;
-            btn.innerHTML = "✅ Descargado";
-            btn.style.backgroundColor = "#0066cc";
+            btn.innerHTML = "✅ Copiado";
+            btn.style.backgroundColor = "#00aa00";
             setTimeout(() => {
               btn.innerHTML = originalText;
               btn.style.backgroundColor = "";
             }, 2000);
-          }
-        };
+          })
+          .catch((err) => {
+            console.error("Error al copiar:", err);
+            btn.innerHTML = "❌ Error";
+            setTimeout(() => {
+              btn.innerHTML = "📋 Copiar";
+            }, 2000);
+          });
       }
-    });
+
+      // Botón descargar
+      if (btn.innerHTML.includes("Descargar")) {
+        const lang = btn.getAttribute("data-lang") || "txt";
+        const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `code_${Date.now()}.${lang}`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ Descargado";
+        btn.style.backgroundColor = "#0066cc";
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.style.backgroundColor = "";
+        }, 2000);
+      }
+    };
+
+    // Agregar listener al document
+    document.addEventListener("click", this.codeBlockClickHandler);
   }
   //-------------------------------------
   /**
@@ -5554,15 +5576,51 @@ class MSNAI {
       .addEventListener("click", () => this.sendMessage());
     // Manejo mejorado del teclado en el input de mensajes
     // Soporte para Shift+Enter (nueva línea) y Enter (enviar)
-    document
-      .getElementById("message-input")
-      .addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && !e.shiftKey) {
+    const messageInput = document.getElementById("message-input");
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        this.sendMessage();
+      }
+      // Shift+Enter permite nueva línea (comportamiento por defecto)
+    });
+
+    // Soporte para pegar imágenes directamente desde el portapapeles
+    messageInput.addEventListener("paste", async (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+
+        // Verificar si el item es una imagen
+        if (item.type.indexOf("image") !== -1) {
           e.preventDefault();
-          this.sendMessage();
+
+          const file = item.getAsFile();
+          if (!file) continue;
+
+          // Usar el método existente para procesar la imagen
+          try {
+            await this.uploadImageFile(file);
+
+            // Mostrar notificación de éxito
+            this.showNotification(
+              this.t("messages.image_pasted") || "Imagen pegada correctamente",
+              "success",
+            );
+          } catch (error) {
+            console.error("Error al pegar imagen:", error);
+            this.showNotification(
+              this.t("errors.image_paste_failed") || "Error al pegar la imagen",
+              "error",
+            );
+          }
+
+          break; // Solo procesar la primera imagen
         }
-        // Shift+Enter permite nueva línea (comportamiento por defecto)
-      });
+      }
+    });
 
     // Navegación entre chats con Ctrl+K o Cmd+K
     document.addEventListener("keydown", (e) => {
