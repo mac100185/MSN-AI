@@ -63,6 +63,7 @@
             <div id="chats-nav">
                 <ul class="iconbar" id="left">
                     <button class="aerobutton chataction" id="new-chat-btn" data-i18n-title="tooltips.new_chat" title="Nuevo Chat" style="background:url(assets/contacts-window/1131.png) no-repeat center;"></button>
+                    <button class="aerobutton chataction" id="new-room-btn" data-i18n-title="tooltips.new_room" title="Crear Sala" style="background:url(assets/contacts-window/1490.png) no-repeat center;"></button>
                     <button class="aerobutton chataction" id="import-btn" data-i18n-title="tooltips.chats_import" title="Importar Todos los Chats" style="background:url(assets/contacts-window/978.png) no-repeat center;"></button>
                     <button class="aerobutton chataction" id="export-btn" data-i18n-title="tooltips.chats_export" title="Exportar Todos los Chats" style="background:url(assets/contacts-window/1484.png) no-repeat center;"></button>
                 </ul>
@@ -801,6 +802,36 @@
                 <button class="aerobutton" id="delete-prompt-from-details" style="margin-left: 8px; background-color: #ff4d4d;">
                     <span data-i18n="prompt_manager.delete_prompt">🗑️ Eliminar</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de selección de modelos para sala de expertos -->
+    <div id="expert-room-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="expert_room.title">Nueva Sala de Expertos</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div style="margin-top: 15px;">
+                <p data-i18n="expert_room.description">Selecciona los modelos de IA que participarán en la sala de expertos:</p>
+                <div id="expert-room-models-list" style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: 10px 0; background: #f9f9f9;">
+                    <!-- Los modelos se cargarán dinámicamente -->
+                </div>
+                <div style="margin-top: 15px;">
+                    <label for="room-title-input" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                        <span data-i18n="expert_room.room_name">Nombre de la Sala:</span>
+                    </label>
+                    <input type="text" id="room-title-input" placeholder="Sala de Expertos" data-i18n-placeholder="expert_room.room_name_placeholder" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 9pt; box-sizing: border-box;">
+                </div>
+                <div style="text-align: right; margin-top: 15px;">
+                    <button class="aerobutton" id="cancel-expert-room-btn">
+                        <span data-i18n="buttons.cancel">Cancelar</span>
+                    </button>
+                    <button class="aerobutton" id="create-expert-room-btn" style="margin-left: 8px;">
+                        <span data-i18n="buttons.create">Crear Sala</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

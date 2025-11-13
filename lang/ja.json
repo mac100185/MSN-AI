@@ -45,7 +45,8 @@
     "close_chat": "チャットを閉じる",
     "stop_response": "AI応答を停止",
     "update": "更新",
-    "copy": "📋 チャットにコピー"
+    "copy": "📋 チャットにコピー",
+    "create": "ルームを作成"
   },
   "tooltips": {
     "new_chat": "新しいチャットを作成",
@@ -71,7 +72,8 @@
     "delete_attachment": "ファイルを削除",
     "download_pdf": "ファイルをダウンロード",
     "download_txt": "ファイルをダウンロード",
-    "download_image": "ファイルをダウンロード"
+    "download_image": "ファイルをダウンロード",
+    "new_room": "エキスパートルームを作成"
   },
   "settings": {
     "title": "AIモデル設定",
@@ -358,5 +360,23 @@
     "pages": "ページ",
     "attached": "PDF添付済み",
     "context_active": "PDFコンテキストがアクティブ（{pages}ページ）"
+  },
+  "expert_room": {
+    "title": "新しいエキスパートルーム",
+    "description": "エキスパートルームに参加するAIモデルを選択してください：",
+    "room_name": "ルーム名",
+    "room_name_placeholder": "エキスパートルーム",
+    "default_name": "エキスパートルーム",
+    "select_min_models": "少なくとも2つのモデルを選択してください",
+    "created": "{count}人の専門家でルームを作成しました",
+    "models_label": "専門家",
+    "model_error": "⚠️ {model}のクエリ中にエラーが発生しました",
+    "error_timeout": "⏱️ {model}：モデルの応答に時間がかかりすぎています。後でもう一度お試しください。",
+    "error_http_500": "⚠️ {model}：サーバーに問題が発生しています。別のモデルを試すか、後でもう一度お試しください。",
+    "error_http_404": "❌ {model}：このモデルは現在利用できません。",
+    "error_http_503": "⚙️ {model}：サービスはメンテナンス中です。後でもう一度お試しください。",
+    "error_network": "🌐 {model}：接続エラー。インターネット接続を確認してください。",
+    "error_generic": "⚠️ {model}：現在応答を取得できません。",
+    "error_http_429": "🚦 {model}：リクエストが多すぎます。サーバーがリクエストを制限しています。しばらく待ってから再度お試しください。"
   }
 }

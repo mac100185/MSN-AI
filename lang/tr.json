@@ -45,7 +45,8 @@
     "close_chat": "Sohbeti Kapat",
     "stop_response": "Yapay Zeka Yanıtını Durdur",
     "update": "Update",
-    "copy": "📋 Sohbete Kopyala"
+    "copy": "📋 Sohbete Kopyala",
+    "create": "Oda Oluştur"
   },
   "tooltips": {
     "new_chat": "Yeni bir sohbet oluştur",
@@ -71,7 +72,8 @@
     "delete_attachment": "Dosyayı sil",
     "download_pdf": "Dosyayı indir",
     "download_txt": "Dosyayı indir",
-    "download_image": "Dosyayı indir"
+    "download_image": "Dosyayı indir",
+    "new_room": "Uzman odası oluştur"
   },
   "settings": {
     "title": "Yapay Zeka Modeli Ayarları",
@@ -358,5 +360,23 @@
     "pages": "sayfa",
     "attached": "PDF eklendi",
     "context_active": "PDF bağlamı etkin ({pages} sayfa)"
+  },
+  "expert_room": {
+    "title": "Yeni Uzman Odası",
+    "description": "Uzman odasına katılacak AI modellerini seçin:",
+    "room_name": "Oda Adı",
+    "room_name_placeholder": "Uzman Odası",
+    "default_name": "Uzman Odası",
+    "select_min_models": "Lütfen en az 2 model seçin",
+    "created": "{count} uzmanla oda oluşturuldu",
+    "models_label": "Uzmanlar",
+    "model_error": "⚠️ {model} sorgulanırken hata",
+    "error_timeout": "⏱️ {model}: Model yanıt vermekte çok uzun sürüyor. Lütfen daha sonra tekrar deneyin.",
+    "error_http_500": "⚠️ {model}: Sunucu sorun yaşıyor. Başka bir model deneyin veya daha sonra tekrar deneyin.",
+    "error_http_404": "❌ {model}: Bu model şu anda kullanılamıyor.",
+    "error_http_503": "⚙️ {model}: Hizmet bakımda. Lütfen daha sonra tekrar deneyin.",
+    "error_network": "🌐 {model}: Bağlantı hatası. İnternet bağlantınızı kontrol edin.",
+    "error_generic": "⚠️ {model}: Şu anda yanıt alınamıyor.",
+    "error_http_429": "🚦 {model}: Çok fazla istek. Sunucu istekleri sınırlandırıyor. Lütfen tekrar denemeden önce bir süre bekleyin."
   }
 }

@@ -44,11 +44,13 @@
     "export_chat": "Export Chat",
     "print_chat": "Print Chat",
     "search_chat": "Search in Chat",
+    "create": "Create Room",
     "close_chat": "Close Chat",
     "stop_response": "Stop AI Response"
   },
   "tooltips": {
     "new_chat": "Create a new chat",
+    "new_room": "Create an expert room",
     "settings": "AI model settings",
     "nudge": "Send a nudge",
     "emoticon_natural": "Natural emoticons",
@@ -359,5 +361,24 @@
     "pages": "pages",
     "attached": "PDF attached",
     "context_active": "PDF context active ({pages} pages)"
+  },
+
+  "expert_room": {
+    "title": "New Expert Room",
+    "description": "Select the AI models that will participate in the expert room:",
+    "room_name": "Room Name",
+    "room_name_placeholder": "Expert Room",
+    "default_name": "Expert Room",
+    "select_min_models": "Please select at least 2 models",
+    "created": "Room created with {count} experts",
+    "models_label": "Experts",
+    "model_error": "⚠️ Error querying {model}",
+    "error_timeout": "⏱️ {model}: The model is taking too long to respond. Please try again later.",
+    "error_http_429": "🚦 {model}: Too many requests. The server is rate limiting requests. Please wait a moment before trying again.",
+    "error_http_500": "⚠️ {model}: The server is experiencing problems. Try another model or try again later.",
+    "error_http_404": "❌ {model}: This model is not currently available.",
+    "error_http_503": "⚙️ {model}: The service is under maintenance. Please try again later.",
+    "error_network": "🌐 {model}: Connection error. Please check your internet connection.",
+    "error_generic": "⚠️ {model}: Unable to get a response at this time."
   }
 }

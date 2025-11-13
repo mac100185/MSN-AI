@@ -2506,10 +2506,29 @@ class MSNAI {
   exportCurrentChat() {
     const chat = this.chats.find((c) => c.id === this.currentChatId);
     if (!chat) return;
+
+    // Agregar encabezado con información de la sala si es una sala de expertos
+    let header = "";
+    if (chat.isExpertRoom) {
+      header = `=== ${chat.title} ===\n`;
+      header += `Participantes: ${chat.models.join(", ")}\n`;
+      header += `Fecha: ${new Date(chat.date).toLocaleString()}\n`;
+      header += `${"=".repeat(50)}\n\n`;
+    }
+
     const content = chat.messages
-      .map((m) => `${m.type === "user" ? "Tú" : "IA"}: ${m.content}`)
+      .map((m) => {
+        const sender =
+          m.type === "user"
+            ? "Tú"
+            : chat.isExpertRoom && m.model
+              ? `IA (${m.model})`
+              : "IA";
+        return `${sender}: ${m.content}`;
+      })
       .join("\n");
-    const blob = new Blob([content], { type: "text/plain" });
+
+    const blob = new Blob([header + content], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -2521,7 +2540,30 @@ class MSNAI {
   printCurrentChat() {
     const chat = this.chats.find((c) => c.id === this.currentChatId);
     if (!chat) return;
-    const printContent = `<html><head><title>Chat</title><style>body{font-family:Tahoma;font-size:9pt;}</style></head><body><pre>${chat.messages.map((m) => `${m.type === "user" ? "Tú" : "IA"}: ${m.content}`).join("\n")}</pre></body></html>`;
+
+    // Agregar encabezado con información de la sala si es una sala de expertos
+    let header = "";
+    if (chat.isExpertRoom) {
+      header = `<div style="border-bottom:2px solid #333;padding-bottom:10px;margin-bottom:20px;">
+        <h2>${chat.title}</h2>
+        <p><strong>Participantes:</strong> ${chat.models.join(", ")}</p>
+        <p><strong>Fecha:</strong> ${new Date(chat.date).toLocaleString()}</p>
+      </div>`;
+    }
+
+    const messagesHTML = chat.messages
+      .map((m) => {
+        const sender =
+          m.type === "user"
+            ? "Tú"
+            : chat.isExpertRoom && m.model
+              ? `IA (${m.model})`
+              : "IA";
+        return `${sender}: ${m.content}`;
+      })
+      .join("\n");
+
+    const printContent = `<html><head><title>Chat</title><style>body{font-family:Tahoma;font-size:9pt;}pre{white-space:pre-wrap;word-wrap:break-word;}</style></head><body>${header}<pre>${messagesHTML}</pre></body></html>`;
     const win = window.open("", "", "width=800,height=600");
     win.document.write(printContent);
     win.document.close();
@@ -3266,7 +3308,59 @@ class MSNAI {
         // No lanzar error, solo retornar lo que se generó
         return fullResponse;
       }
-      throw error;
+
+      // Crear mensaje de error amigable usando el mismo sistema que salas de expertos
+      const errorMessage = error.message || "";
+      let friendlyError = new Error();
+
+      if (
+        errorMessage.includes("TimeoutError") ||
+        errorMessage.includes("timed out")
+      ) {
+        friendlyError.message = this.t("expert_room.error_timeout", {
+          model: chat.model,
+        });
+      } else if (
+        errorMessage.includes("HTTP 429") ||
+        errorMessage.includes("Too Many Requests")
+      ) {
+        friendlyError.message = this.t("expert_room.error_http_429", {
+          model: chat.model,
+        });
+      } else if (errorMessage.includes("HTTP 500")) {
+        friendlyError.message = this.t("expert_room.error_http_500", {
+          model: chat.model,
+        });
+      } else if (errorMessage.includes("HTTP 404")) {
+        friendlyError.message = this.t("expert_room.error_http_404", {
+          model: chat.model,
+        });
+      } else if (errorMessage.includes("HTTP 503")) {
+        friendlyError.message = this.t("expert_room.error_http_503", {
+          model: chat.model,
+        });
+      } else if (
+        errorMessage.includes("network") ||
+        errorMessage.includes("fetch")
+      ) {
+        friendlyError.message = this.t("expert_room.error_network", {
+          model: chat.model,
+        });
+      } else {
+        friendlyError.message = this.t("expert_room.error_generic", {
+          model: chat.model,
+        });
+      }
+
+      // Fallback si la traducción no está disponible
+      if (
+        !friendlyError.message ||
+        friendlyError.message.includes("expert_room.error_")
+      ) {
+        friendlyError.message = `⚠️ ${chat.model}: No se pudo obtener respuesta en este momento.`;
+      }
+
+      throw friendlyError;
     } finally {
       // Asegurar que la respuesta acumulada se guarde en el mensaje
       const chat = this.chats.find((c) => c.id === chatId);
@@ -3442,9 +3536,20 @@ class MSNAI {
     const chatList = document.getElementById("chat-list");
     chatList.innerHTML = "";
 
-    // Agrupar chats por modelo
-    const chatsByModel = {};
+    // Separar salas de expertos de chats normales
+    const expertRooms = [];
+    const regularChats = [];
     this.chats.forEach((chat) => {
+      if (chat.isExpertRoom) {
+        expertRooms.push(chat);
+      } else {
+        regularChats.push(chat);
+      }
+    });
+
+    // Agrupar chats regulares por modelo
+    const chatsByModel = {};
+    regularChats.forEach((chat) => {
       const model = chat.model || "Sin modelo";
       if (!chatsByModel[model]) {
         chatsByModel[model] = [];
@@ -3463,6 +3568,67 @@ class MSNAI {
     if (Object.keys(chatsByModel).length === 0) {
       chatList.innerHTML = `<li style="padding: 20px; text-align: center; color: #666;">${this.t("chat.no_models")}</li>`;
       return;
+    }
+
+    // Renderizar salas de expertos primero (si existen)
+    if (expertRooms.length > 0) {
+      const expertRoomsGroup = document.createElement("li");
+      expertRoomsGroup.className = "model-group";
+      expertRoomsGroup.style.padding = "0";
+      expertRoomsGroup.style.margin = "0";
+
+      const expertRoomsHeader = document.createElement("div");
+      expertRoomsHeader.className = "model-header";
+      expertRoomsHeader.style.display = "flex";
+      expertRoomsHeader.style.alignItems = "center";
+      expertRoomsHeader.style.padding = "8px 10px";
+      expertRoomsHeader.style.cursor = "pointer";
+      expertRoomsHeader.style.backgroundColor = "#fff3e0";
+      expertRoomsHeader.style.borderBottom = "1px solid #ccc";
+      expertRoomsHeader.style.fontWeight = "bold";
+      expertRoomsHeader.style.fontSize = "11px";
+
+      const expertArrowIcon = document.createElement("img");
+      expertArrowIcon.src = "assets/contacts-window/37.png";
+      expertArrowIcon.style.width = "14px";
+      expertArrowIcon.style.height = "14px";
+      expertArrowIcon.style.marginRight = "8px";
+      expertArrowIcon.dataset.expanded = "true";
+
+      const expertRoomsNameSpan = document.createElement("span");
+      expertRoomsNameSpan.textContent = `🏢 ${this.t("expert_room.models_label") || "Salas de Expertos"} (${expertRooms.length})`;
+      expertRoomsNameSpan.style.flex = "1";
+
+      expertRoomsHeader.appendChild(expertArrowIcon);
+      expertRoomsHeader.appendChild(expertRoomsNameSpan);
+
+      const expertRoomsContainer = document.createElement("ul");
+      expertRoomsContainer.className = "model-chats-container";
+      expertRoomsContainer.style.listStyle = "none";
+      expertRoomsContainer.style.padding = "0";
+      expertRoomsContainer.style.margin = "0";
+
+      expertRooms.forEach((room) => {
+        const roomElement = this.createChatElement(room);
+        expertRoomsContainer.appendChild(roomElement);
+      });
+
+      expertRoomsHeader.addEventListener("click", () => {
+        const isExpanded = expertArrowIcon.dataset.expanded === "true";
+        if (isExpanded) {
+          expertRoomsContainer.style.display = "none";
+          expertArrowIcon.src = "assets/contacts-window/38.png";
+          expertArrowIcon.dataset.expanded = "false";
+        } else {
+          expertRoomsContainer.style.display = "block";
+          expertArrowIcon.src = "assets/contacts-window/37.png";
+          expertArrowIcon.dataset.expanded = "true";
+        }
+      });
+
+      expertRoomsGroup.appendChild(expertRoomsHeader);
+      expertRoomsGroup.appendChild(expertRoomsContainer);
+      chatList.appendChild(expertRoomsGroup);
     }
 
     // Renderizar cada grupo de modelo
@@ -3665,7 +3831,13 @@ class MSNAI {
 
     const titleDiv = document.createElement("div");
     titleDiv.className = "chat-title";
-    titleDiv.textContent = chat.title;
+
+    // Agregar icono especial para salas de expertos
+    if (chat.isExpertRoom) {
+      titleDiv.innerHTML = `🏢 ${chat.title}`;
+    } else {
+      titleDiv.textContent = chat.title;
+    }
 
     // Agregar clase de parpadeo si la IA está respondiendo en este chat
     if (this.respondingChats.has(chat.id)) {
@@ -3678,18 +3850,30 @@ class MSNAI {
       titleDiv.style.fontWeight = "bold";
     }
 
-    // Último mensaje
-    const lastMessage =
-      chat.messages.length > 0
-        ? chat.messages[chat.messages.length - 1].content.substring(0, 50) +
-          (chat.messages[chat.messages.length - 1].content.length > 50
-            ? "..."
-            : "")
-        : "Sin mensajes";
+    // Último mensaje o info de sala de expertos
+    let lastMessage;
+    if (chat.isExpertRoom) {
+      const modelsCount = chat.models ? chat.models.length : 0;
+      lastMessage = `${modelsCount} ${this.t("expert_room.models_label") || "expertos"} • ${chat.messages.length} mensajes`;
+    } else {
+      lastMessage =
+        chat.messages.length > 0
+          ? chat.messages[chat.messages.length - 1].content.substring(0, 50) +
+            (chat.messages[chat.messages.length - 1].content.length > 50
+              ? "..."
+              : "")
+          : "Sin mensajes";
+    }
 
     const previewDiv = document.createElement("div");
     previewDiv.className = "chat-preview";
     previewDiv.textContent = lastMessage;
+
+    // Estilo especial para preview de salas de expertos
+    if (chat.isExpertRoom) {
+      previewDiv.style.fontStyle = "italic";
+      previewDiv.style.color = "#666";
+    }
 
     // Fecha
     const date = new Date(chat.date).toLocaleDateString("es-ES", {
@@ -4275,8 +4459,13 @@ class MSNAI {
 
       const senderClass =
         message.type === "user" ? "message-user" : "message-ai";
-      const sender =
+      let sender =
         message.type === "user" ? this.t("chat.you") : this.t("chat.ai");
+
+      // Para salas de expertos, mostrar el nombre del modelo
+      if (chat.isExpertRoom && message.type === "ai" && message.model) {
+        sender = `${this.t("chat.ai")} (${message.model})`;
+      }
 
       // Añadir indicador visual para mensajes de sistema
       const systemIndicator = message.isSystem
@@ -5666,6 +5855,11 @@ class MSNAI {
       .getElementById("new-chat-btn")
       .addEventListener("click", () => this.createNewChat());
 
+    // Botón crear sala de expertos
+    this.addEventListenerSafe("new-room-btn", "click", () => {
+      this.showExpertRoomModal();
+    });
+
     // Botón detener respuesta IA
     document
       .getElementById("detener-respuesta-ia-btn")
@@ -6029,13 +6223,22 @@ class MSNAI {
     // Cerrar modales de prompts con la X
     document
       .querySelectorAll(
-        "#prompt-generator-modal .modal-close, #prompt-manager-modal .modal-close, #prompt-result-modal .modal-close, #save-prompt-modal .modal-close, #prompt-details-modal .modal-close",
+        "#prompt-generator-modal .modal-close, #prompt-manager-modal .modal-close, #prompt-result-modal .modal-close, #save-prompt-modal .modal-close, #prompt-details-modal .modal-close, #expert-room-modal .modal-close",
       )
       .forEach((closeBtn) => {
         closeBtn.addEventListener("click", (e) => {
           e.target.closest(".modal").style.display = "none";
         });
       });
+
+    // Event listeners para modal de sala de expertos
+    this.addEventListenerSafe("cancel-expert-room-btn", "click", () => {
+      document.getElementById("expert-room-modal").style.display = "none";
+    });
+
+    this.addEventListenerSafe("create-expert-room-btn", "click", () => {
+      this.createExpertRoom();
+    });
 
     // Cerrar modales con overlay
     document.getElementById("modal-overlay")?.addEventListener("click", () => {
@@ -7704,4 +7907,508 @@ MSNAI.prototype.showNotification = function (
         setTimeout(() => notification.remove(), 300);
       });
   }
+};
+
+// =================== SALAS DE EXPERTOS (CHAT GRUPAL CON MÚLTIPLES IAs) ===================
+
+/**
+ * Abre el modal para seleccionar modelos y crear una sala de expertos
+ */
+MSNAI.prototype.showExpertRoomModal = function () {
+  const modal = document.getElementById("expert-room-modal");
+  const modelsList = document.getElementById("expert-room-models-list");
+  const roomTitleInput = document.getElementById("room-title-input");
+
+  if (!modal || !modelsList || !roomTitleInput) {
+    console.error(
+      "❌ Error: No se encontraron elementos del modal de sala de expertos",
+    );
+    this.showNotification(
+      "Error al abrir el modal de sala de expertos",
+      "error",
+    );
+    return;
+  }
+
+  // Limpiar lista anterior
+  modelsList.innerHTML = "";
+
+  // Verificar que hay modelos disponibles
+  if (!this.availableModels || this.availableModels.length === 0) {
+    modelsList.innerHTML =
+      '<p style="color: #999; text-align: center; padding: 20px;">⚠️ No hay modelos disponibles.<br><br>Por favor, verifica la conexión con Ollama y asegúrate de tener al menos un modelo instalado.</p>';
+    modal.style.display = "block";
+    this.showNotification(
+      "No hay modelos disponibles para crear una sala",
+      "warning",
+    );
+    return;
+  }
+
+  console.log(
+    `🏢 Abriendo modal de sala de expertos con ${this.availableModels.length} modelos`,
+  );
+
+  // Actualizar traducciones del modal antes de mostrarlo
+  this.updateDataI18nElements();
+
+  // Generar checkboxes para cada modelo
+  this.availableModels.forEach((model) => {
+    const modelName = model.name || model;
+
+    const label = document.createElement("label");
+    label.style.display = "block";
+    label.style.padding = "8px";
+    label.style.cursor = "pointer";
+    label.style.borderRadius = "4px";
+    label.style.transition = "background-color 0.2s";
+
+    label.addEventListener("mouseenter", function () {
+      this.style.backgroundColor = "#e8f0ff";
+    });
+
+    label.addEventListener("mouseleave", function () {
+      this.style.backgroundColor = "transparent";
+    });
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.value = modelName;
+    checkbox.className = "expert-room-model-checkbox";
+    checkbox.style.marginRight = "8px";
+
+    const text = document.createTextNode(modelName);
+
+    label.appendChild(checkbox);
+    label.appendChild(text);
+    modelsList.appendChild(label);
+  });
+
+  // Limpiar campo de título y poner nombre por defecto
+  roomTitleInput.value =
+    this.t("expert_room.default_name") || "Sala de Expertos";
+
+  // Mostrar modal
+  modal.style.display = "block";
+
+  // Forzar actualización de traducciones después de mostrar el modal
+  setTimeout(() => {
+    this.updateDataI18nElements();
+  }, 50);
+};
+
+/**
+ * Crea una nueva sala de expertos con los modelos seleccionados
+ */
+MSNAI.prototype.createExpertRoom = function () {
+  const checkboxes = document.querySelectorAll(
+    ".expert-room-model-checkbox:checked",
+  );
+  const selectedModels = Array.from(checkboxes).map((cb) => cb.value);
+  const roomTitle = document.getElementById("room-title-input").value.trim();
+
+  // Validar que se hayan seleccionado al menos 2 modelos
+  if (selectedModels.length < 2) {
+    this.showNotification(
+      this.t("expert_room.select_min_models") ||
+        "Por favor selecciona al menos 2 modelos",
+      "warning",
+    );
+    return;
+  }
+
+  // Crear el chat grupal
+  const chatId = "room-" + Date.now();
+  const newRoom = {
+    id: chatId,
+    type: "expert-room",
+    isExpertRoom: true,
+    title:
+      roomTitle || this.t("expert_room.default_name") || "Sala de Expertos",
+    date: new Date().toISOString(),
+    models: selectedModels,
+    model: selectedModels[0], // Modelo principal (por compatibilidad)
+    messages: [],
+    attachments: [],
+  };
+
+  this.chats.unshift(newRoom);
+  this.saveChats();
+  this.renderChatList();
+  this.selectChat(chatId);
+  this.playSound("nudge");
+
+  // Cerrar modal
+  document.getElementById("expert-room-modal").style.display = "none";
+
+  // Mostrar notificación de éxito
+  const successMessage = this.t("expert_room.created", {
+    count: selectedModels.length,
+  });
+  this.showNotification(
+    successMessage || `Sala creada con ${selectedModels.length} expertos`,
+    "success",
+  );
+
+  console.log(
+    `🏢 Sala de expertos creada: ${chatId} con modelos:`,
+    selectedModels,
+  );
+};
+
+/**
+ * Envía un mensaje a todos los modelos de una sala de expertos
+ * Las respuestas se muestran conforme van llegando
+ */
+MSNAI.prototype.sendExpertRoomMessage = async function () {
+  const input = document.getElementById("message-input");
+  const message = input.value.trim();
+
+  if (!message || !this.currentChatId) return;
+
+  const chat = this.chats.find((c) => c.id === this.currentChatId);
+  if (!chat || !chat.isExpertRoom) {
+    // Si no es una sala de expertos, usar el método normal
+    return this.sendMessage();
+  }
+
+  // Construir mensaje completo con contextos de adjuntos
+  let displayedMessage = message;
+  let fileContent = "";
+  let pdfContext = null;
+  let imageContext = null;
+
+  // Manejar archivo de texto adjunto
+  if (this.pendingFileAttachment) {
+    const match = message.match(/^(.*?)\s*\[Archivo adjunto: [^\]]+\]$/);
+    if (match) {
+      displayedMessage = match[1] || "";
+    }
+    fileContent = this.pendingFileAttachment.content;
+  }
+
+  // Manejar contexto PDF
+  if (this.pendingPdfContext) {
+    const pdfMatch = message.match(/^(.*?)\s*\[PDF: [^\]]+\]$/);
+    if (pdfMatch) {
+      displayedMessage = pdfMatch[1] || "";
+    }
+    pdfContext = this.pendingPdfContext;
+  }
+
+  // Manejar contexto de imagen
+  if (this.pendingImageContext) {
+    const imageMatch = message.match(/^(.*?)\s*\[.+?: [^\]]+\]$/);
+    if (imageMatch) {
+      displayedMessage = imageMatch[1] || "";
+    }
+    imageContext = this.pendingImageContext;
+  }
+
+  // Limpiar input y contextos
+  input.value = "";
+  const originalAttachment = this.pendingFileAttachment;
+  this.pendingFileAttachment = null;
+  this.pendingPdfContext = null;
+  this.pendingImageContext = null;
+
+  // Agregar mensaje del usuario
+  const userMessage = {
+    type: "user",
+    content: message,
+    timestamp: new Date().toISOString(),
+  };
+  chat.messages.push(userMessage);
+  this.renderMessages(chat);
+  this.playSound("message-out");
+
+  // NO deshabilitar input - permitir nuevos mensajes
+  // input.disabled = false;
+  // document.getElementById("send-button").disabled = false;
+
+  // Marcar sala como respondiendo
+  this.respondingChats.add(chat.id);
+
+  // Mostrar indicador de procesamiento
+  this.showAIThinking(true);
+
+  // Actualizar lista de chats para mostrar indicador visual
+  this.renderChatList();
+
+  console.log(
+    `🏢 [ExpertRoom] Enviando mensaje a ${chat.models.length} modelos...`,
+  );
+
+  // Construir mensaje con contextos
+  let actualMessageToSend = displayedMessage;
+
+  if (fileContent) {
+    let textContent = fileContent;
+    if (originalAttachment.chunks && originalAttachment.chunks.length > 0) {
+      const relevantChunks = originalAttachment.chunks.slice(0, 3);
+      textContent = relevantChunks.join("\n\n[...]\n\n");
+    }
+    actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${textContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
+  }
+
+  let pdfContextText = null;
+  if (pdfContext) {
+    const relevantChunks = pdfContext.chunks.slice(0, 3);
+    pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
+  }
+
+  // Procesar cada modelo en paralelo, mostrando respuestas conforme llegan
+  const modelPromises = chat.models.map(async (model) => {
+    try {
+      console.log(`🤖 [ExpertRoom] Consultando a ${model}...`);
+
+      const response = await this.sendToAIWithoutStreaming(
+        actualMessageToSend,
+        chat.id,
+        model,
+        pdfContextText,
+        imageContext,
+      );
+
+      // Agregar respuesta inmediatamente cuando llega
+      const aiMessage = {
+        type: "ai",
+        content: response,
+        model: model,
+        timestamp: new Date().toISOString(),
+      };
+      chat.messages.push(aiMessage);
+
+      // Renderizar inmediatamente si es el chat actual
+      if (this.currentChatId === chat.id) {
+        this.renderMessages(chat);
+        this.saveChats();
+      }
+
+      console.log(`✅ [ExpertRoom] Respuesta de ${model} recibida`);
+
+      return { model, success: true };
+    } catch (error) {
+      console.error(`❌ [ExpertRoom] Error con ${model}:`, error);
+
+      // Crear mensaje de error amigable para el usuario usando traducciones
+      let errorContent = "";
+      const errorMessage = error.message || "";
+
+      if (
+        errorMessage.includes("TimeoutError") ||
+        errorMessage.includes("timed out")
+      ) {
+        errorContent = this.t("expert_room.error_timeout", { model });
+      } else if (
+        errorMessage.includes("HTTP 429") ||
+        errorMessage.includes("Too Many Requests")
+      ) {
+        errorContent = this.t("expert_room.error_http_429", { model });
+      } else if (errorMessage.includes("HTTP 500")) {
+        errorContent = this.t("expert_room.error_http_500", { model });
+      } else if (errorMessage.includes("HTTP 404")) {
+        errorContent = this.t("expert_room.error_http_404", { model });
+      } else if (errorMessage.includes("HTTP 503")) {
+        errorContent = this.t("expert_room.error_http_503", { model });
+      } else if (
+        errorMessage.includes("network") ||
+        errorMessage.includes("fetch")
+      ) {
+        errorContent = this.t("expert_room.error_network", { model });
+      } else {
+        errorContent = this.t("expert_room.error_generic", { model });
+      }
+
+      // Fallback si la traducción no está disponible
+      if (!errorContent || errorContent.includes("expert_room.error_")) {
+        errorContent = `⚠️ ${model}: No se pudo obtener respuesta en este momento.`;
+      }
+
+      const errorMsg = {
+        type: "ai",
+        content: errorContent,
+        model: model,
+        timestamp: new Date().toISOString(),
+      };
+      chat.messages.push(errorMsg);
+
+      // Renderizar inmediatamente si es el chat actual
+      if (this.currentChatId === chat.id) {
+        this.renderMessages(chat);
+        this.saveChats();
+      }
+
+      return { model, success: false };
+    }
+  });
+
+  // Esperar a que todos terminen (pero las respuestas ya se mostraron)
+  await Promise.allSettled(modelPromises);
+
+  // Marcar sala como NO respondiendo y agregar a no leídos si no es el chat actual
+  this.respondingChats.delete(chat.id);
+  if (this.currentChatId !== chat.id) {
+    this.unreadChats.add(chat.id);
+  }
+
+  // Ocultar indicador de procesamiento
+  this.showAIThinking(false);
+
+  // Actualizar título del chat si es necesario
+  if (chat.messages.length <= chat.models.length + 1) {
+    chat.title = this.generateChatTitle(chat);
+  }
+
+  // Renderizar una vez más para asegurar todo está actualizado
+  if (this.currentChatId === chat.id) {
+    this.renderMessages(chat);
+  }
+
+  this.saveChats();
+
+  // Actualizar lista de chats para quitar indicador de respondiendo
+  this.renderChatList();
+
+  this.playSound("message-in");
+
+  // Input ya está habilitado - solo dar foco
+  input.focus();
+
+  console.log(`✅ [ExpertRoom] Todas las respuestas procesadas`);
+};
+
+/**
+ * Envía un mensaje a Ollama sin streaming (para salas de expertos)
+ * @param {string} message - Mensaje del usuario
+ * @param {string} chatId - ID del chat
+ * @param {string} model - Modelo a usar
+ * @param {string} pdfContext - Contexto PDF opcional
+ * @param {object} imageContext - Contexto de imagen opcional
+ * @returns {Promise<string>} - Respuesta completa del modelo
+ */
+MSNAI.prototype.sendToAIWithoutStreaming = async function (
+  message,
+  chatId,
+  model,
+  pdfContext = null,
+  imageContext = null,
+) {
+  const chat = this.chats.find((c) => c.id === chatId);
+  if (!chat) throw new Error("Chat no encontrado");
+
+  // Construir historial de mensajes (solo del usuario y este modelo específico)
+  const history = chat.messages
+    .filter((m) => m.type === "user" || (m.type === "ai" && m.model === model))
+    .map((m) => ({
+      role: m.type === "user" ? "user" : "assistant",
+      content: m.content,
+    }));
+
+  // Construir mensaje final con contextos
+  let finalMessage = message;
+
+  if (pdfContext) {
+    finalMessage = `${pdfContext}\n\nConsulta del usuario: ${message}`;
+  }
+
+  // Preparar payload base
+  const payload = {
+    model: model,
+    messages: [
+      ...history,
+      {
+        role: "user",
+        content: finalMessage,
+      },
+    ],
+    stream: false,
+    options: {
+      temperature: parseFloat(this.settings.temperature),
+      top_k: parseInt(this.settings.topK),
+      top_p: parseFloat(this.settings.topP),
+      num_predict: parseInt(this.settings.maxTokens),
+    },
+  };
+
+  // Agregar imagen si existe
+  if (imageContext && imageContext.base64Data) {
+    payload.messages[payload.messages.length - 1].images = [
+      imageContext.base64Data,
+    ];
+  }
+
+  console.log(`📤 [ExpertRoom] Enviando a ${model}`);
+
+  const response = await fetch(`${this.settings.ollamaServer}/api/chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(parseInt(this.settings.apiTimeout)),
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  console.log(`✅ [ExpertRoom] Respuesta de ${model} recibida`);
+
+  return data.message?.content || data.response || "";
+};
+
+/**
+ * Modifica selectChat para manejar salas de expertos
+ */
+const originalSelectChat = MSNAI.prototype.selectChat;
+MSNAI.prototype.selectChat = function (chatId) {
+  originalSelectChat.call(this, chatId);
+
+  const chat = this.chats.find((c) => c.id === chatId);
+  if (chat && chat.isExpertRoom) {
+    // Marcar como leído
+    this.unreadChats.delete(chatId);
+
+    // Actualizar información de la sala en el header
+    const modelsInfo = chat.models.join(", ");
+    const modelsLabel = this.t("expert_room.models_label");
+    const labelText =
+      modelsLabel && !modelsLabel.includes("expert_room.")
+        ? modelsLabel
+        : "Expertos";
+    document.getElementById("chat-status-message").textContent =
+      `🏢 ${labelText}: ${modelsInfo}`;
+
+    // Asegurar que los botones de adjuntos funcionen en salas
+    document.getElementById("message-input").disabled = false;
+    document.getElementById("send-button").disabled = false;
+
+    // Actualizar lista para quitar indicador de no leído
+    this.renderChatList();
+  }
+};
+
+/**
+ * Modifica sendMessage para detectar salas de expertos
+ */
+const originalSendMessage = MSNAI.prototype.sendMessage;
+MSNAI.prototype.sendMessage = async function () {
+  const chat = this.chats.find((c) => c.id === this.currentChatId);
+
+  if (chat && chat.isExpertRoom) {
+    return this.sendExpertRoomMessage();
+  }
+
+  return originalSendMessage.call(this);
+};
+
+/**
+ * Modifica createNewChat para crear chats independientes (no dentro de salas)
+ */
+const originalCreateNewChat = MSNAI.prototype.createNewChat;
+MSNAI.prototype.createNewChat = function () {
+  // Crear un chat normal independiente, no vinculado a ninguna sala
+  return originalCreateNewChat.call(this);
 };

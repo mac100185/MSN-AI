@@ -45,7 +45,8 @@
     "close_chat": "Tutup Obrolan",
     "stop_response": "Hentikan Respons AI",
     "update": "Update",
-    "copy": "📋 Salin ke Chat"
+    "copy": "📋 Salin ke Chat",
+    "create": "Buat Ruangan"
   },
   "tooltips": {
     "new_chat": "Buat obrolan baru",
@@ -70,7 +71,8 @@
     "delete_attachment": "Hapus file",
     "download_pdf": "Unduh file",
     "download_txt": "Unduh file",
-    "download_image": "Unduh file"
+    "download_image": "Unduh file",
+    "new_room": "Buat ruang ahli"
   },
   "settings": {
     "title": "Pengaturan Model AI",
@@ -357,5 +359,23 @@
     "pages": "halaman",
     "attached": "PDF dilampirkan",
     "context_active": "Konteks PDF aktif ({pages} halaman)"
+  },
+  "expert_room": {
+    "title": "Ruang Ahli Baru",
+    "description": "Pilih model AI yang akan berpartisipasi dalam ruang ahli:",
+    "room_name": "Nama Ruangan",
+    "room_name_placeholder": "Ruang Ahli",
+    "default_name": "Ruang Ahli",
+    "select_min_models": "Silakan pilih setidaknya 2 model",
+    "created": "Ruangan dibuat dengan {count} ahli",
+    "models_label": "Ahli",
+    "model_error": "⚠️ Error saat query {model}",
+    "error_timeout": "⏱️ {model}: Model memerlukan waktu terlalu lama untuk merespons. Silakan coba lagi nanti.",
+    "error_http_500": "⚠️ {model}: Server mengalami masalah. Coba model lain atau coba lagi nanti.",
+    "error_http_404": "❌ {model}: Model ini saat ini tidak tersedia.",
+    "error_http_503": "⚙️ {model}: Layanan sedang dalam pemeliharaan. Silakan coba lagi nanti.",
+    "error_network": "🌐 {model}: Kesalahan koneksi. Periksa koneksi internet Anda.",
+    "error_generic": "⚠️ {model}: Tidak dapat memperoleh respons saat ini.",
+    "error_http_429": "🚦 {model}: Terlalu banyak permintaan. Server membatasi permintaan. Harap tunggu sebentar sebelum mencoba lagi."
   }
 }

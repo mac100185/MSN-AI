@@ -45,10 +45,12 @@
     "search_chat": "Im Chat suchen",
     "close_chat": "Chat schließen",
     "stop_response": "KI-Antwort stoppen",
-    "update": "Aktualisieren"
+    "update": "Aktualisieren",
+    "create": "Raum erstellen"
   },
   "tooltips": {
     "new_chat": "Neuen Chat erstellen",
+    "new_room": "Expertenraum erstellen",
     "settings": "KI-Modell Einstellungen",
     "nudge": "Anstoßen senden",
     "emoticon_natural": "Natürliche Emoticons",
@@ -358,5 +360,23 @@
     "pages": "Seiten",
     "attached": "PDF angehängt",
     "context_active": "PDF-Kontext aktiv ({pages} Seiten)"
+  },
+  "expert_room": {
+    "title": "Neuer Expertenraum",
+    "description": "Wählen Sie die KI-Modelle aus, die im Expertenraum teilnehmen werden:",
+    "room_name": "Raumname",
+    "room_name_placeholder": "Expertenraum",
+    "default_name": "Expertenraum",
+    "select_min_models": "Bitte wählen Sie mindestens 2 Modelle aus",
+    "created": "Raum mit {count} Experten erstellt",
+    "models_label": "Experten",
+    "model_error": "⚠️ Fehler beim Abfragen von {model}",
+    "error_timeout": "⏱️ {model}: Das Modell braucht zu lange zum Antworten. Bitte versuchen Sie es später erneut.",
+    "error_http_500": "⚠️ {model}: Der Server hat Probleme. Versuchen Sie ein anderes Modell oder versuchen Sie es später erneut.",
+    "error_http_404": "❌ {model}: Dieses Modell ist derzeit nicht verfügbar.",
+    "error_http_503": "⚙️ {model}: Der Dienst ist in Wartung. Bitte versuchen Sie es später erneut.",
+    "error_network": "🌐 {model}: Verbindungsfehler. Bitte überprüfen Sie Ihre Internetverbindung.",
+    "error_generic": "⚠️ {model}: Derzeit kann keine Antwort abgerufen werden.",
+    "error_http_429": "🚦 {model}: Zu viele Anfragen. Der Server limitiert die Anfragen. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen."
   }
 }

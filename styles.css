@@ -1050,6 +1050,8 @@ a {
 }
 
 .modal-content {
+    position: relative;
+    z-index: 1001;
     background-color: #ecf6f9;
     margin: 5% auto;
     padding: 20px;
@@ -1663,4 +1665,50 @@ a {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ===================
+   SALAS DE EXPERTOS
+   =================== */
+
+/* Estilo para checkboxes en el modal de sala de expertos */
+.expert-room-model-checkbox {
+    cursor: pointer;
+    accent-color: #0066cc;
+}
+
+/* Contenedor de lista de modelos en sala de expertos */
+#expert-room-models-list {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+#expert-room-models-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+#expert-room-models-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#expert-room-models-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+#expert-room-models-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Indicador visual para mensajes de sala de expertos */
+.message-ai.expert-room-message {
+    border-left: 3px solid #0066cc;
+    padding-left: 8px;
+}
+
+/* Destacar el nombre del modelo en salas de expertos */
+.expert-room-model-name {
+    color: #0066cc;
+    font-weight: bold;
 }

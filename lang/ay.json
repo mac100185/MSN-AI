@@ -45,7 +45,8 @@
     "close_chat": "Aruskipawi ist'aña",
     "stop_response": "AI jaysawi sayt'ayaña",
     "update": "Musuqchaña",
-    "copy": "📋 Aruskipawiru apayaña"
+    "copy": "📋 Aruskipawiru apayaña",
+    "create": "Uta lurañ"
   },
   "tooltips": {
     "new_chat": "Machaq aruskipawi luraña",
@@ -71,7 +72,8 @@
     "delete_attachment": "Qillqata chhaqtayaña",
     "download_pdf": "Qillqata apaqaña",
     "download_txt": "Qillqata apaqaña",
-    "download_image": "Qillqata apaqaña"
+    "download_image": "Qillqata apaqaña",
+    "new_room": "Yatiqirinaka utapa lurañ"
   },
   "settings": {
     "title": "AI Modelo Wakicht'awinaka",
@@ -358,5 +360,23 @@
     "pages": "laphinaka",
     "attached": "PDF yapxatat",
     "context_active": "PDF contexto ch'ama ({pages} laphinaka)"
+  },
+  "expert_room": {
+    "title": "Machaq Yatiqirinaka Uta",
+    "description": "Yatiqirinaka utan chikachasïña AI uñstayirinaka ajlliñamawa:",
+    "room_name": "Utajj Sutipa",
+    "room_name_placeholder": "Yatiqirinaka Uta",
+    "default_name": "Yatiqirinaka Uta",
+    "select_min_models": "Mä juk'a uñstayirinaka ajlliñamawa",
+    "created": "{count} yatiqirinakaxa utaxa lurawayi",
+    "models_label": "Yatiqirinaka",
+    "model_error": "⚠️ {model} jiskt'awinxa pantjata",
+    "error_timeout": "⏱️ {model}: Modeloxa juk'a pachampi jaysatarakiwa. Qhipa pachanxa wasitata mayita.",
+    "error_http_500": "⚠️ {model}: Servidoroxa jan walt'awinakampiwa jikisxi. Yaqha modelo wakichata mayita jan ukhaxa qhipa pachanxa wasitata mayita.",
+    "error_http_404": "❌ {model}: Aka modeloxa jichhax janiw utjkiti.",
+    "error_http_503": "⚙️ {model}: Servicioxa alitañ ukankirakiwa. Qhipa pachanxa wasitata mayita.",
+    "error_network": "🌐 {model}: Mayañ pantjasiwa. Internet mayaña uñakipäm.",
+    "error_generic": "⚠️ {model}: Jichhax janiw jaysäwi katuqañ yatktanti.",
+    "error_http_429": "🚦 {model}: Juk'a mayirinakawa. Servidoroxa mayirinaka jark'aqirikiwa. Wasitata mayañatakix juk'a pachax suytarakipäm."
   }
 }

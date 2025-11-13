@@ -45,7 +45,8 @@
     "close_chat": "Rimanakuyta wichq'ay",
     "stop_response": "AI kutichiyninata sayachiy",
     "update": "Musuqchay",
-    "copy": "📋 Rimayman kichariy"
+    "copy": "📋 Rimayman kichariy",
+    "create": "Wasita ruway"
   },
   "tooltips": {
     "new_chat": "Musuq rimanakuyta ruway",
@@ -71,7 +72,8 @@
     "delete_attachment": "Willañiqita qichuy",
     "download_pdf": "Willañiqita uraykuchiy",
     "download_txt": "Willañiqita uraykuchiy",
-    "download_image": "Willañiqita uraykuchiy"
+    "download_image": "Willañiqita uraykuchiy",
+    "new_room": "Yachaqkunapa wasiyta ruway"
   },
   "settings": {
     "title": "AI Modelo Churay",
@@ -358,5 +360,23 @@
     "edit_cancelled": "Allichayqa hark'asqa",
     "general_info": "General Willakuy",
     "date": "P'unchaw"
+  },
+  "expert_room": {
+    "title": "Musuq Yachaqkunapa Wasiy",
+    "description": "Yachaqkunapa wasipi yanapanqa AI rikuchiykunata akllay:",
+    "room_name": "Wasiypaq Suti",
+    "room_name_placeholder": "Yachaqkunapa Wasiy",
+    "default_name": "Yachaqkunapa Wasiy",
+    "select_min_models": "Ama hina kaspa iskay rikuchiykunata akllay",
+    "created": "{count} yachaqkunawan wasiy ruwasqa",
+    "models_label": "Yachaqkuna",
+    "model_error": "⚠️ {model} tapuypi pantay",
+    "error_timeout": "⏱️ {model}: Modeloqa ancha tiempo nisqapi kutichiykan. Qhepaman watiqmanta kallpachay.",
+    "error_http_500": "⚠️ {model}: Servidorqa sasachakuykunata tarikun. Huk modelota kallpachay utaq qhepaman watiqmanta kallpachay.",
+    "error_http_404": "❌ {model}: Kay modeloqa kunanqa mana tarikupunchu.",
+    "error_http_503": "⚙️ {model}: Servicionqa allichaypi kachkan. Qhepaman watiqmanta kallpachay.",
+    "error_network": "🌐 {model}: Tinkiypi pantay. Internet tinkikiyta qhaway.",
+    "error_generic": "⚠️ {model}: Kunanqa manam kutichiyta taripakuyta atisqachu.",
+    "error_http_429": "🚦 {model}: Ancha mañakuykuna. Servidorqa mañakuykunata harkakushanmi. Watiqmanta kallpachanaykipaq huk ratolla suyay."
   }
 }

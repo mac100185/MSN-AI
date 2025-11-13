@@ -45,7 +45,8 @@
     "close_chat": "Đóng trò chuyện",
     "stop_response": "Dừng phản hồi AI",
     "update": "Update",
-    "copy": "📋 Sao chép vào Chat"
+    "copy": "📋 Sao chép vào Chat",
+    "create": "Tạo Phòng"
   },
   "tooltips": {
     "new_chat": "Tạo trò chuyện mới",
@@ -71,7 +72,8 @@
     "delete_attachment": "Xóa tệp",
     "download_pdf": "Tải xuống tệp",
     "download_txt": "Tải xuống tệp",
-    "download_image": "Tải xuống tệp"
+    "download_image": "Tải xuống tệp",
+    "new_room": "Tạo phòng chuyên gia"
   },
   "settings": {
     "title": "Cài đặt mô hình AI",
@@ -358,5 +360,23 @@
     "pages": "trang",
     "attached": "PDF đã đính kèm",
     "context_active": "Ngữ cảnh PDF đang hoạt động ({pages} trang)"
+  },
+  "expert_room": {
+    "title": "Phòng Chuyên Gia Mới",
+    "description": "Chọn các mô hình AI sẽ tham gia phòng chuyên gia:",
+    "room_name": "Tên Phòng",
+    "room_name_placeholder": "Phòng Chuyên Gia",
+    "default_name": "Phòng Chuyên Gia",
+    "select_min_models": "Vui lòng chọn ít nhất 2 mô hình",
+    "created": "Phòng được tạo với {count} chuyên gia",
+    "models_label": "Chuyên Gia",
+    "model_error": "⚠️ Lỗi khi truy vấn {model}",
+    "error_timeout": "⏱️ {model}: Mô hình mất quá nhiều thời gian để phản hồi. Vui lòng thử lại sau.",
+    "error_http_500": "⚠️ {model}: Máy chủ đang gặp sự cố. Thử mô hình khác hoặc thử lại sau.",
+    "error_http_404": "❌ {model}: Mô hình này hiện không khả dụng.",
+    "error_http_503": "⚙️ {model}: Dịch vụ đang bảo trì. Vui lòng thử lại sau.",
+    "error_network": "🌐 {model}: Lỗi kết nối. Vui lòng kiểm tra kết nối internet của bạn.",
+    "error_generic": "⚠️ {model}: Không thể nhận phản hồi lúc này.",
+    "error_http_429": "🚦 {model}: Quá nhiều yêu cầu. Máy chủ đang giới hạn các yêu cầu. Vui lòng đợi một chút trước khi thử lại."
   }
 }

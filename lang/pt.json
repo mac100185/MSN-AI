@@ -45,7 +45,8 @@
     "close_chat": "Fechar Chat",
     "stop_response": "Parar Resposta da IA",
     "update": "Atualizar",
-    "copy": "📋 Copiar para o Chat"
+    "copy": "📋 Copiar para o Chat",
+    "create": "Criar Sala"
   },
   "tooltips": {
     "new_chat": "Criar um novo chat",
@@ -71,7 +72,8 @@
     "delete_attachment": "Excluir arquivo",
     "download_pdf": "Baixar arquivo",
     "download_txt": "Baixar arquivo",
-    "download_image": "Baixar arquivo"
+    "download_image": "Baixar arquivo",
+    "new_room": "Criar uma sala de especialistas"
   },
   "settings": {
     "title": "Configurações do Modelo de IA",
@@ -358,5 +360,23 @@
     "pages": "páginas",
     "attached": "PDF anexado",
     "context_active": "Contexto PDF ativo ({pages} páginas)"
+  },
+  "expert_room": {
+    "title": "Nova Sala de Especialistas",
+    "description": "Selecione os modelos de IA que participarão da sala de especialistas:",
+    "room_name": "Nome da Sala",
+    "room_name_placeholder": "Sala de Especialistas",
+    "default_name": "Sala de Especialistas",
+    "select_min_models": "Por favor, selecione pelo menos 2 modelos",
+    "created": "Sala criada com {count} especialistas",
+    "models_label": "Especialistas",
+    "model_error": "⚠️ Erro ao consultar {model}",
+    "error_timeout": "⏱️ {model}: O modelo está demorando muito para responder. Tente novamente mais tarde.",
+    "error_http_500": "⚠️ {model}: O servidor está enfrentando problemas. Tente outro modelo ou tente mais tarde.",
+    "error_http_404": "❌ {model}: Este modelo não está disponível no momento.",
+    "error_http_503": "⚙️ {model}: O serviço está em manutenção. Tente mais tarde.",
+    "error_network": "🌐 {model}: Erro de conexão. Verifique sua conexão com a internet.",
+    "error_generic": "⚠️ {model}: Não foi possível obter resposta no momento.",
+    "error_http_429": "🚦 {model}: Muitas solicitações. O servidor está limitando as requisições. Aguarde um momento antes de tentar novamente."
   }
 }

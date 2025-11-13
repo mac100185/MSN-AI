@@ -48,12 +48,14 @@
     "export_chat": "Exportar Chat",
     "print_chat": "Imprimir Chat",
     "search_chat": "Buscar en Chat",
+    "create": "Crear Sala",
     "close_chat": "Cerrar Chat",
     "stop_response": "Detener Respuesta de IA"
   },
 
   "tooltips": {
     "new_chat": "Crear un nuevo chat",
+    "new_room": "Crear una sala de expertos",
     "settings": "Configuración del modelo de IA",
     "chats_import": "Importar chats",
     "chats_export": "Exportar chats",
@@ -381,5 +383,24 @@
     "pages": "páginas",
     "attached": "PDF adjunto",
     "context_active": "Contexto PDF activo ({pages} páginas)"
+  },
+
+  "expert_room": {
+    "title": "Nueva Sala de Expertos",
+    "description": "Selecciona los modelos de IA que participarán en la sala de expertos:",
+    "room_name": "Nombre de la Sala",
+    "room_name_placeholder": "Sala de Expertos",
+    "default_name": "Sala de Expertos",
+    "select_min_models": "Por favor selecciona al menos 2 modelos",
+    "created": "Sala creada con {count} expertos",
+    "models_label": "Expertos",
+    "model_error": "⚠️ Error al consultar {model}",
+    "error_timeout": "⏱️ {model}: El modelo está tardando demasiado en responder. Intenta nuevamente más tarde.",
+    "error_http_429": "🚦 {model}: Demasiadas solicitudes. El servidor está limitando las peticiones. Espera unos momentos antes de intentar nuevamente.",
+    "error_http_500": "⚠️ {model}: El servidor está experimentando problemas. Intenta con otro modelo o más tarde.",
+    "error_http_404": "❌ {model}: Este modelo no está disponible actualmente.",
+    "error_http_503": "⚙️ {model}: El servicio está en mantenimiento. Intenta más tarde.",
+    "error_network": "🌐 {model}: Error de conexión. Verifica tu conexión a internet.",
+    "error_generic": "⚠️ {model}: No se pudo obtener respuesta en este momento."
   }
 }

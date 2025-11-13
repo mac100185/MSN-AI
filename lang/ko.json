@@ -45,7 +45,8 @@
     "close_chat": "대화 닫기",
     "stop_response": "AI 응답 중지",
     "update": "업데이트",
-    "copy": "📋 채팅에 복사"
+    "copy": "📋 채팅에 복사",
+    "create": "방 만들기"
   },
   "tooltips": {
     "new_chat": "새 대화 만들기",
@@ -71,7 +72,8 @@
     "delete_attachment": "파일 삭제",
     "download_pdf": "파일 다운로드",
     "download_txt": "파일 다운로드",
-    "download_image": "파일 다운로드"
+    "download_image": "파일 다운로드",
+    "new_room": "전문가 방 만들기"
   },
   "settings": {
     "title": "AI 모델 설정",
@@ -358,5 +360,23 @@
     "pages": "페이지",
     "attached": "PDF 첨부됨",
     "context_active": "PDF 컨텍스트 활성 ({pages}페이지)"
+  },
+  "expert_room": {
+    "title": "새 전문가 방",
+    "description": "전문가 방에 참여할 AI 모델을 선택하세요:",
+    "room_name": "방 이름",
+    "room_name_placeholder": "전문가 방",
+    "default_name": "전문가 방",
+    "select_min_models": "최소 2개의 모델을 선택하세요",
+    "created": "{count}명의 전문가로 방이 생성되었습니다",
+    "models_label": "전문가",
+    "model_error": "⚠️ {model} 조회 중 오류 발생",
+    "error_timeout": "⏱️ {model}: 모델이 응답하는 데 너무 오래 걸립니다. 나중에 다시 시도하세요.",
+    "error_http_500": "⚠️ {model}: 서버에 문제가 발생했습니다. 다른 모델을 시도하거나 나중에 다시 시도하세요.",
+    "error_http_404": "❌ {model}: 이 모델은 현재 사용할 수 없습니다.",
+    "error_http_503": "⚙️ {model}: 서비스가 유지 관리 중입니다. 나중에 다시 시도하세요.",
+    "error_network": "🌐 {model}: 연결 오류. 인터넷 연결을 확인하세요.",
+    "error_generic": "⚠️ {model}: 현재 응답을 받을 수 없습니다.",
+    "error_http_429": "🚦 {model}: 요청이 너무 많습니다. 서버가 요청을 제한하고 있습니다. 잠시 기다린 후 다시 시도하세요."
   }
 }

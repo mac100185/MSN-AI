@@ -45,7 +45,8 @@
     "search_chat": "Rechercher dans le Chat",
     "close_chat": "Fermer le Chat",
     "stop_response": "Arrêter la Réponse IA",
-    "update": "Mettre à jour"
+    "update": "Mettre à jour",
+    "create": "Créer une salle"
   },
   "tooltips": {
     "new_chat": "Créer un nouveau chat",
@@ -71,7 +72,8 @@
     "delete_attachment": "Supprimer le fichier",
     "download_pdf": "Télécharger le fichier",
     "download_txt": "Télécharger le fichier",
-    "download_image": "Télécharger le fichier"
+    "download_image": "Télécharger le fichier",
+    "new_room": "Créer une salle d'experts"
   },
   "settings": {
     "title": "Paramètres du Modèle IA",
@@ -358,5 +360,23 @@
     "pages": "pages",
     "attached": "PDF joint",
     "context_active": "Contexte PDF actif ({pages} pages)"
+  },
+  "expert_room": {
+    "title": "Nouvelle Salle d'Experts",
+    "description": "Sélectionnez les modèles d'IA qui participeront à la salle d'experts:",
+    "room_name": "Nom de la Salle",
+    "room_name_placeholder": "Salle d'Experts",
+    "default_name": "Salle d'Experts",
+    "select_min_models": "Veuillez sélectionner au moins 2 modèles",
+    "created": "Salle créée avec {count} experts",
+    "models_label": "Experts",
+    "model_error": "⚠️ Erreur lors de la consultation de {model}",
+    "error_timeout": "⏱️ {model}: Le modèle met trop de temps à répondre. Veuillez réessayer plus tard.",
+    "error_http_500": "⚠️ {model}: Le serveur rencontre des problèmes. Essayez un autre modèle ou réessayez plus tard.",
+    "error_http_404": "❌ {model}: Ce modèle n'est pas disponible actuellement.",
+    "error_http_503": "⚙️ {model}: Le service est en maintenance. Veuillez réessayer plus tard.",
+    "error_network": "🌐 {model}: Erreur de connexion. Vérifiez votre connexion internet.",
+    "error_generic": "⚠️ {model}: Impossible d'obtenir une réponse pour le moment.",
+    "error_http_429": "🚦 {model}: Trop de requêtes. Le serveur limite les demandes. Veuillez attendre un moment avant de réessayer."
   }
 }
