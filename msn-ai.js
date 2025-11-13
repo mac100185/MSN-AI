@@ -15,6 +15,7 @@ class MSNAI {
     this.pendingImageContext = null; // Contexto de imágenes temporal (no se guarda en historial)
     this.userScrolledUp = false; // Flag para detectar si el usuario hizo scroll manual
     this.abortControllers = {}; // Mapa de controladores por chatId
+    this.expertRoomAbortControllers = {}; // Mapa de controladores de abort para salas de expertos por chatId
     this.respondingChats = new Set(); // Set de chatIds que están recibiendo respuesta
     this.wasAborted = false; // Flag para saber si se abortó la última respuesta
     this.accumulatedResponses = {}; // Mapa de respuestas acumuladas por chatId
@@ -29,6 +30,10 @@ class MSNAI {
     this.lastUserInteraction = 0; // Timestamp de última interacción
     this.markdownCache = new Map(); // Caché de renderizado de markdown (content -> html)
     this.lastStreamRender = {}; // Timestamp del último render durante streaming por chatId
+    this.voiceRecognition = null; // Instancia de SpeechRecognition
+    this.isRecording = false; // Flag para saber si está grabando voz
+    this.voiceRecognitionError = false; // Flag para saber si hubo error en reconocimiento de voz
+    this.voiceRecognitionStarted = false; // Flag para saber si el reconocimiento inició correctamente
 
     this.translations = {}; // Diccionario de traducciones
     this.availableLanguages = []; // Idiomas disponibles
@@ -1241,46 +1246,64 @@ class MSNAI {
       "😊 😄 😁 🥰 😇 🤗 🥹 🥲 🤔 🤨 😏 😌 😅 😆 😂 🤣 😭 😢 😞 😟".split(" ");
     const amorEmojis =
       "❤️ 💖 💕 💞 💓 💗 💘 💙 💚 💛 💜 🤍 🤎 💔 💌 💓 💞".split(" ");
+
+    const closeAllPickers = () => {
+      document.getElementById("emoticon-natural-picker").style.display = "none";
+      document.getElementById("emoticon-amor-picker").style.display = "none";
+    };
+
     const createPicker = (id, emojis) => {
       const picker = document.getElementById(id);
       picker.innerHTML = "";
       emojis.forEach((e) => {
         const span = document.createElement("span");
         span.textContent = e;
-        span.addEventListener("click", () => {
+        span.addEventListener("click", (event) => {
+          event.stopPropagation();
           this.insertEmojiAtCursor(e);
-          picker.style.display = "none";
+          closeAllPickers();
         });
         picker.appendChild(span);
       });
     };
     createPicker("emoticon-natural-picker", naturalEmojis);
     createPicker("emoticon-amor-picker", amorEmojis);
+
     const showPicker = (btn, pickerId) => {
       const btnRect = btn.getBoundingClientRect();
       const picker = document.getElementById(pickerId);
-      picker.style.top = btnRect.bottom + "px";
-      picker.style.left = btnRect.left + "px";
-      picker.style.display = picker.style.display === "none" ? "flex" : "none";
+      const isCurrentlyVisible = picker.style.display === "flex";
+
+      // Cerrar todos los pickers primero
+      closeAllPickers();
+
+      // Si el picker actual no estaba visible, mostrarlo
+      if (!isCurrentlyVisible) {
+        picker.style.top = btnRect.bottom + "px";
+        picker.style.left = btnRect.left + "px";
+        picker.style.display = "flex";
+      }
     };
+
     document
       .getElementById("emoticon-natural-btn")
       .addEventListener("click", (e) => {
+        e.stopPropagation();
         showPicker(e.currentTarget, "emoticon-natural-picker");
       });
     document
       .getElementById("emoticon-amor-btn")
       .addEventListener("click", (e) => {
+        e.stopPropagation();
         showPicker(e.currentTarget, "emoticon-amor-picker");
       });
     document.addEventListener("click", (e) => {
       if (
         !e.target.closest(".emoticon-picker") &&
-        !e.target.closest('[id$="-btn"]')
+        !e.target.closest("#emoticon-natural-btn") &&
+        !e.target.closest("#emoticon-amor-btn")
       ) {
-        document.getElementById("emoticon-natural-picker").style.display =
-          "none";
-        document.getElementById("emoticon-amor-picker").style.display = "none";
+        closeAllPickers();
       }
     });
   }
@@ -1386,26 +1409,232 @@ class MSNAI {
   }
 
   startVoiceInput() {
+    // Si ya está grabando, detener
+    if (this.isRecording) {
+      this.stopVoiceInput();
+      return;
+    }
+
     if (
       !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
     ) {
-      alert(this.t("errors.voice_not_supported"));
+      this.showNotification(
+        this.t("errors.voice_not_supported") ||
+          "Tu navegador no soporta reconocimiento de voz.",
+        "error",
+      );
       return;
     }
-    const recognition = new (window.SpeechRecognition ||
+
+    // Verificar conectividad de red
+    if (!navigator.onLine) {
+      this.showNotification(
+        this.t("errors.voice_requires_internet") ||
+          "⚠️ El reconocimiento de voz requiere conexión a internet. Por favor, conéctate y vuelve a intentarlo.",
+        "error",
+      );
+      return;
+    }
+
+    const voiceBtn = document.getElementById("texto-por-voz-btn");
+    const input = document.getElementById("message-input");
+
+    // Crear nueva instancia de reconocimiento
+    this.voiceRecognition = new (window.SpeechRecognition ||
       window.webkitSpeechRecognition)();
-    recognition.lang = "es-ES";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.start();
-    recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      const input = document.getElementById("message-input");
-      input.value += transcript + " ";
-      input.focus();
+
+    // Configurar reconocimiento
+    this.voiceRecognition.lang =
+      this.settings.language === "en" ? "en-US" : "es-ES";
+    this.voiceRecognition.interimResults = true;
+    this.voiceRecognition.continuous = true;
+    this.voiceRecognition.maxAlternatives = 1;
+
+    // Resetear flags
+    this.voiceRecognitionError = false;
+    this.voiceRecognitionStarted = false;
+
+    // Marcar como grabando
+    this.isRecording = true;
+
+    // Cambiar apariencia del botón
+    if (voiceBtn) {
+      voiceBtn.style.backgroundColor = "#ff4444";
+      voiceBtn.style.animation = "pulse-stop 1.5s ease-in-out infinite";
+      voiceBtn.title = this.t("tooltips.voice_input_stop") || "Detener Dictado";
+    }
+
+    // Guardar posición inicial del cursor
+    let interimText = "";
+
+    this.voiceRecognition.onstart = () => {
+      console.log("🎤 Reconocimiento de voz iniciado");
+      this.voiceRecognitionStarted = true;
+      this.playSound("nudge");
+      this.showNotification(
+        this.t("messages.voice_recording_started") ||
+          "🎤 Grabando... Hable ahora",
+        "info",
+      );
     };
-    recognition.onerror = (event) =>
-      console.error("Speech error:", event.error);
+
+    this.voiceRecognition.onresult = (event) => {
+      let finalTranscript = "";
+      interimText = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + " ";
+        } else {
+          interimText += transcript;
+        }
+      }
+
+      if (finalTranscript) {
+        // Agregar texto final al input
+        const currentValue = input.value;
+        input.value = currentValue + finalTranscript;
+        input.focus();
+      }
+
+      // Mostrar feedback visual del texto provisional
+      if (interimText && !finalTranscript) {
+        console.log("🎤 Provisional:", interimText);
+      }
+    };
+
+    this.voiceRecognition.onerror = (event) => {
+      console.error("❌ Error en reconocimiento de voz:", event.error);
+
+      // Marcar que hubo un error para evitar doble llamada en onend
+      this.voiceRecognitionError = true;
+
+      let errorMsg =
+        this.t("errors.voice_error") || "Error en el reconocimiento de voz";
+
+      if (event.error === "no-speech") {
+        errorMsg =
+          this.t("errors.voice_no_speech") ||
+          "No se detectó ninguna voz. Intente nuevamente.";
+      } else if (event.error === "audio-capture") {
+        errorMsg =
+          this.t("errors.voice_no_microphone") ||
+          "No se pudo acceder al micrófono.";
+      } else if (event.error === "not-allowed") {
+        errorMsg =
+          this.t("errors.voice_permission_denied") ||
+          "Permiso de micrófono denegado.";
+      } else if (event.error === "network") {
+        errorMsg =
+          this.t("errors.voice_network_connection") ||
+          "⚠️ Error de conexión. El reconocimiento de voz requiere internet. Verifica tu conexión y vuelve a intentarlo.";
+      } else if (event.error === "aborted") {
+        // No mostrar error si fue abortado intencionalmente
+        this.voiceRecognitionError = false;
+        return;
+      } else if (event.error === "service-not-allowed") {
+        errorMsg =
+          this.t("errors.voice_service_not_allowed") ||
+          "Servicio de reconocimiento de voz no disponible.";
+      }
+
+      this.showNotification(errorMsg, "error");
+
+      // Solo detener si realmente está grabando
+      if (this.isRecording) {
+        this.stopVoiceInput();
+      }
+    };
+
+    this.voiceRecognition.onend = () => {
+      console.log("🎤 Reconocimiento de voz finalizado");
+
+      // Si hubo un error, ya se manejó en onerror, no hacer nada aquí
+      if (this.voiceRecognitionError) {
+        this.voiceRecognitionError = false;
+        return;
+      }
+
+      // Si todavía está marcado como grabando, es porque terminó automáticamente
+      if (this.isRecording) {
+        this.playSound("nudge");
+        this.showNotification(
+          this.t("messages.voice_recording_stopped") || "🎤 Grabación detenida",
+          "info",
+        );
+        this.stopVoiceInput();
+      }
+    };
+
+    // Timeout de seguridad para detectar si no inicia
+    const startTimeout = setTimeout(() => {
+      if (this.isRecording && !this.voiceRecognitionStarted) {
+        console.error("❌ Timeout: El reconocimiento no se inició");
+        this.showNotification(
+          this.t("errors.voice_start_timeout") ||
+            "⚠️ No se pudo conectar al servicio de reconocimiento de voz. Verifica tu conexión a internet.",
+          "error",
+        );
+        this.stopVoiceInput();
+      }
+    }, 5000);
+
+    try {
+      this.voiceRecognition.start();
+
+      // Limpiar timeout si inicia correctamente
+      this.voiceRecognition.addEventListener(
+        "start",
+        () => {
+          clearTimeout(startTimeout);
+        },
+        { once: true },
+      );
+    } catch (error) {
+      clearTimeout(startTimeout);
+      console.error("❌ Error iniciando reconocimiento:", error);
+      this.showNotification(
+        this.t("errors.voice_start_error") ||
+          "No se pudo iniciar el reconocimiento de voz",
+        "error",
+      );
+      this.stopVoiceInput();
+    }
+  }
+
+  stopVoiceInput() {
+    if (!this.isRecording && !this.voiceRecognition) {
+      return;
+    }
+
+    const voiceBtn = document.getElementById("texto-por-voz-btn");
+
+    // Restaurar estado primero para evitar llamadas recursivas
+    this.isRecording = false;
+
+    // Detener reconocimiento si existe
+    if (this.voiceRecognition) {
+      try {
+        this.voiceRecognition.stop();
+      } catch (error) {
+        console.error("Error deteniendo reconocimiento:", error);
+      }
+      this.voiceRecognition = null;
+    }
+
+    // Restaurar apariencia del botón
+    if (voiceBtn) {
+      voiceBtn.style.backgroundColor = "";
+      voiceBtn.style.animation = "";
+      voiceBtn.title = this.t("tooltips.voice_input") || "Dictado por voz";
+    }
+
+    // Resetear flags
+    this.voiceRecognitionError = false;
+    this.voiceRecognitionStarted = false;
+
+    console.log("🎤 Reconocimiento de voz detenido");
   }
 
   increaseFontSize() {
@@ -3423,10 +3652,36 @@ class MSNAI {
   stopAIResponse() {
     // Detener la respuesta del chat actual si está respondiendo
     if (this.currentChatId && this.respondingChats.has(this.currentChatId)) {
+      const chat = this.chats.find((c) => c.id === this.currentChatId);
+
+      // Verificar si es una sala de expertos
+      if (chat && chat.isExpertRoom) {
+        console.log("🛑 Deteniendo respuestas de sala de expertos...");
+        const expertControllers =
+          this.expertRoomAbortControllers[this.currentChatId];
+        if (expertControllers && expertControllers.length > 0) {
+          // Abortar todos los controladores pendientes
+          expertControllers.forEach((controller) => {
+            if (controller && !controller.signal.aborted) {
+              controller.abort();
+            }
+          });
+          // Limpiar controladores
+          delete this.expertRoomAbortControllers[this.currentChatId];
+        }
+        this.respondingChats.delete(this.currentChatId);
+        this.updateStopButtonVisibility();
+        this.showAIThinking(false);
+        this.playSound("nudge");
+        return;
+      }
+
+      // Manejo de chat normal
       const abortController = this.abortControllers[this.currentChatId];
       if (abortController) {
         console.log("🛑 Deteniendo respuesta de IA...");
         abortController.abort();
+        this.updateStopButtonVisibility();
         this.showAIThinking(false);
         this.playSound("nudge");
       }
@@ -8072,6 +8327,9 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     return this.sendMessage();
   }
 
+  // Inicializar array de controladores de abort para esta sala
+  this.expertRoomAbortControllers[chat.id] = [];
+
   // Construir mensaje completo con contextos de adjuntos
   let displayedMessage = message;
   let fileContent = "";
@@ -8129,6 +8387,9 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
   // Marcar sala como respondiendo
   this.respondingChats.add(chat.id);
 
+  // Mostrar botón de detener
+  this.updateStopButtonVisibility();
+
   // Mostrar indicador de procesamiento
   this.showAIThinking(true);
 
@@ -8157,17 +8418,32 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
   }
 
-  // Procesar cada modelo en paralelo, mostrando respuestas conforme llegan
-  const modelPromises = chat.models.map(async (model) => {
-    try {
-      console.log(`🤖 [ExpertRoom] Consultando a ${model}...`);
+  // Procesar cada modelo secuencialmente con delay para evitar HTTP 429
+  const results = [];
+  const delayBetweenRequests = 1000; // 1 segundo entre solicitudes
 
-      const response = await this.sendToAIWithoutStreaming(
+  for (let i = 0; i < chat.models.length; i++) {
+    const model = chat.models[i];
+
+    // Verificar si se abortó el procesamiento
+    if (!this.respondingChats.has(chat.id)) {
+      console.log("🛑 [ExpertRoom] Procesamiento abortado por el usuario");
+      break;
+    }
+
+    try {
+      console.log(
+        `🤖 [ExpertRoom] Consultando a ${model}... (${i + 1}/${chat.models.length})`,
+      );
+
+      // Intentar con retry en caso de error 429
+      const response = await this.sendToAIWithRetry(
         actualMessageToSend,
         chat.id,
         model,
         pdfContextText,
         imageContext,
+        3, // máximo 3 intentos
       );
 
       // Agregar respuesta inmediatamente cuando llega
@@ -8187,9 +8463,15 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
       console.log(`✅ [ExpertRoom] Respuesta de ${model} recibida`);
 
-      return { model, success: true };
+      results.push({ model, success: true });
     } catch (error) {
       console.error(`❌ [ExpertRoom] Error con ${model}:`, error);
+
+      // Si fue abortado, no agregar mensaje de error
+      if (error.name === "AbortError" || !this.respondingChats.has(chat.id)) {
+        console.log(`🛑 [ExpertRoom] Solicitud a ${model} abortada`);
+        continue;
+      }
 
       // Crear mensaje de error amigable para el usuario usando traducciones
       let errorContent = "";
@@ -8239,15 +8521,24 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
         this.saveChats();
       }
 
-      return { model, success: false };
+      results.push({ model, success: false });
     }
-  });
 
-  // Esperar a que todos terminen (pero las respuestas ya se mostraron)
-  await Promise.allSettled(modelPromises);
+    // Agregar delay entre solicitudes (excepto después de la última)
+    if (i < chat.models.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, delayBetweenRequests));
+    }
+  }
 
   // Marcar sala como NO respondiendo y agregar a no leídos si no es el chat actual
   this.respondingChats.delete(chat.id);
+
+  // Limpiar controladores de abort
+  delete this.expertRoomAbortControllers[chat.id];
+
+  // Ocultar botón de detener
+  this.updateStopButtonVisibility();
+
   if (this.currentChatId !== chat.id) {
     this.unreadChats.add(chat.id);
   }
@@ -8297,6 +8588,14 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
   const chat = this.chats.find((c) => c.id === chatId);
   if (!chat) throw new Error("Chat no encontrado");
 
+  // Crear un AbortController para esta solicitud específica
+  const abortController = new AbortController();
+
+  // Si es una sala de expertos, agregar el controlador al array
+  if (chat.isExpertRoom && this.expertRoomAbortControllers[chatId]) {
+    this.expertRoomAbortControllers[chatId].push(abortController);
+  }
+
   // Construir historial de mensajes (solo del usuario y este modelo específico)
   const history = chat.messages
     .filter((m) => m.type === "user" || (m.type === "ai" && m.model === model))
@@ -8340,14 +8639,29 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
 
   console.log(`📤 [ExpertRoom] Enviando a ${model}`);
 
-  const response = await fetch(`${this.settings.ollamaServer}/api/chat`, {
+  // Combinar señales de timeout y abort manual
+  const timeoutSignal = AbortSignal.timeout(parseInt(this.settings.apiTimeout));
+
+  // Crear una promesa que se resuelve cuando cualquiera de las señales aborta
+  const combinedAbort = new Promise((_, reject) => {
+    abortController.signal.addEventListener("abort", () => {
+      reject(new DOMException("Request aborted by user", "AbortError"));
+    });
+    timeoutSignal.addEventListener("abort", () => {
+      reject(new DOMException("Request timeout", "TimeoutError"));
+    });
+  });
+
+  const fetchPromise = fetch(`${this.settings.ollamaServer}/api/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
-    signal: AbortSignal.timeout(parseInt(this.settings.apiTimeout)),
+    signal: abortController.signal,
   });
+
+  const response = await Promise.race([fetchPromise, combinedAbort]);
 
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -8357,6 +8671,68 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
   console.log(`✅ [ExpertRoom] Respuesta de ${model} recibida`);
 
   return data.message?.content || data.response || "";
+};
+
+/**
+ * Envía un mensaje a Ollama con reintentos automáticos en caso de error 429
+ * @param {string} message - Mensaje del usuario
+ * @param {string} chatId - ID del chat
+ * @param {string} model - Modelo a usar
+ * @param {string} pdfContext - Contexto PDF opcional
+ * @param {object} imageContext - Contexto de imagen opcional
+ * @param {number} maxRetries - Número máximo de reintentos (default: 3)
+ * @returns {Promise<string>} - Respuesta completa del modelo
+ */
+MSNAI.prototype.sendToAIWithRetry = async function (
+  message,
+  chatId,
+  model,
+  pdfContext = null,
+  imageContext = null,
+  maxRetries = 3,
+) {
+  let lastError = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      // Intentar enviar el mensaje
+      const response = await this.sendToAIWithoutStreaming(
+        message,
+        chatId,
+        model,
+        pdfContext,
+        imageContext,
+      );
+
+      // Si tuvo éxito, retornar la respuesta
+      return response;
+    } catch (error) {
+      lastError = error;
+      const errorMessage = error.message || "";
+
+      // Si es un error 429, esperar con backoff exponencial antes de reintentar
+      if (
+        errorMessage.includes("HTTP 429") ||
+        errorMessage.includes("Too Many Requests")
+      ) {
+        if (attempt < maxRetries - 1) {
+          // Backoff exponencial: 2^attempt * 2 segundos
+          const waitTime = Math.pow(2, attempt) * 2000;
+          console.log(
+            `⏳ [ExpertRoom] HTTP 429 detectado para ${model}. Reintentando en ${waitTime / 1000}s... (intento ${attempt + 1}/${maxRetries})`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          continue; // Reintentar
+        }
+      }
+
+      // Para otros errores, lanzar inmediatamente sin reintentar
+      throw error;
+    }
+  }
+
+  // Si llegamos aquí, se agotaron los reintentos
+  throw lastError;
 };
 
 /**

@@ -4,10 +4,10 @@
 
 > *Donde la nostalgia se encuentra con la inteligencia artificial moderna*
 
-**Versión 2.1.1** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 3.0.1** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 <p align="center">
-  <img src="assets/screenshots/msn-ai-v2.1.1.png" alt="MSN-AI v2.1.1 - Interfaz principal" width="850"/>
+  <img src="assets/screenshots/msn-ai-v3.0.1.png" alt="MSN-AI v3.0.1 - Interfaz principal" width="850"/>
 </p>
 
 ---
@@ -60,7 +60,8 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **IA en la nube** - Modelos cloud de Ollama (con API Key o signin).
 - **Detección automática de modelos** - Carga dinámica de modelos disponibles.
 - **Multi-chat simultáneo** - La IA responde en varios chats a la vez.
-- **Detener respuesta** - Aborta generación en curso.
+- **Salas de Expertos (Expert Rooms)** 🏢 - Chats grupales con múltiples modelos de IA respondiendo secuencialmente.
+- **Detener respuesta** ⏹️ - Aborta generación en curso (funciona en chats individuales y salas de expertos).
 - **Notificación de estado a IA** - La IA sabe cuando cambias tu estado.
 
 ### 💬 Gestión de Chats
@@ -87,7 +88,8 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 ### 📝 Edición de Texto
 - **Ajuste de tamaño** - 10px a 32px con botones ±
 - **Formato de texto** - Negrita, cursiva, subrayado.
-- **Dictado por voz** 🎤 - Web Speech API.
+- **Dictado por voz** 🎤 - Web Speech API con reconocimiento continuo, feedback visual/auditivo, y soporte multiidioma.
+- **Emoticones mejorados** 😊 - 2 categorías (Naturales y Amor) con cierre automático al seleccionar.
 - **Zumbido/Nudge** 📳 - Como MSN original.
 
 ### 🎨 Generador de Prompts Profesional
@@ -582,6 +584,24 @@ ollama signout                         # Cerrar sesión
 - Clic en botón **"+"** en la lista de contactos
 - Empieza a conversar inmediatamente
 
+**Crear sala de expertos:**
+1. Clic en botón **"🏢"** (Nueva Sala de Expertos) en la lista de contactos
+2. Ingresa nombre personalizado para la sala
+3. Selecciona 2 o más modelos de IA que participarán
+4. Clic en "Crear Sala"
+5. Escribe tu consulta - cada modelo responderá secuencialmente
+6. Las respuestas aparecen etiquetadas: "IA (nombre-del-modelo)"
+7. Perfecto para comparar respuestas o consultar opiniones múltiples
+
+**Características de salas de expertos:**
+- Icono 🏢 diferenciador en la lista
+- Sección agrupada "Salas de Expertos"
+- Cada modelo procesa con delay para evitar saturación
+- Retry automático en errores HTTP 429
+- Manejo individual de errores por modelo
+- Botón ⏹️ detiene todas las respuestas pendientes
+- Exportación incluye info de participantes
+
 **Buscar:**
 - Barra superior: busca por nombre en todos los chats
 - Botón lupa 🔍: busca contenido en chat actual (resalta)
@@ -677,9 +697,24 @@ ollama signout                         # Cerrar sesión
 - Animación y sonido incluidos
 
 **Dictado por voz:**
-- Clic en botón 🎤
-- Permite permisos de micrófono
-- Habla y transcribe automáticamente
+1. Clic en botón 🎤 para iniciar grabación
+2. Permite permisos de micrófono (primera vez)
+3. Botón se vuelve rojo pulsante durante grabación
+4. Notificación: "🎤 Grabando... Hable ahora"
+5. Habla naturalmente - transcribe en tiempo real
+6. Clic nuevamente en 🎤 para detener
+7. Texto aparece automáticamente en el área de mensaje
+
+**Características del dictado:**
+- Reconocimiento continuo sin pausas
+- Feedback visual (botón rojo) y auditivo (sonidos)
+- Soporte para español e inglés según configuración
+- Detección automática de conexión a internet
+- Mensajes claros si no hay internet disponible
+- Manejo robusto de errores con notificaciones específicas
+- Traducciones en los 22 idiomas del sistema
+
+**Nota importante:** El dictado por voz requiere conexión a internet, ya que utiliza la Web Speech API de Google Chrome/Edge
 
 **Subir archivo:**
 - **TXT**: botón 📄, selecciona .txt
@@ -825,10 +860,10 @@ MSN-AI/
 ## 📊 Estadísticas del Proyecto
 
 ### Código Fuente
-- **9,375 líneas totales** de código frontend
-  - HTML: 827 líneas
-  - JavaScript: 6,882 líneas
-  - CSS: 1,666 líneas
+- **9,600+ líneas totales** de código frontend
+  - HTML: 860 líneas
+  - JavaScript: 8,000+ líneas
+  - CSS: 1,700+ líneas
 
 ### Scripts
 - **42 scripts** de automatización total
@@ -836,8 +871,9 @@ MSN-AI/
   - 10 scripts PowerShell (.ps1) para Windows
 
 ### Internacionalización
-- **22 idiomas** completamente traducidos
+- **22 idiomas** completamente traducidos (100% cobertura)
 - **22 archivos JSON** de traducción
+- **450+ claves** de traducción por idioma
 
 ### Recursos Multimedia
 - **102 archivos** en carpeta assets/
@@ -845,11 +881,14 @@ MSN-AI/
   - 97 imágenes (iconos, fondos, capturas)
 
 ### Funcionalidades
-- **60+ características** implementadas
+- **70+ características** implementadas
 - **11 campos** en generador de prompts
 - **4 estados** de presencia
 - **30 emoticones** integrados
-- **2 categorías** de emoticones
+- **2 categorías** de emoticones (con cierre automático)
+- **Salas de expertos** con múltiples modelos de IA
+- **Dictado por voz** con reconocimiento continuo
+- **Sistema de detención** para respuestas individuales y grupales
 
 ### Compatibilidad
 - **3 sistemas operativos**: Linux, Windows, macOS

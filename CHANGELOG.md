@@ -9,6 +9,170 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 
 ---
 
+## [3.0.1] - 2025-01-13
+
+### ✨ Añadido
+
+#### 🏢 Salas de Expertos (Expert Rooms)
+- **Sistema completo de chats grupales con múltiples modelos de IA**
+  - Crear salas con 2 o más modelos de IA simultáneamente
+  - Cada modelo responde secuencialmente a las consultas del usuario
+  - Interfaz dedicada para selección de modelos participantes
+  - Nombre personalizable para cada sala
+  - Visualización diferenciada en la lista de chats con icono 🏢
+  - Indicador de cantidad de expertos y mensajes
+  - Agrupación automática en sección "Salas de Expertos"
+  - Respuestas etiquetadas por modelo: "IA (nombre-del-modelo)"
+  - Procesamiento secuencial con delay para evitar saturación
+  - Sistema de retry automático para errores HTTP 429
+  - Manejo robusto de errores por modelo individual
+  - Exportación e impresión con información de participantes
+
+#### 🛑 Sistema de Detención de Respuestas Mejorado
+- **Detención de respuestas de IA optimizada**
+  - Botón de detener con animación pulsante (roja)
+  - Funciona correctamente en chats individuales
+  - Funciona correctamente en salas de expertos
+  - Detiene todas las solicitudes pendientes en salas grupales
+  - Sistema de abort controllers para cada modelo
+  - Limpieza automática de recursos al detener
+  - Prevención de doble llamadas recursivas
+  - Estado consistente del botón en todos los escenarios
+  - Actualización visual instantánea al detener
+  - Manejo de eventos `onerror` y `onend` sin conflictos
+
+#### 🎤 Dictado por Voz Robusto (Web Speech API)
+- **Sistema completo de reconocimiento de voz mejorado**
+  - Botón toggle para iniciar/detener grabación
+  - Feedback visual: botón rojo pulsante mientras graba
+  - Feedback auditivo: sonido al iniciar y detener
+  - Notificaciones en pantalla del estado de grabación
+  - Transcripción en tiempo real al campo de texto
+  - Reconocimiento continuo sin pausas
+  - Resultados provisionales y finales
+  - Detección proactiva de conexión a internet
+  - Mensajes claros sobre requisito de internet
+  - Timeout de seguridad (5 segundos)
+  - Manejo robusto de errores de red
+  - Detección de errores específicos:
+    - "no-speech" - No se detectó voz
+    - "audio-capture" - No se pudo acceder al micrófono
+    - "not-allowed" - Permiso denegado
+    - "network" - Error de conexión
+    - "aborted" - Cancelado por usuario
+    - "service-not-allowed" - Servicio no disponible
+  - Soporte para español e inglés según configuración
+  - Traducción completa en 22 idiomas
+  - Manejo gracioso cuando no hay internet disponible
+
+#### 😊 Selector de Emoticones Mejorado
+- **Sistema de emoticones optimizado**
+  - Cierre automático al seleccionar un emoticón
+  - Cierre del otro picker al abrir uno diferente
+  - Comportamiento toggle correcto en ambos botones
+  - Prevención de propagación de eventos
+  - Cierre al hacer clic fuera de los pickers
+  - Inserción de emoticón en posición del cursor
+  - Dos categorías: Naturales (😊 😄 😁...) y Amor (❤️ 💖 💕...)
+  - 20+ emoticones naturales y 17+ de amor
+
+### 🔧 Mejorado
+
+#### 🌍 Sistema de Traducciones Completo
+- **Traducciones expandidas a 22 idiomas**
+  - Todas las notificaciones de voz traducidas
+  - Mensajes de error de red traducidos
+  - Mensajes de estado de grabación traducidos
+  - Mensajes de permisos traducidos
+  - Tooltips de botones traducidos
+  - Consistencia en todos los idiomas:
+    - 🇪🇸 Español | 🇬🇧 Inglés | 🇩🇪 Alemán | 🇫🇷 Francés
+    - 🇸🇦 Árabe | 🇨🇳 Chino | 🇮🇳 Hindi | 🇧🇩 Bengalí
+    - 🇵🇹 Portugués | 🇷🇺 Ruso | 🇯🇵 Japonés | 🇰🇷 Coreano
+    - 🇮🇩 Indonesio | 🇹🇷 Turco | 🇵🇰 Urdu | 🇻🇳 Vietnamita
+    - 🇮🇳 Tamil | 🇮🇳 Telugu | 🇮🇳 Maratí | 🇮🇳 Panyabí
+    - 🇵🇪 Quechua | 🇧🇴 Aymara
+
+#### ⚡ Optimizaciones de Rendimiento
+- **Mejoras en el manejo de estados**
+  - Flags adicionales para prevenir condiciones de carrera
+  - Limpieza automática de recursos de reconocimiento de voz
+  - Validaciones de existencia de elementos DOM
+  - Prevención de llamadas recursivas en stopVoiceInput
+  - Mejor manejo de promesas combinadas (timeout + abort)
+  - Sistema de abort controllers por sala de expertos
+  - Verificación de estado antes de operaciones críticas
+
+#### 🎨 Mejoras de Interfaz
+- **UX mejorada en múltiples áreas**
+  - Animación `pulse-stop` en botones activos
+  - Cambio de color del botón de voz mientras graba
+  - Tooltips dinámicos según estado de grabación
+  - Notificaciones con iconos y colores según tipo
+  - Sistema de notificaciones no bloqueante
+  - Agrupación visual de salas de expertos
+  - Indicadores de estado "respondiendo" en salas
+  - Preview de última actividad en cada chat
+
+### 🐛 Corregido
+
+#### ✅ Correcciones Críticas
+- **Botón de detener respuesta**
+  - ✅ Ahora funciona correctamente en chats individuales
+  - ✅ Ahora funciona correctamente en salas de expertos
+  - ✅ Detiene todas las respuestas pendientes en salas
+  - ✅ No deja estados inconsistentes
+  - ✅ Limpia correctamente los abort controllers
+  - ✅ Actualiza visibilidad del botón en todos los casos
+
+- **Dictado por voz**
+  - ✅ No genera errores de red silenciosos
+  - ✅ Maneja correctamente la falta de internet
+  - ✅ No ejecuta código duplicado en eventos
+  - ✅ Limpia recursos al detener manualmente
+  - ✅ No muestra errores cuando se cancela intencionalmente
+  - ✅ Restaura correctamente el estado del botón
+  - ✅ Traducciones disponibles en todos los idiomas
+
+- **Selectores de emoticones**
+  - ✅ Se cierran al seleccionar un emoticón
+  - ✅ No quedan abiertos después de selección
+  - ✅ Solo un picker abierto a la vez
+  - ✅ Comportamiento toggle consistente
+  - ✅ Eventos no se propagan incorrectamente
+
+#### 🔧 Correcciones Menores
+- ✅ Prevención de doble procesamiento en eventos `onend`
+- ✅ Validación de elementos DOM antes de manipular
+- ✅ Flags de error para evitar procesamiento duplicado
+- ✅ Limpieza de timeouts en todos los flujos
+- ✅ Manejo de excepciones en operaciones asíncronas
+
+### 📚 Documentación
+- README.md actualizado con nuevas funcionalidades
+- Documentación de salas de expertos
+- Guía de uso del dictado por voz
+- Notas sobre requisitos de internet para voz
+- Ejemplos de uso de emoticones mejorados
+
+### 🔒 Seguridad
+- Validación de permisos de micrófono
+- Manejo seguro de abort controllers
+- Prevención de memory leaks en reconocimiento de voz
+- Limpieza automática de referencias a objetos
+
+### 🎯 Mejoras Técnicas
+- Implementación de `voiceRecognition` y `isRecording` en constructor
+- Flag `voiceRecognitionError` para control de flujo
+- Flag `voiceRecognitionStarted` para verificar inicio exitoso
+- Array `expertRoomAbortControllers` para salas de expertos
+- Función `closeAllPickers()` centralizada para emoticones
+- Sistema de timeout con `Promise.race()` para solicitudes
+- Verificación de `navigator.onLine` antes de iniciar voz
+- Configuración de idioma automática según settings
+
+---
+
 ## [2.1.1] - 2025-10-23
 
 ### ✨ Añadido
