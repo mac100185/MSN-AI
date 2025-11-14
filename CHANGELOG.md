@@ -9,6 +9,56 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 
 ---
 
+## [3.0.2] - 2025-01-14
+
+### ✨ Añadido
+
+#### 🤖 System Prompt para Salas de Expertos
+- **Sistema de instrucciones contextuales para modelos de IA en salas grupales**
+  - System Prompt configurable desde el panel de Configuración
+  - Plantilla predeterminada traducida en 22 idiomas
+  - Variables dinámicas que se reemplazan automáticamente:
+    - `{{MODEL_NAME}}`: Nombre del modelo participante
+    - `{{PARTICIPANT_LIST}}`: Lista de todos los participantes activos
+  - Instrucciones detalladas para cada modelo:
+    - Identificación obligatoria con formato `[NOMBRE_MODELO]:`
+    - Conciencia de entorno multi-agente
+    - Protocolo de respuesta y comportamiento colaborativo
+    - Reglas de formato Markdown
+    - Límites y restricciones claras
+  - Editor de texto enriquecido (textarea) en configuración
+  - Botón "🔄 Restaurar" para resetear al template predeterminado
+  - Actualización automática al cambiar de idioma
+  - Detección inteligente de personalizaciones del usuario
+  - Inyección automática como mensaje `system` en API de Ollama
+  - Mejora significativa en la calidad de respuestas grupales
+  - Reducción de respuestas duplicadas o conflictivas
+  - Mejor coordinación entre modelos participantes
+
+### 🔧 Mejorado
+
+#### 🌍 Sistema Multi-idioma Mejorado
+- **Traducción dinámica del System Prompt**
+  - Actualización automática del system prompt al cambiar idioma
+  - Mantiene personalizaciones del usuario entre cambios de idioma
+  - Detección de templates predeterminados vs. personalizados
+  - Función `isDefaultSystemPrompt()` con patrones multilingües
+  - Traducción completa en 22 idiomas:
+    - Español, Inglés, Francés, Alemán, Portugués
+    - Ruso, Chino, Japonés, Coreano
+    - Hindi, Árabe, Turco, Vietnamita, Indonesio
+    - Urdu, Bengalí, Tamil, Telugu, Marathi, Punjabi
+    - Aymara, Quechua
+
+### 📚 Documentación
+
+- System Prompt para salas de expertos
+- Variables dinámicas y su uso
+- Guía de personalización del system prompt
+- Notas sobre traducción automática
+
+---
+
 ## [3.0.1] - 2025-01-13
 
 ### ✨ Añadido
@@ -474,6 +524,19 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - **Coherencia 100%** entre código (HTML/JS/CSS) y documentación
 - **Métricas actualizadas** - Líneas de código, funcionalidades, idiomas
 
+### 💡 Notas Técnicas v3.0.2
+
+#### Arquitectura del System Prompt
+- **Inyección de Contexto**: El system prompt se inyecta como primer mensaje con `role: "system"` según especificación de Ollama API
+- **Reemplazo de Variables**: Las variables `{{MODEL_NAME}}` y `{{PARTICIPANT_LIST}}` se procesan antes de enviar a cada modelo
+- **Gestión de Estado**: Sistema inteligente para detectar y preservar personalizaciones del usuario
+- **Sincronización**: Actualización automática en cambios de idioma si el prompt es un default
+
+#### Mejoras de Rate Limiting
+- Sistema de rate limiting ya integrado trabaja en conjunto con el system prompt
+- Prevención de bloqueos por exceso de peticiones a la API
+- Manejo robusto de errores 429 con backoff exponencial
+
 ### 💡 Notas Técnicas v2.1.1
 - **Firewall**: MSN-AI funciona con firewall deshabilitado para simplicidad máxima
 - **Puertos**: 8000 (Web) y 11434 (Ollama) quedan automáticamente disponibles
@@ -504,6 +567,24 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 - **3 servicios Docker** (msn-ai, ollama, ai-setup)
 - **2 modos de instalación** (Docker y Local)
 - **102 archivos multimedia** en carpeta assets/
+
+---
+
+### 📊 Estadísticas v3.0.2
+
+#### Nuevas Funcionalidades
+- **1** nueva función principal: System Prompt configurable
+- **2** nuevas funciones auxiliares: `updateGroupChatSystemPrompt()`, `isDefaultSystemPrompt()`
+- **1** nuevo botón de UI: Restaurar system prompt
+- **44** nuevas claves de traducción (2 por idioma × 22 idiomas)
+- **~150** líneas de código JavaScript agregadas
+- **~20** líneas de HTML agregadas
+
+#### Mejoras de Experiencia
+- ✅ Traducción automática del system prompt al cambiar idioma
+- ✅ Respeto a personalizaciones del usuario
+- ✅ Interfaz intuitiva con botón de restauración
+- ✅ Mejor calidad de respuestas en salas grupales
 
 ---
 

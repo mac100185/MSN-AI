@@ -61,6 +61,7 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Detección automática de modelos** - Carga dinámica de modelos disponibles.
 - **Multi-chat simultáneo** - La IA responde en varios chats a la vez.
 - **Salas de Expertos (Expert Rooms)** 🏢 - Chats grupales con múltiples modelos de IA respondiendo secuencialmente.
+- **System Prompt para Salas Grupales** 🤖 - Instrucciones contextuales automáticas para cada modelo participante con variables dinámicas `{{MODEL_NAME}}` y `{{PARTICIPANT_LIST}}`.
 - **Detener respuesta** ⏹️ - Aborta generación en curso (funciona en chats individuales y salas de expertos).
 - **Notificación de estado a IA** - La IA sabe cuando cambias tu estado.
 
@@ -145,6 +146,7 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Cambio manual** desde configuración.
 - **Persistencia** entre sesiones.
 - **Traducción completa** de toda la interfaz.
+- **System Prompt multiidioma** - Traducción automática del system prompt al cambiar idioma.
 
 ### 🐳 Docker Edition
 - **Instalación simplificada** - Un comando para instalar.
@@ -625,6 +627,41 @@ ollama signout                         # Cerrar sesión
 - **Eliminar**: elimina permanentemente (con modal)
 - **Imprimir**: versión imprimible con estilos
 
+### 🤖 System Prompt para Salas de Expertos
+
+**Configurar instrucciones para modelos en salas grupales:**
+
+1. Clic en configuración ⚙️
+2. Desplázate hasta "System Prompt para Salas de Chat Grupales"
+3. Verás un editor de texto con la plantilla predeterminada
+4. **Variables dinámicas disponibles:**
+   - `{{MODEL_NAME}}`: Se reemplaza automáticamente con el nombre de cada modelo
+   - `{{PARTICIPANT_LIST}}`: Se reemplaza con la lista de todos los participantes
+
+**Características del System Prompt:**
+- ✅ **Traducción automática**: Al cambiar idioma, el prompt se actualiza automáticamente
+- ✅ **Personalizable**: Edita el contenido según tus necesidades
+- ✅ **Botón Restaurar (🔄)**: Vuelve a la plantilla predeterminada del idioma actual
+- ✅ **Instrucciones incluidas**:
+  - Identificación obligatoria con formato `[NOMBRE_MODELO]:`
+  - Conciencia de entorno multi-agente
+  - Protocolo de respuesta colaborativa
+  - Reglas de formato y límites
+  - Ejemplos de uso
+
+**Personalizar:**
+1. Edita el texto en el editor
+2. Mantén las variables `{{MODEL_NAME}}` y `{{PARTICIPANT_LIST}}`
+3. Guarda cambios con el botón "💾 Guardar"
+4. Los cambios se aplican inmediatamente a nuevas salas
+
+**Restaurar predeterminado:**
+1. Clic en botón "🔄 Restaurar" junto al título
+2. Se carga la plantilla predeterminada del idioma actual
+3. Personalización anterior se reemplaza
+
+**Nota**: El system prompt se envía automáticamente a cada modelo al inicio de la conversación en salas de expertos, mejorando significativamente la calidad y coordinación de las respuestas.
+
 ### 📝 Generador de Prompts Profesional
 
 **Crear prompt estructurado:**
@@ -741,9 +778,25 @@ Accede desde el botón **⚙️** en la interfaz:
 - 🌐 **Servidor Ollama** - URL (autodetección o manual)
 - 🤖 **Modelo de IA** - Selector dinámico de modelos
 - ⏱️ **Timeout API** - Tiempo máximo de espera (30s)
+- 🤖 **System Prompt para Salas Grupales** - Editor de instrucciones contextuales con variables dinámicas `{{MODEL_NAME}}` y `{{PARTICIPANT_LIST}}`, botón de restauración, y traducción automática
 - 🔌 **Probar conexión** - Verifica Ollama y modelos
 
 **Persistencia:** Todas las configuraciones se guardan automáticamente en localStorage.
+</text>
+
+<old_text line=883>
+### Funcionalidades
+- **30 emoticones** integrados
+- **2 categorías** de emoticones (con cierre automático)
+- **Salas de expertos** con múltiples modelos de IA
+- **System Prompt configurable** con variables dinámicas y traducción automática
+- **Dictado por voz** con reconocimiento continuo
+- **Sistema de detención** para respuestas individuales y grupales
+- **Generador de prompts** con 11 campos especializados
+- **Gestor de prompts** con biblioteca completa
+- **Sistema de búsqueda** avanzado (global y por chat)
+- **Exportación múltiple** (todos, seleccionados, individual)
+- **Importación inteligente** con resolución de conflictos
 
 ---
 
@@ -860,9 +913,9 @@ MSN-AI/
 ## 📊 Estadísticas del Proyecto
 
 ### Código Fuente
-- **9,600+ líneas totales** de código frontend
-  - HTML: 860 líneas
-  - JavaScript: 8,000+ líneas
+- **9,750+ líneas totales** de código frontend
+  - HTML: 880 líneas
+  - JavaScript: 8,150+ líneas
   - CSS: 1,700+ líneas
 
 ### Scripts
