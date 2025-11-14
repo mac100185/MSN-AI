@@ -171,15 +171,16 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 ```bash
 git clone https://github.com/mac100185/MSN-AI.git
 cd MSN-AI
-cd linux  # o cd macos para macOS
-chmod +x start-msnai-docker.sh
-./start-msnai-docker.sh --auto
+
+chmod +x start-docker.sh
+./start-docker.sh --auto
 
 ```
 
 **Instalación de modelos IA Cloud (Opcional):**
 ```bash
 # Para Linux
+cd linux  
 ./docker-install-cloud-models.sh
 
 # Para macOS
