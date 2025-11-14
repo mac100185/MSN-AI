@@ -41,6 +41,13 @@ class MSNAI {
     this.translationsReady = false; // Flag para indicar si las traducciones están listas
     this.db = null; // IndexedDB para almacenar archivos adjuntos
 
+    // Sistema de rate limiting y gestión de solicitudes
+    this.rateLimiter = null; // Instancia del gestor de rate limiting
+    this.requestQueue = []; // Cola de solicitudes pendientes
+    this.activeRequests = 0; // Número de solicitudes activas
+    this.maxConcurrentRequests = 3; // Máximo de solicitudes simultáneas
+    this.rateLimitEvents = []; // Registro de eventos de rate limit
+
     // Detectar Microsoft Edge
     const userAgent = navigator.userAgent.toLowerCase();
     this.isEdgeBrowser = userAgent.includes("edg/");
@@ -66,8 +73,22 @@ class MSNAI {
       apiTimeout: 30000,
       notifyStatusChanges: true,
       language: "es",
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.9,
+      maxTokens: 2000,
     };
     this.currentStatus = "online"; // Estado inicial
+
+    // Inicializar sistema de rate limiting
+    this.rateLimiter = new OllamaRateLimiter({
+      maxRequestsPerMinute: 30,
+      minRequestInterval: 500, // Mínimo 500ms entre solicitudes
+      maxRetries: 3,
+      baseRetryDelay: 2000,
+      maxRetryDelay: 60000,
+    });
+
     this.init();
     this.startMainThreadMonitor();
   }
@@ -3127,7 +3148,14 @@ class MSNAI {
     if (saved) {
       const savedSettings = JSON.parse(saved);
       const currentOllamaServer = this.settings.ollamaServer;
-      this.settings = { ...this.settings, ...savedSettings };
+      // Asegurar valores por defecto para configuraciones críticas
+      const defaults = {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.9,
+        maxTokens: 2000,
+      };
+      this.settings = { ...this.settings, ...defaults, ...savedSettings };
       const currentHost = window.location.hostname;
       const isLocalAccess =
         currentHost === "localhost" || currentHost === "127.0.0.1";
@@ -3191,11 +3219,19 @@ class MSNAI {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
-      const response = await fetch(`${this.settings.ollamaServer}/api/tags`, {
-        method: "GET",
-        signal: controller.signal,
-        headers: { Accept: "application/json" },
-      });
+
+      // Usar el rate limiter para verificar la conexión
+      const response = await this.rateLimiter.makeRequest(
+        async () => {
+          return await fetch(`${this.settings.ollamaServer}/api/tags`, {
+            method: "GET",
+            signal: controller.signal,
+            headers: { Accept: "application/json" },
+          });
+        },
+        { priority: "high", skipQueue: true }, // Alta prioridad y sin cola para verificación
+      );
+
       clearTimeout(timeoutId);
       if (response.ok) {
         const data = await response.json();
@@ -3316,12 +3352,18 @@ class MSNAI {
     let fullResponse = ""; // Mover fuera del try para que sea accesible en catch
 
     try {
-      // Preparar el cuerpo de la petición
+      // Preparar el cuerpo de la petición según la documentación de Ollama
       const requestBody = {
         model: chat.model,
         prompt: prompt,
         stream: true,
-        options: { temperature: 0.7, max_tokens: 2000 },
+        options: {
+          temperature: parseFloat(this.settings.temperature) || 0.7,
+          top_k: parseInt(this.settings.topK) || 40,
+          top_p: parseFloat(this.settings.topP) || 0.9,
+          num_predict: parseInt(this.settings.maxTokens) || 2000,
+        },
+        keep_alive: "5m", // Mantener modelo en memoria por 5 minutos
       };
 
       // Si hay contexto de imagen o imágenes de attachments, agregarlas
@@ -3333,14 +3375,17 @@ class MSNAI {
         requestBody.images = [attachmentImages[0]];
       }
 
-      const response = await fetch(
-        `${this.settings.ollamaServer}/api/generate`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody),
-          signal: this.abortControllers[chatId].signal, // Añadir señal de aborto específica del chat
+      // Usar el rate limiter para hacer la solicitud
+      const response = await this.rateLimiter.makeRequest(
+        async () => {
+          return await fetch(`${this.settings.ollamaServer}/api/generate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody),
+            signal: this.abortControllers[chatId].signal,
+          });
         },
+        { priority: "normal", chatId: chatId },
       );
 
       if (!response.ok) {
@@ -3459,6 +3504,16 @@ class MSNAI {
           for (const line of lines) {
             try {
               const json = JSON.parse(line);
+
+              // Verificar si hay un error en el stream según documentación de Ollama
+              if (json.error) {
+                console.error(
+                  "❌ [Stream] Error durante streaming:",
+                  json.error,
+                );
+                throw new Error(json.error);
+              }
+
               if (json.response) {
                 fullResponse += json.response;
                 tokenBatch += json.response;
@@ -3503,6 +3558,11 @@ class MSNAI {
                 break;
               }
             } catch (e) {
+              // Si es un error de parsing JSON, solo advertir
+              // Si es un error real del stream, lanzarlo
+              if (e.message && !e.message.includes("Unexpected")) {
+                throw e;
+              }
               console.warn("⚠️ [Stream] Línea no JSON:", line);
             }
           }
@@ -6666,7 +6726,14 @@ class MSNAI {
   //-----------------------------------------------
   async updateAvailableModels() {
     try {
-      const response = await fetch(`${this.settings.ollamaServer}/api/tags`);
+      // Usar el rate limiter para actualizar modelos
+      const response = await this.rateLimiter.makeRequest(
+        async () => {
+          return await fetch(`${this.settings.ollamaServer}/api/tags`);
+        },
+        { priority: "low", skipQueue: false },
+      );
+
       if (response.ok) {
         const data = await response.json();
         this.availableModels = data.models || [];
@@ -8418,9 +8485,8 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
   }
 
-  // Procesar cada modelo secuencialmente con delay para evitar HTTP 429
+  // Procesar cada modelo con el sistema de rate limiting
   const results = [];
-  const delayBetweenRequests = 1000; // 1 segundo entre solicitudes
 
   for (let i = 0; i < chat.models.length; i++) {
     const model = chat.models[i];
@@ -8436,7 +8502,7 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
         `🤖 [ExpertRoom] Consultando a ${model}... (${i + 1}/${chat.models.length})`,
       );
 
-      // Intentar con retry en caso de error 429
+      // El rate limiter manejará automáticamente el espaciado y los reintentos
       const response = await this.sendToAIWithRetry(
         actualMessageToSend,
         chat.id,
@@ -8524,10 +8590,7 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
       results.push({ model, success: false });
     }
 
-    // Agregar delay entre solicitudes (excepto después de la última)
-    if (i < chat.models.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, delayBetweenRequests));
-    }
+    // El rate limiter maneja automáticamente el espaciado entre solicitudes
   }
 
   // Marcar sala como NO respondiendo y agregar a no leídos si no es el chat actual
@@ -8611,7 +8674,7 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     finalMessage = `${pdfContext}\n\nConsulta del usuario: ${message}`;
   }
 
-  // Preparar payload base
+  // Preparar payload base según documentación de Ollama API
   const payload = {
     model: model,
     messages: [
@@ -8623,11 +8686,12 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     ],
     stream: false,
     options: {
-      temperature: parseFloat(this.settings.temperature),
-      top_k: parseInt(this.settings.topK),
-      top_p: parseFloat(this.settings.topP),
-      num_predict: parseInt(this.settings.maxTokens),
+      temperature: parseFloat(this.settings.temperature) || 0.7,
+      top_k: parseInt(this.settings.topK) || 40,
+      top_p: parseFloat(this.settings.topP) || 0.9,
+      num_predict: parseInt(this.settings.maxTokens) || 2000,
     },
+    keep_alive: "5m", // Mantener modelo en memoria por 5 minutos
   };
 
   // Agregar imagen si existe
@@ -8652,14 +8716,20 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     });
   });
 
-  const fetchPromise = fetch(`${this.settings.ollamaServer}/api/chat`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  // Usar el rate limiter para la solicitud
+  const fetchPromise = this.rateLimiter.makeRequest(
+    async () => {
+      return await fetch(`${this.settings.ollamaServer}/api/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        signal: abortController.signal,
+      });
     },
-    body: JSON.stringify(payload),
-    signal: abortController.signal,
-  });
+    { priority: "high", model: model, chatId: chatId },
+  );
 
   const response = await Promise.race([fetchPromise, combinedAbort]);
 
@@ -8691,48 +8761,33 @@ MSNAI.prototype.sendToAIWithRetry = async function (
   imageContext = null,
   maxRetries = 3,
 ) {
-  let lastError = null;
+  // El rate limiter ahora maneja automáticamente los reintentos con backoff exponencial
+  // Solo necesitamos hacer la llamada una vez
+  try {
+    const response = await this.sendToAIWithoutStreaming(
+      message,
+      chatId,
+      model,
+      pdfContext,
+      imageContext,
+    );
+    return response;
+  } catch (error) {
+    const errorMessage = error.message || "";
 
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      // Intentar enviar el mensaje
-      const response = await this.sendToAIWithoutStreaming(
-        message,
-        chatId,
-        model,
-        pdfContext,
-        imageContext,
+    // Registrar eventos de rate limit para monitoreo
+    if (
+      errorMessage.includes("HTTP 429") ||
+      errorMessage.includes("Too Many Requests")
+    ) {
+      this.rateLimiter.logRateLimitEvent(model, chatId);
+      console.error(
+        `❌ [ExpertRoom] Error 429 persistente para ${model} después de reintentos automáticos`,
       );
-
-      // Si tuvo éxito, retornar la respuesta
-      return response;
-    } catch (error) {
-      lastError = error;
-      const errorMessage = error.message || "";
-
-      // Si es un error 429, esperar con backoff exponencial antes de reintentar
-      if (
-        errorMessage.includes("HTTP 429") ||
-        errorMessage.includes("Too Many Requests")
-      ) {
-        if (attempt < maxRetries - 1) {
-          // Backoff exponencial: 2^attempt * 2 segundos
-          const waitTime = Math.pow(2, attempt) * 2000;
-          console.log(
-            `⏳ [ExpertRoom] HTTP 429 detectado para ${model}. Reintentando en ${waitTime / 1000}s... (intento ${attempt + 1}/${maxRetries})`,
-          );
-          await new Promise((resolve) => setTimeout(resolve, waitTime));
-          continue; // Reintentar
-        }
-      }
-
-      // Para otros errores, lanzar inmediatamente sin reintentar
-      throw error;
     }
-  }
 
-  // Si llegamos aquí, se agotaron los reintentos
-  throw lastError;
+    throw error;
+  }
 };
 
 /**
@@ -8788,3 +8843,297 @@ MSNAI.prototype.createNewChat = function () {
   // Crear un chat normal independiente, no vinculado a ninguna sala
   return originalCreateNewChat.call(this);
 };
+
+// ===================
+// SISTEMA DE RATE LIMITING PARA OLLAMA
+// ===================
+
+/**
+ * Gestor de rate limiting para solicitudes a Ollama API
+ * Implementa:
+ * - Cola de solicitudes con prioridades
+ * - Espaciado automático entre solicitudes
+ * - Backoff exponencial con jitter para errores 429
+ * - Monitoreo de eventos de rate limit
+ * - Límite de solicitudes concurrentes
+ */
+class OllamaRateLimiter {
+  constructor(config = {}) {
+    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 30;
+    this.minRequestInterval = config.minRequestInterval || 500; // ms
+    this.maxRetries = config.maxRetries || 3;
+    this.baseRetryDelay = config.baseRetryDelay || 2000; // ms
+    this.maxRetryDelay = config.maxRetryDelay || 60000; // ms
+    this.maxConcurrentRequests = config.maxConcurrentRequests || 3;
+
+    // Estado interno
+    this.requestQueue = [];
+    this.requestTimestamps = [];
+    this.activeRequests = 0;
+    this.rateLimitEvents = [];
+    this.lastRequestTime = 0;
+    this.isProcessingQueue = false;
+
+    console.log("🔧 [RateLimiter] Inicializado con configuración:", {
+      maxRequestsPerMinute: this.maxRequestsPerMinute,
+      minRequestInterval: this.minRequestInterval,
+      maxRetries: this.maxRetries,
+      maxConcurrentRequests: this.maxConcurrentRequests,
+    });
+  }
+
+  /**
+   * Realiza una solicitud con rate limiting automático
+   * @param {Function} requestFn - Función que realiza la solicitud (debe retornar Promise)
+   * @param {Object} options - Opciones de la solicitud (priority, chatId, model, skipQueue)
+   * @returns {Promise} - Resultado de la solicitud
+   */
+  async makeRequest(requestFn, options = {}) {
+    const priority = options.priority || "normal"; // 'high', 'normal', 'low'
+    const skipQueue = options.skipQueue || false;
+
+    // Si skipQueue es true, ejecutar inmediatamente sin cola (para verificaciones de conexión)
+    if (skipQueue) {
+      return await this._executeRequest(requestFn, options, 0);
+    }
+
+    // Agregar a la cola con prioridad
+    return new Promise((resolve, reject) => {
+      const queueItem = {
+        requestFn,
+        options,
+        priority: this._getPriorityValue(priority),
+        resolve,
+        reject,
+        timestamp: Date.now(),
+      };
+
+      this.requestQueue.push(queueItem);
+
+      // Ordenar cola por prioridad (mayor prioridad primero)
+      this.requestQueue.sort((a, b) => b.priority - a.priority);
+
+      console.log(
+        `📋 [RateLimiter] Solicitud agregada a cola (prioridad: ${priority}, cola: ${this.requestQueue.length})`,
+      );
+
+      // Procesar cola
+      this._processQueue();
+    });
+  }
+
+  /**
+   * Procesa la cola de solicitudes respetando límites
+   */
+  async _processQueue() {
+    // Evitar procesamiento concurrente de la cola
+    if (this.isProcessingQueue) {
+      return;
+    }
+
+    this.isProcessingQueue = true;
+
+    try {
+      while (this.requestQueue.length > 0) {
+        // Verificar límite de solicitudes concurrentes
+        if (this.activeRequests >= this.maxConcurrentRequests) {
+          console.log(
+            `⏸️ [RateLimiter] Esperando: ${this.activeRequests} solicitudes activas (máx: ${this.maxConcurrentRequests})`,
+          );
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          continue;
+        }
+
+        // Verificar límite de solicitudes por minuto
+        const now = Date.now();
+        this._cleanOldTimestamps(now);
+
+        if (this.requestTimestamps.length >= this.maxRequestsPerMinute) {
+          const oldestTimestamp = this.requestTimestamps[0];
+          const waitTime = 60000 - (now - oldestTimestamp);
+
+          if (waitTime > 0) {
+            console.log(
+              `⏳ [RateLimiter] Límite de ${this.maxRequestsPerMinute} req/min alcanzado. Esperando ${Math.ceil(waitTime / 1000)}s`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+            continue;
+          }
+        }
+
+        // Verificar intervalo mínimo entre solicitudes
+        const timeSinceLastRequest = now - this.lastRequestTime;
+        if (timeSinceLastRequest < this.minRequestInterval) {
+          const waitTime = this.minRequestInterval - timeSinceLastRequest;
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          continue;
+        }
+
+        // Obtener siguiente solicitud de la cola
+        const queueItem = this.requestQueue.shift();
+
+        if (!queueItem) {
+          break;
+        }
+
+        // Ejecutar solicitud (sin esperar a que termine)
+        this._executeRequest(queueItem.requestFn, queueItem.options, 0)
+          .then(queueItem.resolve)
+          .catch(queueItem.reject);
+
+        this.lastRequestTime = Date.now();
+        this.requestTimestamps.push(this.lastRequestTime);
+      }
+    } finally {
+      this.isProcessingQueue = false;
+    }
+  }
+
+  /**
+   * Ejecuta una solicitud con reintentos automáticos en caso de error 429
+   */
+  async _executeRequest(requestFn, options, attempt) {
+    this.activeRequests++;
+
+    try {
+      console.log(
+        `🚀 [RateLimiter] Ejecutando solicitud (activas: ${this.activeRequests}, intento: ${attempt + 1})`,
+      );
+
+      const response = await requestFn();
+
+      // Verificar si es un error 429
+      if (response.status === 429) {
+        throw new Error("HTTP 429: Too Many Requests");
+      }
+
+      return response;
+    } catch (error) {
+      const errorMessage = error.message || "";
+
+      // Si es error 429 y quedan reintentos
+      if (
+        (errorMessage.includes("429") ||
+          errorMessage.includes("Too Many Requests")) &&
+        attempt < this.maxRetries
+      ) {
+        // Calcular delay con backoff exponencial y jitter
+        const exponentialDelay = Math.min(
+          this.baseRetryDelay * Math.pow(2, attempt),
+          this.maxRetryDelay,
+        );
+
+        // Agregar jitter aleatorio (0-25% del delay)
+        const jitter = Math.random() * exponentialDelay * 0.25;
+        const totalDelay = exponentialDelay + jitter;
+
+        console.warn(
+          `⚠️ [RateLimiter] Error 429 detectado. Reintentando en ${Math.ceil(totalDelay / 1000)}s (intento ${attempt + 1}/${this.maxRetries})`,
+        );
+
+        // Registrar evento de rate limit
+        this.rateLimitEvents.push({
+          timestamp: Date.now(),
+          attempt: attempt + 1,
+          delay: totalDelay,
+          options: options,
+        });
+
+        // Esperar antes de reintentar
+        await new Promise((resolve) => setTimeout(resolve, totalDelay));
+
+        // Reintentar
+        return await this._executeRequest(requestFn, options, attempt + 1);
+      }
+
+      // Si no es 429 o se agotaron los reintentos, lanzar error
+      throw error;
+    } finally {
+      this.activeRequests--;
+
+      // Si hay solicitudes en cola, continuar procesando
+      if (this.requestQueue.length > 0) {
+        setTimeout(() => this._processQueue(), 0);
+      }
+    }
+  }
+
+  /**
+   * Limpia timestamps antiguos (más de 1 minuto)
+   */
+  _cleanOldTimestamps(now) {
+    const oneMinuteAgo = now - 60000;
+    this.requestTimestamps = this.requestTimestamps.filter(
+      (timestamp) => timestamp > oneMinuteAgo,
+    );
+  }
+
+  /**
+   * Convierte prioridad textual a valor numérico
+   */
+  _getPriorityValue(priority) {
+    const priorities = {
+      high: 3,
+      normal: 2,
+      low: 1,
+    };
+    return priorities[priority] || 2;
+  }
+
+  /**
+   * Registra un evento de rate limit para monitoreo
+   */
+  logRateLimitEvent(model, chatId) {
+    this.rateLimitEvents.push({
+      timestamp: Date.now(),
+      model: model,
+      chatId: chatId,
+      type: "persistent_429",
+    });
+
+    // Mantener solo los últimos 100 eventos
+    if (this.rateLimitEvents.length > 100) {
+      this.rateLimitEvents = this.rateLimitEvents.slice(-100);
+    }
+
+    // Verificar si hay demasiados eventos recientes
+    this._checkRateLimitFrequency();
+  }
+
+  /**
+   * Verifica la frecuencia de eventos de rate limit
+   */
+  _checkRateLimitFrequency() {
+    const now = Date.now();
+    const recentEvents = this.rateLimitEvents.filter(
+      (event) => now - event.timestamp < 600000, // Últimos 10 minutos
+    );
+
+    if (recentEvents.length > 10) {
+      console.error(
+        `❌❌❌ [RateLimiter] ALTA FRECUENCIA DE RATE LIMITS: ${recentEvents.length} eventos en 10 minutos`,
+      );
+      console.error(
+        `💡 [RateLimiter] Considere reducir maxRequestsPerMinute o aumentar minRequestInterval`,
+      );
+    }
+  }
+
+  /**
+   * Obtiene estadísticas del rate limiter
+   */
+  getStats() {
+    const now = Date.now();
+    const recentEvents = this.rateLimitEvents.filter(
+      (event) => now - event.timestamp < 3600000, // Última hora
+    );
+
+    return {
+      queueSize: this.requestQueue.length,
+      activeRequests: this.activeRequests,
+      requestsLastMinute: this.requestTimestamps.length,
+      rateLimitEventsLastHour: recentEvents.length,
+      lastRequestTime: this.lastRequestTime,
+    };
+  }
+}
