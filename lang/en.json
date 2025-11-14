@@ -392,6 +392,7 @@
     "models_label": "Experts",
     "model_error": "⚠️ Error querying {model}",
     "error_timeout": "⏱️ {model}: The model is taking too long to respond. Please try again later.",
+    "error_http_401": "🔐 {model}: This model requires authentication. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Too many requests. The server is rate limiting requests. Please wait a moment before trying again.",
     "error_http_500": "⚠️ {model}: The server is experiencing problems. Try another model or try again later.",
     "error_http_404": "❌ {model}: This model is not currently available.",

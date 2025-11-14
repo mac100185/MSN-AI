@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: Dịch vụ đang bảo trì. Vui lòng thử lại sau.",
     "error_network": "🌐 {model}: Lỗi kết nối. Vui lòng kiểm tra kết nối internet của bạn.",
     "error_generic": "⚠️ {model}: Không thể nhận phản hồi lúc này.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Quá nhiều yêu cầu. Máy chủ đang giới hạn các yêu cầu. Vui lòng đợi một chút trước khi thử lại."
   }
 }

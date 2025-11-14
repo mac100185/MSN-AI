@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: سروس مینٹیننس میں ہے۔ براہ کرم بعد میں دوبارہ کوشش کریں۔",
     "error_network": "🌐 {model}: کنکشن کی خرابی۔ اپنے انٹرنیٹ کنکشن کی جانچ کریں۔",
     "error_generic": "⚠️ {model}: اس وقت جواب حاصل نہیں کیا جا سکا۔",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: بہت زیادہ درخواستیں۔ سرور درخواستوں کو محدود کر رہا ہے۔ دوبارہ کوشش کرنے سے پہلے کچھ دیر انتظار کریں۔"
   }
 }

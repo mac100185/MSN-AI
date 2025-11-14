@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}：サービスはメンテナンス中です。後でもう一度お試しください。",
     "error_network": "🌐 {model}：接続エラー。インターネット接続を確認してください。",
     "error_generic": "⚠️ {model}：現在応答を取得できません。",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}：リクエストが多すぎます。サーバーがリクエストを制限しています。しばらく待ってから再度お試しください。"
   }
 }

@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: Servicionqa allichaypi kachkan. Qhepaman watiqmanta kallpachay.",
     "error_network": "🌐 {model}: Tinkiypi pantay. Internet tinkikiyta qhaway.",
     "error_generic": "⚠️ {model}: Kunanqa manam kutichiyta taripakuyta atisqachu.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Ancha mañakuykuna. Servidorqa mañakuykunata harkakushanmi. Watiqmanta kallpachanaykipaq huk ratolla suyay."
   }
 }

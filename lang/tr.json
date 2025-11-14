@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: Hizmet bakımda. Lütfen daha sonra tekrar deneyin.",
     "error_network": "🌐 {model}: Bağlantı hatası. İnternet bağlantınızı kontrol edin.",
     "error_generic": "⚠️ {model}: Şu anda yanıt alınamıyor.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Çok fazla istek. Sunucu istekleri sınırlandırıyor. Lütfen tekrar denemeden önce bir süre bekleyin."
   }
 }

@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: Servicioxa alitañ ukankirakiwa. Qhipa pachanxa wasitata mayita.",
     "error_network": "🌐 {model}: Mayañ pantjasiwa. Internet mayaña uñakipäm.",
     "error_generic": "⚠️ {model}: Jichhax janiw jaysäwi katuqañ yatktanti.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Juk'a mayirinakawa. Servidoroxa mayirinaka jark'aqirikiwa. Wasitata mayañatakix juk'a pachax suytarakipäm."
   }
 }

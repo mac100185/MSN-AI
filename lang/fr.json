@@ -391,6 +391,7 @@
     "error_http_503": "⚙️ {model}: Le service est en maintenance. Veuillez réessayer plus tard.",
     "error_network": "🌐 {model}: Erreur de connexion. Vérifiez votre connexion internet.",
     "error_generic": "⚠️ {model}: Impossible d'obtenir une réponse pour le moment.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: Trop de requêtes. Le serveur limite les demandes. Veuillez attendre un moment avant de réessayer."
   }
 }

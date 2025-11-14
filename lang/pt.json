@@ -390,6 +390,7 @@
     "models_label": "Especialistas",
     "model_error": "⚠️ Erro ao consultar {model}",
     "error_timeout": "⏱️ {model}: O modelo está demorando muito para responder. Tente novamente mais tarde.",
+    "error_http_401": "🔐 {model}: Este modelo requer autenticação. Por favor, execute 'ollama signin' no seu terminal.",
     "error_http_500": "⚠️ {model}: O servidor está enfrentando problemas. Tente outro modelo ou tente mais tarde.",
     "error_http_404": "❌ {model}: Este modelo não está disponível no momento.",
     "error_http_503": "⚙️ {model}: O serviço está em manutenção. Tente mais tarde.",

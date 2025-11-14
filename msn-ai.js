@@ -3478,6 +3478,13 @@ class MSNAI {
       );
 
       if (!response.ok) {
+        // Manejar error 401 (Unauthorized) para modelos cloud
+        if (response.status === 401) {
+          const error = new Error(`HTTP 401: Unauthorized`);
+          error.statusCode = 401;
+          throw error;
+        }
+
         // Manejar error específico de modelo sin soporte de imágenes
         if (
           (response.status === 400 || response.status === 500) &&
@@ -3698,6 +3705,20 @@ class MSNAI {
         friendlyError.message = this.t("expert_room.error_timeout", {
           model: chat.model,
         });
+      } else if (
+        errorMessage.includes("HTTP 401") ||
+        errorMessage.includes("Unauthorized")
+      ) {
+        friendlyError.message = this.t("expert_room.error_http_401", {
+          model: chat.model,
+        });
+        // Fallback si la traducción no está disponible
+        if (
+          !friendlyError.message ||
+          friendlyError.message.includes("expert_room.error_")
+        ) {
+          friendlyError.message = `🔐 ${chat.model}: Este modelo requiere autenticación. Por favor, ejecuta 'ollama signin' en tu terminal.`;
+        }
       } else if (
         errorMessage.includes("HTTP 429") ||
         errorMessage.includes("Too Many Requests")
@@ -7143,31 +7164,32 @@ class MSNAI {
     // INICIALIZACIÓN DEL RATE LIMITER - CONFIGURACIÓN CRÍTICA PARA EVITAR ERROR 429
     // ==================================================================================
     //
-    // PROBLEMA IDENTIFICADO:
-    // - Ollama tiene un rate limiter interno MUY ESTRICTO en localhost
-    // - Se detectaron solicitudes enviadas con solo 2ms de diferencia (casi simultáneas)
-    // - Esto causaba error 429 (Too Many Requests) incluso con rate limiting "normal"
-    // - El problema se agravaba en salas de expertos (múltiples modelos)
+    // CONFIGURACIÓN BALANCEADA:
+    // - Intervalo base de 1 segundo para buena experiencia de usuario
+    // - Sistema de ajuste dinámico que aumenta el intervalo si detecta errores 429
+    // - Máximo 1 solicitud concurrente para evitar saturación
+    // - El sistema se adapta automáticamente a las limitaciones del servidor
     //
     // SOLUCIÓN IMPLEMENTADA:
-    // - maxRequestsPerMinute: 10 (muy conservador, ~1 solicitud cada 6 segundos)
-    // - minRequestInterval: 2500ms (2.5 segundos MÍNIMO entre solicitudes)
-    // - maxConcurrentRequests: 1 (SOLO UNA solicitud a la vez, NO concurrencia)
-    // - Ejecución ESTRICTAMENTE SECUENCIAL (cada solicitud espera a que termine la anterior)
+    // - maxRequestsPerMinute: 30 (conservador pero razonable)
+    // - minRequestInterval: 1000ms (1 segundo base - buena UX)
+    // - maxConcurrentRequests: 1 (SOLO UNA solicitud a la vez)
+    // - Ajuste dinámico: si hay errores 429, aumenta hasta 15s automáticamente
+    // - Ejecución ESTRICTAMENTE SECUENCIAL
     //
     // IMPACTO:
-    // - Las salas de expertos con N modelos tardarán mínimo N * 2.5 segundos
-    // - Ejemplo: 3 modelos = mínimo 7.5 segundos solo en espaciado
-    // - PERO: Se garantiza que NO habrá errores 429 de Ollama
+    // - Las salas de expertos con N modelos tardarán mínimo N * 1 segundo
+    // - Ejemplo: 3 modelos = mínimo 3 segundos (en lugar de 15s)
+    // - Si hay errores 429, el sistema ajusta automáticamente el intervalo
     // - Los archivos grandes se envían completos sin pérdida de información
     //
-    // ADVERTENCIA: NO reducir estos valores sin pruebas exhaustivas
+    // NOTA: El sistema aumentará el intervalo dinámicamente si detecta errores 429
     // ==================================================================================
     this.rateLimiter = new OllamaRateLimiter({
-      maxRequestsPerMinute: 10, // MUY reducido: solo 10 req/min
-      minRequestInterval: 2500, // MUY aumentado: 2.5 segundos entre solicitudes
+      maxRequestsPerMinute: 30, // 30 req/min = 1 cada 2 segundos en promedio
+      minRequestInterval: 1000, // 1 segundo entre solicitudes (buena UX)
       maxRetries: 3,
-      baseRetryDelay: 3000, // Aumentado: esperar 3s antes del primer reintento
+      baseRetryDelay: 3000, // 3s antes del primer reintento
       maxRetryDelay: 60000,
       maxConcurrentRequests: 1, // CRÍTICO: Solo UNA solicitud a la vez
     });
@@ -8741,6 +8763,15 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
       ) {
         errorContent = this.t("expert_room.error_timeout", { model });
       } else if (
+        errorMessage.includes("HTTP 401") ||
+        errorMessage.includes("Unauthorized")
+      ) {
+        errorContent = this.t("expert_room.error_http_401", { model });
+        // Fallback si la traducción no está disponible
+        if (!errorContent || errorContent.includes("expert_room.error_")) {
+          errorContent = `🔐 ${model}: Este modelo requiere autenticación. Por favor, ejecuta 'ollama signin' en tu terminal.`;
+        }
+      } else if (
         errorMessage.includes("HTTP 429") ||
         errorMessage.includes("Too Many Requests")
       ) {
@@ -8760,7 +8791,7 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
         errorContent = this.t("expert_room.error_generic", { model });
       }
 
-      // Fallback si la traducción no está disponible
+      // Fallback si la traducción no está disponible (solo para errores que no sean 401)
       if (!errorContent || errorContent.includes("expert_room.error_")) {
         errorContent = `⚠️ ${model}: No se pudo obtener respuesta en este momento.`;
       }
@@ -9007,6 +9038,12 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
   const response = await Promise.race([fetchPromise, combinedAbort]);
 
   if (!response.ok) {
+    // Manejar error 401 específicamente
+    if (response.status === 401) {
+      const error = new Error(`HTTP 401: Unauthorized`);
+      error.statusCode = 401;
+      throw error;
+    }
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
 
@@ -9149,12 +9186,12 @@ MSNAI.prototype.createNewChat = function () {
  */
 class OllamaRateLimiter {
   constructor(config = {}) {
-    // Configuración MUY conservadora para evitar errores 429 (Too Many Requests)
-    // CRÍTICO: Valores estrictos para prevenir saturación de Ollama
-    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 10; // MUY reducido: 10 req/min
-    this.minRequestInterval = config.minRequestInterval || 2500; // MUY aumentado: 2.5 segundos
+    // Configuración balanceada con ajuste dinámico para evitar errores 429 (Too Many Requests)
+    // El sistema aumenta el intervalo automáticamente si detecta errores 429
+    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 30; // 30 req/min razonable
+    this.minRequestInterval = config.minRequestInterval || 1000; // 1 segundo base (buena UX)
     this.maxRetries = config.maxRetries || 3; // Reintentos automáticos con backoff exponencial
-    this.baseRetryDelay = config.baseRetryDelay || 3000; // ms - Aumentado a 3s
+    this.baseRetryDelay = config.baseRetryDelay || 3000; // ms - 3s antes del primer reintento
     this.maxRetryDelay = config.maxRetryDelay || 60000; // ms - Espera máxima entre reintentos
     this.maxConcurrentRequests = config.maxConcurrentRequests || 1; // CRÍTICO: Solo 1 solicitud a la vez
 
@@ -9165,6 +9202,8 @@ class OllamaRateLimiter {
     this.rateLimitEvents = [];
     this.lastRequestTime = 0;
     this.isProcessingQueue = false;
+    this.consecutive429Errors = 0; // Contador de errores 429 consecutivos
+    this.originalMinInterval = this.minRequestInterval; // Guardar intervalo original
 
     console.log("🔧 [RateLimiter] Inicializado con configuración:", {
       maxRequestsPerMinute: this.maxRequestsPerMinute,
@@ -9340,7 +9379,47 @@ class OllamaRateLimiter {
 
       // Verificar si es un error 429
       if (response.status === 429) {
+        this.consecutive429Errors++;
+
+        // Si hay muchos errores 429 consecutivos, aumentar el intervalo
+        if (this.consecutive429Errors >= 3) {
+          const newInterval = Math.min(
+            this.minRequestInterval * 1.5,
+            15000, // Máximo 15 segundos
+          );
+          if (newInterval > this.minRequestInterval) {
+            console.warn(
+              `⚠️ [RateLimiter] Demasiados errores 429 (${this.consecutive429Errors}). Aumentando intervalo de ${this.minRequestInterval}ms a ${newInterval}ms`,
+            );
+            this.minRequestInterval = newInterval;
+          }
+        }
+
         throw new Error("HTTP 429: Too Many Requests");
+      }
+
+      // Resetear contador de errores 429 en caso de éxito
+      if (response.status === 200) {
+        if (this.consecutive429Errors > 0) {
+          console.log(
+            `✅ [RateLimiter] Solicitud exitosa después de ${this.consecutive429Errors} errores 429. Reseteando contador.`,
+          );
+          this.consecutive429Errors = 0;
+
+          // Reducir gradualmente el intervalo de vuelta al original si fue aumentado
+          if (this.minRequestInterval > this.originalMinInterval) {
+            const newInterval = Math.max(
+              this.minRequestInterval * 0.9,
+              this.originalMinInterval,
+            );
+            if (newInterval < this.minRequestInterval) {
+              console.log(
+                `📉 [RateLimiter] Reduciendo intervalo de ${this.minRequestInterval}ms a ${newInterval}ms`,
+              );
+              this.minRequestInterval = newInterval;
+            }
+          }
+        }
       }
 
       return response;

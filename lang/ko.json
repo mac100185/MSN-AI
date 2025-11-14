@@ -395,6 +395,7 @@
     "error_http_503": "⚙️ {model}: 서비스가 유지 관리 중입니다. 나중에 다시 시도하세요.",
     "error_network": "🌐 {model}: 연결 오류. 인터넷 연결을 확인하세요.",
     "error_generic": "⚠️ {model}: 현재 응답을 받을 수 없습니다.",
+    "error_http_401": "🔐 {model}: Authentication required. Please run 'ollama signin' in your terminal.",
     "error_http_429": "🚦 {model}: 요청이 너무 많습니다. 서버가 요청을 제한하고 있습니다. 잠시 기다린 후 다시 시도하세요."
   }
 }
