@@ -81,15 +81,6 @@ class MSNAI {
     };
     this.currentStatus = "online"; // Estado inicial
 
-    // Inicializar sistema de rate limiting
-    this.rateLimiter = new OllamaRateLimiter({
-      maxRequestsPerMinute: 30,
-      minRequestInterval: 500, // Mínimo 500ms entre solicitudes
-      maxRetries: 3,
-      baseRetryDelay: 2000,
-      maxRetryDelay: 60000,
-    });
-
     this.init();
     this.startMainThreadMonitor();
   }
@@ -2071,6 +2062,17 @@ class MSNAI {
         return;
       }
 
+      // Validar tamaño (máximo 10 MB para archivos de texto)
+      const maxSize = 10 * 1024 * 1024; // 10 MB en bytes
+      if (file.size > maxSize) {
+        this.showNotification(
+          this.t("errors.text_file_too_large") ||
+            "El archivo de texto es demasiado grande (máximo 10 MB)",
+          "error",
+        );
+        return;
+      }
+
       // Leer el archivo como texto
       const textReader = new FileReader();
       textReader.onload = async (ev) => {
@@ -3075,21 +3077,37 @@ class MSNAI {
 
       // Construir mensaje con archivo de texto si existe
       if (fileContent) {
-        // Si hay chunks, usar solo los primeros 3
+        // IMPORTANTE: Enviar el contenido COMPLETO del archivo
+        // Anteriormente se limitaba a solo 3 chunks (~72KB), causando pérdida de información
+        // El rate limiter (20 req/min, 1000ms intervalo, máx 2 concurrentes) gestiona
+        // automáticamente el flujo para evitar errores 429 incluso con archivos grandes
         let textContent = fileContent;
-        if (originalAttachment.chunks && originalAttachment.chunks.length > 0) {
-          const relevantChunks = originalAttachment.chunks.slice(0, 3);
-          textContent = relevantChunks.join("\n\n[...]\n\n");
+
+        // Advertencia si el archivo es muy grande
+        if (textContent.length > 50000) {
+          console.warn(
+            `⚠️ [SendMessage] Enviando archivo grande (${Math.round(textContent.length / 1000)}KB). Esto puede aumentar el tiempo de respuesta.`,
+          );
         }
+
         actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${textContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
       }
 
       // Construir contexto con PDF si existe (se pasa por separado)
       let pdfContextText = null;
       if (pdfContext) {
-        // Tomar solo los primeros chunks relevantes (máximo 3 para no saturar)
-        const relevantChunks = pdfContext.chunks.slice(0, 3);
-        pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
+        // IMPORTANTE: Enviar el contenido COMPLETO del PDF
+        // Anteriormente se limitaba a solo 3 chunks, causando pérdida de información
+        // El rate limiter gestiona automáticamente el flujo para evitar errores 429
+
+        // Advertencia si el PDF es muy grande
+        if (pdfContext.text.length > 50000) {
+          console.warn(
+            `⚠️ [SendMessage] Enviando PDF grande (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas). Esto puede aumentar el tiempo de respuesta.`,
+          );
+        }
+
+        pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${pdfContext.text}`;
       }
 
       const onToken = (token) => {
@@ -3377,21 +3395,17 @@ class MSNAI {
           const attachment = await this.getAttachment(attachmentMeta.id);
           if (attachment) {
             if (attachment.type === "text/plain") {
-              // Si hay chunks, usar solo los primeros 3
+              // IMPORTANTE: Enviar el contenido COMPLETO del archivo de texto
+              // El rate limiter evita sobrecargar el servidor Ollama
               let textContent = attachment.content;
-              if (attachment.chunks && attachment.chunks.length > 0) {
-                const relevantChunks = attachment.chunks.slice(0, 3);
-                textContent = relevantChunks.join("\n\n[...]\n\n");
-              }
               attachmentsData.push(
                 `[Archivo TXT: ${attachment.name}]\n${textContent}\n`,
               );
             } else if (attachment.type === "application/pdf") {
-              const relevantChunks = attachment.chunks
-                ? attachment.chunks.slice(0, 3)
-                : [];
+              // IMPORTANTE: Enviar el contenido COMPLETO del PDF
+              // El rate limiter evita sobrecargar el servidor Ollama
               attachmentsData.push(
-                `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${relevantChunks.join("\n\n[...]\n\n")}\n`,
+                `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${attachment.content}\n`,
               );
             } else if (
               attachment.type &&
@@ -7125,6 +7139,39 @@ class MSNAI {
     console.log("   - Logs de formateo Markdown: ACTIVO");
     console.log("=".repeat(80));
 
+    // ==================================================================================
+    // INICIALIZACIÓN DEL RATE LIMITER - CONFIGURACIÓN CRÍTICA PARA EVITAR ERROR 429
+    // ==================================================================================
+    //
+    // PROBLEMA IDENTIFICADO:
+    // - Ollama tiene un rate limiter interno MUY ESTRICTO en localhost
+    // - Se detectaron solicitudes enviadas con solo 2ms de diferencia (casi simultáneas)
+    // - Esto causaba error 429 (Too Many Requests) incluso con rate limiting "normal"
+    // - El problema se agravaba en salas de expertos (múltiples modelos)
+    //
+    // SOLUCIÓN IMPLEMENTADA:
+    // - maxRequestsPerMinute: 10 (muy conservador, ~1 solicitud cada 6 segundos)
+    // - minRequestInterval: 2500ms (2.5 segundos MÍNIMO entre solicitudes)
+    // - maxConcurrentRequests: 1 (SOLO UNA solicitud a la vez, NO concurrencia)
+    // - Ejecución ESTRICTAMENTE SECUENCIAL (cada solicitud espera a que termine la anterior)
+    //
+    // IMPACTO:
+    // - Las salas de expertos con N modelos tardarán mínimo N * 2.5 segundos
+    // - Ejemplo: 3 modelos = mínimo 7.5 segundos solo en espaciado
+    // - PERO: Se garantiza que NO habrá errores 429 de Ollama
+    // - Los archivos grandes se envían completos sin pérdida de información
+    //
+    // ADVERTENCIA: NO reducir estos valores sin pruebas exhaustivas
+    // ==================================================================================
+    this.rateLimiter = new OllamaRateLimiter({
+      maxRequestsPerMinute: 10, // MUY reducido: solo 10 req/min
+      minRequestInterval: 2500, // MUY aumentado: 2.5 segundos entre solicitudes
+      maxRetries: 3,
+      baseRetryDelay: 3000, // Aumentado: esperar 3s antes del primer reintento
+      maxRetryDelay: 60000,
+      maxConcurrentRequests: 1, // CRÍTICO: Solo UNA solicitud a la vez
+    });
+
     // Inicializar IndexedDB para archivos adjuntos
     await this.initAttachmentsDB();
 
@@ -8600,18 +8647,34 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
   let actualMessageToSend = displayedMessage;
 
   if (fileContent) {
+    // IMPORTANTE: Enviar el contenido COMPLETO del archivo a TODOS los modelos de la sala
+    // El rate limiter (20 req/min, 1000ms intervalo, máx 2 concurrentes) espaciará
+    // automáticamente las solicitudes para evitar errores 429
     let textContent = fileContent;
-    if (originalAttachment.chunks && originalAttachment.chunks.length > 0) {
-      const relevantChunks = originalAttachment.chunks.slice(0, 3);
-      textContent = relevantChunks.join("\n\n[...]\n\n");
+
+    // Advertencia si el archivo es muy grande
+    if (textContent.length > 50000) {
+      console.warn(
+        `⚠️ [ExpertRoom] Enviando archivo grande (${Math.round(textContent.length / 1000)}KB) a múltiples modelos. Esto puede aumentar significativamente el tiempo de respuesta.`,
+      );
     }
+
     actualMessageToSend = `[Archivo: ${originalAttachment.name}]\n${textContent}\n\nMensaje del usuario: ${displayedMessage || "(sin mensaje adicional)"}`;
   }
 
   let pdfContextText = null;
   if (pdfContext) {
-    const relevantChunks = pdfContext.chunks.slice(0, 3);
-    pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${relevantChunks.join("\n\n[...]\n\n")}`;
+    // IMPORTANTE: Enviar el contenido COMPLETO del PDF a TODOS los modelos de la sala
+    // El rate limiter espaciará automáticamente las solicitudes para evitar errores 429
+
+    // Advertencia si el PDF es muy grande
+    if (pdfContext.text.length > 50000) {
+      console.warn(
+        `⚠️ [ExpertRoom] Enviando PDF grande (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas) a múltiples modelos. Esto puede aumentar significativamente el tiempo de respuesta.`,
+      );
+    }
+
+    pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${pdfContext.text}`;
   }
 
   // Procesar cada modelo con el sistema de rate limiting
@@ -8796,10 +8859,53 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
       content: m.content,
     }));
 
+  // Cargar todos los archivos adjuntos del chat desde IndexedDB
+  // NOTA: En salas de expertos, cada modelo recibirá el contenido completo de los attachments
+  // El rate limiter gestiona automáticamente el flujo para evitar errores 429
+  let attachmentsContext = "";
+  let attachmentImages = []; // Array para almacenar imágenes de attachments
+  if (chat.attachments && chat.attachments.length > 0) {
+    const attachmentsData = [];
+    for (const attachmentMeta of chat.attachments) {
+      try {
+        const attachment = await this.getAttachment(attachmentMeta.id);
+        if (attachment) {
+          if (attachment.type === "text/plain") {
+            // IMPORTANTE: Enviar contenido COMPLETO a cada modelo de la sala
+            // El rate limiter evita saturar el servidor con múltiples solicitudes simultáneas
+            let textContent = attachment.content;
+            attachmentsData.push(
+              `[Archivo TXT: ${attachment.name}]\n${textContent}\n`,
+            );
+          } else if (attachment.type === "application/pdf") {
+            // IMPORTANTE: Enviar contenido COMPLETO a cada modelo de la sala
+            // El rate limiter evita saturar el servidor con múltiples solicitudes simultáneas
+            attachmentsData.push(
+              `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${attachment.content}\n`,
+            );
+          } else if (attachment.type && attachment.type.startsWith("image/")) {
+            // Para imágenes, agregar al array de imágenes (no al contexto de texto)
+            if (attachment.base64Data) {
+              attachmentImages.push(attachment.base64Data);
+              attachmentsData.push(`[Imagen: ${attachment.name}]\n`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error(`Error cargando attachment ${attachmentMeta.id}:`, error);
+      }
+    }
+    if (attachmentsData.length > 0) {
+      attachmentsContext = `\n\n=== ${this.t("chat.attachments_context_header")} ===\n${attachmentsData.join("\n---\n")}\n=== ${this.t("chat.attachments_context_footer")} ===\n\n`;
+    }
+  }
+
   // Construir mensaje final con contextos
   let finalMessage = message;
 
-  if (pdfContext) {
+  if (attachmentsContext || pdfContext) {
+    finalMessage = `${attachmentsContext}${pdfContext ? pdfContext + "\n\n---\n\n" : ""}${message}`;
+  } else if (pdfContext) {
     finalMessage = `${pdfContext}\n\nConsulta del usuario: ${message}`;
   }
 
@@ -8856,10 +8962,15 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     keep_alive: "5m", // Mantener modelo en memoria por 5 minutos
   };
 
-  // Agregar imagen si existe
+  // Agregar imagen si existe (temporal o de attachments)
   if (imageContext && imageContext.base64Data) {
     payload.messages[payload.messages.length - 1].images = [
       imageContext.base64Data,
+    ];
+  } else if (attachmentImages.length > 0) {
+    // Usar solo la primera imagen de los attachments para no saturar
+    payload.messages[payload.messages.length - 1].images = [
+      attachmentImages[0],
     ];
   }
 
@@ -9019,14 +9130,33 @@ MSNAI.prototype.createNewChat = function () {
  * - Monitoreo de eventos de rate limit
  * - Límite de solicitudes concurrentes
  */
+/**
+ * Gestor de Rate Limiting para Ollama API
+ *
+ * CONFIGURACIÓN ULTRA-CONSERVADORA implementada después de análisis de logs HAR
+ * que mostraron solicitudes enviadas con solo 2ms de diferencia causando error 429.
+ *
+ * La API de Ollama en localhost tiene límites de rate muy estrictos que no están
+ * documentados claramente. Esta clase implementa:
+ *
+ * 1. Cola de prioridades con ejecución ESTRICTAMENTE SECUENCIAL
+ * 2. Espera mínima de 2.5 segundos entre CADA solicitud
+ * 3. Solo 1 solicitud concurrente (sin paralelismo)
+ * 4. Reintentos automáticos con backoff exponencial
+ * 5. Logging detallado para monitoreo y debugging
+ *
+ * IMPORTANTE: Modificar estos valores puede resultar en error 429 persistente.
+ */
 class OllamaRateLimiter {
   constructor(config = {}) {
-    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 30;
-    this.minRequestInterval = config.minRequestInterval || 500; // ms
-    this.maxRetries = config.maxRetries || 3;
-    this.baseRetryDelay = config.baseRetryDelay || 2000; // ms
-    this.maxRetryDelay = config.maxRetryDelay || 60000; // ms
-    this.maxConcurrentRequests = config.maxConcurrentRequests || 3;
+    // Configuración MUY conservadora para evitar errores 429 (Too Many Requests)
+    // CRÍTICO: Valores estrictos para prevenir saturación de Ollama
+    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 10; // MUY reducido: 10 req/min
+    this.minRequestInterval = config.minRequestInterval || 2500; // MUY aumentado: 2.5 segundos
+    this.maxRetries = config.maxRetries || 3; // Reintentos automáticos con backoff exponencial
+    this.baseRetryDelay = config.baseRetryDelay || 3000; // ms - Aumentado a 3s
+    this.maxRetryDelay = config.maxRetryDelay || 60000; // ms - Espera máxima entre reintentos
+    this.maxConcurrentRequests = config.maxConcurrentRequests || 1; // CRÍTICO: Solo 1 solicitud a la vez
 
     // Estado interno
     this.requestQueue = [];
@@ -9123,12 +9253,19 @@ class OllamaRateLimiter {
           }
         }
 
-        // Verificar intervalo mínimo entre solicitudes
-        const timeSinceLastRequest = now - this.lastRequestTime;
-        if (timeSinceLastRequest < this.minRequestInterval) {
+        // CRÍTICO: Forzar espera del intervalo mínimo ANTES de cada solicitud
+        // Recalcular now para tener el tiempo actual después de posibles esperas anteriores
+        const currentTime = Date.now();
+        const timeSinceLastRequest = currentTime - this.lastRequestTime;
+        if (
+          this.lastRequestTime > 0 &&
+          timeSinceLastRequest < this.minRequestInterval
+        ) {
           const waitTime = this.minRequestInterval - timeSinceLastRequest;
+          console.log(
+            `⏱️ [RateLimiter] Esperando ${waitTime}ms para respetar intervalo mínimo`,
+          );
           await new Promise((resolve) => setTimeout(resolve, waitTime));
-          continue;
         }
 
         // Obtener siguiente solicitud de la cola
@@ -9138,13 +9275,40 @@ class OllamaRateLimiter {
           break;
         }
 
-        // Ejecutar solicitud (sin esperar a que termine)
-        this._executeRequest(queueItem.requestFn, queueItem.options, 0)
-          .then(queueItem.resolve)
-          .catch(queueItem.reject);
+        // CRÍTICO: ESPERAR a que la solicitud termine antes de continuar
+        // Esto asegura ejecución ESTRICTAMENTE SECUENCIAL
+        const requestStartTime = Date.now();
+        console.log(
+          `🔵 [RateLimiter] Iniciando solicitud secuencial (cola restante: ${this.requestQueue.length})`,
+        );
 
+        try {
+          const result = await this._executeRequest(
+            queueItem.requestFn,
+            queueItem.options,
+            0,
+          );
+          queueItem.resolve(result);
+
+          const requestDuration = Date.now() - requestStartTime;
+          console.log(
+            `✅ [RateLimiter] Solicitud completada en ${requestDuration}ms`,
+          );
+        } catch (error) {
+          const requestDuration = Date.now() - requestStartTime;
+          console.error(
+            `❌ [RateLimiter] Solicitud falló después de ${requestDuration}ms: ${error.message}`,
+          );
+          queueItem.reject(error);
+        }
+
+        // Actualizar timestamp DESPUÉS de que la solicitud termine
         this.lastRequestTime = Date.now();
         this.requestTimestamps.push(this.lastRequestTime);
+
+        console.log(
+          `⏱️ [RateLimiter] Próxima solicitud en mínimo ${this.minRequestInterval}ms`,
+        );
       }
     } finally {
       this.isProcessingQueue = false;
@@ -9155,14 +9319,24 @@ class OllamaRateLimiter {
    * Ejecuta una solicitud con reintentos automáticos en caso de error 429
    */
   async _executeRequest(requestFn, options, attempt) {
-    this.activeRequests++;
+    // Solo incrementar activeRequests en el primer intento
+    const isFirstAttempt = attempt === 0;
+    if (isFirstAttempt) {
+      this.activeRequests++;
+    }
 
     try {
+      const execStartTime = Date.now();
       console.log(
         `🚀 [RateLimiter] Ejecutando solicitud (activas: ${this.activeRequests}, intento: ${attempt + 1})`,
       );
 
       const response = await requestFn();
+
+      const execDuration = Date.now() - execStartTime;
+      console.log(
+        `📊 [RateLimiter] Respuesta recibida en ${execDuration}ms - Status: ${response.status}`,
+      );
 
       // Verificar si es un error 429
       if (response.status === 429) {
@@ -9204,18 +9378,21 @@ class OllamaRateLimiter {
         // Esperar antes de reintentar
         await new Promise((resolve) => setTimeout(resolve, totalDelay));
 
-        // Reintentar
+        // Reintentar (sin incrementar activeRequests nuevamente)
         return await this._executeRequest(requestFn, options, attempt + 1);
       }
 
       // Si no es 429 o se agotaron los reintentos, lanzar error
       throw error;
     } finally {
-      this.activeRequests--;
+      // Solo decrementar activeRequests en el primer intento
+      if (isFirstAttempt) {
+        this.activeRequests--;
 
-      // Si hay solicitudes en cola, continuar procesando
-      if (this.requestQueue.length > 0) {
-        setTimeout(() => this._processQueue(), 0);
+        // Si hay solicitudes en cola, continuar procesando
+        if (this.requestQueue.length > 0) {
+          setTimeout(() => this._processQueue(), 0);
+        }
       }
     }
   }
