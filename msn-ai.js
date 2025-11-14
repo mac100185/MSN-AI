@@ -77,6 +77,7 @@ class MSNAI {
       topK: 40,
       topP: 0.9,
       maxTokens: 2000,
+      groupChatSystemPrompt: "", // Se llenará con la traducción por defecto
     };
     this.currentStatus = "online"; // Estado inicial
 
@@ -762,6 +763,9 @@ class MSNAI {
       // Marcar traducciones como listas
       this.translationsReady = true;
 
+      // Actualizar el system prompt para salas de chat grupales con la nueva traducción
+      this.updateGroupChatSystemPrompt();
+
       // Actualizar toda la interfaz
       this.updateUI();
 
@@ -812,6 +816,77 @@ class MSNAI {
       this.translations = {}; // Asegurar que translations esté definido aunque sea vacío
       this.translationsReady = false;
     }
+  }
+
+  /**
+   * Actualiza el system prompt de salas de chat grupales cuando cambia el idioma
+   */
+  updateGroupChatSystemPrompt() {
+    const defaultPrompt =
+      this.t("settings.default_group_chat_system_prompt") || "";
+
+    // Si el system prompt actual es el default del idioma anterior, actualizarlo
+    // Solo actualizamos si está en la UI de settings abierta o si coincide con un default anterior
+    if (defaultPrompt) {
+      // Verificar si el modal de settings está abierto
+      const settingsModal = document.getElementById("settings-modal");
+      const groupChatSystemPromptEl = document.getElementById(
+        "group-chat-system-prompt",
+      );
+
+      if (settingsModal && groupChatSystemPromptEl) {
+        // Obtener el valor actual en el campo
+        const currentValue = groupChatSystemPromptEl.value.trim();
+
+        // Si el campo está vacío o tiene un default, actualizarlo
+        if (!currentValue || this.isDefaultSystemPrompt(currentValue)) {
+          this.settings.groupChatSystemPrompt = defaultPrompt;
+          groupChatSystemPromptEl.value = defaultPrompt;
+          console.log(
+            `🔄 System prompt actualizado para idioma: ${this.currentLanguage}`,
+          );
+        }
+      } else {
+        // Si el modal no está abierto, verificar si el setting guardado es un default
+        if (
+          !this.settings.groupChatSystemPrompt ||
+          this.isDefaultSystemPrompt(this.settings.groupChatSystemPrompt)
+        ) {
+          this.settings.groupChatSystemPrompt = defaultPrompt;
+          console.log(
+            `🔄 System prompt actualizado en settings para idioma: ${this.currentLanguage}`,
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Verifica si un system prompt es uno de los defaults (en cualquier idioma)
+   */
+  isDefaultSystemPrompt(prompt) {
+    if (!prompt) return true;
+
+    // Lista de patrones que identifican un system prompt default
+    const defaultPatterns = [
+      "SISTEMA:",
+      "SYSTEM:",
+      "SYSTÈME:",
+      "سيستم:",
+      "সিস্টেম:",
+      "システム:",
+      "시스템:",
+      "सिस्टम:",
+      "CHAT GRUPAL MULTI-MODELO",
+      "MULTI-MODEL GROUP CHAT",
+      "CHAT DE GROUPE MULTI-MODÈLE",
+      "MULTI-MODELL-GRUPPENCHAT",
+      "{{MODEL_NAME}}",
+      "{{PARTICIPANT_LIST}}",
+    ];
+
+    // Si contiene alguno de estos patrones, probablemente es un default
+    return defaultPatterns.some((pattern) => prompt.includes(pattern));
   }
 
   t(key, replacements = {}) {
@@ -5040,13 +5115,33 @@ class MSNAI {
     const soundsEnabledEl = document.getElementById("sounds-enabled");
     const ollamaServerEl = document.getElementById("ollama-server");
     const modelSelectEl = document.getElementById("model-select");
-    const notifyStatusEl = document.getElementById("notify-status-changes"); // ✅ NUEVO
+    const notifyStatusEl = document.getElementById("notify-status-changes");
+    const groupChatSystemPromptEl = document.getElementById(
+      "group-chat-system-prompt",
+    );
 
     if (soundsEnabledEl) soundsEnabledEl.checked = this.settings.soundsEnabled;
     if (ollamaServerEl) ollamaServerEl.value = this.settings.ollamaServer;
     if (modelSelectEl) modelSelectEl.value = this.settings.selectedModel;
     if (notifyStatusEl)
-      notifyStatusEl.checked = this.settings.notifyStatusChanges; // ✅ NUEVO
+      notifyStatusEl.checked = this.settings.notifyStatusChanges;
+
+    // Cargar system prompt para salas de chat grupales
+    if (groupChatSystemPromptEl) {
+      // Cargar la traducción actual del system prompt
+      const defaultPrompt =
+        this.t("settings.default_group_chat_system_prompt") || "";
+
+      // Si no hay system prompt configurado o es el default, usar el traducido
+      if (
+        !this.settings.groupChatSystemPrompt ||
+        this.settings.groupChatSystemPrompt === defaultPrompt
+      ) {
+        this.settings.groupChatSystemPrompt = defaultPrompt;
+      }
+
+      groupChatSystemPromptEl.value = this.settings.groupChatSystemPrompt;
+    }
   }
   //--------------------------------
   async exportChats() {
@@ -6237,6 +6332,9 @@ class MSNAI {
     // Botón de configuración (abrir modal)--------------------
     // En setupEventListeners(), reemplaza/añade estos eventos:
     document.getElementById("settings-btn").addEventListener("click", () => {
+      // Actualizar el system prompt con la traducción actual antes de abrir el modal
+      this.updateGroupChatSystemPrompt();
+      this.updateSettingsUI();
       document.getElementById("settings-modal").style.display = "block";
     });
 
@@ -6265,6 +6363,28 @@ class MSNAI {
         btn.disabled = false;
       });
 
+    // Botón de reset para system prompt
+    document
+      .getElementById("reset-system-prompt-btn")
+      .addEventListener("click", () => {
+        const groupChatSystemPromptEl = document.getElementById(
+          "group-chat-system-prompt",
+        );
+        if (groupChatSystemPromptEl) {
+          // Obtener el system prompt por defecto del idioma actual
+          const defaultPrompt =
+            this.t("settings.default_group_chat_system_prompt") || "";
+
+          // Actualizar el campo y el setting
+          groupChatSystemPromptEl.value = defaultPrompt;
+          this.settings.groupChatSystemPrompt = defaultPrompt;
+
+          console.log(
+            `🔄 System prompt restaurado al valor predeterminado para idioma: ${this.currentLanguage}`,
+          );
+        }
+      });
+
     document.getElementById("save-settings").addEventListener("click", () => {
       this.settings.soundsEnabled =
         document.getElementById("sounds-enabled").checked;
@@ -6276,6 +6396,15 @@ class MSNAI {
       this.settings.notifyStatusChanges = document.getElementById(
         "notify-status-changes",
       ).checked;
+
+      // Guardar system prompt para salas de chat grupales
+      const groupChatSystemPromptEl = document.getElementById(
+        "group-chat-system-prompt",
+      );
+      if (groupChatSystemPromptEl) {
+        this.settings.groupChatSystemPrompt =
+          groupChatSystemPromptEl.value.trim();
+      }
 
       // Guardar idioma seleccionado
       const selectedLang = document.getElementById("language-select").value;
@@ -8674,16 +8803,49 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     finalMessage = `${pdfContext}\n\nConsulta del usuario: ${message}`;
   }
 
+  // Preparar array de mensajes
+  const messages = [];
+
+  // Si es una sala de expertos, agregar system prompt al inicio
+  if (chat.isExpertRoom) {
+    // Obtener el system prompt configurado o el por defecto
+    let systemPrompt =
+      this.settings.groupChatSystemPrompt ||
+      this.t("settings.default_group_chat_system_prompt") ||
+      "";
+
+    if (systemPrompt) {
+      // Reemplazar variables en el system prompt
+      const modelName = model;
+      const participantList = chat.models.join(", ");
+
+      systemPrompt = systemPrompt
+        .replace(/\{\{MODEL_NAME\}\}/g, modelName)
+        .replace(/\{\{PARTICIPANT_LIST\}\}/g, participantList);
+
+      // Agregar como primer mensaje del sistema
+      messages.push({
+        role: "system",
+        content: systemPrompt,
+      });
+
+      console.log(
+        `🔧 [ExpertRoom] System prompt inyectado para ${model} en sala ${chat.title}`,
+      );
+    }
+  }
+
+  // Agregar historial y mensaje actual
+  messages.push(...history);
+  messages.push({
+    role: "user",
+    content: finalMessage,
+  });
+
   // Preparar payload base según documentación de Ollama API
   const payload = {
     model: model,
-    messages: [
-      ...history,
-      {
-        role: "user",
-        content: finalMessage,
-      },
-    ],
+    messages: messages,
     stream: false,
     options: {
       temperature: parseFloat(this.settings.temperature) || 0.7,

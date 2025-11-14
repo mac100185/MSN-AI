@@ -265,6 +265,26 @@
                     </p>
                 </div>
 
+                <!-- ========== SYSTEM PROMPT PARA SALAS DE CHAT GRUPALES ========== -->
+                <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label style="font-weight: bold; margin: 0;">
+                            <span data-i18n="settings.group_chat_system_prompt">System Prompt para Salas de Chat Grupales</span>:
+                        </label>
+                        <button class="aerobutton" id="reset-system-prompt-btn" style="padding: 4px 8px; font-size: 7pt;" data-i18n-title="settings.reset_system_prompt_title" title="Restaurar plantilla predeterminada">
+                            <span data-i18n="settings.reset_system_prompt">🔄 Restaurar</span>
+                        </button>
+                    </div>
+                    <textarea
+                        id="group-chat-system-prompt"
+                        rows="8"
+                        style="width: 100%; padding: 8px; font-size: 7pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: 'Courier New', monospace; resize: vertical;"
+                        placeholder="Se cargará la plantilla por defecto..."></textarea>
+                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                        <span data-i18n="settings.group_chat_system_prompt_description">Plantilla de instrucciones enviadas a cada modelo de IA en salas grupales. Variables: {{MODEL_NAME}} (nombre del participante), {{PARTICIPANT_LIST}} (lista de participantes).</span>
+                    </p>
+                </div>
+
                 <!-- ========== BOTONES ========== -->
                 <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
                     <button class="aerobutton" id="test-connection" style="margin-right: 8px; padding: 6px 12px;">

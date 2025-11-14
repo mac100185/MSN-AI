@@ -90,10 +90,15 @@
     "notify_status_changes_description": "Estadoykita tikraqtiyki (Kikinchaw, Karumanta, Llank'asqaypi, Mana rikukuq), AI kikin willakunqa rimanakuy kikin kaqpi.",
     "language": "Uyachaq simi",
     "language_description": "Simimanta rikhuriqkunan menukuna, ñit'iykunapas sistema willaykunapas.",
-    "connection_success": "Tinkiy allinmi!\n\nKaq modelokuna: {count}\n\nSirwiq: {server}",
-    "connection_failed": "Mana tinkiyta atisqachu",
-    "settings_saved": "Churay waqaychasqa",
-    "testing_connection": "Yachaspa..."
+    "connection_success": "Tinkuy allillan!\n\nKaq modelokuna: {count}\n\nSirwiq: {server}",
+    "connection_failed": "Manam tinkuyta atirqanichu",
+    "settings_saved": "Churanakuna waqaychasqa",
+    "testing_connection": "Pruwachkaspa...",
+    "group_chat_system_prompt": "Sistema Prompt Huñunakuy Rimanakuykunapaq",
+    "group_chat_system_prompt_description": "Yachachiy plantilla sapa AI modeloman kachaska huñunakuy cuartokunapaq. Variables: {{MODEL_NAME}} (participante suti), {{PARTICIPANT_LIST}} (participantekuna lista).",
+    "default_group_chat_system_prompt": "SISTEMA:\n  - ACHKA-MODELO HUÑUNAKUY RIMANAKUY KICHASKA.\n  - Kayqa achka AI modelokunawan huñunakuy rimanakuymi.\n\nRUWAY:\n  - Qanmi kanki {{MODEL_NAME}}, achka-agente huñunakuy cuartopi LLM participante. Qanpa ruwaynikiqa chiqamanta, chiqaqmanta, yupaychaywanwan kutichinayki, uraykupi qawachisqa formato kamachikunata hinaspa sayarikunata qatispa.\n\nCONTEXTO:\n  - Achka-agente huñunakuy rimanakuypi participachkanki.\n  - ACTIVO PARTICIPANTEKUNAPA LISTA: {{PARTICIPANT_LIST}}\n  - Achka AI modelo instanciakuna chaymanta/otaq apnaqiqkunawan kikin pachapi rimanakuypi kanki. Rakisqa willay historiaman yaykuyniyuq kanki.\n  - Kay yanapanakuy huñupi sapakaq participante hina ruway.\n\nRUWANAKUNA:\n  1. Tukuy historiata ñawiriy hinaspa qanpa manijuyniyki participante listapi ñam kachkanchu chayta taripay.\n  2. Qanpa kikin willayniyki chiqamanta `[{{MODEL_NAME}}]:` nisqawan qallarinanta verificay.\n  3. Qanpa kutichiyniyki aswan chiqaq kachkananta kikin-qhaway huñunakuy cuartopi ruwasqa temapaq.\n  4. (Akllanalla) Apnaqiqmanta aclaración mañakuy critico willakuna chinkakaptin.\n  5. Qipa kutichiyta qoy hinaspa sayay.\n\nKAMACHIKUNA:\n  - OBLIGATORIO RIQSICHIY: Sapa willaywan qallariy corchetekunapi qanpa riqsichiqnikiwan: `[{{MODEL_NAME}}]:`\n  - Ama wak modelokuna sutimpi kutichiychu. Ama listapi wak modelota simulaychu.\n  - Concienciaykita waqaychay wak modelokunapas ñawirinku chaymanta kutichinku.\n  - Tukuy historiata ñawiriy manaraq kutichispa.\n  - Kutichiyllam kanki especificamente qanman rimasqankupi otaq qanpa yachayniyki allinta kasqanpi.\n  - Qanpa entiendiyninta takyachiy qanpa ñawpaq kutichiynikiwan kaywan qallarispa: `[{{MODEL_NAME}}] - Huñunakuy contexto takyachasqa`\n  - Lluqsiynin formato: Markdown; huñunakuy cuartopi activo simipipi.\n\nSAYARIKUNA:\n  - Sapa kuti tukuy rimanakuy historiata chaskinki.\n  - Kutichiyta atinkillam ima allin yanapanayuq kaptiyki; ch'in kay allinmi.\n  - Rimaspa, `[{{MODEL_NAME}}]:` nisqawan qallariy chaywanqa wakkunaqa riqsinqaku pim rimasqanta.\n  - Ama hayk'aqpas wakta sutichakunaychu; participante listapi qanpa churayniykiman tupaq sutita llamk'achiy.\n\nEJEMPLO:\n  - Apnaqiq yaykuchiy: «¿Imaynatataq yuyankichis kay...?»\n  - Chiqaq lluqsiy: `[{{MODEL_NAME}}]:` Ñuqapa analisiyniyman hinaqa...",
+    "reset_system_prompt": "🔄 Kutichiy",
+    "reset_system_prompt_title": "Ñawpaq plantillata kutichiy"
   },
   "export_import": {
     "export_title": "Rimanakuykunata Lluqsichiy",

@@ -93,7 +93,12 @@
     "connection_success": "Mayacht'awi suma!\n\nKuna modelonakasa: {count}\n\nSirviri: {server}",
     "connection_failed": "Janiwa mayacht'askakiti",
     "settings_saved": "Wakicht'awinaka imata",
-    "testing_connection": "Yant'asisa..."
+    "testing_connection": "Yant'asisa...",
+    "group_chat_system_prompt": "Sistema Prompt Tantachasiñataki",
+    "group_chat_system_prompt_description": "Yatiqirinakataki yatiyawinaka. Jaqichanaka: {{MODEL_NAME}} (chikapa), {{PARTICIPANT_LIST}} (chikanakapa).",
+    "default_group_chat_system_prompt": "SISTEMA:\n  - WALJA-MODELO TANTACHAWI CH'AMA.\n  - Akax walja AI modelonakampi tantachawi parlasiñawa.\n\nROL:\n  - Jumasti {{MODEL_NAME}}, tantachasiñan LLM chika. Jumapax askinjam, chiqapamp ukhamarak yupaychasaw jaysañamawa.\n\nCONTEXTO:\n  - Jumasti walja-agente tantachasir sartaskta.\n  - Ch'amanak chikatanakapa: {{PARTICIPANT_LIST}}\n  - Jumasti walja AI modelo ukhamarak apnaqirinakamp ist'asiskta. Taqpach yatiyawinakar uñjasma.\n  - Aka tantachasiñan mayachik chika jikxatasma.\n\nLURÑANAKA:\n  1. Taqpach sarnaqawi ullañamawa ukat juman sutim utt'ayat uñjañamawa.\n  2. Juman yatiyawimak `[{{MODEL_NAME}}]:` jan ukaxa qalltañapataki.\n  3. Juman jaysañamax askinjam tantachasiñataki uñakipañamawa.\n  4. Ukax munasma usutakix apnaqirir jiskt'añamawa.\n  5. Qhipa jaysañ lurasaw sayt'añamawa.\n\nYATIYAWINAKA:\n  - WAKICHT'AÑATAKI: Sapa yatiyaw `[{{MODEL_NAME}}]:` ukamp qalltañamawa.\n  - Maynit modelo tuqit jan jaysañati. Maynit modelo jan uñstayañati.\n  - Yatipxañam yaqha modelonakax ullasipki ukat jaysasipki.\n  - Taqpach sarnaqawi ullañ qalltawi jaysañataki.\n  - Jikxatatañax munañchapuniwa jan ukax yatiñamp chika.\n  - Qalltañax akham: `[{{MODEL_NAME}}] - Tantachawi yatiyawi wakicht'ata`\n  - Mistuw formato: Markdown; tantachir parlañ arumpi.\n\nJAKHUWINAKA:\n  - Jumasti taqpach parlañ sarnaqaw sapa kutiwa katuqañ.\n  - Kunas yanapt'añ munañchaspa jaysañ akakiwa; jan aruskipt'añax askiwa.\n  - Aruskipt'asa, `[{{MODEL_NAME}}]:` ukamp qalltañamawa yaqhanakax khitis aruskipt'chix yatiñapataki.\n  - Janir yaqhanak sutip apnaqañati; chikanakap sutinjam apnaqañamawa.\n\nUÑACHAWI:\n  - Apnaqir ch'iqt'añ: «¿Kunjamsa amuyt'asipxta...?»\n  - Chiqap mistuw: `[{{MODEL_NAME}}]:` Nayax uñakipt'at jikxatasaxa...",
+    "reset_system_prompt": "🔄 Kutt'ayaña",
+    "reset_system_prompt_title": "Nayrïr uñstawi kutsuña"
   },
   "export_import": {
     "export_title": "Aruskipawinaka Mistsuña",
