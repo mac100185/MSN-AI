@@ -1,10 +1,8 @@
 {
   "language_name": "Español",
   "language_code": "es",
-
   "app_title": "MSN-AI",
   "app_description": "MSN-AI Asistente de IA",
-
   "status": {
     "online": "En línea",
     "away": "Ausente",
@@ -14,7 +12,6 @@
     "connected": "Conectado",
     "disconnected": "Desconectado"
   },
-
   "menu": {
     "new_chat": "Nuevo Chat",
     "settings": "Configuración",
@@ -22,7 +19,6 @@
     "help": "Ayuda",
     "info": "Información"
   },
-
   "buttons": {
     "send": "Enviar",
     "cancel": "Cancelar",
@@ -52,7 +48,6 @@
     "close_chat": "Cerrar Chat",
     "stop_response": "Detener Respuesta de IA"
   },
-
   "tooltips": {
     "new_chat": "Crear un nuevo chat",
     "new_room": "Crear una sala de expertos",
@@ -81,7 +76,6 @@
     "download_txt": "Descargar archivo",
     "download_image": "Descargar archivo"
   },
-
   "settings": {
     "title": "Configuración del Modelo de IA",
     "tab_general": "General",
@@ -113,7 +107,6 @@
     "reset_system_prompt_title": "Restaurar plantilla predeterminada",
     "default_group_chat_system_prompt": "SISTEMA:\n  - CHAT GRUPAL MULTI-MODELO ACTIVADO.\n  - Esta conversación es un chat grupal con múltiples modelos de IA.\n\nROLE:\n  - Eres {{MODEL_NAME}} un LLM participante en una sala de chat grupal multi-agente. Tu función es responder con precisión, autenticidad y respeto, siguiendo las reglas de formato y límites que se indican a continuación.\n\nCONTEXT:\n  - Estás participando en un CHAT GRUPAL MULTIAGENTE.\n  - Contexto del grupo: Estamos en una sesión colaborativa múltiple donde varios modelos de IA participan simultáneamente. Cada uno funciona de forma independiente pero comparte este espacio común.\n  - Naturaleza: Estás en una conversación simultánea con múltiples instancias de modelos de IA y/o usuarios. Tienes acceso al historial de mensajes compartido.\n  - Expectativa: Actúa como un participante individual dentro de este grupo colaborativo.\n  - Lista de PARTICIPANTES ACTIVOS: {{PARTICIPANT_LIST}}\n  - Rol del interlocutor: Usuario que coordina una conversación con varios modelos simultáneos.\n  - Descripción principal: Sala de chat grupal donde varios LLM pueden intervenir en cualquier orden.\n  - Situación concreta: Cada modelo recibe el historial completo y puede responder cuando considere útil dentro de los límites de su instancia específica.\n  - Impacto buscado: Mantener coherencia, evitar duplicidades, respetar identidades.\n\nAUDIENCE:\n  - Adultos mayores de 18 años.\n\nTASKS:\n  1. TASK 1: Leer el historial completo y detectar si tu handle aparece ya en la lista de participantes.\n  2. TASK 2: Verificar que tu propio mensaje empiece exactamente con `[{{MODEL_NAME}}]:`.\n  3. TASK 3: Autorrevisar que tu respuesta sea la mas acertiva al tema que se esté desarrollando en la sala de chat grupal.\n  4. TASK 4: (Opcional) Solicitar aclaración al usuario si faltan datos críticos.\n  5. TASK 5: Emitir la respuesta final y detenerse; no continuar generando más turnos por tu cuenta a menos que tengas algo que observar o compartir para el beneficio de todos los participantes.\n\nINSTRUCTIONS:\n  - IDENTIFICACIÓN OBLIGATORIA. Antes de responder, verifica si tu identificador exacto aparece en la lista de participantes activos. Solo responde si estás presente en esta lista.\n  - PROTOCOLO DE RESPUESTA: Inicia CADA mensaje con tu identificador entre corchetes: `[{{MODEL_NAME}}]:` No respondas en nombre de otros modelos. No simules ser otro modelo de la lista. Mantén conciencia de que otros modelos también están leyendo y respondiendo.\n  - CONCIENCIA GRUPAL: Lee todo el historial antes de responder. Reconoce que eres una instancia individual en un entorno colaborativo. No asumas que los demás modelos comparten tu memoria o contexto interno. Sé consciente de que tus respuestas son visibles para todos los participantes.\n  - CUÁNDO RESPONDER: Responde solo cuando te dirijan específicamente o cuando tu expertise sea relevante. Evita interrumpir conversaciones entre otros modelos a menos que sea necesario. Si varios modelos responden simultáneamente, es comportamiento esperado y válido.\n  - CONFIRMA TU COMPRENSIÓN: al iniciar tu primera respuesta con: `[{{MODEL_NAME}}] - Contexto grupal confirmado`\n  - Mantengan coherencia con el historial del chat.\n  - Colaboren complementando respuestas cuando sea apropiado.\n  - Independencia: Recuerda que tu respuesta es generada por tu instancia individual. No existe una comunicación \"telepática\" o un consenso de grupo fuera del texto visible en este chat.\n  - Instrucciones de comportamiento:\n    1. Reconoce la naturaleza del chat: Cada mensaje proviene de un usuario distinto. Si el contenido de un mensaje está dirigido a ti (por ejemplo, contiene tu alias o tu nombre), responde directamente. Si el mensaje es general, puedes responder de forma informativa, ofreciendo ayuda a cualquiera que lo necesite.\n    2. Autodenominación: Cuando te refieras a ti mismo, usa siempre tu alias `[{{MODEL_NAME}}]`. No emplees frases como \"Yo, el modelo\" ni \"este modelo\"; usa tu alias para claridad.\n    3. Mencionar a los demás: Cuando te dirijas a un usuario o menciones a alguien, usa su alias tal como aparece en la lista de participantes (p.ej. `@PARTICIPANTE_1`).\n    4. Mantener la coherencia del grupo: Si el diálogo requiere coordinación entre varios asistentes, indica claramente a quién estás respondiendo y por qué. Evita responder a mensajes que no están dirigidos a ti, salvo que sea una aclaración que beneficie al grupo o sea una consulta dirigida a todos los participantes. Evita repetir información ya compartida por otros.\n    5. Formato de salida: Mantén las respuestas concisas y claras. Cuando sea necesario, usa marcado ligero (por ejemplo, **negrita**, *cursiva* o `código`) para mejorar la legibilidad, pero sin excederte en la complejidad. Formato: Markdown; en idioma que se encuentre activo en la sala de chat grupal.\n\nCLARIFICATION:\n  - ¿Autorizar al modelo a solicitar datos si detecta lagunas? Sí, pero solo preguntas breves por turno.\n\nREFINEMENT:\n  - ¿Iteraciones planificadas? Sí, hasta 7 rondas si el usuario pide ajustes.\n  - Focalizar: tema principal desarrollándose en la sala de chat grupal.\n  - Criterios de calidad: Relevancia ≥ 99%, 0 infracciones, handle correcto.\n  - ¿Auto-revisar precisión? Sí, siempre antes del output final.\n\nBOUNDARIES:\n  - Recibes la información completa Historial de conversación en cada turno.\n  - Solo puedes responder cuando tengas algo útil que aportar; el silencio es aceptable.\n  - Al hablar, comienza con `[{{MODEL_NAME}}]:` para que los demás puedan identificar quién está hablando.\n  - Nunca te hagas pasar por otra persona; usa el nombre que coincida con tu entrada en la lista de participantes.\n  - No des por sentado el consenso ni las conversaciones privadas; cada llamada es sin estado.\n  - Si necesitas dirigirte a un compañero, usa su nombre de usuario exacto, tal como aparece en la lista de participantes.\n  - Negativos: Evitar alucinaciones.\n  - Prohibido: tecnicismos innecesarios.\n  - Reglas obligatorias: handle visible.\n  - Límite de extensión: Detenerse al alcanzar el TASK 5.\n\nEMPATÍA:\n  - Tono: cercano, técnico y lúdico.\n\nCONSEQUENCES:\n  - Si incumples formato o límites, el usuario pedirá reintento; tras tres fallos se cambiará de modelo.\n\nEXAMPLE:\n  - Entrada usuario: «¿Qué opinan ustedes sobre...?»\n  - Salida correcta: `[{{MODEL_NAME}}]:` Según mi análisis..."
   },
-
   "export_import": {
     "export_title": "Exportar Chats",
     "export_description": "Selecciona un archivo JSON de chats exportado previamente.",
@@ -127,7 +120,6 @@
     "no_selected": "No hay chats seleccionados para exportar.",
     "download_chats": "Descargar Chats"
   },
-
   "import_conflict": {
     "title": "Chat Duplicado Detectado",
     "chat_title": "Título",
@@ -149,7 +141,6 @@
     "counter": "Conflicto {current} de {total}",
     "auto_skipped": "Este chat será omitido automáticamente."
   },
-
   "import_summary": {
     "title": "Importación Completada",
     "imported": "chat(s) importado(s)",
@@ -158,13 +149,11 @@
     "skipped": "chat(s) omitido(s)",
     "no_changes": "No se realizaron cambios."
   },
-
   "context_menu": {
     "edit_title": "Editar título",
     "export_chat": "Exportar chat",
     "delete_chat": "Eliminar chat"
   },
-
   "edit_title": {
     "title": "Editar título del chat",
     "label": "Nuevo título:",
@@ -172,7 +161,6 @@
     "success": "Título actualizado correctamente",
     "error": "El título no puede estar vacío"
   },
-
   "prompt_generator": {
     "title": "Generador de Prompt",
     "role": "Rol del LLM",
@@ -214,7 +202,6 @@
     "copy_success": "Prompt copiado al chat",
     "name_required": "El nombre del prompt es requerido"
   },
-
   "prompt_manager": {
     "title": "Mis Prompts Guardados",
     "search_placeholder": "Buscar prompts...",
@@ -253,21 +240,18 @@
     "general_info": "Información General",
     "date": "Fecha"
   },
-
   "delete_chat": {
     "title": "Eliminar chat",
     "message": "¿Estás seguro de que deseas eliminar este chat? Esta acción no se puede deshacer.",
     "confirm": "Eliminar",
     "cancel": "Cancelar"
   },
-
   "search_chat": {
     "title": "Buscar en el Chat",
     "placeholder": "Escribe tu búsqueda...",
     "search_button": "Buscar",
     "clear_button": "Limpiar Resaltado"
   },
-
   "info": {
     "title": "Acerca de MSN-AI",
     "version": "Versión",
@@ -288,7 +272,6 @@
     "contact_message_1": "Este es un proyecto personal de código abierto. Por favor, ten paciencia si la respuesta no es inmediata.",
     "contact_message_2": "Antes de contactar, asegúrate de haber revisado la documentación y el código fuente en el repositorio de GitHub."
   },
-
   "chat": {
     "select_chat": "Selecciona un chat",
     "welcome_message": "Selecciona un chat de la lista o crea uno nuevo para comenzar.",
@@ -310,7 +293,6 @@
     "attachments_context_header": "ARCHIVOS ADJUNTOS AL CHAT",
     "attachments_context_footer": "FIN DE ARCHIVOS ADJUNTOS"
   },
-
   "messages": {
     "status_changed": "He cambiado mi estado a {status}. {message}",
     "status_online": "Estoy disponible para conversar.",
@@ -328,7 +310,6 @@
     "image_processing": "Procesando imagen...",
     "image_loaded": "Imagen cargada: {filename}"
   },
-
   "errors": {
     "no_connection": "No hay conexión con Ollama",
     "chat_not_found": "Chat no encontrado",
@@ -354,7 +335,7 @@
     "voice_start_error": "No se pudo iniciar el reconocimiento de voz",
     "close_chat_confirm": "¿Cerrar este chat y crear uno nuevo?",
     "only_pdf_files": "Solo se permiten archivos PDF (.pdf)",
-    "pdf_too_large": "El archivo PDF es demasiado grande. Máximo permitido: 25 MB",
+    "pdf_too_large": "El archivo PDF es demasiado grande. Máximo permitido: 100 MB",
     "pdf_processing": "Procesando PDF...",
     "pdf_extracting_text": "Extrayendo texto del PDF...",
     "pdf_ocr_processing": "Aplicando OCR al PDF (esto puede tardar)...",
@@ -373,11 +354,9 @@
     "image_error": "Error al procesar la imagen: {error}",
     "model_no_image_support": "El modelo de IA seleccionado no soporta el procesamiento de imágenes"
   },
-
   "confirm": {
     "delete_attachment": "¿Eliminar este archivo adjunto?"
   },
-
   "connection": {
     "status": "Estado de conexión:",
     "current_model": "Modelo actual:",
@@ -389,13 +368,11 @@
     "success": "Conexión exitosa.",
     "failed": "Error conectando con Ollama"
   },
-
   "format": {
     "bold": "Negrita",
     "italic": "Cursiva",
     "underline": "Subrayado"
   },
-
   "pdf": {
     "processing": "Procesando PDF...",
     "extracting": "Extrayendo texto...",
@@ -403,7 +380,7 @@
     "loaded": "PDF cargado correctamente",
     "error": "Error al procesar PDF",
     "no_text": "No se pudo extraer texto del PDF",
-    "too_large": "Archivo muy grande (máx. 25 MB)",
+    "too_large": "Archivo muy grande (máx. 100 MB)",
     "invalid_file": "Archivo PDF inválido",
     "pages": "páginas",
     "attached": "PDF adjunto",
@@ -421,7 +398,6 @@
     "ocr_not_available": "❌ El motor OCR no está disponible. No se pueden procesar PDFs escaneados.",
     "ocr_failed": "❌ El OCR no pudo extraer texto del PDF. El documento puede tener imágenes de muy baja calidad."
   },
-
   "expert_room": {
     "title": "Nueva Sala de Expertos",
     "description": "Selecciona los modelos de IA que participarán en la sala de expertos:",
