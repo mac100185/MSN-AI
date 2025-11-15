@@ -393,7 +393,11 @@
     "editing_prompt": "Promptta Allichaspa",
     "edit_cancelled": "Allichayqa hark'asqa",
     "general_info": "General Willakuy",
-    "date": "P'unchaw"
+    "date": "P'unchaw",
+    "import_error": "Promptkunata haykuchiyta pantay",
+    "prompt_not_found": "Prompt mana tarisqachu",
+    "export_single_success": "Prompt allin lluqsichikunqa",
+    "delete_all_success": "Tukuy promptkuna qichurisqa"
   },
   "expert_room": {
     "title": "Musuq Yachaqkunapa Wasiy",

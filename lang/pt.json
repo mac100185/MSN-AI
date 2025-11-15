@@ -235,7 +235,11 @@
     "date": "Data",
     "edit_mode": "Modo de edição ativado. Modifique os campos e gere o prompt atualizado.",
     "editing_prompt": "Editando Prompt",
-    "edit_cancelled": "Edição cancelada"
+    "edit_cancelled": "Edição cancelada",
+    "import_error": "Erro ao importar prompts",
+    "prompt_not_found": "Prompt não encontrado",
+    "export_single_success": "Prompt exportado com sucesso",
+    "delete_all_success": "Todos os prompts foram excluídos"
   },
   "delete_chat": {
     "title": "Eliminar chat",

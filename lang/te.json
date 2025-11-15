@@ -368,7 +368,11 @@
     "date": "Date",
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "edit_cancelled": "Edit cancelled",
+    "import_error": "ప్రాంప్ట్‌లను దిగుమతి చేయడంలో లోపం",
+    "prompt_not_found": "ప్రాంప్ట్ కనుగొనబడలేదు",
+    "export_single_success": "ప్రాంప్ట్ విజయవంతంగా ఎగుమతి చేయబడింది",
+    "delete_all_success": "అన్ని ప్రాంప్ట్‌లు తొలగించబడ్డాయి"
   },
   "pdf": {
     "processing": "Processing PDF...",

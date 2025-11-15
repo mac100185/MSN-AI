@@ -368,7 +368,11 @@
     "date": "날짜",
     "edit_mode": "편집 모드가 활성화되었습니다. 필드를 수정하고 업데이트된 프롬프트를 생성하세요.",
     "editing_prompt": "프롬프트 편집 중",
-    "edit_cancelled": "편집 취소됨"
+    "edit_cancelled": "편집 취소됨",
+    "import_error": "프롬프트 가져오기 오류",
+    "prompt_not_found": "프롬프트를 찾을 수 없습니다",
+    "export_single_success": "프롬프트를 성공적으로 내보냈습니다",
+    "delete_all_success": "모든 프롬프트가 삭제되었습니다"
   },
   "pdf": {
     "processing": "PDF 처리 중...",

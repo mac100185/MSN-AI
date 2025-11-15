@@ -235,7 +235,11 @@
     "editing_prompt": "Prompt bearbeiten",
     "edit_cancelled": "Bearbeitung abgebrochen",
     "general_info": "Allgemeine Informationen",
-    "date": "Datum"
+    "date": "Datum",
+    "import_error": "Fehler beim Importieren von Prompts",
+    "prompt_not_found": "Prompt nicht gefunden",
+    "export_single_success": "Prompt erfolgreich exportiert",
+    "delete_all_success": "Alle Prompts wurden gelöscht"
   },
   "delete_chat": {
     "title": "Chat löschen",

@@ -241,7 +241,11 @@
     "date": "日期",
     "edit_mode": "编辑模式已激活。修改字段并生成更新的提示词。",
     "editing_prompt": "编辑提示词",
-    "edit_cancelled": "编辑已取消"
+    "edit_cancelled": "编辑已取消",
+    "import_error": "导入提示时出错",
+    "prompt_not_found": "未找到提示",
+    "export_single_success": "提示导出成功",
+    "delete_all_success": "已删除所有提示"
   },
   "search_chat": {
     "title": "在聊天中搜索",

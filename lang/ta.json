@@ -368,7 +368,11 @@
     "date": "Date",
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "edit_cancelled": "Edit cancelled",
+    "import_error": "ப்ராம்ட் இறக்குமதி செய்வதில் பிழை",
+    "prompt_not_found": "ப்ராம்ட் காணப்படவில்லை",
+    "export_single_success": "ப்ராம்ட் வெற்றிகரமாக ஏற்றுமதி செய்யப்பட்டது",
+    "delete_all_success": "அனைத்து ப்ராம்ட்களும் நீக்கப்பட்டன"
   },
   "pdf": {
     "processing": "Processing PDF...",

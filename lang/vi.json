@@ -368,7 +368,11 @@
     "date": "Ngày",
     "edit_mode": "Chế độ chỉnh sửa đã được kích hoạt. Sửa đổi các trường và tạo prompt đã cập nhật.",
     "editing_prompt": "Đang chỉnh sửa Prompt",
-    "edit_cancelled": "Đã hủy chỉnh sửa"
+    "edit_cancelled": "Đã hủy chỉnh sửa",
+    "import_error": "Lỗi khi nhập prompt",
+    "prompt_not_found": "Không tìm thấy prompt",
+    "export_single_success": "Đã xuất prompt thành công",
+    "delete_all_success": "Đã xóa tất cả các prompt"
   },
   "pdf": {
     "processing": "Đang xử lý PDF...",

@@ -241,7 +241,11 @@
     "date": "Дата",
     "edit_mode": "Режим редактирования активирован. Измените поля и сгенерируйте обновленный промпт.",
     "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "edit_cancelled": "Edit cancelled",
+    "import_error": "Ошибка импорта подсказок",
+    "prompt_not_found": "Подсказка не найдена",
+    "export_single_success": "Подсказка успешно экспортирована",
+    "delete_all_success": "Все подсказки удалены"
   },
   "search_chat": {
     "title": "Поиск в чате",

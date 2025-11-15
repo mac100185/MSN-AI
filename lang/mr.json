@@ -368,7 +368,11 @@
     "date": "Date",
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "edit_cancelled": "Edit cancelled",
+    "import_error": "प्रॉम्प्ट आयात करताना त्रुटी",
+    "prompt_not_found": "प्रॉम्प्ट आढळला नाही",
+    "export_single_success": "प्रॉम्प्ट यशस्वीरित्या निर्यात केला",
+    "delete_all_success": "सर्व प्रॉम्प्ट हटवले गेले आहेत"
   },
   "pdf": {
     "processing": "Processing PDF...",

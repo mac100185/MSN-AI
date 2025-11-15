@@ -368,7 +368,11 @@
     "editing_prompt": "Promptxa Mayjt'ayasa",
     "edit_cancelled": "Mayjt'awixa sayt'ayata",
     "general_info": "General Yatiyawi",
-    "date": "Uru"
+    "date": "Uru",
+    "import_error": "Prompts uñstayirinak mantañan pantjata",
+    "prompt_not_found": "Prompt jan jikxatatäkiti",
+    "export_single_success": "Prompt sum apxatawayi",
+    "delete_all_success": "Taqi prompts apsuñ phuqhatawa"
   },
   "pdf": {
     "processing": "PDF lurasiña...",

@@ -367,7 +367,11 @@
     "date": "Tanggal",
     "edit_mode": "Mode edit diaktifkan. Ubah bidang dan buat prompt yang diperbarui.",
     "editing_prompt": "Mengedit Prompt",
-    "edit_cancelled": "Edit dibatalkan"
+    "edit_cancelled": "Edit dibatalkan",
+    "import_error": "Kesalahan mengimpor prompt",
+    "prompt_not_found": "Prompt tidak ditemukan",
+    "export_single_success": "Prompt berhasil diekspor",
+    "delete_all_success": "Semua prompt telah dihapus"
   },
   "pdf": {
     "processing": "Memproses PDF...",

@@ -368,7 +368,11 @@
     "date": "Tarih",
     "edit_mode": "Düzenleme modu etkinleştirildi. Alanları değiştirin ve güncellenmiş promptu oluşturun.",
     "editing_prompt": "Prompt Düzenleniyor",
-    "edit_cancelled": "Düzenleme iptal edildi"
+    "edit_cancelled": "Düzenleme iptal edildi",
+    "import_error": "Komut istemlerini içe aktarma hatası",
+    "prompt_not_found": "Komut istemi bulunamadı",
+    "export_single_success": "Komut istemi başarıyla dışa aktarıldı",
+    "delete_all_success": "Tüm komut istemleri silindi"
   },
   "pdf": {
     "processing": "PDF işleniyor...",

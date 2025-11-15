@@ -238,7 +238,11 @@
     "editing_prompt": "Editando Prompt",
     "edit_cancelled": "Edición cancelada",
     "general_info": "Información General",
-    "date": "Fecha"
+    "date": "Fecha",
+    "import_error": "Error al importar prompts",
+    "prompt_not_found": "Prompt no encontrado",
+    "export_single_success": "Prompt exportado correctamente",
+    "delete_all_success": "Todos los prompts han sido eliminados"
   },
   "delete_chat": {
     "title": "Eliminar chat",

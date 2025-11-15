@@ -235,7 +235,11 @@
     "date": "Date",
     "edit_mode": "Mode édition activé. Modifiez les champs et générez le prompt mis à jour.",
     "editing_prompt": "Édition du Prompt",
-    "edit_cancelled": "Édition annulée"
+    "edit_cancelled": "Édition annulée",
+    "import_error": "Erreur lors de l'importation des prompts",
+    "prompt_not_found": "Prompt introuvable",
+    "export_single_success": "Prompt exporté avec succès",
+    "delete_all_success": "Tous les prompts ont été supprimés"
   },
   "delete_chat": {
     "title": "Supprimer le chat",

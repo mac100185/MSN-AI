@@ -368,7 +368,11 @@
     "date": "日付",
     "edit_mode": "編集モードが有効になりました。フィールドを変更して更新されたプロンプトを生成してください。",
     "editing_prompt": "プロンプトを編集中",
-    "edit_cancelled": "編集がキャンセルされました"
+    "edit_cancelled": "編集がキャンセルされました",
+    "import_error": "プロンプトのインポート中にエラーが発生しました",
+    "prompt_not_found": "プロンプトが見つかりません",
+    "export_single_success": "プロンプトが正常にエクスポートされました",
+    "delete_all_success": "すべてのプロンプトが削除されました"
   },
   "pdf": {
     "processing": "PDFを処理中...",

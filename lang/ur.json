@@ -368,7 +368,11 @@
     "date": "Date",
     "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
     "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled"
+    "edit_cancelled": "Edit cancelled",
+    "import_error": "پرامپٹ درآمد کرنے میں خرابی",
+    "prompt_not_found": "پرامپٹ نہیں ملا",
+    "export_single_success": "پرامپٹ کامیابی سے برآمد کیا گیا",
+    "delete_all_success": "تمام پرامپٹس حذف کر دیے گئے"
   },
   "pdf": {
     "processing": "Processing PDF...",

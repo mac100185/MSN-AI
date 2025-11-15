@@ -2743,7 +2743,8 @@ class MSNAI {
       processingMsg.includes("messages.") ||
       processingMsg === "messages.image_processing"
     ) {
-      processingMsg = "Procesando imagen...";
+      processingMsg =
+        this.t("messages.image_processing") || "Processing image...";
     }
     this.showNotification(processingMsg, "info");
 
@@ -3206,9 +3207,12 @@ class MSNAI {
           message =
             "El modelo de IA seleccionado no soporta el procesamiento de imágenes";
         } else if (message === "messages.image_processing") {
-          message = "Procesando imagen...";
+          message =
+            this.t("messages.image_processing") || "Processing image...";
         } else if (message.includes("messages.image_loaded")) {
-          message = "Imagen cargada correctamente";
+          message =
+            this.t("messages.image_loaded", { filename: "" }) ||
+            "Image loaded successfully";
         }
       }
     }
@@ -8745,7 +8749,10 @@ MSNAI.prototype.importPrompts = function (file) {
       this.showNotification(this.t("prompt_manager.import_success"), "success");
     } catch (error) {
       console.error("Error al importar prompts:", error);
-      this.showNotification("Error al importar prompts", "error");
+      this.showNotification(
+        this.t("prompt_manager.import_error") || "Error importing prompts",
+        "error",
+      );
     }
   };
   reader.readAsText(file);
@@ -8758,7 +8765,10 @@ MSNAI.prototype.exportSinglePrompt = function (promptId) {
   const prompt = prompts.find((p) => String(p.id) === String(promptId));
 
   if (!prompt) {
-    this.showNotification("Prompt no encontrado", "error");
+    this.showNotification(
+      this.t("prompt_manager.prompt_not_found") || "Prompt not found",
+      "error",
+    );
     return;
   }
 
@@ -8803,13 +8813,20 @@ MSNAI.prototype.exportSinglePrompt = function (promptId) {
 
   a.click();
   URL.revokeObjectURL(url);
-  this.showNotification("Prompt exportado correctamente", "success");
+  this.showNotification(
+    this.t("prompt_manager.export_single_success") ||
+      "Prompt exported successfully",
+    "success",
+  );
 };
 
 MSNAI.prototype.deleteAllPrompts = function () {
   localStorage.removeItem("msnai-saved-prompts");
   this.loadSavedPrompts();
-  this.showNotification("Todos los prompts han sido eliminados", "success");
+  this.showNotification(
+    this.t("prompt_manager.delete_all_success") || "All prompts deleted",
+    "success",
+  );
 };
 
 MSNAI.prototype.searchPrompts = function (query) {
