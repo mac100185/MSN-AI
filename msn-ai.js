@@ -1,6 +1,13 @@
 // ===================
 // SISTEMA MSN-AI (EXTENDIDO CON FUNCIONALIDADES COMPLETAS)
 // ===================
+// ÚLTIMA ACTUALIZACIÓN: Mejoras críticas para evitar errores 429 y soporte completo de salas de expertos
+// - Rate limiting mejorado: 3s intervalo mínimo, backoff exponencial más agresivo
+// - Botón "enviar-sumbido-btn" ahora funciona en salas de expertos
+// - SIN límites ni truncamientos: archivos .txt y .pdf se envían COMPLETOS
+// - Notificaciones de progreso mejoradas para archivos grandes
+// - Límites de carga aumentados: 100 MB para txt, pdf e imágenes
+// ===================
 class MSNAI {
   constructor() {
     this.chats = [];
@@ -78,7 +85,7 @@ class MSNAI {
       topP: 0.9,
       maxTokens: 4000, // Aumentado a 4000 para respuestas más completas
       groupChatSystemPrompt: "", // Se llenará con la traducción por defecto
-      rateLimitInterval: 2000, // 2 segundos por defecto para evitar errores 429
+      rateLimitInterval: 3000, // 3 segundos por defecto para evitar errores 429
     };
     this.currentStatus = "online"; // Estado inicial
 
@@ -1396,6 +1403,12 @@ class MSNAI {
     });
   }
 
+  /**
+   * Envía un "zumbido" (nudge) al chat actual
+   * ACTUALIZACIÓN: Ahora soporta salas de expertos enviando a todos los participantes
+   * - Si es chat individual: comportamiento original (streaming)
+   * - Si es sala de expertos: envía a todos los modelos secuencialmente con rate limiting
+   */
   async sendNudge() {
     const chatPanel = document.getElementById("chat-panel");
     chatPanel.style.animation = "nudge 0.5s ease";
@@ -1411,9 +1424,166 @@ class MSNAI {
       timestamp: new Date().toISOString(),
     };
     chat.messages.push(nudgeMsg);
+
+    // VERIFICAR SI ES UNA SALA DE EXPERTOS
+    if (chat.isExpertRoom) {
+      // Agregar solo el mensaje del usuario al DOM sin re-renderizar todo
+      this.appendMessageToDOM(chat, nudgeMsg, chat.messages.length - 1);
+      this.saveChats();
+      console.log("🏢 [Nudge] Enviando zumbido a sala de expertos...");
+
+      // Inicializar array de controladores de abort para esta sala
+      this.expertRoomAbortControllers[chat.id] = [];
+
+      // Marcar sala como respondiendo
+      this.respondingChats.add(chat.id);
+
+      // Mostrar botón de detener
+      this.updateStopButtonVisibility();
+
+      // Mostrar indicador de procesamiento
+      this.showAIThinking(true);
+
+      // Actualizar lista de chats para mostrar indicador visual
+      this.renderChatList();
+
+      const nudgeMessage = this.t("messages.nudge_sent");
+
+      // Procesar cada modelo de la sala
+      for (let i = 0; i < chat.models.length; i++) {
+        const model = chat.models[i];
+
+        // Verificar si se abortó el procesamiento
+        if (!this.respondingChats.has(chat.id)) {
+          console.log("🛑 [Nudge] Procesamiento abortado por el usuario");
+          break;
+        }
+
+        try {
+          console.log(
+            `🤖 [Nudge] Enviando zumbido a ${model}... (${i + 1}/${chat.models.length})`,
+          );
+
+          // Enviar con el sistema de rate limiting
+          const response = await this.sendToAIWithRetry(
+            nudgeMessage,
+            chat.id,
+            model,
+            null,
+            null,
+            3, // máximo 3 intentos
+          );
+
+          // Agregar respuesta inmediatamente cuando llega
+          const aiMessage = {
+            type: "ai",
+            content: response,
+            model: model,
+            timestamp: new Date().toISOString(),
+          };
+          chat.messages.push(aiMessage);
+
+          // Agregar al DOM sin re-renderizar todo si es el chat actual
+          if (this.currentChatId === chat.id) {
+            this.appendMessageToDOM(chat, aiMessage, chat.messages.length - 1);
+            this.saveChats();
+          }
+
+          console.log(`✅ [Nudge] Respuesta de ${model} recibida`);
+        } catch (error) {
+          console.error(`❌ [Nudge] Error con ${model}:`, error);
+
+          // Si fue abortado, no agregar mensaje de error
+          if (
+            error.name === "AbortError" ||
+            !this.respondingChats.has(chat.id)
+          ) {
+            console.log(`🛑 [Nudge] Solicitud a ${model} abortada`);
+            continue;
+          }
+
+          // Crear mensaje de error amigable
+          let errorContent = "";
+          const errorMessage = error.message || "";
+
+          if (
+            errorMessage.includes("TimeoutError") ||
+            errorMessage.includes("timed out")
+          ) {
+            errorContent = this.t("expert_room.error_timeout", { model });
+          } else if (
+            errorMessage.includes("HTTP 429") ||
+            errorMessage.includes("Too Many Requests")
+          ) {
+            errorContent = this.t("expert_room.error_http_429", { model });
+          } else if (errorMessage.includes("HTTP 500")) {
+            errorContent = this.t("expert_room.error_http_500", { model });
+          } else if (errorMessage.includes("HTTP 404")) {
+            errorContent = this.t("expert_room.error_http_404", { model });
+          } else if (errorMessage.includes("HTTP 503")) {
+            errorContent = this.t("expert_room.error_http_503", { model });
+          } else if (
+            errorMessage.includes("network") ||
+            errorMessage.includes("fetch")
+          ) {
+            errorContent = this.t("expert_room.error_network", { model });
+          } else {
+            errorContent = this.t("expert_room.error_generic", { model });
+          }
+
+          // Fallback si la traducción no está disponible
+          if (!errorContent || errorContent.includes("expert_room.error_")) {
+            errorContent = `⚠️ ${model}: No se pudo obtener respuesta en este momento.`;
+          }
+
+          const errorMsg = {
+            type: "ai",
+            content: errorContent,
+            model: model,
+            timestamp: new Date().toISOString(),
+          };
+          chat.messages.push(errorMsg);
+
+          // Agregar al DOM sin re-renderizar todo si es el chat actual
+          if (this.currentChatId === chat.id) {
+            this.appendMessageToDOM(chat, errorMsg, chat.messages.length - 1);
+            this.saveChats();
+          }
+        }
+      }
+
+      // Marcar sala como NO respondiendo
+      this.respondingChats.delete(chat.id);
+
+      // Limpiar controladores de abort
+      delete this.expertRoomAbortControllers[chat.id];
+
+      // Ocultar botón de detener
+      this.updateStopButtonVisibility();
+
+      // Ocultar indicador de procesamiento
+      this.showAIThinking(false);
+
+      // NO es necesario renderizar todo de nuevo ya que los mensajes fueron agregados incrementalmente
+      // con appendMessageToDOM durante el proceso
+
+      this.saveChats();
+
+      // Actualizar lista de chats para quitar indicador de respondiendo
+      this.renderChatList();
+
+      this.playSound("message-in");
+
+      console.log(
+        `✅ [Nudge] Todas las respuestas procesadas en sala de expertos`,
+      );
+      return;
+    }
+
+    // CHAT INDIVIDUAL - comportamiento original
+    // Renderizar el mensaje del usuario para chats individuales
     this.renderMessages(chat);
     this.saveChats();
-
     // Crear mensaje de IA vacío para streaming
     const aiMessage = {
       type: "ai",
@@ -2063,12 +2233,12 @@ class MSNAI {
         return;
       }
 
-      // Validar tamaño (máximo 10 MB para archivos de texto)
-      const maxSize = 10 * 1024 * 1024; // 10 MB en bytes
+      // Validar tamaño (máximo 100 MB para archivos de texto)
+      const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
       if (file.size > maxSize) {
         this.showNotification(
           this.t("errors.text_file_too_large") ||
-            "El archivo de texto es demasiado grande (máximo 10 MB)",
+            "El archivo de texto es demasiado grande (máximo 100 MB)",
           "error",
         );
         return;
@@ -2196,8 +2366,8 @@ class MSNAI {
         return;
       }
 
-      // Validar tamaño (máximo 25 MB)
-      const maxSize = 25 * 1024 * 1024; // 25 MB en bytes
+      // Validar tamaño (máximo 100 MB)
+      const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
       if (file.size > maxSize) {
         this.showNotification(this.t("errors.pdf_too_large"), "error");
         return;
@@ -2476,8 +2646,8 @@ class MSNAI {
       return;
     }
 
-    // Validar tamaño (máximo 20 MB)
-    const maxSize = 20 * 1024 * 1024; // 20 MB en bytes
+    // Validar tamaño (máximo 100 MB)
+    const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
     if (file.size > maxSize) {
       this.showNotification(this.t("errors.image_too_large"), "error");
       return;
@@ -3078,16 +3248,18 @@ class MSNAI {
 
       // Construir mensaje con archivo de texto si existe
       if (fileContent) {
-        // IMPORTANTE: Enviar el contenido COMPLETO del archivo
-        // Anteriormente se limitaba a solo 3 chunks (~72KB), causando pérdida de información
-        // El rate limiter (20 req/min, 1000ms intervalo, máx 2 concurrentes) gestiona
-        // automáticamente el flujo para evitar errores 429 incluso con archivos grandes
+        // IMPORTANTE: Enviar el contenido COMPLETO del archivo sin límites ni truncamientos
+        // El rate limiter gestiona automáticamente el flujo para evitar errores 429
         let textContent = fileContent;
 
-        // Advertencia si el archivo es muy grande
-        if (textContent.length > 50000) {
+        // Advertencia solo informativa si el archivo es muy grande
+        if (textContent.length > 100000) {
           console.warn(
-            `⚠️ [SendMessage] Enviando archivo grande (${Math.round(textContent.length / 1000)}KB). Esto puede aumentar el tiempo de respuesta.`,
+            `⚠️ [SendMessage] Enviando archivo muy grande (${Math.round(textContent.length / 1000)}KB). El procesamiento puede tomar varios minutos.`,
+          );
+        } else if (textContent.length > 50000) {
+          console.log(
+            `📄 [SendMessage] Enviando archivo (${Math.round(textContent.length / 1000)}KB).`,
           );
         }
 
@@ -3097,14 +3269,17 @@ class MSNAI {
       // Construir contexto con PDF si existe (se pasa por separado)
       let pdfContextText = null;
       if (pdfContext) {
-        // IMPORTANTE: Enviar el contenido COMPLETO del PDF
-        // Anteriormente se limitaba a solo 3 chunks, causando pérdida de información
+        // IMPORTANTE: Enviar el contenido COMPLETO del PDF sin límites ni truncamientos
         // El rate limiter gestiona automáticamente el flujo para evitar errores 429
 
-        // Advertencia si el PDF es muy grande
-        if (pdfContext.text.length > 50000) {
+        // Advertencia solo informativa si el PDF es muy grande
+        if (pdfContext.text.length > 100000) {
           console.warn(
-            `⚠️ [SendMessage] Enviando PDF grande (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas). Esto puede aumentar el tiempo de respuesta.`,
+            `⚠️ [SendMessage] Enviando PDF muy grande (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas). El procesamiento puede tomar varios minutos.`,
+          );
+        } else if (pdfContext.text.length > 50000) {
+          console.log(
+            `📄 [SendMessage] Enviando PDF (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas).`,
           );
         }
 
@@ -3396,15 +3571,15 @@ class MSNAI {
           const attachment = await this.getAttachment(attachmentMeta.id);
           if (attachment) {
             if (attachment.type === "text/plain") {
-              // IMPORTANTE: Enviar el contenido COMPLETO del archivo de texto
-              // El rate limiter evita sobrecargar el servidor Ollama
+              // IMPORTANTE: Enviar el contenido COMPLETO sin límites del archivo de texto
+              // El rate limiter gestiona el flujo para evitar errores 429
               let textContent = attachment.content;
               attachmentsData.push(
                 `[Archivo TXT: ${attachment.name}]\n${textContent}\n`,
               );
             } else if (attachment.type === "application/pdf") {
-              // IMPORTANTE: Enviar el contenido COMPLETO del PDF
-              // El rate limiter evita sobrecargar el servidor Ollama
+              // IMPORTANTE: Enviar el contenido COMPLETO sin límites del PDF
+              // El rate limiter gestiona el flujo para evitar errores 429
               attachmentsData.push(
                 `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${attachment.content}\n`,
               );
@@ -3821,9 +3996,20 @@ class MSNAI {
   }
 
   stopAIResponse() {
+    console.log("🛑 [StopAI] Función stopAIResponse llamada");
+    console.log(`🛑 [StopAI] currentChatId: ${this.currentChatId}`);
+    console.log(
+      `🛑 [StopAI] respondingChats tiene este chat: ${this.respondingChats.has(this.currentChatId)}`,
+    );
+    console.log(
+      `🛑 [StopAI] respondingChats: ${Array.from(this.respondingChats).join(", ")}`,
+    );
+
     // Detener la respuesta del chat actual si está respondiendo
     if (this.currentChatId && this.respondingChats.has(this.currentChatId)) {
       const chat = this.chats.find((c) => c.id === this.currentChatId);
+      console.log(`🛑 [StopAI] Chat encontrado: ${chat ? chat.id : "NO"}`);
+      console.log(`🛑 [StopAI] Es sala de expertos: ${chat?.isExpertRoom}`);
 
       // Verificar si es una sala de expertos
       if (chat && chat.isExpertRoom) {
@@ -3849,13 +4035,37 @@ class MSNAI {
 
       // Manejo de chat normal
       const abortController = this.abortControllers[this.currentChatId];
+      console.log(`🛑 [StopAI] abortController existe: ${!!abortController}`);
+      console.log(
+        `🛑 [StopAI] Controladores disponibles: ${Object.keys(this.abortControllers).join(", ")}`,
+      );
+
       if (abortController) {
-        console.log("🛑 Deteniendo respuesta de IA...");
+        console.log("🛑 Deteniendo respuesta de IA en chat individual...");
+
+        // CRÍTICO: marcar ANTES de abortar para que sendToAI lo detecte
+        this.wasAborted = true;
+
+        // Abortar la solicitud
         abortController.abort();
+
+        // NO eliminar el controller aquí - lo hará el finally de sendToAI
+        // después de que el abort se propague correctamente
+
         this.updateStopButtonVisibility();
         this.showAIThinking(false);
         this.playSound("nudge");
+
+        console.log("✅ [StopAI] Señal de abort enviada correctamente");
+      } else {
+        console.error(
+          `❌ [StopAI] No se encontró abortController para chat ${this.currentChatId}`,
+        );
       }
+    } else {
+      console.log(
+        "⚠️ [StopAI] No se puede detener: chat no está respondiendo o no hay chat activo",
+      );
     }
   }
 
@@ -4657,6 +4867,102 @@ class MSNAI {
     });
   }
 
+  /**
+   * Agrega un solo mensaje al DOM sin re-renderizar todos los mensajes
+   * Útil para salas de expertos donde las respuestas llegan secuencialmente
+   * @param {Object} chat - Chat al que pertenece el mensaje
+   * @param {Object} message - Mensaje a agregar
+   * @param {number} messageIndex - Índice del mensaje en el array
+   */
+  appendMessageToDOM(chat, message, messageIndex) {
+    const messagesArea = document.getElementById("messages-area");
+    if (!messagesArea) return;
+
+    // VERIFICAR si ya existe el número correcto de mensajes en el DOM
+    // Esto evita duplicados cuando se cambia de chat y se vuelve
+    const existingMessages = messagesArea.querySelectorAll(".message");
+    const expectedMessageCount = chat.messages.length;
+
+    // Si el DOM tiene el mensaje esperado o más, no hacer nada (evitar duplicados)
+    if (existingMessages.length >= expectedMessageCount) {
+      console.log(
+        `⏭️ [AppendMessage] DOM ya tiene ${existingMessages.length} mensajes (esperados: ${expectedMessageCount}). Saltando duplicado.`,
+      );
+      return;
+    }
+
+    // Si el DOM está desincronizado (faltan varios mensajes), reconstruir todos los faltantes
+    if (existingMessages.length < expectedMessageCount - 1) {
+      console.log(
+        `🔄 [AppendMessage] DOM desincronizado: tiene ${existingMessages.length} mensajes pero se esperan ${expectedMessageCount}. Reconstruyendo mensajes faltantes.`,
+      );
+
+      // Agregar TODOS los mensajes faltantes desde donde está el DOM hasta el actual
+      for (let i = existingMessages.length; i < expectedMessageCount; i++) {
+        const msg = chat.messages[i];
+        this.createAndAppendMessageElement(chat, msg, i);
+      }
+      return;
+    }
+
+    // Agregar el mensaje actual (caso normal: DOM sincronizado)
+    this.createAndAppendMessageElement(chat, message, messageIndex);
+  }
+
+  /**
+   * Crea y agrega un elemento de mensaje al DOM
+   * Función auxiliar usada por appendMessageToDOM
+   */
+  createAndAppendMessageElement(chat, message, messageIndex) {
+    const messagesArea = document.getElementById("messages-area");
+    if (!messagesArea) return;
+
+    const messageElement = document.createElement("div");
+    messageElement.className = "message";
+
+    const time = new Date(message.timestamp).toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const senderClass = message.type === "user" ? "message-user" : "message-ai";
+    let sender =
+      message.type === "user" ? this.t("chat.you") : this.t("chat.ai");
+
+    // Para salas de expertos, mostrar el nombre del modelo
+    if (chat.isExpertRoom && message.type === "ai" && message.model) {
+      sender = `${this.t("chat.ai")} (${message.model})`;
+    }
+
+    // Añadir indicador visual para mensajes de sistema
+    const systemIndicator = message.isSystem
+      ? `<span style="color: #999; font-size: 7pt; margin-left: 5px;">(${this.t("chat.system")})</span>`
+      : "";
+
+    const formattedContent = this.formatMessage(message.content);
+
+    messageElement.innerHTML = `
+      <span class="${senderClass}"><strong>${sender}</strong>${systemIndicator}</span>
+      <span class="message-timestamp">${time}</span>
+      <div class="message-content">${formattedContent}</div>
+    `;
+
+    messagesArea.appendChild(messageElement);
+
+    // Configurar botones de código si hay bloques de código
+    this.setupCodeBlockButtons();
+
+    // Scroll al final si el usuario no hizo scroll manual
+    if (!this.userScrolledUp) {
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+
+    const modelInfo = message.model ? message.model : "usuario";
+    console.log(
+      `✅ [AppendMessage] Mensaje ${messageIndex + 1} agregado al DOM para ${modelInfo} (total en chat: ${chat.messages.length})`,
+    );
+  }
+
   // =================== ACTUALIZACIÓN EN RENDERMESSAGES ===================
   renderMessages(chat) {
     // DETECTAR SI SE ESTÁ LLAMANDO DURANTE STREAMING (ESTO ES UN ERROR)
@@ -4665,6 +4971,13 @@ class MSNAI {
         `❌❌❌ [RenderMessages] ERROR: Se está llamando renderMessages durante streaming para chat ${chat.id}`,
       );
       console.trace("Stack trace:");
+      // En salas de expertos, RETORNAR sin hacer nada para evitar conflictos
+      if (chat.isExpertRoom) {
+        console.log(
+          `⏸️ [RenderMessages] Saliendo para evitar conflicto en sala de expertos`,
+        );
+        return;
+      }
     }
 
     console.log(
@@ -5167,7 +5480,7 @@ class MSNAI {
 
     // Actualizar slider de rate limit
     if (rateLimitSliderEl && rateLimitValueEl) {
-      const rateLimitSeconds = (this.settings.rateLimitInterval || 2000) / 1000;
+      const rateLimitSeconds = (this.settings.rateLimitInterval || 3000) / 1000;
       rateLimitSliderEl.value = rateLimitSeconds;
       rateLimitValueEl.textContent = `${rateLimitSeconds.toFixed(1)}s`;
     }
@@ -7260,6 +7573,12 @@ class MSNAI {
     // ==================================================================================
     // INICIALIZACIÓN DEL RATE LIMITER - CONFIGURACIÓN CRÍTICA PARA EVITAR ERROR 429
     // ==================================================================================
+    // ACTUALIZACIÓN: Valores optimizados para mayor estabilidad
+    // - Intervalo mínimo: 3s (antes 2s) para evitar saturación
+    // - Max solicitudes: 20/min (antes 30/min) para reducir carga
+    // - Delay base reintentos: 5s (antes 3s) para dar más tiempo entre reintentos
+    // - Backoff exponencial más agresivo: 2.5^n (antes 2^n)
+    // - Jitter aumentado: 40% (antes 25%) para mejor dispersión
     //
     // CONFIGURACIÓN BALANCEADA:
     // - Intervalo base de 1 segundo para buena experiencia de usuario
@@ -7283,10 +7602,10 @@ class MSNAI {
     // NOTA: El sistema aumentará el intervalo dinámicamente si detecta errores 429
     // ==================================================================================
     this.rateLimiter = new OllamaRateLimiter({
-      maxRequestsPerMinute: 30, // 30 req/min = 1 cada 2 segundos en promedio
-      minRequestInterval: this.settings.rateLimitInterval || 2000, // Usar valor de configuración, 2s por defecto
+      maxRequestsPerMinute: 20, // 20 req/min para evitar saturación
+      minRequestInterval: this.settings.rateLimitInterval || 3000, // 3s por defecto para mayor estabilidad
       maxRetries: 3,
-      baseRetryDelay: 3000, // 3s antes del primer reintento
+      baseRetryDelay: 5000, // 5s antes del primer reintento (aumentado)
       maxRetryDelay: 60000,
       maxConcurrentRequests: 1, // CRÍTICO: Solo UNA solicitud a la vez
     });
@@ -8742,7 +9061,8 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     timestamp: new Date().toISOString(),
   };
   chat.messages.push(userMessage);
-  this.renderMessages(chat);
+  // Agregar solo el mensaje del usuario al DOM sin re-renderizar todo
+  this.appendMessageToDOM(chat, userMessage, chat.messages.length - 1);
   this.playSound("message-out");
 
   // NO deshabilitar input - permitir nuevos mensajes
@@ -8769,15 +9089,30 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
   let actualMessageToSend = displayedMessage;
 
   if (fileContent) {
-    // IMPORTANTE: Enviar el contenido COMPLETO del archivo a TODOS los modelos de la sala
-    // El rate limiter (20 req/min, 1000ms intervalo, máx 2 concurrentes) espaciará
-    // automáticamente las solicitudes para evitar errores 429
+    // IMPORTANTE: Enviar el contenido COMPLETO sin límites ni truncamientos del archivo a TODOS los modelos de la sala
+    // El rate limiter espaciará automáticamente las solicitudes para evitar errores 429
     let textContent = fileContent;
 
-    // Advertencia si el archivo es muy grande
-    if (textContent.length > 50000) {
+    // Advertencia solo informativa para archivos grandes
+    if (textContent.length > 100000) {
       console.warn(
-        `⚠️ [ExpertRoom] Enviando archivo grande (${Math.round(textContent.length / 1000)}KB) a múltiples modelos. Esto puede aumentar significativamente el tiempo de respuesta.`,
+        `⚠️ [ExpertRoom] Enviando archivo muy grande (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos. El procesamiento puede tomar varios minutos.`,
+      );
+
+      // Mostrar notificación al usuario
+      this.showNotification(
+        `⏳ Enviando archivo completo (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere, esto puede tomar varios minutos...`,
+        "info",
+      );
+    } else if (textContent.length > 50000) {
+      console.log(
+        `📄 [ExpertRoom] Enviando archivo (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos.`,
+      );
+
+      // Mostrar notificación al usuario
+      this.showNotification(
+        `⏳ Enviando archivo completo (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere...`,
+        "info",
       );
     }
 
@@ -8786,21 +9121,46 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
   let pdfContextText = null;
   if (pdfContext) {
-    // IMPORTANTE: Enviar el contenido COMPLETO del PDF a TODOS los modelos de la sala
+    // IMPORTANTE: Enviar el contenido COMPLETO sin límites ni truncamientos del PDF a TODOS los modelos de la sala
     // El rate limiter espaciará automáticamente las solicitudes para evitar errores 429
+    let pdfText = pdfContext.text;
 
-    // Advertencia si el PDF es muy grande
-    if (pdfContext.text.length > 50000) {
+    // Advertencia solo informativa para PDFs grandes
+    if (pdfText.length > 100000) {
       console.warn(
-        `⚠️ [ExpertRoom] Enviando PDF grande (${Math.round(pdfContext.text.length / 1000)}KB, ${pdfContext.pages} páginas) a múltiples modelos. Esto puede aumentar significativamente el tiempo de respuesta.`,
+        `⚠️ [ExpertRoom] Enviando PDF muy grande (${Math.round(pdfText.length / 1000)}KB, ${pdfContext.pages} páginas) a ${chat.models.length} modelos. El procesamiento puede tomar varios minutos.`,
+      );
+
+      // Mostrar notificación al usuario
+      this.showNotification(
+        `⏳ Enviando PDF completo (${pdfContext.pages} páginas, ${Math.round(pdfText.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere, esto puede tomar varios minutos...`,
+        "info",
+      );
+    } else if (pdfText.length > 50000) {
+      console.log(
+        `📄 [ExpertRoom] Enviando PDF (${Math.round(pdfText.length / 1000)}KB, ${pdfContext.pages} páginas) a ${chat.models.length} modelos.`,
+      );
+
+      // Mostrar notificación al usuario
+      this.showNotification(
+        `⏳ Enviando PDF completo (${pdfContext.pages} páginas, ${Math.round(pdfText.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere...`,
+        "info",
       );
     }
 
-    pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${pdfContext.text}`;
+    pdfContextText = `[Contexto PDF: ${pdfContext.name} - ${pdfContext.pages} páginas]\n\n${pdfText}`;
   }
 
   // Procesar cada modelo con el sistema de rate limiting
   const results = [];
+
+  // Mostrar progreso inicial
+  if (chat.models.length > 1) {
+    this.showNotification(
+      `🏢 Consultando ${chat.models.length} expertos...`,
+      "info",
+    );
+  }
 
   for (let i = 0; i < chat.models.length; i++) {
     const model = chat.models[i];
@@ -8815,6 +9175,14 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
       console.log(
         `🤖 [ExpertRoom] Consultando a ${model}... (${i + 1}/${chat.models.length})`,
       );
+
+      // Actualizar progreso para salas con múltiples modelos
+      if (chat.models.length > 1 && i > 0) {
+        this.showNotification(
+          `🤖 Consultando experto ${i + 1}/${chat.models.length}: ${model}`,
+          "info",
+        );
+      }
 
       // El rate limiter manejará automáticamente el espaciado y los reintentos
       const response = await this.sendToAIWithRetry(
@@ -8835,9 +9203,9 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
       };
       chat.messages.push(aiMessage);
 
-      // Renderizar inmediatamente si es el chat actual
+      // Agregar al DOM sin re-renderizar todo si es el chat actual
       if (this.currentChatId === chat.id) {
-        this.renderMessages(chat);
+        this.appendMessageToDOM(chat, aiMessage, chat.messages.length - 1);
         this.saveChats();
       }
 
@@ -8904,9 +9272,9 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
       };
       chat.messages.push(errorMsg);
 
-      // Renderizar inmediatamente si es el chat actual
+      // Agregar al DOM sin re-renderizar todo si es el chat actual
       if (this.currentChatId === chat.id) {
-        this.renderMessages(chat);
+        this.appendMessageToDOM(chat, errorMsg, chat.messages.length - 1);
         this.saveChats();
       }
 
@@ -8937,10 +9305,8 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     chat.title = this.generateChatTitle(chat);
   }
 
-  // Renderizar una vez más para asegurar todo está actualizado
-  if (this.currentChatId === chat.id) {
-    this.renderMessages(chat);
-  }
+  // NO es necesario renderizar todo de nuevo ya que los mensajes fueron agregados incrementalmente
+  // con appendMessageToDOM durante el proceso
 
   this.saveChats();
 
@@ -8948,6 +9314,15 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
   this.renderChatList();
 
   this.playSound("message-in");
+
+  // Mostrar notificación de finalización
+  if (chat.models.length > 1) {
+    const successCount = results.filter((r) => r.success).length;
+    this.showNotification(
+      `✅ ${successCount}/${chat.models.length} expertos respondieron`,
+      successCount === chat.models.length ? "success" : "warning",
+    );
+  }
 
   // Input ya está habilitado - solo dar foco
   input.focus();
@@ -9002,15 +9377,15 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
         const attachment = await this.getAttachment(attachmentMeta.id);
         if (attachment) {
           if (attachment.type === "text/plain") {
-            // IMPORTANTE: Enviar contenido COMPLETO a cada modelo de la sala
-            // El rate limiter evita saturar el servidor con múltiples solicitudes simultáneas
+            // IMPORTANTE: Enviar contenido COMPLETO sin límites a cada modelo de la sala
+            // El rate limiter gestiona el flujo para evitar errores 429
             let textContent = attachment.content;
             attachmentsData.push(
               `[Archivo TXT: ${attachment.name}]\n${textContent}\n`,
             );
           } else if (attachment.type === "application/pdf") {
-            // IMPORTANTE: Enviar contenido COMPLETO a cada modelo de la sala
-            // El rate limiter evita saturar el servidor con múltiples solicitudes simultáneas
+            // IMPORTANTE: Enviar contenido COMPLETO sin límites a cada modelo de la sala
+            // El rate limiter gestiona el flujo para evitar errores 429
             attachmentsData.push(
               `[Archivo PDF: ${attachment.name} - ${attachment.pages} páginas]\n${attachment.content}\n`,
             );
@@ -9287,11 +9662,12 @@ MSNAI.prototype.createNewChat = function () {
 class OllamaRateLimiter {
   constructor(config = {}) {
     // Configuración balanceada con ajuste dinámico para evitar errores 429 (Too Many Requests)
+    // ACTUALIZACIÓN: Configuración más conservadora para máxima estabilidad
     // El sistema aumenta el intervalo automáticamente si detecta errores 429
-    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 30; // 30 req/min razonable
-    this.minRequestInterval = config.minRequestInterval || 2000; // 2 segundos base para evitar 429
+    this.maxRequestsPerMinute = config.maxRequestsPerMinute || 20; // 20 req/min para mayor estabilidad
+    this.minRequestInterval = config.minRequestInterval || 3000; // 3 segundos base para evitar 429
     this.maxRetries = config.maxRetries || 3; // Reintentos automáticos con backoff exponencial
-    this.baseRetryDelay = config.baseRetryDelay || 3000; // ms - 3s antes del primer reintento
+    this.baseRetryDelay = config.baseRetryDelay || 5000; // ms - 5s antes del primer reintento (aumentado)
     this.maxRetryDelay = config.maxRetryDelay || 60000; // ms - Espera máxima entre reintentos
     this.maxConcurrentRequests = config.maxConcurrentRequests || 1; // CRÍTICO: Solo 1 solicitud a la vez
 
@@ -9481,11 +9857,11 @@ class OllamaRateLimiter {
       if (response.status === 429) {
         this.consecutive429Errors++;
 
-        // Si hay muchos errores 429 consecutivos, aumentar el intervalo
-        if (this.consecutive429Errors >= 3) {
+        // AUMENTAR INTERVALO PROGRESIVAMENTE con errores 429
+        if (this.consecutive429Errors >= 2) {
           const newInterval = Math.min(
-            this.minRequestInterval * 1.5,
-            15000, // Máximo 15 segundos
+            this.minRequestInterval * 2, // Duplicar el intervalo
+            20000, // Máximo 20 segundos
           );
           if (newInterval > this.minRequestInterval) {
             console.warn(
@@ -9506,10 +9882,10 @@ class OllamaRateLimiter {
           );
           this.consecutive429Errors = 0;
 
-          // Reducir gradualmente el intervalo de vuelta al original si fue aumentado
+          // Reducir GRADUALMENTE el intervalo de vuelta al original si fue aumentado
           if (this.minRequestInterval > this.originalMinInterval) {
             const newInterval = Math.max(
-              this.minRequestInterval * 0.9,
+              this.minRequestInterval * 0.85, // Reducción más lenta
               this.originalMinInterval,
             );
             if (newInterval < this.minRequestInterval) {
@@ -9532,14 +9908,14 @@ class OllamaRateLimiter {
           errorMessage.includes("Too Many Requests")) &&
         attempt < this.maxRetries
       ) {
-        // Calcular delay con backoff exponencial y jitter
+        // Calcular delay con backoff exponencial y jitter MÁS AGRESIVO
         const exponentialDelay = Math.min(
-          this.baseRetryDelay * Math.pow(2, attempt),
+          this.baseRetryDelay * Math.pow(2.5, attempt), // Exponencial más agresivo
           this.maxRetryDelay,
         );
 
-        // Agregar jitter aleatorio (0-25% del delay)
-        const jitter = Math.random() * exponentialDelay * 0.25;
+        // Agregar jitter aleatorio (0-40% del delay) para mayor dispersión
+        const jitter = Math.random() * exponentialDelay * 0.4;
         const totalDelay = exponentialDelay + jitter;
 
         console.warn(
