@@ -309,7 +309,12 @@
     "image_attached": "图像已附加",
     "no_message": "无附加消息",
     "image_processing": "正在处理图像...",
-    "image_loaded": "图像已加载：{filename}"
+    "image_loaded": "图像已加载：{filename}",
+    "image_pasted": "图片粘贴成功",
+    "sending_large_file": "⏳ 正在将完整文件（{size}KB）发送到 {count} 个模型。请等待，这可能需要几分钟...",
+    "sending_file": "⏳ 正在将完整文件（{size}KB）发送到 {count} 个模型。请等待...",
+    "status_change_noticed": "我注意到您的状态更改为 {status}。",
+    "status_change_noticed_help": "我注意到您的状态更改为 {status}。我能帮您什么吗？"
   },
   "errors": {
     "no_connection": "无法连接到Ollama",
@@ -319,9 +324,10 @@
     "file_not_found": "未找到文件选择器",
     "invalid_json": "无效的JSON文件或没有聊天。",
     "invalid_file": "读取文件时出错。验证它是有效的JSON。",
-    "select_file_first": "请先选择JSON文件",
-    "select_valid_json": "请选择有效的JSON文件",
+    "select_file_first": "请先选择一个 JSON 文件",
+    "select_valid_json": "请选择一个有效的 JSON 文件",
     "only_txt_files": "只允许 .txt 文件",
+    "text_file_too_large": "文本文件太大（最大 100 MB）",
     "select_text_to_format": "选择要格式化的文本",
     "voice_not_supported": "您的浏览器不支持语音识别。",
     "voice_error": "语音识别错误",
@@ -353,7 +359,10 @@
     "only_image_files": "仅允许图像文件（JPG、PNG、GIF、WebP）",
     "image_too_large": "图像太大。最大允许：20 MB",
     "image_error": "处理图像时出错：{error}",
-    "model_no_image_support": "所选的AI模型不支持图像处理"
+    "model_no_image_support": "所选的AI模型不支持图像处理",
+    "image_paste_failed": "粘贴图片时出错",
+    "expert_room_modal_error": "打开专家室模态框时出错",
+    "no_models_for_room": "没有可用的模型来创建房间"
   },
   "confirm": {
     "delete_attachment": "删除此附件？"

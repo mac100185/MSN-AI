@@ -312,7 +312,12 @@
     "image_attached": "Imagen adjunta",
     "no_message": "sin mensaje adicional",
     "image_processing": "Procesando imagen...",
-    "image_loaded": "Imagen cargada: {filename}"
+    "image_loaded": "Imagen cargada: {filename}",
+    "image_pasted": "Imagen pegada correctamente",
+    "sending_large_file": "⏳ Enviando archivo completo ({size}KB) a {count} modelos. Por favor espere, esto puede tomar varios minutos...",
+    "sending_file": "⏳ Enviando archivo completo ({size}KB) a {count} modelos. Por favor espere...",
+    "status_change_noticed": "He notado tu cambio de estado a {status}.",
+    "status_change_noticed_help": "He notado tu cambio de estado a {status}. ¿En qué puedo ayudarte?"
   },
   "errors": {
     "no_connection": "No hay conexión con Ollama",
@@ -325,6 +330,7 @@
     "select_file_first": "Por favor selecciona un archivo JSON primero",
     "select_valid_json": "Por favor selecciona un archivo JSON válido",
     "only_txt_files": "Solo se permiten archivos .txt",
+    "text_file_too_large": "El archivo de texto es demasiado grande (máximo 100 MB)",
     "select_text_to_format": "Selecciona texto para formatear",
     "voice_not_supported": "Tu navegador no soporta reconocimiento de voz.",
     "voice_error": "Error en el reconocimiento de voz",
@@ -356,7 +362,10 @@
     "only_image_files": "Solo se permiten archivos de imagen (JPG, PNG, GIF, WebP)",
     "image_too_large": "La imagen es demasiado grande. Máximo permitido: 20 MB",
     "image_error": "Error al procesar la imagen: {error}",
-    "model_no_image_support": "El modelo de IA seleccionado no soporta el procesamiento de imágenes"
+    "model_no_image_support": "El modelo de IA seleccionado no soporta el procesamiento de imágenes",
+    "image_paste_failed": "Error al pegar la imagen",
+    "expert_room_modal_error": "Error al abrir el modal de sala de expertos",
+    "no_models_for_room": "No hay modelos disponibles para crear una sala"
   },
   "confirm": {
     "delete_attachment": "¿Eliminar este archivo adjunto?"

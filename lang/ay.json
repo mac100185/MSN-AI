@@ -223,10 +223,12 @@
     "voice_recording_started": "🎤 Aru apthapiri... Jichhax arsuma",
     "voice_recording_stopped": "🎤 Aru apthapiri sayt'ayata",
     "file_attached": "Qillqa yapxatata: {filename}",
-    "image_attached": "Uñacht'awi yapxatata",
-    "no_message": "janiwa yapäkiti yatiyawikiti",
-    "image_processing": "Uñacht'awi luraña...",
-    "image_loaded": "Uñacht'awi apthapita: {filename}"
+    "image_attached": "Uñacht'awi apthapita",
+    "no_message": "jan yaqha yatiyawi",
+    "image_processing": "Uñacht'awi luraskipana...",
+    "image_loaded": "Uñacht'awi apthapita: {filename}",
+    "status_change_noticed": "Estado mayjt'awamarux {status} uñt'ta.",
+    "status_change_noticed_help": "Estado mayjt'awamarux {status} uñt'ta. ¿Kunjamasa yanapt'apxasmawa?"
   },
   "errors": {
     "no_connection": "Ollama-mpi janiwa mayacht'atakiti",
@@ -239,6 +241,7 @@
     "select_file_first": "Nayraqata JSON qillqa chhijllaña",
     "select_valid_json": "Wali JSON qillqa chhijllaña",
     "only_txt_files": "Sapaki .txt qillqanakaxa wakisiwa",
+    "text_file_too_large": "Qillqa archivoxa jach'a jilawa (jach'a pachanakawa 100 MB)",
     "select_text_to_format": "Qillqa chhijllaña uñtayañataki",
     "voice_not_supported": "Navegadornakax janiwa aru yatiñanakataki yanapt'kiti.",
     "voice_error": "Aru yatiñana pantjata",

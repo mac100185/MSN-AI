@@ -226,7 +226,12 @@
     "image_attached": "이미지 첨부됨",
     "no_message": "추가 메시지 없음",
     "image_processing": "이미지 처리 중...",
-    "image_loaded": "이미지 로드됨: {filename}"
+    "image_loaded": "이미지 로드됨: {filename}",
+    "image_pasted": "이미지가 성공적으로 붙여넣기되었습니다",
+    "sending_large_file": "⏳ 전체 파일({size}KB)을 {count}개의 모델에 전송 중입니다. 몇 분 정도 걸릴 수 있으니 기다려주세요...",
+    "sending_file": "⏳ 전체 파일({size}KB)을 {count}개의 모델에 전송 중입니다. 기다려주세요...",
+    "status_change_noticed": "상태가 {status}(으)로 변경된 것을 확인했습니다.",
+    "status_change_noticed_help": "상태가 {status}(으)로 변경된 것을 확인했습니다. 무엇을 도와드릴까요?"
   },
   "errors": {
     "no_connection": "Ollama에 연결되지 않았습니다",
@@ -239,6 +244,7 @@
     "select_file_first": "먼저 JSON 파일을 선택하세요",
     "select_valid_json": "유효한 JSON 파일을 선택하세요",
     "only_txt_files": ".txt 파일만 허용됩니다",
+    "text_file_too_large": "텍스트 파일이 너무 큽니다 (최대 100 MB)",
     "select_text_to_format": "서식을 지정할 텍스트를 선택하세요",
     "voice_not_supported": "브라우저가 음성 인식을 지원하지 않습니다.",
     "voice_error": "음성 인식 오류",
@@ -270,7 +276,10 @@
     "only_image_files": "이미지 파일만 허용됩니다 (JPG, PNG, GIF, WebP)",
     "image_too_large": "이미지가 너무 큽니다. 최대 허용: 20 MB",
     "image_error": "이미지 처리 오류: {error}",
-    "model_no_image_support": "선택한 AI 모델은 이미지 처리를 지원하지 않습니다"
+    "model_no_image_support": "선택한 AI 모델은 이미지 처리를 지원하지 않습니다",
+    "image_paste_failed": "이미지 붙여넣기 오류",
+    "expert_room_modal_error": "전문가 방 모달 열기 오류",
+    "no_models_for_room": "방을 만들 수 있는 모델이 없습니다"
   },
   "confirm": {
     "delete_attachment": "이 첨부 파일을 삭제하시겠습니까?"

@@ -309,7 +309,12 @@
     "image_attached": "Imagem anexada",
     "no_message": "sem mensagem adicional",
     "image_processing": "Processando imagem...",
-    "image_loaded": "Imagem carregada: {filename}"
+    "image_loaded": "Imagem carregada: {filename}",
+    "image_pasted": "Imagem colada com sucesso",
+    "sending_large_file": "⏳ Enviando arquivo completo ({size}KB) para {count} modelos. Por favor aguarde, isso pode levar vários minutos...",
+    "sending_file": "⏳ Enviando arquivo completo ({size}KB) para {count} modelos. Por favor aguarde...",
+    "status_change_noticed": "Notei sua mudança de status para {status}.",
+    "status_change_noticed_help": "Notei sua mudança de status para {status}. Como posso ajudá-lo?"
   },
   "errors": {
     "no_connection": "Não há conexão com Ollama",
@@ -322,6 +327,7 @@
     "select_file_first": "Por favor selecione um arquivo JSON primeiro",
     "select_valid_json": "Por favor selecione um arquivo JSON válido",
     "only_txt_files": "Apenas são permitidos arquivos .txt",
+    "text_file_too_large": "O arquivo de texto é muito grande (máximo 100 MB)",
     "select_text_to_format": "Selecione texto para formatar",
     "voice_not_supported": "Seu navegador não suporta reconhecimento de voz.",
     "voice_error": "Erro no reconhecimento de voz",
@@ -353,7 +359,10 @@
     "only_image_files": "Apenas arquivos de imagem são permitidos (JPG, PNG, GIF, WebP)",
     "image_too_large": "A imagem é muito grande. Máximo permitido: 20 MB",
     "image_error": "Erro ao processar a imagem: {error}",
-    "model_no_image_support": "O modelo de IA selecionado não suporta processamento de imagens"
+    "model_no_image_support": "O modelo de IA selecionado não suporta processamento de imagens",
+    "image_paste_failed": "Erro ao colar imagem",
+    "expert_room_modal_error": "Erro ao abrir modal de sala de especialistas",
+    "no_models_for_room": "Nenhum modelo disponível para criar uma sala"
   },
   "confirm": {
     "delete_attachment": "Excluir este anexo?"

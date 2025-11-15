@@ -1287,11 +1287,15 @@ class MSNAI {
           aiMessage.content += `\n\n[⏹️ ${this.t("chat.response_stopped")}]`;
         } else {
           const statusName = this.t(`status.${newStatus}`);
-          aiMessage.content = `He notado tu cambio de estado a ${statusName}.`;
+          aiMessage.content = this.t("messages.status_change_noticed", {
+            status: statusName,
+          });
         }
       } else {
         const statusName = this.t(`status.${newStatus}`);
-        aiMessage.content = `He notado tu cambio de estado a ${statusName}. ¿En qué puedo ayudarte?`;
+        aiMessage.content = this.t("messages.status_change_noticed_help", {
+          status: statusName,
+        });
       }
 
       // Limpiar recursos de streaming
@@ -1533,7 +1537,7 @@ class MSNAI {
 
           // Fallback si la traducción no está disponible
           if (!errorContent || errorContent.includes("expert_room.error_")) {
-            errorContent = `⚠️ ${model}: No se pudo obtener respuesta en este momento.`;
+            errorContent = this.t("expert_room.error_generic", { model });
           }
 
           const errorMsg = {
@@ -1676,21 +1680,13 @@ class MSNAI {
     if (
       !("SpeechRecognition" in window || "webkitSpeechRecognition" in window)
     ) {
-      this.showNotification(
-        this.t("errors.voice_not_supported") ||
-          "Tu navegador no soporta reconocimiento de voz.",
-        "error",
-      );
+      this.showNotification(this.t("errors.voice_not_supported"), "error");
       return;
     }
 
     // Verificar conectividad de red
     if (!navigator.onLine) {
-      this.showNotification(
-        this.t("errors.voice_requires_internet") ||
-          "⚠️ El reconocimiento de voz requiere conexión a internet. Por favor, conéctate y vuelve a intentarlo.",
-        "error",
-      );
+      this.showNotification(this.t("errors.voice_requires_internet"), "error");
       return;
     }
 
@@ -1719,7 +1715,7 @@ class MSNAI {
     if (voiceBtn) {
       voiceBtn.style.backgroundColor = "#ff4444";
       voiceBtn.style.animation = "pulse-stop 1.5s ease-in-out infinite";
-      voiceBtn.title = this.t("tooltips.voice_input_stop") || "Detener Dictado";
+      voiceBtn.title = this.t("tooltips.voice_input_stop");
     }
 
     // Guardar posición inicial del cursor
@@ -1729,11 +1725,7 @@ class MSNAI {
       console.log("🎤 Reconocimiento de voz iniciado");
       this.voiceRecognitionStarted = true;
       this.playSound("nudge");
-      this.showNotification(
-        this.t("messages.voice_recording_started") ||
-          "🎤 Grabando... Hable ahora",
-        "info",
-      );
+      this.showNotification(this.t("messages.voice_recording_started"), "info");
     };
 
     this.voiceRecognition.onresult = (event) => {
@@ -1768,33 +1760,22 @@ class MSNAI {
       // Marcar que hubo un error para evitar doble llamada en onend
       this.voiceRecognitionError = true;
 
-      let errorMsg =
-        this.t("errors.voice_error") || "Error en el reconocimiento de voz";
+      let errorMsg = this.t("errors.voice_error");
 
       if (event.error === "no-speech") {
-        errorMsg =
-          this.t("errors.voice_no_speech") ||
-          "No se detectó ninguna voz. Intente nuevamente.";
+        errorMsg = this.t("errors.voice_no_speech");
       } else if (event.error === "audio-capture") {
-        errorMsg =
-          this.t("errors.voice_no_microphone") ||
-          "No se pudo acceder al micrófono.";
+        errorMsg = this.t("errors.voice_no_microphone");
       } else if (event.error === "not-allowed") {
-        errorMsg =
-          this.t("errors.voice_permission_denied") ||
-          "Permiso de micrófono denegado.";
+        errorMsg = this.t("errors.voice_permission_denied");
       } else if (event.error === "network") {
-        errorMsg =
-          this.t("errors.voice_network_connection") ||
-          "⚠️ Error de conexión. El reconocimiento de voz requiere internet. Verifica tu conexión y vuelve a intentarlo.";
+        errorMsg = this.t("errors.voice_network_connection");
       } else if (event.error === "aborted") {
         // No mostrar error si fue abortado intencionalmente
         this.voiceRecognitionError = false;
         return;
       } else if (event.error === "service-not-allowed") {
-        errorMsg =
-          this.t("errors.voice_service_not_allowed") ||
-          "Servicio de reconocimiento de voz no disponible.";
+        errorMsg = this.t("errors.voice_service_not_allowed");
       }
 
       this.showNotification(errorMsg, "error");
@@ -1818,7 +1799,7 @@ class MSNAI {
       if (this.isRecording) {
         this.playSound("nudge");
         this.showNotification(
-          this.t("messages.voice_recording_stopped") || "🎤 Grabación detenida",
+          this.t("messages.voice_recording_stopped"),
           "info",
         );
         this.stopVoiceInput();
@@ -1829,11 +1810,7 @@ class MSNAI {
     const startTimeout = setTimeout(() => {
       if (this.isRecording && !this.voiceRecognitionStarted) {
         console.error("❌ Timeout: El reconocimiento no se inició");
-        this.showNotification(
-          this.t("errors.voice_start_timeout") ||
-            "⚠️ No se pudo conectar al servicio de reconocimiento de voz. Verifica tu conexión a internet.",
-          "error",
-        );
+        this.showNotification(this.t("errors.voice_start_timeout"), "error");
         this.stopVoiceInput();
       }
     }, 5000);
@@ -1852,11 +1829,7 @@ class MSNAI {
     } catch (error) {
       clearTimeout(startTimeout);
       console.error("❌ Error iniciando reconocimiento:", error);
-      this.showNotification(
-        this.t("errors.voice_start_error") ||
-          "No se pudo iniciar el reconocimiento de voz",
-        "error",
-      );
+      this.showNotification(this.t("errors.voice_start_error"), "error");
       this.stopVoiceInput();
     }
   }
@@ -1885,7 +1858,7 @@ class MSNAI {
     if (voiceBtn) {
       voiceBtn.style.backgroundColor = "";
       voiceBtn.style.animation = "";
-      voiceBtn.title = this.t("tooltips.voice_input") || "Dictado por voz";
+      voiceBtn.title = this.t("tooltips.voice_input");
     }
 
     // Resetear flags
@@ -2215,10 +2188,7 @@ class MSNAI {
 
   uploadTextFile() {
     if (!this.currentChatId) {
-      alert(
-        this.t("errors.select_chat_first") ||
-          "Por favor selecciona un chat primero",
-      );
+      alert(this.t("errors.select_chat_first"));
       return;
     }
 
@@ -2236,11 +2206,7 @@ class MSNAI {
       // Validar tamaño (máximo 100 MB para archivos de texto)
       const maxSize = 100 * 1024 * 1024; // 100 MB en bytes
       if (file.size > maxSize) {
-        this.showNotification(
-          this.t("errors.text_file_too_large") ||
-            "El archivo de texto es demasiado grande (máximo 100 MB)",
-          "error",
-        );
+        this.showNotification(this.t("errors.text_file_too_large"), "error");
         return;
       }
 
@@ -2323,10 +2289,7 @@ class MSNAI {
             console.log(`📎 Archivo TXT adjuntado al chat: ${file.name}`);
           } catch (error) {
             console.error("Error guardando archivo adjunto:", error);
-            alert(
-              this.t("errors.attachment_save_failed") ||
-                "Error al guardar el archivo adjunto",
-            );
+            alert(this.t("errors.attachment_save_failed"));
           }
         };
         binaryReader.readAsArrayBuffer(file);
@@ -2343,10 +2306,7 @@ class MSNAI {
    */
   uploadPdfFile() {
     if (!this.currentChatId) {
-      alert(
-        this.t("errors.select_chat_first") ||
-          "Por favor selecciona un chat primero",
-      );
+      alert(this.t("errors.select_chat_first"));
       return;
     }
 
@@ -2464,8 +2424,7 @@ class MSNAI {
           } catch (saveError) {
             console.error("Error guardando archivo adjunto:", saveError);
             this.showNotification(
-              this.t("errors.attachment_save_failed") ||
-                "Error al guardar el archivo adjunto",
+              this.t("errors.attachment_save_failed"),
               "error",
             );
           }
@@ -2683,10 +2642,7 @@ class MSNAI {
    */
   async uploadImageFile(fileParam = null) {
     if (!this.currentChatId) {
-      alert(
-        this.t("errors.select_chat_first") ||
-          "Por favor selecciona un chat primero",
-      );
+      alert(this.t("errors.select_chat_first"));
       return;
     }
 
@@ -2737,16 +2693,7 @@ class MSNAI {
     }
 
     // Mostrar indicador de procesamiento con traducción validada
-    let processingMsg = this.t("messages.image_processing");
-    if (
-      !processingMsg ||
-      processingMsg.includes("messages.") ||
-      processingMsg === "messages.image_processing"
-    ) {
-      processingMsg =
-        this.t("messages.image_processing") || "Processing image...";
-    }
-    this.showNotification(processingMsg, "info");
+    this.showNotification(this.t("messages.image_processing"), "info");
 
     try {
       // Convertir imagen a base64
@@ -2823,25 +2770,17 @@ class MSNAI {
           // Renderizar el chat para mostrar el attachment
           this.renderMessages(chat);
 
-          // Mostrar notificación de éxito con traducción validada
-          let loadedMsg = this.t("messages.image_loaded", {
-            filename: file.name,
-          });
-          if (
-            !loadedMsg ||
-            loadedMsg.includes("messages.") ||
-            loadedMsg.includes("{filename}")
-          ) {
-            loadedMsg = `Imagen cargada: ${file.name}`;
-          }
-          this.showNotification(loadedMsg, "success");
+          // Mostrar notificación de éxito
+          this.showNotification(
+            this.t("messages.image_loaded", { filename: file.name }),
+            "success",
+          );
 
           console.log(`📎 Archivo de imagen adjuntado al chat: ${file.name}`);
         } catch (saveError) {
           console.error("Error guardando archivo adjunto:", saveError);
           this.showNotification(
-            this.t("errors.attachment_save_failed") ||
-              "Error al guardar el archivo adjunto",
+            this.t("errors.attachment_save_failed"),
             "error",
           );
         }
@@ -3078,10 +3017,7 @@ class MSNAI {
       console.log("✅ Exportación selectiva completada exitosamente");
     } catch (error) {
       console.error("❌ Error exportando chats seleccionados:", error);
-      alert(
-        this.t("errors.export_failed") ||
-          "Error al exportar chats seleccionados",
-      );
+      alert(this.t("errors.export_failed"));
     }
   }
 
@@ -3207,12 +3143,9 @@ class MSNAI {
           message =
             "El modelo de IA seleccionado no soporta el procesamiento de imágenes";
         } else if (message === "messages.image_processing") {
-          message =
-            this.t("messages.image_processing") || "Processing image...";
+          message = this.t("messages.image_processing");
         } else if (message.includes("messages.image_loaded")) {
-          message =
-            this.t("messages.image_loaded", { filename: "" }) ||
-            "Image loaded successfully";
+          message = this.t("messages.image_loaded", { filename: "" });
         }
       }
     }
@@ -4319,7 +4252,7 @@ class MSNAI {
       expertArrowIcon.dataset.expanded = "true";
 
       const expertRoomsNameSpan = document.createElement("span");
-      expertRoomsNameSpan.textContent = `🏢 ${this.t("expert_room.models_label") || "Salas de Expertos"} (${expertRooms.length})`;
+      expertRoomsNameSpan.textContent = `🏢 ${this.t("expert_room.models_label")} (${expertRooms.length})`;
       expertRoomsNameSpan.style.flex = "1";
 
       expertRoomsHeader.appendChild(expertArrowIcon);
@@ -4577,7 +4510,7 @@ class MSNAI {
     let lastMessage;
     if (chat.isExpertRoom) {
       const modelsCount = chat.models ? chat.models.length : 0;
-      lastMessage = `${modelsCount} ${this.t("expert_room.models_label") || "expertos"} • ${chat.messages.length} mensajes`;
+      lastMessage = `${modelsCount} ${this.t("expert_room.models_label")} • ${chat.messages.length} mensajes`;
     } else {
       lastMessage =
         chat.messages.length > 0
@@ -5261,10 +5194,7 @@ class MSNAI {
                 console.log(`🗑️ Archivo adjunto eliminado: ${attachmentId}`);
               } catch (error) {
                 console.error("Error eliminando attachment:", error);
-                alert(
-                  this.t("errors.delete_attachment_failed") ||
-                    "Error al eliminar el archivo",
-                );
+                alert(this.t("errors.delete_attachment_failed"));
               }
             }
           });
@@ -5706,7 +5636,7 @@ class MSNAI {
       console.log("✅ Exportación completada exitosamente");
     } catch (error) {
       console.error("❌ Error exportando chats:", error);
-      alert(this.t("errors.export_failed") || "Error al exportar chats");
+      alert(this.t("errors.export_failed"));
     }
   }
 
@@ -6691,16 +6621,10 @@ class MSNAI {
             await this.uploadImageFile(file);
 
             // Mostrar notificación de éxito
-            this.showNotification(
-              this.t("messages.image_pasted") || "Imagen pegada correctamente",
-              "success",
-            );
+            this.showNotification(this.t("messages.image_pasted"), "success");
           } catch (error) {
             console.error("Error al pegar imagen:", error);
-            this.showNotification(
-              this.t("errors.image_paste_failed") || "Error al pegar la imagen",
-              "error",
-            );
+            this.showNotification(this.t("errors.image_paste_failed"), "error");
           }
 
           break; // Solo procesar la primera imagen
@@ -8008,8 +7932,7 @@ MSNAI.prototype.showSavePromptModal = function () {
     if (saveBtn) {
       const textSpan = saveBtn.querySelector("span");
       if (textSpan) {
-        textSpan.textContent =
-          "✏️ " + (this.t("buttons.update") || "Actualizar");
+        textSpan.textContent = "✏️ " + this.t("buttons.update");
       }
     }
   } else {
@@ -8024,7 +7947,7 @@ MSNAI.prototype.showSavePromptModal = function () {
     if (saveBtn) {
       const textSpan = saveBtn.querySelector("span");
       if (textSpan) {
-        textSpan.textContent = "💾 " + (this.t("buttons.save") || "Guardar");
+        textSpan.textContent = "💾 " + this.t("buttons.save");
       }
     }
   }
@@ -8043,7 +7966,7 @@ MSNAI.prototype.saveCurrentPrompt = function () {
     notification.innerHTML = `
       <div class="notification-content">
         <span class="notification-icon">❌</span>
-        <span class="notification-text">${this.t("prompt_generator.name_required") || "El nombre del prompt es requerido"}</span>
+        <span class="notification-text">${this.t("prompt_generator.name_required")}</span>
         <button class="notification-close">×</button>
       </div>
     `;
@@ -8173,8 +8096,7 @@ MSNAI.prototype.loadSavedPrompts = function () {
   const container = document.getElementById("saved-prompts-list");
   const countEl = document.getElementById("prompts-count");
 
-  const countText =
-    this.t("prompt_manager.prompts_count") || "{count} prompts guardados";
+  const countText = this.t("prompt_manager.prompts_count");
   countEl.textContent = countText.replace("{count}", prompts.length);
 
   this.updateCategoryFilter(prompts);
@@ -8514,7 +8436,7 @@ MSNAI.prototype.cancelEditMode = function () {
   notification.innerHTML = `
     <div class="notification-content">
       <span class="notification-icon">ℹ️</span>
-      <span class="notification-text">${this.t("prompt_manager.edit_cancelled") || "Edición cancelada"}</span>
+      <span class="notification-text">${this.t("prompt_manager.edit_cancelled")}</span>
       <button class="notification-close">×</button>
     </div>
   `;
@@ -8749,10 +8671,7 @@ MSNAI.prototype.importPrompts = function (file) {
       this.showNotification(this.t("prompt_manager.import_success"), "success");
     } catch (error) {
       console.error("Error al importar prompts:", error);
-      this.showNotification(
-        this.t("prompt_manager.import_error") || "Error importing prompts",
-        "error",
-      );
+      this.showNotification(this.t("prompt_manager.import_error"), "error");
     }
   };
   reader.readAsText(file);
@@ -8765,10 +8684,7 @@ MSNAI.prototype.exportSinglePrompt = function (promptId) {
   const prompt = prompts.find((p) => String(p.id) === String(promptId));
 
   if (!prompt) {
-    this.showNotification(
-      this.t("prompt_manager.prompt_not_found") || "Prompt not found",
-      "error",
-    );
+    this.showNotification(this.t("prompt_manager.prompt_not_found"), "error");
     return;
   }
 
@@ -8823,10 +8739,7 @@ MSNAI.prototype.exportSinglePrompt = function (promptId) {
 MSNAI.prototype.deleteAllPrompts = function () {
   localStorage.removeItem("msnai-saved-prompts");
   this.loadSavedPrompts();
-  this.showNotification(
-    this.t("prompt_manager.delete_all_success") || "All prompts deleted",
-    "success",
-  );
+  this.showNotification(this.t("prompt_manager.delete_all_success"), "success");
 };
 
 MSNAI.prototype.searchPrompts = function (query) {
@@ -8845,8 +8758,7 @@ MSNAI.prototype.searchPrompts = function (query) {
   const container = document.getElementById("saved-prompts-list");
   const countEl = document.getElementById("prompts-count");
 
-  const countText =
-    this.t("prompt_manager.prompts_found") || "{count} prompts encontrados";
+  const countText = this.t("prompt_manager.prompts_found");
   countEl.textContent = countText.replace("{count}", filtered.length);
 
   if (filtered.length === 0) {
@@ -8962,10 +8874,7 @@ MSNAI.prototype.showExpertRoomModal = function () {
     console.error(
       "❌ Error: No se encontraron elementos del modal de sala de expertos",
     );
-    this.showNotification(
-      "Error al abrir el modal de sala de expertos",
-      "error",
-    );
+    this.showNotification(this.t("errors.expert_room_modal_error"), "error");
     return;
   }
 
@@ -9024,8 +8933,7 @@ MSNAI.prototype.showExpertRoomModal = function () {
   });
 
   // Limpiar campo de título y poner nombre por defecto
-  roomTitleInput.value =
-    this.t("expert_room.default_name") || "Sala de Expertos";
+  roomTitleInput.value = this.t("expert_room.default_name");
 
   // Mostrar modal
   modal.style.display = "block";
@@ -9062,8 +8970,7 @@ MSNAI.prototype.createExpertRoom = function () {
     id: chatId,
     type: "expert-room",
     isExpertRoom: true,
-    title:
-      roomTitle || this.t("expert_room.default_name") || "Sala de Expertos",
+    title: roomTitle || this.t("expert_room.default_name"),
     date: new Date().toISOString(),
     models: selectedModels,
     model: selectedModels[0], // Modelo principal (por compatibilidad)

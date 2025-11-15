@@ -225,7 +225,9 @@
     "image_attached": "Gambar terlampir",
     "no_message": "tidak ada pesan tambahan",
     "image_processing": "Memproses gambar...",
-    "image_loaded": "Gambar dimuat: {filename}"
+    "image_loaded": "Gambar dimuat: {filename}",
+    "status_change_noticed": "Saya menyadari perubahan status Anda menjadi {status}.",
+    "status_change_noticed_help": "Saya menyadari perubahan status Anda menjadi {status}. Bagaimana saya bisa membantu Anda?"
   },
   "errors": {
     "no_connection": "Tidak ada koneksi dengan Ollama",
@@ -237,7 +239,8 @@
     "invalid_file": "Kesalahan membaca file. Verifikasi bahwa itu adalah JSON yang valid.",
     "select_file_first": "Silakan pilih file JSON terlebih dahulu",
     "select_valid_json": "Silakan pilih file JSON yang valid",
-    "only_txt_files": "Hanya file .txt yang diperbolehkan",
+    "only_txt_files": "Hanya file .txt yang diizinkan",
+    "text_file_too_large": "File teks terlalu besar (maksimum 100 MB)",
     "select_text_to_format": "Pilih teks untuk diformat",
     "voice_not_supported": "Browser Anda tidak mendukung pengenalan suara.",
     "voice_error": "Kesalahan pengenalan suara",

@@ -309,7 +309,12 @@
     "image_attached": "Image jointe",
     "no_message": "pas de message supplémentaire",
     "image_processing": "Traitement de l'image...",
-    "image_loaded": "Image chargée: {filename}"
+    "image_loaded": "Image chargée: {filename}",
+    "image_pasted": "Image collée avec succès",
+    "sending_large_file": "⏳ Envoi du fichier complet ({size}KB) à {count} modèles. Veuillez patienter, cela peut prendre plusieurs minutes...",
+    "sending_file": "⏳ Envoi du fichier complet ({size}KB) à {count} modèles. Veuillez patienter...",
+    "status_change_noticed": "J'ai remarqué votre changement de statut à {status}.",
+    "status_change_noticed_help": "J'ai remarqué votre changement de statut à {status}. Comment puis-je vous aider?"
   },
   "errors": {
     "no_connection": "Pas de connexion à Ollama",
@@ -322,6 +327,7 @@
     "select_file_first": "Veuillez d'abord sélectionner un fichier JSON",
     "select_valid_json": "Veuillez sélectionner un fichier JSON valide",
     "only_txt_files": "Seuls les fichiers .txt sont autorisés",
+    "text_file_too_large": "Le fichier texte est trop volumineux (maximum 100 Mo)",
     "select_text_to_format": "Sélectionnez le texte à formater",
     "voice_not_supported": "Votre navigateur ne prend pas en charge la reconnaissance vocale.",
     "voice_error": "Erreur de reconnaissance vocale",
@@ -349,7 +355,10 @@
     "only_image_files": "Seuls les fichiers image sont autorisés (JPG, PNG, GIF, WebP)",
     "image_too_large": "L'image est trop grande. Maximum autorisé: 20 MB",
     "image_error": "Erreur lors du traitement de l'image: {error}",
-    "model_no_image_support": "Le modèle d'IA sélectionné ne prend pas en charge le traitement d'images"
+    "model_no_image_support": "Le modèle d'IA sélectionné ne prend pas en charge le traitement d'images",
+    "image_paste_failed": "Erreur lors du collage de l'image",
+    "expert_room_modal_error": "Erreur lors de l'ouverture du modal de salle d'experts",
+    "no_models_for_room": "Aucun modèle disponible pour créer une salle"
   },
   "confirm": {
     "delete_attachment": "Supprimer cette pièce jointe ?"

@@ -226,7 +226,9 @@
     "image_attached": "Resim eklendi",
     "no_message": "ek mesaj yok",
     "image_processing": "Resim işleniyor...",
-    "image_loaded": "Resim yüklendi: {filename}"
+    "image_loaded": "Resim yüklendi: {filename}",
+    "status_change_noticed": "Durumunuzun {status} olarak değiştiğini fark ettim.",
+    "status_change_noticed_help": "Durumunuzun {status} olarak değiştiğini fark ettim. Size nasıl yardımcı olabilirim?"
   },
   "errors": {
     "no_connection": "Ollama ile bağlantı yok",
@@ -239,6 +241,7 @@
     "select_file_first": "Lütfen önce bir JSON dosyası seçin",
     "select_valid_json": "Lütfen geçerli bir JSON dosyası seçin",
     "only_txt_files": "Sadece .txt dosyalarına izin verilir",
+    "text_file_too_large": "Metin dosyası çok büyük (maksimum 100 MB)",
     "select_text_to_format": "Biçimlendirilecek metni seçin",
     "voice_not_supported": "Tarayıcınız ses tanımayı desteklemiyor.",
     "voice_error": "Ses tanıma hatası",

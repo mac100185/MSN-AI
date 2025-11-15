@@ -220,13 +220,15 @@
     "nudge_sent": "¿Chaypichu kanki?",
     "nudge_received": "Kallpachay kachasqa (kutichiy sayachisqa)",
     "nudge_stopped": "Kutichiy sayachisqa",
-    "voice_recording_started": "🎤 Grabakuspa... Kunan rimay",
-    "voice_recording_stopped": "🎤 Grabakuy sayachisqa",
+    "voice_recording_started": "🎤 Grabakusqa... Kunan rimay",
+    "voice_recording_stopped": "🎤 Grabación tukupusqa",
     "file_attached": "Qillqa yapasqa: {filename}",
     "image_attached": "Siq'i yapasqa",
-    "no_message": "mana yapasqa willaychu",
+    "no_message": "mana yapay willakuychu",
     "image_processing": "Siq'i rurasqa...",
-    "image_loaded": "Siq'i cargasqa: {filename}"
+    "image_loaded": "Siq'i cargasqa: {filename}",
+    "status_change_noticed": "Estado {status}-man tikrakusqaykita riqsirqani.",
+    "status_change_noticed_help": "Estado {status}-man tikrakusqaykita riqsirqani. ¿Imaynatataq yanapasqayki?"
   },
   "errors": {
     "no_connection": "Ollama-wan mana tinkiychu",
@@ -239,6 +241,7 @@
     "select_file_first": "Ama hina kaspa ñawpaqta JSON qillqata akllay",
     "select_valid_json": "Ama hina kaspa allin JSON qillqata akllay",
     "only_txt_files": "Sapalla .txt qillqakunalla kamachikunmi",
+    "text_file_too_large": "Qillqa archivuqa nisyu hatunmi (100 MB pisi)",
     "select_text_to_format": "Qillqata akllay rikch'anaypaq",
     "voice_not_supported": "Navegadorniki mana kunka riqsiyta yanapanchu.",
     "voice_error": "Kunka riqsiypi pantay",

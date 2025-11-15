@@ -223,10 +223,12 @@
     "voice_recording_started": "🎤 Đang ghi âm... Hãy nói ngay",
     "voice_recording_stopped": "🎤 Ghi âm đã dừng",
     "file_attached": "Tệp đính kèm: {filename}",
-    "image_attached": "Hình ảnh đính kèm",
+    "image_attached": "Hình ảnh đã đính kèm",
     "no_message": "không có tin nhắn bổ sung",
     "image_processing": "Đang xử lý hình ảnh...",
-    "image_loaded": "Hình ảnh đã tải: {filename}"
+    "image_loaded": "Hình ảnh đã tải: {filename}",
+    "status_change_noticed": "Tôi nhận thấy trạng thái của bạn đã thay đổi thành {status}.",
+    "status_change_noticed_help": "Tôi nhận thấy trạng thái của bạn đã thay đổi thành {status}. Tôi có thể giúp gì cho bạn?"
   },
   "errors": {
     "no_connection": "Không có kết nối với Ollama",
@@ -239,6 +241,7 @@
     "select_file_first": "Vui lòng chọn tệp JSON trước",
     "select_valid_json": "Vui lòng chọn tệp JSON hợp lệ",
     "only_txt_files": "Chỉ cho phép tệp .txt",
+    "text_file_too_large": "Tệp văn bản quá lớn (tối đa 100 MB)",
     "select_text_to_format": "Chọn văn bản để định dạng",
     "voice_not_supported": "Trình duyệt của bạn không hỗ trợ nhận dạng giọng nói.",
     "voice_error": "Lỗi nhận dạng giọng nói",

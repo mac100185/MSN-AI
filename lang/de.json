@@ -309,7 +309,12 @@
     "image_attached": "Bild angehängt",
     "no_message": "keine zusätzliche Nachricht",
     "image_processing": "Bild wird verarbeitet...",
-    "image_loaded": "Bild geladen: {filename}"
+    "image_loaded": "Bild geladen: {filename}",
+    "image_pasted": "Bild erfolgreich eingefügt",
+    "sending_large_file": "⏳ Sende vollständige Datei ({size}KB) an {count} Modelle. Bitte warten, dies kann mehrere Minuten dauern...",
+    "sending_file": "⏳ Sende vollständige Datei ({size}KB) an {count} Modelle. Bitte warten...",
+    "status_change_noticed": "Ich habe Ihre Statusänderung zu {status} bemerkt.",
+    "status_change_noticed_help": "Ich habe Ihre Statusänderung zu {status} bemerkt. Wie kann ich Ihnen helfen?"
   },
   "errors": {
     "no_connection": "Keine Verbindung zu Ollama",
@@ -322,6 +327,7 @@
     "select_file_first": "Bitte wählen Sie zuerst eine JSON-Datei aus",
     "select_valid_json": "Bitte wählen Sie eine gültige JSON-Datei aus",
     "only_txt_files": "Nur .txt-Dateien sind erlaubt",
+    "text_file_too_large": "Die Textdatei ist zu groß (maximal 100 MB)",
     "select_text_to_format": "Wählen Sie Text zum Formatieren aus",
     "voice_not_supported": "Ihr Browser unterstützt keine Spracherkennung.",
     "voice_error": "Fehler bei der Spracherkennung",
@@ -349,7 +355,10 @@
     "only_image_files": "Nur Bilddateien sind erlaubt (JPG, PNG, GIF, WebP)",
     "image_too_large": "Das Bild ist zu groß. Maximal erlaubt: 20 MB",
     "image_error": "Fehler beim Verarbeiten des Bildes: {error}",
-    "model_no_image_support": "Das ausgewählte KI-Modell unterstützt keine Bildverarbeitung"
+    "model_no_image_support": "Das ausgewählte KI-Modell unterstützt keine Bildverarbeitung",
+    "image_paste_failed": "Fehler beim Einfügen des Bildes",
+    "expert_room_modal_error": "Fehler beim Öffnen des Expertenraum-Modals",
+    "no_models_for_room": "Keine Modelle verfügbar, um einen Raum zu erstellen"
   },
   "confirm": {
     "delete_attachment": "Diesen Anhang löschen?"

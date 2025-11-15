@@ -222,11 +222,13 @@
     "nudge_stopped": "تم إيقاف الرد",
     "voice_recording_started": "🎤 جاري التسجيل... تحدث الآن",
     "voice_recording_stopped": "🎤 توقف التسجيل",
-    "file_attached": "الملف المرفق: {filename}",
+    "file_attached": "ملف مرفق: {filename}",
     "image_attached": "صورة مرفقة",
     "no_message": "لا توجد رسالة إضافية",
     "image_processing": "معالجة الصورة...",
-    "image_loaded": "تم تحميل الصورة: {filename}"
+    "image_loaded": "تم تحميل الصورة: {filename}",
+    "status_change_noticed": "لاحظت تغيير حالتك إلى {status}.",
+    "status_change_noticed_help": "لاحظت تغيير حالتك إلى {status}. كيف يمكنني مساعدتك؟"
   },
   "errors": {
     "no_connection": "لا يوجد اتصال بـ Ollama",
@@ -236,9 +238,10 @@
     "file_not_found": "لم يتم العثور على محدد الملف",
     "invalid_json": "ملف JSON غير صالح أو لا توجد محادثات.",
     "invalid_file": "خطأ في قراءة الملف. تحقق من أنه JSON صالح.",
-    "select_file_first": "الرجاء تحديد ملف JSON أولاً",
-    "select_valid_json": "الرجاء تحديد ملف JSON صالح",
-    "only_txt_files": "يُسمح فقط بملفات .txt",
+    "select_file_first": "يرجى تحديد ملف JSON أولاً",
+    "select_valid_json": "يرجى تحديد ملف JSON صالح",
+    "only_txt_files": "مسموح فقط بملفات .txt",
+    "text_file_too_large": "ملف النص كبير جدًا (الحد الأقصى 100 ميجابايت)",
     "select_text_to_format": "حدد النص لتنسيقه",
     "voice_not_supported": "متصفحك لا يدعم التعرف على الصوت.",
     "voice_error": "خطأ في التعرف على الصوت",
@@ -334,17 +337,17 @@
   },
   "prompt_manager": {
     "title": "My Saved Prompts",
-    "search_placeholder": "Search prompts...",
+    "search_placeholder": "ابحث عن المطالبات...",
     "all_categories": "All categories",
-    "refresh": "Refresh list",
+    "refresh": "تحديث القائمة",
     "no_prompts_title": "📝 No saved prompts",
-    "no_prompts_message": "Generate a prompt and click '⭐ Save Prompt' to start your collection.",
+    "no_prompts_message": "أنشئ مطالبة وانقر على ⭐ حفظ المطالبة لبدء مجموعتك.",
     "export_all": "📤 Export All",
-    "export_all_tooltip": "Export all prompts to a JSON file",
+    "export_all_tooltip": "تصدير جميع المطالبات إلى ملف JSON",
     "import": "📥 Import",
-    "import_tooltip": "Import prompts from a JSON file",
+    "import_tooltip": "استيراد المطالبات من ملف JSON",
     "delete_all": "🗑️ Delete All",
-    "delete_all_tooltip": "Delete all saved prompts",
+    "delete_all_tooltip": "حذف جميع المطالبات المحفوظة",
     "delete_all_confirm": "Are you sure you want to delete all saved prompts? This action cannot be undone.",
     "use_prompt": "📝 Use",
     "view_prompt": "👁️ View",
@@ -366,25 +369,25 @@
     "loaded_to_form": "Prompt loaded to form",
     "general_info": "General Information",
     "date": "Date",
-    "edit_mode": "Edit mode activated. Modify the fields and generate the updated prompt.",
-    "editing_prompt": "Editing Prompt",
-    "edit_cancelled": "Edit cancelled",
+    "edit_mode": "تم تفعيل وضع التحرير. عدّل الحقول وأنشئ المطالبة المحدثة.",
+    "editing_prompt": "تحرير المطالبة",
+    "edit_cancelled": "تم إلغاء التحرير",
     "import_error": "خطأ في استيراد المطالبات",
     "prompt_not_found": "لم يتم العثور على المطالبة",
     "export_single_success": "تم تصدير المطالبة بنجاح",
     "delete_all_success": "تم حذف جميع المطالبات"
   },
   "pdf": {
-    "processing": "Processing PDF...",
-    "extracting": "Extracting text...",
-    "ocr_processing": "Applying OCR (page {current} of {total})...",
-    "loaded": "PDF loaded successfully",
-    "error": "Error processing PDF",
+    "processing": "معالجة PDF...",
+    "extracting": "استخراج النص...",
+    "ocr_processing": "تطبيق OCR (الصفحة {current} من {total})...",
+    "loaded": "تم تحميل PDF بنجاح",
+    "error": "خطأ في معالجة PDF",
     "no_text": "Could not extract text from PDF",
     "too_large": "الملف كبير جداً (الحد الأقصى 100 ميجابايت)",
-    "invalid_file": "Invalid PDF file",
+    "invalid_file": "ملف PDF غير صالح",
     "pages": "pages",
-    "attached": "PDF attached",
+    "attached": "PDF مرفق",
     "context_active": "PDF context active ({pages} pages)",
     "password_protected": "❌ ملف PDF محمي بكلمة مرور. يرجى إزالة الحماية والمحاولة مرة أخرى.",
     "incorrect_password": "❌ كلمة مرور غير صحيحة لملف PDF المحمي.",
