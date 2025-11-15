@@ -316,6 +316,9 @@
     "image_pasted": "Imagen pegada correctamente",
     "sending_large_file": "⏳ Enviando archivo completo ({size}KB) a {count} modelos. Por favor espere, esto puede tomar varios minutos...",
     "sending_file": "⏳ Enviando archivo completo ({size}KB) a {count} modelos. Por favor espere...",
+    "sending_large_pdf": "⏳ Enviando PDF completo ({pages} páginas, {size}KB) a {count} modelos. Por favor espere, esto puede tomar varios minutos...",
+    "sending_pdf": "⏳ Enviando PDF completo ({pages} páginas, {size}KB) a {count} modelos. Por favor espere...",
+    "consulting_experts": "🏢 Consultando {count} expertos...",
     "status_change_noticed": "He notado tu cambio de estado a {status}.",
     "status_change_noticed_help": "He notado tu cambio de estado a {status}. ¿En qué puedo ayudarte?"
   },

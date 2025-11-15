@@ -313,6 +313,9 @@
     "image_pasted": "Image collée avec succès",
     "sending_large_file": "⏳ Envoi du fichier complet ({size}KB) à {count} modèles. Veuillez patienter, cela peut prendre plusieurs minutes...",
     "sending_file": "⏳ Envoi du fichier complet ({size}KB) à {count} modèles. Veuillez patienter...",
+    "sending_large_pdf": "⏳ Envoi du PDF complet ({pages} pages, {size}KB) à {count} modèles. Veuillez patienter, cela peut prendre plusieurs minutes...",
+    "sending_pdf": "⏳ Envoi du PDF complet ({pages} pages, {size}KB) à {count} modèles. Veuillez patienter...",
+    "consulting_experts": "🏢 Consultation de {count} experts...",
     "status_change_noticed": "J'ai remarqué votre changement de statut à {status}.",
     "status_change_noticed_help": "J'ai remarqué votre changement de statut à {status}. Comment puis-je vous aider?"
   },

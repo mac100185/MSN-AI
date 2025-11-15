@@ -230,7 +230,10 @@
     "status_change_noticed": "Tôi nhận thấy trạng thái của bạn đã thay đổi thành {status}.",
     "status_change_noticed_help": "Tôi nhận thấy trạng thái của bạn đã thay đổi thành {status}. Tôi có thể giúp gì cho bạn?",
     "sending_large_file": "⏳ Đang gửi tệp đầy đủ ({size}KB) đến {count} mô hình. Vui lòng đợi, quá trình này có thể mất vài phút...",
-    "sending_file": "⏳ Đang gửi tệp đầy đủ ({size}KB) đến {count} mô hình. Vui lòng đợi..."
+    "sending_file": "⏳ Đang gửi tệp đầy đủ ({size}KB) đến {count} mô hình. Vui lòng đợi...",
+    "sending_large_pdf": "⏳ Đang gửi PDF đầy đủ ({pages} trang, {size}KB) đến {count} mô hình. Vui lòng đợi, quá trình này có thể mất vài phút...",
+    "sending_pdf": "⏳ Đang gửi PDF đầy đủ ({pages} trang, {size}KB) đến {count} mô hình. Vui lòng đợi...",
+    "consulting_experts": "🏢 Đang tham khảo {count} chuyên gia..."
   },
   "errors": {
     "no_connection": "Không có kết nối với Ollama",

@@ -230,6 +230,9 @@
     "image_pasted": "画像が正常に貼り付けられました",
     "sending_large_file": "⏳ 完全なファイル({size}KB)を{count}モデルに送信中。数分かかる場合がありますのでお待ちください...",
     "sending_file": "⏳ 完全なファイル({size}KB)を{count}モデルに送信中。お待ちください...",
+    "sending_large_pdf": "⏳ 完全なPDF（{pages}ページ、{size}KB）を{count}モデルに送信中。数分かかる場合がありますのでお待ちください...",
+    "sending_pdf": "⏳ 完全なPDF（{pages}ページ、{size}KB）を{count}モデルに送信中。お待ちください...",
+    "consulting_experts": "🏢 {count}人の専門家に相談中...",
     "status_change_noticed": "ステータスが {status} に変更されたことに気づきました。",
     "status_change_noticed_help": "ステータスが {status} に変更されたことに気づきました。どのようにお手伝いできますか？"
   },

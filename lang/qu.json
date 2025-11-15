@@ -230,7 +230,10 @@
     "status_change_noticed": "Estado {status}-man tikrakusqaykita riqsirqani.",
     "status_change_noticed_help": "Estado {status}-man tikrakusqaykita riqsirqani. ¿Imaynatataq yanapasqayki?",
     "sending_large_file": "⏳ Hunt'a qillqa ({size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay, kay wakin minutukunata hap'inman...",
-    "sending_file": "⏳ Hunt'a qillqa ({size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay..."
+    "sending_file": "⏳ Hunt'a qillqa ({size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay...",
+    "sending_large_pdf": "⏳ Hunt'a PDF ({pages} p'anqanakuna, {size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay, kay wakin minutukunata hap'inman...",
+    "sending_pdf": "⏳ Hunt'a PDF ({pages} p'anqanakuna, {size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay...",
+    "consulting_experts": "🏢 {count} yachaqkunawan tapukuspa..."
   },
   "errors": {
     "no_connection": "Ollama-wan mana tinkiychu",

@@ -230,6 +230,9 @@
     "image_pasted": "이미지가 성공적으로 붙여넣기되었습니다",
     "sending_large_file": "⏳ 전체 파일({size}KB)을 {count}개의 모델에 전송 중입니다. 몇 분 정도 걸릴 수 있으니 기다려주세요...",
     "sending_file": "⏳ 전체 파일({size}KB)을 {count}개의 모델에 전송 중입니다. 기다려주세요...",
+    "sending_large_pdf": "⏳ 전체 PDF({pages}페이지, {size}KB)를 {count}개의 모델에 전송 중입니다. 몇 분 정도 걸릴 수 있으니 기다려주세요...",
+    "sending_pdf": "⏳ 전체 PDF({pages}페이지, {size}KB)를 {count}개의 모델에 전송 중입니다. 기다려주세요...",
+    "consulting_experts": "🏢 {count}명의 전문가에게 문의 중...",
     "status_change_noticed": "상태가 {status}(으)로 변경된 것을 확인했습니다.",
     "status_change_noticed_help": "상태가 {status}(으)로 변경된 것을 확인했습니다. 무엇을 도와드릴까요?"
   },

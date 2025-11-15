@@ -230,7 +230,10 @@
     "status_change_noticed": "Durumunuzun {status} olarak değiştiğini fark ettim.",
     "status_change_noticed_help": "Durumunuzun {status} olarak değiştiğini fark ettim. Size nasıl yardımcı olabilirim?",
     "sending_large_file": "⏳ Tam dosya ({size}KB) {count} modele gönderiliyor. Lütfen bekleyin, bu birkaç dakika sürebilir...",
-    "sending_file": "⏳ Tam dosya ({size}KB) {count} modele gönderiliyor. Lütfen bekleyin..."
+    "sending_file": "⏳ Tam dosya ({size}KB) {count} modele gönderiliyor. Lütfen bekleyin...",
+    "sending_large_pdf": "⏳ Tam PDF ({pages} sayfa, {size}KB) {count} modele gönderiliyor. Lütfen bekleyin, bu birkaç dakika sürebilir...",
+    "sending_pdf": "⏳ Tam PDF ({pages} sayfa, {size}KB) {count} modele gönderiliyor. Lütfen bekleyin...",
+    "consulting_experts": "🏢 {count} uzmanla danışılıyor..."
   },
   "errors": {
     "no_connection": "Ollama ile bağlantı yok",

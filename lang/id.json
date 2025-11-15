@@ -229,7 +229,10 @@
     "status_change_noticed": "Saya menyadari perubahan status Anda menjadi {status}.",
     "status_change_noticed_help": "Saya menyadari perubahan status Anda menjadi {status}. Bagaimana saya bisa membantu Anda?",
     "sending_large_file": "⏳ Mengirim file lengkap ({size}KB) ke {count} model. Harap tunggu, ini mungkin memakan waktu beberapa menit...",
-    "sending_file": "⏳ Mengirim file lengkap ({size}KB) ke {count} model. Harap tunggu..."
+    "sending_file": "⏳ Mengirim file lengkap ({size}KB) ke {count} model. Harap tunggu...",
+    "sending_large_pdf": "⏳ Mengirim PDF lengkap ({pages} halaman, {size}KB) ke {count} model. Harap tunggu, ini mungkin memakan waktu beberapa menit...",
+    "sending_pdf": "⏳ Mengirim PDF lengkap ({pages} halaman, {size}KB) ke {count} model. Harap tunggu...",
+    "consulting_experts": "🏢 Berkonsultasi dengan {count} ahli..."
   },
   "errors": {
     "no_connection": "Tidak ada koneksi dengan Ollama",

@@ -316,6 +316,9 @@
     "image_pasted": "Image pasted successfully",
     "sending_large_file": "⏳ Sending complete file ({size}KB) to {count} models. Please wait, this may take several minutes...",
     "sending_file": "⏳ Sending complete file ({size}KB) to {count} models. Please wait...",
+    "sending_large_pdf": "⏳ Sending complete PDF ({pages} pages, {size}KB) to {count} models. Please wait, this may take several minutes...",
+    "sending_pdf": "⏳ Sending complete PDF ({pages} pages, {size}KB) to {count} models. Please wait...",
+    "consulting_experts": "🏢 Consulting {count} experts...",
     "status_change_noticed": "I noticed your status change to {status}.",
     "status_change_noticed_help": "I noticed your status change to {status}. How can I help you?"
   },

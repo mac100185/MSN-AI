@@ -9146,7 +9146,11 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
       // Mostrar notificación al usuario
       this.showNotification(
-        `⏳ Enviando PDF completo (${pdfContext.pages} páginas, ${Math.round(pdfText.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere, esto puede tomar varios minutos...`,
+        this.t("messages.sending_large_pdf", {
+          pages: pdfContext.pages,
+          size: Math.round(pdfText.length / 1000),
+          count: chat.models.length,
+        }),
         "info",
       );
     } else if (pdfText.length > 50000) {
@@ -9156,7 +9160,11 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
       // Mostrar notificación al usuario
       this.showNotification(
-        `⏳ Enviando PDF completo (${pdfContext.pages} páginas, ${Math.round(pdfText.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere...`,
+        this.t("messages.sending_pdf", {
+          pages: pdfContext.pages,
+          size: Math.round(pdfText.length / 1000),
+          count: chat.models.length,
+        }),
         "info",
       );
     }
@@ -9170,7 +9178,7 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
   // Mostrar progreso inicial
   if (chat.models.length > 1) {
     this.showNotification(
-      `🏢 Consultando ${chat.models.length} expertos...`,
+      this.t("messages.consulting_experts", { count: chat.models.length }),
       "info",
     );
   }

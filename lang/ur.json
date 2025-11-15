@@ -228,9 +228,12 @@
     "image_processing": "تصویر پر کارروائی ہو رہی ہے...",
     "image_loaded": "تصویر لوڈ ہو گئی: {filename}",
     "status_change_noticed": "میں نے آپ کی حیثیت {status} میں تبدیل ہوتے دیکھا۔",
-    "status_change_noticed_help": "میں نے آپ کی حیثیت {status} میں تبدیل ہوتے دیکھا۔ میں آپ کی کیسے مدد کر سکتا ہوں؟",
+    "status_change_noticed_help": "میں نے آپ کی حیثیت {status} میں تبدیل ہوتے دیکھا۔ میں آپ کی کیسے مدد کر سکتا ہوں?",
     "sending_large_file": "⏳ مکمل فائل ({size}KB) {count} ماڈلز کو بھیجی جا رہی ہے۔ براہ کرم انتظار کریں، اس میں کئی منٹ لگ سکتے ہیں...",
-    "sending_file": "⏳ مکمل فائل ({size}KB) {count} ماڈلز کو بھیجی جا رہی ہے۔ براہ کرم انتظار کریں..."
+    "sending_file": "⏳ مکمل فائل ({size}KB) {count} ماڈلز کو بھیجی جا رہی ہے۔ براہ کرم انتظار کریں...",
+    "sending_large_pdf": "⏳ مکمل PDF ({pages} صفحات، {size}KB) {count} ماڈلز کو بھیجی جا رہی ہے۔ براہ کرم انتظار کریں، اس میں کئی منٹ لگ سکتے ہیں...",
+    "sending_pdf": "⏳ مکمل PDF ({pages} صفحات، {size}KB) {count} ماڈلز کو بھیجی جا رہی ہے۔ براہ کرم انتظار کریں...",
+    "consulting_experts": "🏢 {count} ماہرین سے مشورہ کیا جا رہا ہے..."
   },
   "errors": {
     "no_connection": "Ollama سے کوئی کنکشن نہیں",
