@@ -4,10 +4,10 @@
 
 > *Donde la nostalgia se encuentra con la inteligencia artificial moderna*
 
-**Versión 3.0.1** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
+**Versión 3.0.3** | **Licencia GPL-3.0** | **Por Alan Mac-Arthur García Díaz**
 
 <p align="center">
-  <img src="assets/screenshots/msn-ai-v3.0.1.png" alt="MSN-AI v3.0.1 - Interfaz principal" width="850"/>
+  <img src="assets/screenshots/msn-ai-v3.0.3.png" alt="MSN-AI v3.0.3 - Interfaz principal" width="850"/>
 </p>
 
 ---
@@ -145,8 +145,10 @@ MSN-AI es una aplicación web que combina la interfaz nostálgica de **Windows L
 - **Detección automática** del idioma del navegador.
 - **Cambio manual** desde configuración.
 - **Persistencia** entre sesiones.
-- **Traducción completa** de toda la interfaz.
+- **Traducción completa** de toda la interfaz y notificaciones.
 - **System Prompt multiidioma** - Traducción automática del system prompt al cambiar idioma.
+- **Sin texto hardcodeado** - Todas las notificaciones usan el sistema i18n.
+- **Interpolación inteligente** - Variables dinámicas en mensajes traducidos.
 
 ### 🐳 Docker Edition
 - **Instalación simplificada** - Un comando para instalar.
@@ -764,8 +766,16 @@ ollama signout                         # Cerrar sesión
 1. Clic en configuración ⚙️
 2. Selector de idioma
 3. Selecciona entre 22 idiomas
-4. Interfaz se traduce instantáneamente
-5. Preferencia se guarda automáticamente
+4. Interfaz se traduce instantáneamente (100% de cobertura)
+5. **Todas las notificaciones** se muestran en el idioma seleccionado
+6. **Mensajes dinámicos** con interpolación de variables traducidos
+7. Preferencia se guarda automáticamente
+
+**Mejoras en v3.0.3:**
+- ✅ Eliminado todo texto hardcodeado en notificaciones
+- ✅ 458+ claves de traducción por idioma
+- ✅ Mensajes de estado, archivos y salas de expertos completamente traducidos
+- ✅ Interpolación inteligente: tamaños, cantidades, páginas y nombres en cada idioma
 
 ---
 
@@ -914,20 +924,24 @@ MSN-AI/
 ## 📊 Estadísticas del Proyecto
 
 ### Código Fuente
-- **9,750+ líneas totales** de código frontend
-  - HTML: 880 líneas
-  - JavaScript: 8,150+ líneas
-  - CSS: 1,700+ líneas
+- **12,759 líneas totales** de código frontend
+  - HTML: 939 líneas
+  - JavaScript: 10,054 líneas
+  - CSS: 1,766 líneas
 
 ### Scripts
-- **42 scripts** de automatización total
+- **40 scripts** de automatización total
   - 32 scripts Shell (.sh) para Linux/macOS
   - 10 scripts PowerShell (.ps1) para Windows
+  - Scripts de instalación, actualización, limpieza y gestión
 
 ### Internacionalización
 - **22 idiomas** completamente traducidos (100% cobertura)
 - **22 archivos JSON** de traducción
-- **450+ claves** de traducción por idioma
+- **458+ claves** de traducción por idioma
+- **Sistema de notificaciones** completamente traducido sin texto hardcodeado
+- **Interpolación de variables** en 22 idiomas ({size}, {count}, {pages}, {filename}, {status})
+- **8 nuevas claves** agregadas en v3.0.3 para traducciones completas
 
 ### Recursos Multimedia
 - **102 archivos** en carpeta assets/
@@ -935,14 +949,25 @@ MSN-AI/
   - 97 imágenes (iconos, fondos, capturas)
 
 ### Funcionalidades
-- **70+ características** implementadas
-- **11 campos** en generador de prompts
-- **4 estados** de presencia
-- **30 emoticones** integrados
-- **2 categorías** de emoticones (con cierre automático)
-- **Salas de expertos** con múltiples modelos de IA
-- **Dictado por voz** con reconocimiento continuo
+- **582 funciones y métodos** en total (85+ métodos principales en clase MSNAI)
+- **11 campos** en generador de prompts profesional
+- **4 estados** de presencia (Online, Away, Busy, Invisible)
+- **30 emoticones** integrados en 2 categorías (Naturales y Amor)
+- **Salas de expertos** con múltiples modelos de IA simultáneos
+- **Dictado por voz** continuo con Web Speech API de Chrome/Edge
 - **Sistema de detención** para respuestas individuales y grupales
+- **Rate Limiter inteligente** (clase OllamaRateLimiter) con:
+  - Cola de prioridades (high, normal, low)
+  - Reintentos automáticos con backoff exponencial
+  - Control de solicitudes concurrentes
+  - Prevención de sobrecarga (429 Too Many Requests)
+- **OCR para PDFs** escaneados con Tesseract.js
+- **Procesamiento de imágenes** multimodal con análisis visual por IA
+- **IndexedDB** para almacenamiento persistente de archivos binarios
+- **Markdown renderer** con syntax highlighting (Prism.js)
+- **Sistema de chunks** para archivos grandes (>100KB)
+- **Sanitización HTML** con DOMPurify para seguridad
+- **System Prompt dinámico** con variables {{MODEL_NAME}} y {{PARTICIPANT_LIST}}
 
 ### Compatibilidad
 - **3 sistemas operativos**: Linux, Windows, macOS

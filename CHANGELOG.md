@@ -9,6 +9,69 @@ y este proyecto se adhiere al [Versionado Semántico](https://semver.org/lang/es
 
 ---
 
+## [3.0.3] - 2025-01-15
+
+### 🔧 Corregido
+
+#### 🌍 Sistema de Traducciones Multiidioma
+- **Corrección completa de mensajes sin traducir en notificaciones**
+  - Eliminados todos los textos hardcodeados en español e inglés de `showNotification()`
+  - Eliminados todos los fallbacks hardcodeados (`|| "texto"`) en mensajes visibles al usuario
+  - **Nuevas claves de traducción agregadas (22 idiomas cada una):**
+    - `text_file_too_large`: Error de archivo de texto demasiado grande
+    - `status_change_noticed`: Notificación de cambio de estado (sin pregunta)
+    - `status_change_noticed_help`: Notificación de cambio de estado (con oferta de ayuda)
+    - `sending_large_file`: Mensaje de envío de archivo grande (>100KB)
+    - `sending_file`: Mensaje de envío de archivo normal (>50KB)
+    - `sending_large_pdf`: Mensaje de envío de PDF grande con páginas
+    - `sending_pdf`: Mensaje de envío de PDF normal con páginas
+    - `consulting_experts`: Mensaje de consulta a múltiples expertos en salas
+  - **Correcciones en mensajes con interpolación de variables:**
+    - Reconocimiento de voz: notificaciones de inicio y detención
+    - Procesamiento de imágenes: carga y procesamiento
+    - Procesamiento de PDFs: envío con páginas y tamaño
+    - Salas de expertos: consulta de múltiples modelos
+    - Archivos de texto: validación de tamaño
+  - **Total de traducciones agregadas:** 176 (8 claves × 22 idiomas)
+  - **Idiomas actualizados:** es, en, de, fr, pt, ru, zh, ja, ko, ar, hi, bn, ta, te, mr, pa, ur, tr, id, vi, ay, qu
+  - Mejora significativa en la experiencia multiidioma
+  - Todos los mensajes ahora respetan el idioma seleccionado por el usuario
+  - Interpolación correcta de variables dinámicas ({size}, {count}, {pages}, {filename}, {status})
+
+### 📊 Estadísticas Actualizadas
+
+#### Código Base
+- **12,759 líneas totales** de código frontend
+  - HTML: 939 líneas (msn-ai.html)
+  - JavaScript: 10,054 líneas (msn-ai.js)
+  - CSS: 1,766 líneas (styles.css)
+  - 582 funciones y métodos totales
+  - 85+ métodos principales en clase MSNAI
+
+#### Sistema de Traducciones
+- **458+ claves** de traducción por idioma
+- **10,076 traducciones totales** (458 × 22 idiomas)
+- **176 traducciones nuevas** en v3.0.3 (8 claves × 22 idiomas)
+- **100% cobertura** en notificaciones del sistema
+- Sin texto hardcodeado en mensajes visibles al usuario
+
+### 💡 Notas Técnicas v3.0.3
+
+#### Mejoras en el Sistema i18n
+- **Eliminación de fallbacks hardcodeados:** Todos los mensajes usan `this.t()` sin fallbacks `|| "texto"`
+- **Interpolación inteligente:** Variables dinámicas se procesan correctamente en todos los idiomas
+- **Placeholders compatibles:** {size}, {count}, {pages}, {filename}, {status} funcionan en 22 idiomas
+- **Detección de idioma:** El sistema respeta la preferencia del usuario en tiempo real
+
+#### Áreas Corregidas
+1. **Reconocimiento de voz:** Mensajes de inicio/detención/error completamente traducidos
+2. **Procesamiento de archivos:** Notificaciones de carga para TXT, PDF e imágenes
+3. **Salas de expertos:** Mensaje de consulta a múltiples modelos traducido
+4. **Cambio de estado:** Notificaciones contextuales con y sin oferta de ayuda
+5. **Validación de archivos:** Errores de tamaño máximo en todos los idiomas
+
+---
+
 ## [3.0.2] - 2025-01-14
 
 ### ✨ Añadido
