@@ -380,7 +380,19 @@
     "invalid_file": "File PDF tidak valid",
     "pages": "halaman",
     "attached": "PDF dilampirkan",
-    "context_active": "Konteks PDF aktif ({pages} halaman)"
+    "context_active": "Konteks PDF aktif ({pages} halaman)",
+    "password_protected": "❌ File PDF dilindungi kata sandi. Harap hapus perlindungan dan coba lagi.",
+    "incorrect_password": "❌ Kata sandi salah untuk file PDF yang dilindungi.",
+    "corrupted_file": "❌ File PDF rusak atau rusak. Tidak dapat diproses.",
+    "invalid_format": "❌ Format file tidak valid. Pastikan itu adalah file PDF yang valid.",
+    "empty_file": "❌ File PDF kosong (0 halaman).",
+    "no_text_found": "⚠️ Tidak ada teks yang dapat diekstrak ditemukan dalam PDF. Dokumen mungkin merupakan gambar yang dipindai tanpa OCR.",
+    "no_extractable_text": "❌ Tidak dapat mengekstrak teks apa pun dari PDF. Verifikasi bahwa file berisi teks yang dapat dibaca.",
+    "processing_failed": "❌ Kesalahan memproses file PDF. File mungkin rusak atau dalam format yang tidak didukung.",
+    "error_reading_file": "❌ Kesalahan membaca file. Verifikasi bahwa file tidak rusak.",
+    "network_error": "🌐 Kesalahan jaringan saat memproses PDF. Periksa koneksi internet Anda.",
+    "ocr_not_available": "❌ Mesin OCR tidak tersedia. Tidak dapat memproses PDF yang dipindai.",
+    "ocr_failed": "❌ OCR tidak dapat mengekstrak teks dari PDF. Dokumen mungkin memiliki gambar berkualitas sangat rendah."
   },
   "expert_room": {
     "title": "Ruang Ahli Baru",

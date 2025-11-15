@@ -377,7 +377,19 @@
     "invalid_file": "Fichier PDF invalide",
     "pages": "pages",
     "attached": "PDF joint",
-    "context_active": "Contexte PDF actif ({pages} pages)"
+    "context_active": "Contexte PDF actif ({pages} pages)",
+    "password_protected": "❌ Le fichier PDF est protégé par mot de passe. Veuillez supprimer la protection et réessayer.",
+    "incorrect_password": "❌ Mot de passe incorrect pour le fichier PDF protégé.",
+    "corrupted_file": "❌ Le fichier PDF est corrompu ou endommagé. Il ne peut pas être traité.",
+    "invalid_format": "❌ Format de fichier invalide. Assurez-vous qu'il s'agit d'un fichier PDF valide.",
+    "empty_file": "❌ Le fichier PDF est vide (0 pages).",
+    "no_text_found": "⚠️ Aucun texte extractible trouvé dans le PDF. Le document peut être une image numérisée sans OCR.",
+    "no_extractable_text": "❌ Impossible d'extraire du texte du PDF. Vérifiez que le fichier contient du texte lisible.",
+    "processing_failed": "❌ Erreur lors du traitement du fichier PDF. Le fichier peut être corrompu ou dans un format non pris en charge.",
+    "error_reading_file": "❌ Erreur lors de la lecture du fichier. Vérifiez que le fichier n'est pas endommagé.",
+    "network_error": "🌐 Erreur réseau lors du traitement du PDF. Vérifiez votre connexion Internet.",
+    "ocr_not_available": "❌ Le moteur OCR n'est pas disponible. Impossible de traiter les PDF numérisés.",
+    "ocr_failed": "❌ L'OCR n'a pas pu extraire le texte du PDF. Le document peut contenir des images de très mauvaise qualité."
   },
   "expert_room": {
     "title": "Nouvelle Salle d'Experts",

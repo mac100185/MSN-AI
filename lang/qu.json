@@ -302,7 +302,19 @@
     "invalid_file": "Mana allin PDF qillqa",
     "pages": "p'anqakuna",
     "attached": "PDF yapasqa",
-    "context_active": "PDF contexto kikin kaq ({pages} p'anqakuna)"
+    "context_active": "PDF contexto kikin kaq ({pages} p'anqakuna)",
+    "password_protected": "❌ PDF qillqaqa yaykuna rimaywanmi waqaychasqa. Ama hina kaspa waqaychayta qichuy hinaspa wakmanta ruway.",
+    "incorrect_password": "❌ Mana allin yaykuna rimay waqaychasqa PDF qillqapaq.",
+    "corrupted_file": "❌ PDF qillqaqa waqlliychasqami utaq waqllisqami. Mana ruwayta atinkichu.",
+    "invalid_format": "❌ Mana allin qillqa rikuchiy. Allin PDF qillqa kayninta qhaway.",
+    "empty_file": "❌ PDF qillqaqa ch'usaqmi (0 p'anqakuna).",
+    "no_text_found": "⚠️ Mana PDF-pi qillqata tarisqachu lluqsichinapaq. Qillqataqa OCR mana kaqtin escaneasqa siq'i kanman.",
+    "no_extractable_text": "❌ Mana ima qillqatapis PDF-manta lluqsichiyta atirqachu. Qillqapi ñawirinapaq qillqata kayninta qhaway.",
+    "processing_failed": "❌ PDF qillqa ruwaypi pantay. Qillqataqa waqlliychasqa kanman utaq mana yanapasqa rikuchiypi kanman.",
+    "error_reading_file": "❌ Qillqa ñawirinapi pantay. Qillqaqa mana waqllisqa kayninta qhaway.",
+    "network_error": "🌐 PDF ruwaypi red pantay. Internet tinkiykita qhaway.",
+    "ocr_not_available": "❌ OCR motor mana kanchu. Escaneasqa PDF qillqakunata mana ruwayta atinkichu.",
+    "ocr_failed": "❌ OCR mana PDF-manta qillqata lluqsichiyta atirqachu. Qillqataqa ancha mana allin siq'ikunata kapunman."
   },
   "prompt_generator": {
     "title": "Prompt Ruwaq",

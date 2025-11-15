@@ -381,7 +381,19 @@
     "invalid_file": "Arquivo PDF inválido",
     "pages": "páginas",
     "attached": "PDF anexado",
-    "context_active": "Contexto PDF ativo ({pages} páginas)"
+    "context_active": "Contexto PDF ativo ({pages} páginas)",
+    "password_protected": "❌ O arquivo PDF está protegido por senha. Por favor, remova a proteção e tente novamente.",
+    "incorrect_password": "❌ Senha incorreta para o arquivo PDF protegido.",
+    "corrupted_file": "❌ O arquivo PDF está corrompido ou danificado. Não pode ser processado.",
+    "invalid_format": "❌ Formato de arquivo inválido. Certifique-se de que é um arquivo PDF válido.",
+    "empty_file": "❌ O arquivo PDF está vazio (0 páginas).",
+    "no_text_found": "⚠️ Nenhum texto extraível encontrado no PDF. O documento pode ser uma imagem digitalizada sem OCR.",
+    "no_extractable_text": "❌ Não foi possível extrair nenhum texto do PDF. Verifique se o arquivo contém texto legível.",
+    "processing_failed": "❌ Erro ao processar o arquivo PDF. O arquivo pode estar corrompido ou em um formato não suportado.",
+    "error_reading_file": "❌ Erro ao ler o arquivo. Verifique se o arquivo não está danificado.",
+    "network_error": "🌐 Erro de rede ao processar o PDF. Verifique sua conexão com a internet.",
+    "ocr_not_available": "❌ O mecanismo OCR não está disponível. Não é possível processar PDFs digitalizados.",
+    "ocr_failed": "❌ O OCR não conseguiu extrair texto do PDF. O documento pode ter imagens de qualidade muito baixa."
   },
   "expert_room": {
     "title": "Nova Sala de Especialistas",

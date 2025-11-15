@@ -407,7 +407,19 @@
     "invalid_file": "Archivo PDF inválido",
     "pages": "páginas",
     "attached": "PDF adjunto",
-    "context_active": "Contexto PDF activo ({pages} páginas)"
+    "context_active": "Contexto PDF activo ({pages} páginas)",
+    "password_protected": "❌ El archivo PDF está protegido con contraseña. Por favor, elimina la protección y vuelve a intentarlo.",
+    "incorrect_password": "❌ Contraseña incorrecta para el archivo PDF protegido.",
+    "corrupted_file": "❌ El archivo PDF está corrupto o dañado. No se puede procesar.",
+    "invalid_format": "❌ Formato de archivo inválido. Asegúrate de que sea un archivo PDF válido.",
+    "empty_file": "❌ El archivo PDF está vacío (0 páginas).",
+    "no_text_found": "⚠️ No se encontró texto extraíble en el PDF. El documento puede ser una imagen escaneada sin OCR.",
+    "no_extractable_text": "❌ No se pudo extraer ningún texto del PDF. Verifica que el archivo contenga texto legible.",
+    "processing_failed": "❌ Error al procesar el archivo PDF. El archivo puede estar corrupto o en un formato no compatible.",
+    "error_reading_file": "❌ Error al leer el archivo. Verifica que el archivo no esté dañado.",
+    "network_error": "🌐 Error de red al procesar el PDF. Verifica tu conexión a internet.",
+    "ocr_not_available": "❌ El motor OCR no está disponible. No se pueden procesar PDFs escaneados.",
+    "ocr_failed": "❌ El OCR no pudo extraer texto del PDF. El documento puede tener imágenes de muy baja calidad."
   },
 
   "expert_room": {

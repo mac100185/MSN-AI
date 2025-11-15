@@ -381,7 +381,19 @@
     "invalid_file": "Jan wali PDF qillqa",
     "pages": "laphinaka",
     "attached": "PDF yapxatat",
-    "context_active": "PDF contexto ch'ama ({pages} laphinaka)"
+    "context_active": "PDF contexto ch'ama ({pages} laphinaka)",
+    "password_protected": "❌ PDF qillqaxa jist'aratawa arknaqata. Arknaqata apsuñamawa ukata wasitata yant'aña.",
+    "incorrect_password": "❌ Jan wali jist'arata arknaqat PDF qillqataki.",
+    "corrupted_file": "❌ PDF qillqaxa ch'usaqiwa jan ukax wañuyatawa. Janiwa lurañakiti.",
+    "invalid_format": "❌ Jan wali qillqa formato. Wali PDF qillqa ukhamajja amtañamawa.",
+    "empty_file": "❌ PDF qillqaxa ch'usawa (0 laphinaka).",
+    "no_text_found": "⚠️ Janiwa PDF-na mistuñjama qillqata jikxatatakiti. Qillqataxa OCR jan utjki uñakipata qillqachata ukhamawa.",
+    "no_extractable_text": "❌ Janiwa kuna qillqata PDF-manta mistuñakiti. Qillqanxa ullaña qillqata utjki ukaxa amtañamawa.",
+    "processing_failed": "❌ PDF qillqa luraña pantjata. Qillqaxa ch'usaqiwa jan ukax jan yanapt'ata formato ukankaspawa.",
+    "error_reading_file": "❌ Qillqa ullaña pantjata. Qillqaxa jan wañuyata ukhamaxa amtañamawa.",
+    "network_error": "🌐 PDF luraña pachanxa red pantjata. Internet chiqapa amtañamawa.",
+    "ocr_not_available": "❌ OCR motor janiwa utjakiti. Uñakipat PDF qillqanakxa janiwa lurañakiti.",
+    "ocr_failed": "❌ OCR janiwa PDF-manta qillqata mistuñakiti. Qillqataxa walpuru jan suma uñnaqat uñakipatanakaniwa."
   },
   "expert_room": {
     "title": "Machaq Yatiqirinaka Uta",

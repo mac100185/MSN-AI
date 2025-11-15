@@ -381,7 +381,19 @@
     "invalid_file": "PDF文件无效",
     "pages": "页",
     "attached": "PDF已附加",
-    "context_active": "PDF上下文已激活（{pages}页）"
+    "context_active": "PDF上下文已激活（{pages}页）",
+    "password_protected": "❌ PDF文件受密码保护。请删除保护后重试。",
+    "incorrect_password": "❌ 受保护PDF文件的密码不正确。",
+    "corrupted_file": "❌ PDF文件已损坏或损坏。无法处理。",
+    "invalid_format": "❌ 无效的文件格式。请确保它是有效的PDF文件。",
+    "empty_file": "❌ PDF文件为空（0页）。",
+    "no_text_found": "⚠️ 在PDF中未找到可提取的文本。该文档可能是没有OCR的扫描图像。",
+    "no_extractable_text": "❌ 无法从PDF中提取任何文本。请验证文件包含可读文本。",
+    "processing_failed": "❌ 处理PDF文件时出错。该文件可能已损坏或格式不受支持。",
+    "error_reading_file": "❌ 读取文件时出错。请验证文件未损坏。",
+    "network_error": "🌐 处理PDF时出现网络错误。请检查您的互联网连接。",
+    "ocr_not_available": "❌ OCR引擎不可用。无法处理扫描的PDF。",
+    "ocr_failed": "❌ OCR无法从PDF中提取文本。该文档可能包含质量非常低的图像。"
   },
   "expert_room": {
     "title": "新专家室",

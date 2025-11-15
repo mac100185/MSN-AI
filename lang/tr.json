@@ -381,7 +381,19 @@
     "invalid_file": "Geçersiz PDF dosyası",
     "pages": "sayfa",
     "attached": "PDF eklendi",
-    "context_active": "PDF bağlamı etkin ({pages} sayfa)"
+    "context_active": "PDF bağlamı etkin ({pages} sayfa)",
+    "password_protected": "❌ PDF dosyası parola korumalıdır. Lütfen korumayı kaldırın ve tekrar deneyin.",
+    "incorrect_password": "❌ Korumalı PDF dosyası için yanlış parola.",
+    "corrupted_file": "❌ PDF dosyası bozuk veya hasarlı. İşlenemiyor.",
+    "invalid_format": "❌ Geçersiz dosya formatı. Geçerli bir PDF dosyası olduğundan emin olun.",
+    "empty_file": "❌ PDF dosyası boş (0 sayfa).",
+    "no_text_found": "⚠️ PDF'de çıkarılabilir metin bulunamadı. Belge, OCR olmayan taranmış bir görüntü olabilir.",
+    "no_extractable_text": "❌ PDF'den hiçbir metin çıkarılamadı. Dosyanın okunabilir metin içerdiğini doğrulayın.",
+    "processing_failed": "❌ PDF dosyası işlenirken hata oluştu. Dosya bozuk veya desteklenmeyen bir formatta olabilir.",
+    "error_reading_file": "❌ Dosya okunurken hata oluştu. Dosyanın hasarlı olmadığını doğrulayın.",
+    "network_error": "🌐 PDF işlenirken ağ hatası. İnternet bağlantınızı kontrol edin.",
+    "ocr_not_available": "❌ OCR motoru kullanılamıyor. Taranmış PDF'ler işlenemiyor.",
+    "ocr_failed": "❌ OCR, PDF'den metin çıkaramadı. Belge çok düşük kaliteli görüntüler içerebilir."
   },
   "expert_room": {
     "title": "Yeni Uzman Odası",

@@ -377,7 +377,19 @@
     "invalid_file": "Ungültige PDF-Datei",
     "pages": "Seiten",
     "attached": "PDF angehängt",
-    "context_active": "PDF-Kontext aktiv ({pages} Seiten)"
+    "context_active": "PDF-Kontext aktiv ({pages} Seiten)",
+    "password_protected": "❌ Die PDF-Datei ist passwortgeschützt. Bitte entfernen Sie den Schutz und versuchen Sie es erneut.",
+    "incorrect_password": "❌ Falsches Passwort für die geschützte PDF-Datei.",
+    "corrupted_file": "❌ Die PDF-Datei ist beschädigt oder fehlerhaft. Sie kann nicht verarbeitet werden.",
+    "invalid_format": "❌ Ungültiges Dateiformat. Stellen Sie sicher, dass es sich um eine gültige PDF-Datei handelt.",
+    "empty_file": "❌ Die PDF-Datei ist leer (0 Seiten).",
+    "no_text_found": "⚠️ Kein extrahierbarer Text in der PDF gefunden. Das Dokument könnte ein gescanntes Bild ohne OCR sein.",
+    "no_extractable_text": "❌ Es konnte kein Text aus der PDF extrahiert werden. Überprüfen Sie, ob die Datei lesbaren Text enthält.",
+    "processing_failed": "❌ Fehler beim Verarbeiten der PDF-Datei. Die Datei könnte beschädigt oder in einem nicht unterstützten Format sein.",
+    "error_reading_file": "❌ Fehler beim Lesen der Datei. Überprüfen Sie, ob die Datei nicht beschädigt ist.",
+    "network_error": "🌐 Netzwerkfehler beim Verarbeiten der PDF. Überprüfen Sie Ihre Internetverbindung.",
+    "ocr_not_available": "❌ Die OCR-Engine ist nicht verfügbar. Gescannte PDFs können nicht verarbeitet werden.",
+    "ocr_failed": "❌ OCR konnte keinen Text aus der PDF extrahieren. Das Dokument könnte Bilder von sehr schlechter Qualität enthalten."
   },
   "expert_room": {
     "title": "Neuer Expertenraum",

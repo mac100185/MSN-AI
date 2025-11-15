@@ -385,7 +385,19 @@
     "invalid_file": "Invalid PDF file",
     "pages": "pages",
     "attached": "PDF attached",
-    "context_active": "PDF context active ({pages} pages)"
+    "context_active": "PDF context active ({pages} pages)",
+    "password_protected": "❌ The PDF file is password protected. Please remove the protection and try again.",
+    "incorrect_password": "❌ Incorrect password for the protected PDF file.",
+    "corrupted_file": "❌ The PDF file is corrupted or damaged. It cannot be processed.",
+    "invalid_format": "❌ Invalid file format. Make sure it is a valid PDF file.",
+    "empty_file": "❌ The PDF file is empty (0 pages).",
+    "no_text_found": "⚠️ No extractable text found in the PDF. The document may be a scanned image without OCR.",
+    "no_extractable_text": "❌ Could not extract any text from the PDF. Verify that the file contains readable text.",
+    "processing_failed": "❌ Error processing the PDF file. The file may be corrupted or in an unsupported format.",
+    "error_reading_file": "❌ Error reading the file. Verify that the file is not damaged.",
+    "network_error": "🌐 Network error while processing the PDF. Check your internet connection.",
+    "ocr_not_available": "❌ The OCR engine is not available. Cannot process scanned PDFs.",
+    "ocr_failed": "❌ OCR could not extract text from the PDF. The document may have very low-quality images."
   },
 
   "expert_room": {

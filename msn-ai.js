@@ -2473,10 +2473,18 @@ class MSNAI {
         reader.readAsArrayBuffer(file);
       } catch (error) {
         console.error("Error procesando PDF:", error);
-        this.showNotification(
-          this.t("errors.pdf_error", { error: error.message }),
-          "error",
-        );
+        // Mostrar mensaje de error más específico
+        let errorMessage = error.message;
+
+        // Si el mensaje de error ya está traducido (contiene claves de traducción), usarlo directamente
+        if (
+          !errorMessage.includes("pdf.") &&
+          !errorMessage.includes("errors.")
+        ) {
+          errorMessage = this.t("errors.pdf_error", { error: errorMessage });
+        }
+
+        this.showNotification(errorMessage, "error");
       }
     };
     input.click();
@@ -2494,39 +2502,105 @@ class MSNAI {
         "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
     }
 
-    const arrayBuffer = await file.arrayBuffer();
+    let arrayBuffer;
+    try {
+      arrayBuffer = await file.arrayBuffer();
+    } catch (error) {
+      console.error("Error leyendo archivo:", error);
+      throw new Error(this.t("pdf.error_reading_file"));
+    }
+
     let extractedText = "";
     let numPages = 0;
 
     try {
       // Intentar extraer texto con PDF.js (para PDFs con texto real)
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+
+      loadingTask.onPassword = (updateCallback, reason) => {
+        // El PDF está protegido con contraseña
+        console.error("PDF protegido con contraseña:", reason);
+        if (reason === 1) {
+          // NEEDS_PASSWORD
+          throw new Error(this.t("pdf.password_protected"));
+        } else {
+          // INCORRECT_PASSWORD
+          throw new Error(this.t("pdf.incorrect_password"));
+        }
+      };
+
+      const pdf = await loadingTask.promise;
       numPages = pdf.numPages;
+
+      if (numPages === 0) {
+        throw new Error(this.t("pdf.empty_file"));
+      }
 
       this.showNotification(this.t("errors.pdf_extracting_text"), "info");
 
       for (let i = 1; i <= numPages; i++) {
-        const page = await pdf.getPage(i);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map((item) => item.str).join(" ");
-        extractedText += pageText + "\n\n";
+        try {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map((item) => item.str).join(" ");
+          extractedText += pageText + "\n\n";
+        } catch (pageError) {
+          console.error(`Error extrayendo página ${i}:`, pageError);
+          // Continuar con las otras páginas
+        }
       }
 
       // Si no se extrajo suficiente texto, intentar OCR
       if (extractedText.trim().length < 100) {
         console.log("Poco texto extraído, aplicando OCR...");
-        extractedText = await this.applyOcrToPdf(arrayBuffer, numPages);
+        try {
+          extractedText = await this.applyOcrToPdf(arrayBuffer, numPages);
+        } catch (ocrError) {
+          console.error("Error en OCR:", ocrError);
+          if (extractedText.trim().length === 0) {
+            throw new Error(this.t("pdf.no_text_found"));
+          }
+          // Si hay algo de texto, continuar
+        }
       }
     } catch (error) {
-      console.error("Error con PDF.js, intentando OCR:", error);
-      // Si falla PDF.js, intentar OCR directamente
+      console.error("Error procesando PDF:", error);
+
+      // Detectar tipos específicos de errores
+      if (error.message && error.message.includes("password")) {
+        throw error; // Re-lanzar error de contraseña
+      }
+
+      if (error.name === "InvalidPDFException") {
+        throw new Error(this.t("pdf.corrupted_file"));
+      }
+
+      if (error.name === "MissingPDFException") {
+        throw new Error(this.t("pdf.invalid_format"));
+      }
+
+      if (error.name === "UnexpectedResponseException") {
+        throw new Error(this.t("pdf.network_error"));
+      }
+
+      // Si falla PDF.js, intentar OCR como último recurso
       try {
+        console.log("Intentando OCR como último recurso...");
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         numPages = pdf.numPages;
         extractedText = await this.applyOcrToPdf(arrayBuffer, numPages);
       } catch (ocrError) {
-        throw new Error(this.t("pdf.invalid_file"));
+        console.error("Error final en OCR:", ocrError);
+        // Proporcionar mensaje de error específico
+        if (error.message.includes(this.t("pdf."))) {
+          throw error; // Ya tiene un mensaje traducido
+        }
+        throw new Error(this.t("pdf.processing_failed"));
       }
+    }
+
+    if (!extractedText || extractedText.trim().length === 0) {
+      throw new Error(this.t("pdf.no_extractable_text"));
     }
 
     return {
@@ -2543,7 +2617,7 @@ class MSNAI {
    */
   async applyOcrToPdf(arrayBuffer, numPages) {
     if (typeof Tesseract === "undefined") {
-      throw new Error("Tesseract.js no está disponible");
+      throw new Error(this.t("pdf.ocr_not_available"));
     }
 
     const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
@@ -2555,38 +2629,47 @@ class MSNAI {
         "info",
       );
 
-      const page = await pdf.getPage(i);
-      const viewport = page.getViewport({ scale: 2.0 });
+      try {
+        const page = await pdf.getPage(i);
+        const viewport = page.getViewport({ scale: 2.0 });
 
-      // Crear canvas para renderizar la página
-      const canvas = document.createElement("canvas");
-      const context = canvas.getContext("2d");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+        // Crear canvas para renderizar la página
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
 
-      await page.render({
-        canvasContext: context,
-        viewport: viewport,
-      }).promise;
+        await page.render({
+          canvasContext: context,
+          viewport: viewport,
+        }).promise;
 
-      // Aplicar OCR a la imagen del canvas
-      const {
-        data: { text },
-      } = await Tesseract.recognize(
-        canvas.toDataURL(),
-        "spa+eng", // Español e inglés
-        {
-          logger: (info) => {
-            if (info.status === "recognizing text") {
-              console.log(
-                `OCR página ${i}: ${Math.round(info.progress * 100)}%`,
-              );
-            }
+        // Aplicar OCR a la imagen del canvas
+        const {
+          data: { text },
+        } = await Tesseract.recognize(
+          canvas.toDataURL(),
+          "spa+eng", // Español e inglés
+          {
+            logger: (info) => {
+              if (info.status === "recognizing text") {
+                console.log(
+                  `OCR página ${i}: ${Math.round(info.progress * 100)}%`,
+                );
+              }
+            },
           },
-        },
-      );
+        );
 
-      ocrText += text + "\n\n";
+        ocrText += text + "\n\n";
+      } catch (pageError) {
+        console.error(`Error en OCR página ${i}:`, pageError);
+        // Continuar con las siguientes páginas
+      }
+    }
+
+    if (ocrText.trim().length === 0) {
+      throw new Error(this.t("pdf.ocr_failed"));
     }
 
     return ocrText;

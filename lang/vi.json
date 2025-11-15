@@ -381,7 +381,19 @@
     "invalid_file": "Tệp PDF không hợp lệ",
     "pages": "trang",
     "attached": "PDF đã đính kèm",
-    "context_active": "Ngữ cảnh PDF đang hoạt động ({pages} trang)"
+    "context_active": "Ngữ cảnh PDF đang hoạt động ({pages} trang)",
+    "password_protected": "❌ Tệp PDF được bảo vệ bằng mật khẩu. Vui lòng xóa bảo vệ và thử lại.",
+    "incorrect_password": "❌ Mật khẩu không chính xác cho tệp PDF được bảo vệ.",
+    "corrupted_file": "❌ Tệp PDF bị hỏng hoặc bị hư hỏng. Không thể xử lý.",
+    "invalid_format": "❌ Định dạng tệp không hợp lệ. Đảm bảo đây là tệp PDF hợp lệ.",
+    "empty_file": "❌ Tệp PDF trống (0 trang).",
+    "no_text_found": "⚠️ Không tìm thấy văn bản có thể trích xuất trong PDF. Tài liệu có thể là hình ảnh được quét không có OCR.",
+    "no_extractable_text": "❌ Không thể trích xuất bất kỳ văn bản nào từ PDF. Xác minh rằng tệp chứa văn bản có thể đọc được.",
+    "processing_failed": "❌ Lỗi xử lý tệp PDF. Tệp có thể bị hỏng hoặc ở định dạng không được hỗ trợ.",
+    "error_reading_file": "❌ Lỗi đọc tệp. Xác minh rằng tệp không bị hư hỏng.",
+    "network_error": "🌐 Lỗi mạng khi xử lý PDF. Kiểm tra kết nối internet của bạn.",
+    "ocr_not_available": "❌ Công cụ OCR không khả dụng. Không thể xử lý PDF được quét.",
+    "ocr_failed": "❌ OCR không thể trích xuất văn bản từ PDF. Tài liệu có thể có hình ảnh chất lượng rất thấp."
   },
   "expert_room": {
     "title": "Phòng Chuyên Gia Mới",
