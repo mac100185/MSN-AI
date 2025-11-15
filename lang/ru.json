@@ -311,7 +311,9 @@
     "image_processing": "Обработка изображения...",
     "image_loaded": "Изображение загружено: {filename}",
     "status_change_noticed": "Я заметил изменение вашего статуса на {status}.",
-    "status_change_noticed_help": "Я заметил изменение вашего статуса на {status}. Чем могу помочь?"
+    "status_change_noticed_help": "Я заметил изменение вашего статуса на {status}. Чем могу помочь?",
+    "sending_large_file": "⏳ Отправка полного файла ({size}KB) на {count} моделей. Пожалуйста, подождите, это может занять несколько минут...",
+    "sending_file": "⏳ Отправка полного файла ({size}KB) на {count} моделей. Пожалуйста, подождите..."
   },
   "errors": {
     "no_connection": "Нет соединения с Ollama",

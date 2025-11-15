@@ -228,7 +228,9 @@
     "image_processing": "معالجة الصورة...",
     "image_loaded": "تم تحميل الصورة: {filename}",
     "status_change_noticed": "لاحظت تغيير حالتك إلى {status}.",
-    "status_change_noticed_help": "لاحظت تغيير حالتك إلى {status}. كيف يمكنني مساعدتك؟"
+    "status_change_noticed_help": "لاحظت تغيير حالتك إلى {status}. كيف يمكنني مساعدتك؟",
+    "sending_large_file": "⏳ إرسال الملف الكامل ({size}KB) إلى {count} نماذج. يرجى الانتظار، قد يستغرق هذا عدة دقائق...",
+    "sending_file": "⏳ إرسال الملف الكامل ({size}KB) إلى {count} نماذج. يرجى الانتظار..."
   },
   "errors": {
     "no_connection": "لا يوجد اتصال بـ Ollama",

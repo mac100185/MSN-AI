@@ -227,7 +227,9 @@
     "image_processing": "Memproses gambar...",
     "image_loaded": "Gambar dimuat: {filename}",
     "status_change_noticed": "Saya menyadari perubahan status Anda menjadi {status}.",
-    "status_change_noticed_help": "Saya menyadari perubahan status Anda menjadi {status}. Bagaimana saya bisa membantu Anda?"
+    "status_change_noticed_help": "Saya menyadari perubahan status Anda menjadi {status}. Bagaimana saya bisa membantu Anda?",
+    "sending_large_file": "⏳ Mengirim file lengkap ({size}KB) ke {count} model. Harap tunggu, ini mungkin memakan waktu beberapa menit...",
+    "sending_file": "⏳ Mengirim file lengkap ({size}KB) ke {count} model. Harap tunggu..."
   },
   "errors": {
     "no_connection": "Tidak ada koneksi dengan Ollama",

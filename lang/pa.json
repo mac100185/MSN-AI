@@ -228,7 +228,9 @@
     "image_processing": "ਚਿੱਤਰ ਪ੍ਰੋਸੈਸ ਹੋ ਰਿਹਾ ਹੈ...",
     "image_loaded": "ਚਿੱਤਰ ਲੋਡ ਹੋ ਗਿਆ: {filename}",
     "status_change_noticed": "ਮੈਂ ਦੇਖਿਆ ਕਿ ਤੁਹਾਡੀ ਸਥਿਤੀ {status} ਵਿੱਚ ਬਦਲ ਗਈ ਹੈ।",
-    "status_change_noticed_help": "ਮੈਂ ਦੇਖਿਆ ਕਿ ਤੁਹਾਡੀ ਸਥਿਤੀ {status} ਵਿੱਚ ਬਦਲ ਗਈ ਹੈ। ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?"
+    "status_change_noticed_help": "ਮੈਂ ਦੇਖਿਆ ਕਿ ਤੁਹਾਡੀ ਸਥਿਤੀ {status} ਵਿੱਚ ਬਦਲ ਗਈ ਹੈ। ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?",
+    "sending_large_file": "⏳ ਪੂਰੀ ਫਾਈਲ ({size}KB) {count} ਮਾਡਲਾਂ ਨੂੰ ਭੇਜੀ ਜਾ ਰਹੀ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ, ਇਸ ਵਿੱਚ ਕਈ ਮਿੰਟ ਲੱਗ ਸਕਦੇ ਹਨ...",
+    "sending_file": "⏳ ਪੂਰੀ ਫਾਈਲ ({size}KB) {count} ਮਾਡਲਾਂ ਨੂੰ ਭੇਜੀ ਜਾ ਰਹੀ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਉਡੀਕ ਕਰੋ..."
   },
   "errors": {
     "no_connection": "Ollama ਨਾਲ ਕੋਈ ਕਨੈਕਸ਼ਨ ਨਹੀਂ",

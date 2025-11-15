@@ -228,7 +228,9 @@
     "image_processing": "Resim işleniyor...",
     "image_loaded": "Resim yüklendi: {filename}",
     "status_change_noticed": "Durumunuzun {status} olarak değiştiğini fark ettim.",
-    "status_change_noticed_help": "Durumunuzun {status} olarak değiştiğini fark ettim. Size nasıl yardımcı olabilirim?"
+    "status_change_noticed_help": "Durumunuzun {status} olarak değiştiğini fark ettim. Size nasıl yardımcı olabilirim?",
+    "sending_large_file": "⏳ Tam dosya ({size}KB) {count} modele gönderiliyor. Lütfen bekleyin, bu birkaç dakika sürebilir...",
+    "sending_file": "⏳ Tam dosya ({size}KB) {count} modele gönderiliyor. Lütfen bekleyin..."
   },
   "errors": {
     "no_connection": "Ollama ile bağlantı yok",

@@ -228,7 +228,9 @@
     "image_processing": "Siq'i rurasqa...",
     "image_loaded": "Siq'i cargasqa: {filename}",
     "status_change_noticed": "Estado {status}-man tikrakusqaykita riqsirqani.",
-    "status_change_noticed_help": "Estado {status}-man tikrakusqaykita riqsirqani. ¿Imaynatataq yanapasqayki?"
+    "status_change_noticed_help": "Estado {status}-man tikrakusqaykita riqsirqani. ¿Imaynatataq yanapasqayki?",
+    "sending_large_file": "⏳ Hunt'a qillqa ({size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay, kay wakin minutukunata hap'inman...",
+    "sending_file": "⏳ Hunt'a qillqa ({size}KB) {count} modelokunapaq kachasqa. Ama hina kaspa, suyay..."
   },
   "errors": {
     "no_connection": "Ollama-wan mana tinkiychu",

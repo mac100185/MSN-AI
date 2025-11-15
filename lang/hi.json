@@ -228,7 +228,9 @@
     "image_processing": "छवि संसाधित हो रही है...",
     "image_loaded": "छवि लोड की गई: {filename}",
     "status_change_noticed": "मैंने आपकी स्थिति {status} में बदलते देखा।",
-    "status_change_noticed_help": "मैंने आपकी स्थिति {status} में बदलते देखा। मैं आपकी क्या मदद कर सकता हूं?"
+    "status_change_noticed_help": "मैंने आपकी स्थिति {status} में बदलते देखा। मैं आपकी क्या मदद कर सकता हूं?",
+    "sending_large_file": "⏳ {count} मॉडलों को पूर्ण फ़ाइल ({size}KB) भेजी जा रही है। कृपया प्रतीक्षा करें, इसमें कई मिनट लग सकते हैं...",
+    "sending_file": "⏳ {count} मॉडलों को पूर्ण फ़ाइल ({size}KB) भेजी जा रही है। कृपया प्रतीक्षा करें..."
   },
   "errors": {
     "no_connection": "Ollama से कोई कनेक्शन नहीं",

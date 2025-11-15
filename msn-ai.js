@@ -9108,7 +9108,10 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
       // Mostrar notificación al usuario
       this.showNotification(
-        `⏳ Enviando archivo completo (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere, esto puede tomar varios minutos...`,
+        this.t("messages.sending_large_file", {
+          size: Math.round(textContent.length / 1000),
+          count: chat.models.length,
+        }),
         "info",
       );
     } else if (textContent.length > 50000) {
@@ -9118,7 +9121,10 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
       // Mostrar notificación al usuario
       this.showNotification(
-        `⏳ Enviando archivo completo (${Math.round(textContent.length / 1000)}KB) a ${chat.models.length} modelos. Por favor espere...`,
+        this.t("messages.sending_file", {
+          size: Math.round(textContent.length / 1000),
+          count: chat.models.length,
+        }),
         "info",
       );
     }

@@ -228,7 +228,9 @@
     "image_processing": "Uñacht'awi luraskipana...",
     "image_loaded": "Uñacht'awi apthapita: {filename}",
     "status_change_noticed": "Estado mayjt'awamarux {status} uñt'ta.",
-    "status_change_noticed_help": "Estado mayjt'awamarux {status} uñt'ta. ¿Kunjamasa yanapt'apxasmawa?"
+    "status_change_noticed_help": "Estado mayjt'awamarux {status} uñt'ta. ¿Kunjamasa yanapt'apxasmawa?",
+    "sending_large_file": "⏳ Taqpach qillqa ({size}KB) {count} modelonakaru apayaskipana. Jayp'uma, aka walja minutunakawa utjarakispawa...",
+    "sending_file": "⏳ Taqpach qillqa ({size}KB) {count} modelonakaru apayaskipana. Jayp'uma..."
   },
   "errors": {
     "no_connection": "Ollama-mpi janiwa mayacht'atakiti",
