@@ -1311,9 +1311,61 @@ a {
 }
 
 #settings-modal .modal-content {
-    width: 450px;
+    width: 500px;
     max-width: 90%;
+    max-height: 85vh;
     margin: 5% auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#settings-modal .modal-header {
+    flex-shrink: 0;
+}
+
+#settings-modal .settings-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+/* Estilos para pestañas */
+.settings-tabs {
+    display: flex;
+    border-bottom: 2px solid #c0c0c0;
+    margin-bottom: 15px;
+    gap: 5px;
+}
+
+.settings-tab {
+    padding: 8px 16px;
+    background: #e0e0e0;
+    border: 1px solid #c0c0c0;
+    border-bottom: none;
+    cursor: pointer;
+    font-size: 8pt;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+    transition: background 0.2s;
+}
+
+.settings-tab:hover {
+    background: #f0f0f0;
+}
+
+.settings-tab.active {
+    background: #ecf6f9;
+    border-bottom: 2px solid #ecf6f9;
+    margin-bottom: -2px;
+}
+
+.settings-tab-content {
+    display: none;
+}
+
+.settings-tab-content.active {
+    display: block;
 }
 
 #export-modal .modal-content {

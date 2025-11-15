@@ -84,6 +84,9 @@
 
   "settings": {
     "title": "Configuración del Modelo de IA",
+    "tab_general": "General",
+    "tab_connection": "Conexión",
+    "tab_advanced": "Avanzado",
     "sounds_enabled": "Sonidos habilitados",
     "ollama_server": "Servidor Ollama",
     "ollama_server_description": "Dirección del servidor Ollama. Déjalo vacío para autodetección.",
@@ -94,6 +97,10 @@
     "api_timeout": "Tiempo de espera (ms)",
     "notify_status_changes": "Notificar cambios de estado a la IA",
     "notify_status_changes_description": "Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.",
+    "rate_limit": "Intervalo entre solicitudes",
+    "rate_limit_description": "Tiempo mínimo entre solicitudes a Ollama. Aumentar si hay errores 429 (Too Many Requests).",
+    "max_tokens": "Tokens máximos en respuesta",
+    "max_tokens_description": "Número máximo de tokens que el modelo puede generar en una respuesta. Aumentar si las respuestas se cortan.",
     "language": "Idioma de la interfaz",
     "language_description": "Idioma en el que se mostrarán los menús, botones y mensajes del sistema.",
     "connection_success": "¡Conexión exitosa!\n\nModelos disponibles: {count}\n\nServidor: {server}",

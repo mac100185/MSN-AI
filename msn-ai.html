@@ -200,100 +200,160 @@
                 <h3 data-i18n="settings.title">Configuración del Modelo de IA</h3>
                 <span class="modal-close">&times;</span>
             </div>
-            <div style="padding: 10px 0;">
-                <!-- ========== SONIDOS ========== -->
-                <div style="margin-bottom: 15px;">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" id="sounds-enabled" checked style="margin-right: 8px;">
-                        <span data-i18n="settings.sounds_enabled">Activar sonidos</span>
-                    </label>
-                </div>
 
-                <!-- ========== NOTIFICACIONES DE ESTADO ========== -->
-                <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
-                    <label style="display: flex; align-items: center; cursor: pointer;">
-                        <input type="checkbox" id="notify-status-changes" checked style="margin-right: 8px;">
-                        <span data-i18n="settings.notify_status_changes">Notificar cambios de estado a la IA</span>
-                    </label>
-                    <p style="margin: 8px 0 0 24px; font-size: 7pt; color: #666; line-height: 1.4;" data-i18n="settings.notify_status_changes_description">
-                        Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.
-                    </p>
-                </div>
+            <!-- Pestañas -->
+            <div class="settings-tabs">
+                <div class="settings-tab active" data-tab="general" data-i18n="settings.tab_general">General</div>
+                <div class="settings-tab" data-tab="connection" data-i18n="settings.tab_connection">Conexión</div>
+                <div class="settings-tab" data-tab="advanced" data-i18n="settings.tab_advanced">Avanzado</div>
+            </div>
 
-                <!-- ========== SERVIDOR OLLAMA ========== -->
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        <span data-i18n="settings.ollama_server">Servidor Ollama</span>:
-                    </label>
-                    <input
-                        type="text"
-                        id="ollama-server"
-                        placeholder="http://localhost:11434"
-                        style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: Tahoma;">
-                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        <span data-i18n="settings.ollama_server_description">Dirección del servidor Ollama. Déjalo vacío para autodetección.</span>
-                    </p>
-                </div>
-
-                <!-- ========== MODELO DE IA ========== -->
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        <span data-i18n="settings.select_model">Modelo de IA</span>:
-                    </label>
-                    <select
-                        id="model-select"
-                        style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; font-family: Tahoma;">
-                        <option value="">Cargando modelos...</option>
-                    </select>
-                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        <span data-i18n="settings.model_description">Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.</span>
-                    </p>
-                </div>
-
-                <!-- ========== IDIOMA DE INTERFAZ ========== -->
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: bold;">
-                        <span data-i18n="settings.language">Idioma de la interfaz</span>:
-                    </label>
-                    <select
-                        id="language-select"
-                        style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; font-family: Tahoma;">
-                        <option value="">Cargando idiomas...</option>
-                    </select>
-                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        <span data-i18n="settings.language_description">Idioma en el que se mostrarán los menús, botones y mensajes del sistema.</span>
-                    </p>
-                </div>
-
-                <!-- ========== SYSTEM PROMPT PARA SALAS DE CHAT GRUPALES ========== -->
-                <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label style="font-weight: bold; margin: 0;">
-                            <span data-i18n="settings.group_chat_system_prompt">System Prompt para Salas de Chat Grupales</span>:
+            <div class="settings-body">
+                <!-- ========== PESTAÑA GENERAL ========== -->
+                <div class="settings-tab-content active" data-tab-content="general">
+                    <!-- SONIDOS -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="sounds-enabled" checked style="margin-right: 8px;">
+                            <span data-i18n="settings.sounds_enabled">Activar sonidos</span>
                         </label>
-                        <button class="aerobutton" id="reset-system-prompt-btn" style="padding: 4px 8px; font-size: 7pt;" data-i18n-title="settings.reset_system_prompt_title" title="Restaurar plantilla predeterminada">
-                            <span data-i18n="settings.reset_system_prompt">🔄 Restaurar</span>
+                    </div>
+
+                    <!-- NOTIFICACIONES DE ESTADO -->
+                    <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="notify-status-changes" checked style="margin-right: 8px;">
+                            <span data-i18n="settings.notify_status_changes">Notificar cambios de estado a la IA</span>
+                        </label>
+                        <p style="margin: 8px 0 0 24px; font-size: 7pt; color: #666; line-height: 1.4;" data-i18n="settings.notify_status_changes_description">
+                            Cuando cambies tu estado (Online, Away, Busy, Invisible), la IA será notificada automáticamente en el chat activo.
+                        </p>
+                    </div>
+
+                    <!-- MODELO DE IA -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                            <span data-i18n="settings.select_model">Modelo de IA</span>:
+                        </label>
+                        <select
+                            id="model-select"
+                            style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; font-family: Tahoma;">
+                            <option value="">Cargando modelos...</option>
+                        </select>
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.model_description">Modelo que se usará para nuevos chats. Los chats existentes mantienen su modelo.</span>
+                        </p>
+                    </div>
+
+                    <!-- IDIOMA DE INTERFAZ -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                            <span data-i18n="settings.language">Idioma de la interfaz</span>:
+                        </label>
+                        <select
+                            id="language-select"
+                            style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; font-family: Tahoma;">
+                            <option value="">Cargando idiomas...</option>
+                        </select>
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.language_description">Idioma en el que se mostrarán los menús, botones y mensajes del sistema.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- ========== PESTAÑA CONEXIÓN ========== -->
+                <div class="settings-tab-content" data-tab-content="connection">
+                    <!-- SERVIDOR OLLAMA -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                            <span data-i18n="settings.ollama_server">Servidor Ollama</span>:
+                        </label>
+                        <input
+                            type="text"
+                            id="ollama-server"
+                            placeholder="http://localhost:11434"
+                            style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: Tahoma;">
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.ollama_server_description">Dirección del servidor Ollama. Déjalo vacío para autodetección.</span>
+                        </p>
+                    </div>
+
+                    <!-- RATE LIMIT -->
+                    <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                            <span data-i18n="settings.rate_limit">Intervalo entre solicitudes</span>:
+                        </label>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <input
+                                type="range"
+                                id="rate-limit-slider"
+                                min="1"
+                                max="5"
+                                step="0.5"
+                                value="2"
+                                style="flex: 1;">
+                            <span id="rate-limit-value" style="font-weight: bold; min-width: 60px;">2.0s</span>
+                        </div>
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.rate_limit_description">Tiempo mínimo entre solicitudes a Ollama. Aumentar si hay errores 429 (Too Many Requests).</span>
+                        </p>
+                    </div>
+
+                    <!-- BOTÓN TEST CONEXIÓN -->
+                    <div style="text-align: right;">
+                        <button class="aerobutton" id="test-connection" style="padding: 6px 12px;">
+                            <span data-i18n="buttons.test_connection">🔌 Probar Conexión</span>
                         </button>
                     </div>
-                    <textarea
-                        id="group-chat-system-prompt"
-                        rows="8"
-                        style="width: 100%; padding: 8px; font-size: 7pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: 'Courier New', monospace; resize: vertical;"
-                        placeholder="Se cargará la plantilla por defecto..."></textarea>
-                    <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
-                        <span data-i18n="settings.group_chat_system_prompt_description">Plantilla de instrucciones enviadas a cada modelo de IA en salas grupales. Variables: {{MODEL_NAME}} (nombre del participante), {{PARTICIPANT_LIST}} (lista de participantes).</span>
-                    </p>
                 </div>
 
-                <!-- ========== BOTONES ========== -->
-                <div style="text-align: right; margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
-                    <button class="aerobutton" id="test-connection" style="margin-right: 8px; padding: 6px 12px;">
-                        <span data-i18n="buttons.test_connection">🔌 Probar Conexión</span>
-                    </button>
-                    <button class="aerobutton" id="save-settings" style="padding: 6px 12px; font-weight: bold;">
-                        <span data-i18n="buttons.save">💾 Guardar</span>
-                    </button>
+                <!-- ========== PESTAÑA AVANZADO ========== -->
+                <div class="settings-tab-content" data-tab-content="advanced">
+                    <!-- TOKENS MÁXIMOS EN RESPUESTA -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: bold;">
+                            <span data-i18n="settings.max_tokens">Tokens máximos en respuesta</span>:
+                        </label>
+                        <input
+                            type="number"
+                            id="max-tokens-input"
+                            min="512"
+                            max="8192"
+                            step="512"
+                            value="4000"
+                            style="width: 100%; padding: 6px 8px; font-size: 8pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: Tahoma;">
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.max_tokens_description">Número máximo de tokens que el modelo puede generar en una respuesta. Aumentar si las respuestas se cortan.</span>
+                        </p>
+                    </div>
+
+                    <!-- SYSTEM PROMPT PARA SALAS DE CHAT GRUPALES -->
+                    <div style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 4px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <label style="font-weight: bold; margin: 0;">
+                                <span data-i18n="settings.group_chat_system_prompt">System Prompt para Salas de Chat Grupales</span>:
+                            </label>
+                            <button class="aerobutton" id="reset-system-prompt-btn" style="padding: 4px 8px; font-size: 7pt;" data-i18n-title="settings.reset_system_prompt_title" title="Restaurar plantilla predeterminada">
+                                <span data-i18n="settings.reset_system_prompt">🔄 Restaurar</span>
+                            </button>
+                        </div>
+                        <textarea
+                            id="group-chat-system-prompt"
+                            rows="12"
+                            style="width: 100%; padding: 8px; font-size: 7pt; border: thin solid #c7c7c7; box-sizing: border-box; font-family: 'Courier New', monospace; resize: vertical;"
+                            placeholder="Se cargará la plantilla por defecto..."></textarea>
+                        <p style="margin: 4px 0 0 0; font-size: 7pt; color: #666;">
+                            <span data-i18n="settings.group_chat_system_prompt_description">Plantilla de instrucciones enviadas a cada modelo de IA en salas grupales. Variables: {{MODEL_NAME}} (nombre del participante), {{PARTICIPANT_LIST}} (lista de participantes).</span>
+                        </p>
+                    </div>
                 </div>
+            </div>
+
+            <!-- BOTONES INFERIORES -->
+            <div style="padding: 15px 0 0 0; border-top: 1px solid #e0e0e0; text-align: right; flex-shrink: 0;">
+                <button class="aerobutton" id="save-settings" style="padding: 6px 12px; font-weight: bold;">
+                    <span data-i18n="buttons.save">💾 Guardar</span>
+                </button>
             </div>
         </div>
     </div>

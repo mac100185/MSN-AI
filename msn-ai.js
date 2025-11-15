@@ -76,8 +76,9 @@ class MSNAI {
       temperature: 0.7,
       topK: 40,
       topP: 0.9,
-      maxTokens: 2000,
+      maxTokens: 4000, // Aumentado a 4000 para respuestas más completas
       groupChatSystemPrompt: "", // Se llenará con la traducción por defecto
+      rateLimitInterval: 2000, // 2 segundos por defecto para evitar errores 429
     };
     this.currentStatus = "online"; // Estado inicial
 
@@ -3246,7 +3247,7 @@ class MSNAI {
         temperature: 0.7,
         topK: 40,
         topP: 0.9,
-        maxTokens: 2000,
+        maxTokens: 4000,
       };
       this.settings = { ...this.settings, ...defaults, ...savedSettings };
       const currentHost = window.location.hostname;
@@ -3450,7 +3451,7 @@ class MSNAI {
           temperature: parseFloat(this.settings.temperature) || 0.7,
           top_k: parseInt(this.settings.topK) || 40,
           top_p: parseFloat(this.settings.topP) || 0.9,
-          num_predict: parseInt(this.settings.maxTokens) || 2000,
+          num_predict: parseInt(this.settings.maxTokens) || 4000,
         },
         keep_alive: "5m", // Mantener modelo en memoria por 5 minutos
       };
@@ -5151,6 +5152,9 @@ class MSNAI {
     const ollamaServerEl = document.getElementById("ollama-server");
     const modelSelectEl = document.getElementById("model-select");
     const notifyStatusEl = document.getElementById("notify-status-changes");
+    const rateLimitSliderEl = document.getElementById("rate-limit-slider");
+    const rateLimitValueEl = document.getElementById("rate-limit-value");
+    const maxTokensEl = document.getElementById("max-tokens-input");
     const groupChatSystemPromptEl = document.getElementById(
       "group-chat-system-prompt",
     );
@@ -5160,6 +5164,18 @@ class MSNAI {
     if (modelSelectEl) modelSelectEl.value = this.settings.selectedModel;
     if (notifyStatusEl)
       notifyStatusEl.checked = this.settings.notifyStatusChanges;
+
+    // Actualizar slider de rate limit
+    if (rateLimitSliderEl && rateLimitValueEl) {
+      const rateLimitSeconds = (this.settings.rateLimitInterval || 2000) / 1000;
+      rateLimitSliderEl.value = rateLimitSeconds;
+      rateLimitValueEl.textContent = `${rateLimitSeconds.toFixed(1)}s`;
+    }
+
+    // Actualizar max tokens
+    if (maxTokensEl) {
+      maxTokensEl.value = this.settings.maxTokens || 4000;
+    }
 
     // Cargar system prompt para salas de chat grupales
     if (groupChatSystemPromptEl) {
@@ -5177,6 +5193,42 @@ class MSNAI {
 
       groupChatSystemPromptEl.value = this.settings.groupChatSystemPrompt;
     }
+  }
+
+  /**
+   * Cambia la pestaña activa en el modal de configuración
+   */
+  switchSettingsTab(tabName) {
+    // Desactivar todas las pestañas y contenidos
+    const tabs = document.querySelectorAll(".settings-tab");
+    const contents = document.querySelectorAll(".settings-tab-content");
+
+    tabs.forEach((tab) => tab.classList.remove("active"));
+    contents.forEach((content) => content.classList.remove("active"));
+
+    // Activar la pestaña y contenido seleccionados
+    const activeTab = document.querySelector(
+      `.settings-tab[data-tab="${tabName}"]`,
+    );
+    const activeContent = document.querySelector(
+      `.settings-tab-content[data-tab-content="${tabName}"]`,
+    );
+
+    if (activeTab) activeTab.classList.add("active");
+    if (activeContent) activeContent.classList.add("active");
+  }
+
+  /**
+   * Inicializa el manejo de pestañas del modal de configuración
+   */
+  initSettingsTabs() {
+    const settingsTabs = document.querySelectorAll(".settings-tab");
+    settingsTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const tabName = tab.getAttribute("data-tab");
+        this.switchSettingsTab(tabName);
+      });
+    });
   }
   //--------------------------------
   async exportChats() {
@@ -6371,6 +6423,17 @@ class MSNAI {
       this.updateGroupChatSystemPrompt();
       this.updateSettingsUI();
       document.getElementById("settings-modal").style.display = "block";
+      // Mostrar la primera pestaña por defecto
+      this.switchSettingsTab("general");
+    });
+
+    // Event listeners para las pestañas del modal de configuración
+    const settingsTabs = document.querySelectorAll(".settings-tab");
+    settingsTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const tabName = tab.getAttribute("data-tab");
+        this.switchSettingsTab(tabName);
+      });
     });
 
     // AÑADE ESTOS EVENTOS SI NO EXISTEN:
@@ -6432,6 +6495,30 @@ class MSNAI {
         "notify-status-changes",
       ).checked;
 
+      // Guardar rate limit
+      const rateLimitValue = parseFloat(
+        document.getElementById("rate-limit-slider").value,
+      );
+      this.settings.rateLimitInterval = rateLimitValue * 1000; // Convertir a ms
+
+      // Actualizar el rate limiter con el nuevo valor
+      if (this.rateLimiter) {
+        this.rateLimiter.minRequestInterval = this.settings.rateLimitInterval;
+        this.rateLimiter.originalMinInterval = this.settings.rateLimitInterval;
+        console.log(
+          `⚙️ [RateLimiter] Intervalo actualizado a ${this.settings.rateLimitInterval}ms (${rateLimitValue}s)`,
+        );
+      }
+
+      // Guardar max tokens
+      const maxTokensValue = parseInt(
+        document.getElementById("max-tokens-input").value,
+      );
+      if (maxTokensValue >= 512 && maxTokensValue <= 8192) {
+        this.settings.maxTokens = maxTokensValue;
+        console.log(`⚙️ [Settings] Max tokens actualizado a ${maxTokensValue}`);
+      }
+
       // Guardar system prompt para salas de chat grupales
       const groupChatSystemPromptEl = document.getElementById(
         "group-chat-system-prompt",
@@ -6457,6 +6544,16 @@ class MSNAI {
     document.getElementById("model-select").addEventListener("change", (e) => {
       this.settings.selectedModel = e.target.value;
     });
+
+    // Event listener para el slider de rate limit
+    const rateLimitSlider = document.getElementById("rate-limit-slider");
+    const rateLimitValue = document.getElementById("rate-limit-value");
+    if (rateLimitSlider && rateLimitValue) {
+      rateLimitSlider.addEventListener("input", (e) => {
+        const value = parseFloat(e.target.value);
+        rateLimitValue.textContent = `${value.toFixed(1)}s`;
+      });
+    }
 
     // Event listener para cambio de idioma
     document
@@ -7187,7 +7284,7 @@ class MSNAI {
     // ==================================================================================
     this.rateLimiter = new OllamaRateLimiter({
       maxRequestsPerMinute: 30, // 30 req/min = 1 cada 2 segundos en promedio
-      minRequestInterval: 1000, // 1 segundo entre solicitudes (buena UX)
+      minRequestInterval: this.settings.rateLimitInterval || 2000, // Usar valor de configuración, 2s por defecto
       maxRetries: 3,
       baseRetryDelay: 3000, // 3s antes del primer reintento
       maxRetryDelay: 60000,
@@ -7196,6 +7293,9 @@ class MSNAI {
 
     // Inicializar IndexedDB para archivos adjuntos
     await this.initAttachmentsDB();
+
+    // Inicializar manejo de pestañas del modal de configuración
+    this.initSettingsTabs();
 
     // ✅ CARGAR EL ESTADO GUARDADO PRIMERO (antes de cargar idiomas)
     // Esto evita que updateUI() sobrescriba el estado durante loadLanguages()
@@ -8988,7 +9088,7 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
       temperature: parseFloat(this.settings.temperature) || 0.7,
       top_k: parseInt(this.settings.topK) || 40,
       top_p: parseFloat(this.settings.topP) || 0.9,
-      num_predict: parseInt(this.settings.maxTokens) || 2000,
+      num_predict: parseInt(this.settings.maxTokens) || 4000,
     },
     keep_alive: "5m", // Mantener modelo en memoria por 5 minutos
   };
@@ -9189,7 +9289,7 @@ class OllamaRateLimiter {
     // Configuración balanceada con ajuste dinámico para evitar errores 429 (Too Many Requests)
     // El sistema aumenta el intervalo automáticamente si detecta errores 429
     this.maxRequestsPerMinute = config.maxRequestsPerMinute || 30; // 30 req/min razonable
-    this.minRequestInterval = config.minRequestInterval || 1000; // 1 segundo base (buena UX)
+    this.minRequestInterval = config.minRequestInterval || 2000; // 2 segundos base para evitar 429
     this.maxRetries = config.maxRetries || 3; // Reintentos automáticos con backoff exponencial
     this.baseRetryDelay = config.baseRetryDelay || 3000; // ms - 3s antes del primer reintento
     this.maxRetryDelay = config.maxRetryDelay || 60000; // ms - Espera máxima entre reintentos
