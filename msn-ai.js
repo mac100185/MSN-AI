@@ -77,7 +77,7 @@ class MSNAI {
       soundsEnabled: true,
       ollamaServer: defaultServer,
       selectedModel: "",
-      apiTimeout: 30000,
+      apiTimeout: 180000, // Aumentado a 180 segundos (3 minutos) para modelos cloud que responden lentamente
       notifyStatusChanges: true,
       language: "es",
       temperature: 0.7,
@@ -149,10 +149,10 @@ class MSNAI {
           this.userInteracting = true;
           this.lastUserInteraction = Date.now();
 
-          // Resetear flag después de 100ms para mayor fluidez
+          // Resetear flag después de 50ms para mayor fluidez (reducido de 100ms)
           setTimeout(() => {
             this.userInteracting = false;
-          }, 100);
+          }, 50);
         },
         { passive: true, capture: true },
       );
@@ -3761,7 +3761,7 @@ class MSNAI {
       try {
         let tokenBatch = "";
         let batchCount = 0;
-        const BATCH_SIZE = 3; // Reducido para actualizaciones más frecuentes pero ligeras
+        const BATCH_SIZE = 1; // Cambiado a 1 para enviar cada token inmediatamente sin batching
         let totalTokensSent = 0;
 
         while (true) {
@@ -3815,6 +3815,7 @@ class MSNAI {
                 // Solo llamar onToken cada BATCH_SIZE tokens para reducir actualizaciones
                 if (batchCount >= BATCH_SIZE) {
                   const tokenStart = performance.now();
+                  fullResponse += tokenBatch; // Asegurar que el contenido no se pierda en caso de AbortError
                   onToken(tokenBatch);
                   const tokenTime = performance.now() - tokenStart;
                   totalTokensSent++;
@@ -3844,6 +3845,7 @@ class MSNAI {
                   console.log(
                     `🔵 [Stream] Enviando tokens finales (done): ${tokenBatch.length} caracteres`,
                   );
+                  fullResponse += tokenBatch; // Asegurar que el contenido no se pierda
                   onToken(tokenBatch);
                   tokenBatch = "";
                 }
@@ -3853,6 +3855,15 @@ class MSNAI {
               // Si es un error de parsing JSON, solo advertir
               // Si es un error real del stream, lanzarlo
               if (e.message && !e.message.includes("Unexpected")) {
+                // Enviar tokens pendientes antes de lanzar error
+                if (tokenBatch) {
+                  console.log(
+                    `🔵 [Stream] Enviando tokens pendientes antes del error: ${tokenBatch.length} caracteres`,
+                  );
+                  fullResponse += tokenBatch; // Asegurar que el contenido no se pierda
+                  onToken(tokenBatch);
+                  tokenBatch = "";
+                }
                 throw e;
               }
               console.warn("⚠️ [Stream] Línea no JSON:", line);
@@ -4622,11 +4633,11 @@ class MSNAI {
     const chatId = chat.id;
     const updateStart = performance.now();
 
-    // Throttling: no renderizar más de una vez cada 100ms por chat
+    // Throttling: no renderizar más de una vez cada 50ms por chat (reducido de 100ms para mejor fluidez)
     const now = performance.now();
     if (
       this.lastStreamRender[chatId] &&
-      now - this.lastStreamRender[chatId] < 100
+      now - this.lastStreamRender[chatId] < 50
     ) {
       return;
     }
@@ -7159,7 +7170,12 @@ class MSNAI {
         const markdownContent =
           document.getElementById("markdownEditor").textContent;
         const messageInput = document.getElementById("message-input");
-        messageInput.value = markdownContent;
+        // Preservar el contenido existente y agregar el markdown
+        const currentContent = messageInput.value.trim();
+        const newContent = currentContent
+          ? currentContent + "\n\n" + markdownContent
+          : markdownContent;
+        messageInput.value = newContent;
         messageInput.focus();
 
         // Mostrar notificación visible
@@ -8488,7 +8504,12 @@ MSNAI.prototype.usePrompt = function (promptId) {
     }
 
     const messageInput = document.getElementById("message-input");
-    messageInput.value = markdownText;
+    // Preservar el contenido existente y agregar el markdown
+    const currentContent = messageInput.value.trim();
+    const newContent = currentContent
+      ? currentContent + "\n\n" + markdownText
+      : markdownText;
+    messageInput.value = newContent;
     messageInput.focus();
     document.getElementById("prompt-manager-modal").style.display = "none";
     this.showNotification(this.t("prompt_generator.copy_success"), "success");
@@ -9007,16 +9028,50 @@ MSNAI.prototype.createExpertRoom = function () {
  * Las respuestas se muestran conforme van llegando
  */
 MSNAI.prototype.sendExpertRoomMessage = async function () {
+  console.log(
+    "🏢 [DEBUG] sendExpertRoomMessage() iniciada - currentChatId:",
+    this.currentChatId,
+  );
   const input = document.getElementById("message-input");
   const message = input.value.trim();
+  console.log(
+    "🏢 [DEBUG] Mensaje obtenido:",
+    message
+      ? `"${message.substring(0, 50)}${message.length > 50 ? "..." : ""}"`
+      : "(vacío)",
+  );
 
-  if (!message || !this.currentChatId) return;
+  if (!message || !this.currentChatId) {
+    console.log(
+      "⚠️ [DEBUG] sendExpertRoomMessage() retornando temprano - message:",
+      !!message,
+      "currentChatId:",
+      this.currentChatId,
+    );
+    return;
+  }
 
   const chat = this.chats.find((c) => c.id === this.currentChatId);
+  console.log(
+    "🏢 [DEBUG] Chat encontrado:",
+    chat ? chat.id : "null",
+    "isExpertRoom:",
+    chat?.isExpertRoom,
+  );
+
   if (!chat || !chat.isExpertRoom) {
+    console.log(
+      "⚠️ [DEBUG] No es sala de expertos, llamando sendMessage() normal",
+    );
     // Si no es una sala de expertos, usar el método normal
     return this.sendMessage();
   }
+
+  console.log(
+    "🏢 [DEBUG] Iniciando procesamiento de sala de expertos con",
+    chat.models.length,
+    "modelos",
+  );
 
   // Inicializar array de controladores de abort para esta sala
   this.expertRoomAbortControllers[chat.id] = [];
@@ -9087,6 +9142,8 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
 
   // Actualizar lista de chats para mostrar indicador visual
   this.renderChatList();
+
+  console.log("🏢 [DEBUG] Preparando contextos y mensaje final");
 
   console.log(
     `🏢 [ExpertRoom] Enviando mensaje a ${chat.models.length} modelos...`,
@@ -9183,8 +9240,18 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
     );
   }
 
+  console.log(
+    "🏢 [DEBUG] Iniciando loop para procesar",
+    chat.models.length,
+    "modelos",
+  );
+
   for (let i = 0; i < chat.models.length; i++) {
     const model = chat.models[i];
+    console.log(
+      `🤖 [DEBUG] Procesando modelo ${i + 1}/${chat.models.length}:`,
+      model,
+    );
 
     // Verificar si se abortó el procesamiento
     if (!this.respondingChats.has(chat.id)) {
@@ -9205,6 +9272,8 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
         );
       }
 
+      console.log("🏢 [DEBUG] Llamando sendToAIWithRetry para modelo:", model);
+
       // El rate limiter manejará automáticamente el espaciado y los reintentos
       const response = await this.sendToAIWithRetry(
         actualMessageToSend,
@@ -9213,6 +9282,13 @@ MSNAI.prototype.sendExpertRoomMessage = async function () {
         pdfContextText,
         imageContext,
         3, // máximo 3 intentos
+      );
+
+      console.log(
+        "✅ [DEBUG] Respuesta recibida de",
+        model,
+        "- longitud:",
+        response.length,
       );
 
       // Agregar respuesta inmediatamente cuando llega
@@ -9516,6 +9592,14 @@ MSNAI.prototype.sendToAIWithoutStreaming = async function (
     });
   });
 
+  // Verificar que el rate limiter esté inicializado
+  if (!this.rateLimiter) {
+    console.error("❌ [ExpertRoom] Rate limiter no inicializado");
+    throw new Error(
+      "Rate limiter no inicializado. Asegúrate de que la aplicación esté completamente cargada antes de usar salas de expertos.",
+    );
+  }
+
   // Usar el rate limiter para la solicitud
   const fetchPromise = this.rateLimiter.makeRequest(
     async () => {
@@ -9632,12 +9716,26 @@ MSNAI.prototype.selectChat = function (chatId) {
  */
 const originalSendMessage = MSNAI.prototype.sendMessage;
 MSNAI.prototype.sendMessage = async function () {
+  console.log(
+    "🔍 [DEBUG] sendMessage() llamada - currentChatId:",
+    this.currentChatId,
+  );
   const chat = this.chats.find((c) => c.id === this.currentChatId);
+  console.log(
+    "🔍 [DEBUG] Chat encontrado:",
+    chat ? chat.id : "null",
+    "isExpertRoom:",
+    chat?.isExpertRoom,
+  );
 
   if (chat && chat.isExpertRoom) {
+    console.log(
+      "🏢 [DEBUG] Detectada sala de expertos, llamando sendExpertRoomMessage()",
+    );
     return this.sendExpertRoomMessage();
   }
 
+  console.log("💬 [DEBUG] Chat normal, llamando sendMessage original");
   return originalSendMessage.call(this);
 };
 
