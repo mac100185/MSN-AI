@@ -48,6 +48,13 @@ $CloudModels = @(
     "kimi-k2:1t-cloud"
     "kimi-k2-thinking:cloud"
     "glm-4.6:cloud"
+    "mistral-large-3:675b-cloud"
+    "cogito-2.1:671b-cloud"
+    "cogito-2.1:671b-cloud"
+    "gemini-3-pro-preview:latest"
+    "ministral-3:3b-cloud"
+    "ministral-3:8b-cloud"
+    "ministral-3:14b-cloud"
 )
 
 Write-Host "[PACKAGE] Modelos cloud disponibles:" -ForegroundColor Cyan
